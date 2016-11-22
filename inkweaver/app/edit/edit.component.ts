@@ -2,6 +2,6 @@
 
 @Component({
     selector: 'edit',
-    template: `<h1>EDIT</h1>`
+    templateUrl: './app/edit/edit.component.html'
 })
 export class EditComponent { }

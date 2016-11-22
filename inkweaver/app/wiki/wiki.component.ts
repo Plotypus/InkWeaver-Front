@@ -2,6 +2,6 @@
 
 @Component({
     selector: 'wiki',
-    template: `<h1>Wiki</h1>`
+    templateUrl: './app/wiki/wiki.component.html'
 })
 export class WikiComponent { }
