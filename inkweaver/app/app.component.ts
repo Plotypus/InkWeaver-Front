@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'my-app',
+    selector: 'ink-app',
     templateUrl: './app/app.component.html'
 })
-export class AppComponent { }
+export class AppComponent {
+    title = 'Inkweaver';
+}
