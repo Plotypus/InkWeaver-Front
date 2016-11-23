@@ -1,7 +1,14 @@
-﻿<nav>
-    <a routerLink="/edit">Edit</a>
-    <a routerLink="/wiki">Wiki</a>
-    <a routerLink="/settings">Settings</a>
-</nav>
+﻿<div class="header">
+    <div class="title">
+        My Great Story
+    </div>
+    <div class="navigation">
+        <kendo-button-group [selection]="'single'">
+            <button kendoButton routerLink="/edit">Edit</button>
+            <button kendoButton routerLink="/wiki">Wiki</button>
+            <button kendoButton routerLink="/settings">Settings</button>
+        </kendo-button-group>
+    </div>
+</div>
 
 <router-outlet></router-outlet>
