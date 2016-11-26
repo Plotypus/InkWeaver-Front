@@ -11,6 +11,7 @@ import { WikiModule } from './wiki/wiki.module';
 import { SettingsModule } from './settings/settings.module';
 
 import { AppComponent } from './app.component';
+import { WebSocketService } from './shared/websocket.service';
 
 @NgModule({
     imports: [
@@ -22,6 +23,9 @@ import { AppComponent } from './app.component';
         EditModule,
         WikiModule,
         SettingsModule
+    ],
+    providers: [
+        WebSocketService
     ],
     declarations: [
         AppComponent

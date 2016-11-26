@@ -76,6 +76,7 @@
     <Content Include="packages.config" />
     <Content Include=".gitignore" />
     <Content Include="systemjs.config.js" />
+    <Content Include="todo.txt" />
     <Content Include="tsconfig.json" />
     <Content Include="package.json" />
     <None Include="compilerconfig.json" />
@@ -103,14 +104,31 @@
     <TypeScriptCompile Include="app\core\core.module.ts" />
     <TypeScriptCompile Include="app\edit\edit-panel.component.ts" />
     <TypeScriptCompile Include="app\edit\edit.module.ts" />
+    <TypeScriptCompile Include="app\edit\edit.service.ts" />
+    <TypeScriptCompile Include="app\models\author-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\bson.model.ts" />
+    <TypeScriptCompile Include="app\models\category-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\category.model.ts" />
+    <TypeScriptCompile Include="app\models\chapter-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\chapter.model.ts" />
+    <TypeScriptCompile Include="app\models\page-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\paragraph-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\paragraph.model.ts" />
+    <TypeScriptCompile Include="app\models\story.model.ts" />
+    <TypeScriptCompile Include="app\models\story-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\wiki-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\wiki.model.ts" />
     <TypeScriptCompile Include="app\routing.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.component.ts" />
     <TypeScriptCompile Include="app\settings\settings.component.ts" />
     <TypeScriptCompile Include="app\settings\settings.module.ts" />
+    <TypeScriptCompile Include="app\settings\settings.service.ts" />
     <TypeScriptCompile Include="app\shared\shared.module.ts" />
+    <TypeScriptCompile Include="app\shared\websocket.service.ts" />
     <TypeScriptCompile Include="app\wiki\wiki.component.ts" />
     <TypeScriptCompile Include="app\main.ts" />
     <TypeScriptCompile Include="app\wiki\wiki.module.ts" />
+    <TypeScriptCompile Include="app\wiki\wiki.service.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
