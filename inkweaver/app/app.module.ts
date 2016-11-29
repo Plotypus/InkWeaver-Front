@@ -10,8 +10,10 @@ import { EditModule } from './edit/edit.module';
 import { WikiModule } from './wiki/wiki.module';
 import { SettingsModule } from './settings/settings.module';
 
-import { AppComponent } from './app.component';
+import { ParserService } from './shared/parser.service';
 import { WebSocketService } from './shared/websocket.service';
+
+import { AppComponent } from './app.component';
 
 @NgModule({
     imports: [
@@ -25,6 +27,7 @@ import { WebSocketService } from './shared/websocket.service';
         SettingsModule
     ],
     providers: [
+        ParserService,
         WebSocketService
     ],
     declarations: [

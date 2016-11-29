@@ -5,7 +5,7 @@ import { BSON } from '../models/bson.model';
 
 @Injectable()
 export class WikiService {
-    constructor(parser: ParserService) { }
+    constructor(private parser: ParserService) { }
 
     public createWiki(templateId: BSON) {
         this.parser.send({

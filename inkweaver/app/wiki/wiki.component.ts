@@ -10,6 +10,6 @@ export class WikiComponent {
     private replies: string[];
 
     constructor(private wikiService: WikiService, private parser: ParserService) {
-        this.replies = parser.replies();
+        this.replies = this.parser.replies;
     }
 }
