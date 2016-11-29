@@ -1,8 +1,8 @@
 ﻿<div class="content">
     <div class="main">
-        <textarea class="story" [(ngModel)]="message"></textarea>
-        <button kendoButton (click)="sendMessage()">Send</button>
-        <div>{{ messages }}</div>
+        <textarea class="story" [(ngModel)]="paragraph"></textarea>
+        <button kendoButton (click)="saveParagraph()">Send</button>
+        <div>{{replies}}</div>
     </div>
     <div class="panel">
         <edit-panel></edit-panel>

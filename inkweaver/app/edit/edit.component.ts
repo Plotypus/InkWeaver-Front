@@ -1,21 +1,20 @@
 ﻿import { Component } from '@angular/core';
 import { EditService } from './edit.service';
+import { ParserService } from '../shared/parser.service';
 
 @Component({
     selector: 'edit',
     templateUrl: './app/edit/edit.component.html'
 })
 export class EditComponent {
-    private message: string = '';
-    private messages: string[] = [];
+    private paragraph: string;
+    private replies: string[];
 
-    constructor(private editService: EditService) {
-        editService.messages.subscribe(msg => {
-            this.messages.push(msg);
-        });
+    constructor(private editService: EditService, private parser: ParserService) {
+        this.replies = parser.replies;
     }
 
-    private sendMessage() {
-        this.editService.messages.next(this.message);
+    private saveParagraph() {
+        this.parser.send(this.paragraph);
     }
 }

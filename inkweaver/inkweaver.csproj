@@ -123,6 +123,7 @@
     <TypeScriptCompile Include="app\settings\settings.component.ts" />
     <TypeScriptCompile Include="app\settings\settings.module.ts" />
     <TypeScriptCompile Include="app\settings\settings.service.ts" />
+    <TypeScriptCompile Include="app\shared\parser.service.ts" />
     <TypeScriptCompile Include="app\shared\shared.module.ts" />
     <TypeScriptCompile Include="app\shared\websocket.service.ts" />
     <TypeScriptCompile Include="app\wiki\wiki.component.ts" />
