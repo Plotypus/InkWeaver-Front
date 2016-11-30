@@ -23,8 +23,7 @@
             '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
             '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
             '@angular/upgrade': 'npm:@angular/upgrade/bundles/upgrade.umd.js',
-            '@progress/kendo-angular-buttons': 'npm:@progress/kendo-angular-buttons',
-            '@progress/kendo-angular-layout': 'npm:@progress/kendo-angular-layout',
+            'primeng': 'npm:primeng',
 
             // other libraries
             'rxjs': 'npm:rxjs',
@@ -39,12 +38,7 @@
             rxjs: {
                 defaultExtension: 'js'
             },
-            'npm:@progress/kendo-angular-buttons': {
-                main: './dist/npm/js/main.js',
-                defaultExtension: 'js'
-            },
-            'npm:@progress/kendo-angular-layout': {
-                main: './dist/npm/js/main.js',
+            primeng: {
                 defaultExtension: 'js'
             }
         }
