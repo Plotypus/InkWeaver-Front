@@ -1,14 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-
-import {
-    TabMenuModule,
-    TabViewModule,
-    EditorModule,
-    SharedModule,
-    ButtonModule
-} from 'primeng/primeng';
+import { PanelModule, TabMenuModule } from 'primeng/primeng';
 
 import { RoutingModule } from './routing.module';
 import { EditModule } from './edit/edit.module';
@@ -25,13 +18,8 @@ import { AppComponent } from './app.component';
         // Angular Modules
         BrowserModule,
         FormsModule,
-
-        // PrimeNG Modules
+        PanelModule,
         TabMenuModule,
-        TabViewModule,
-        EditorModule,
-        SharedModule,
-        ButtonModule,
 
         // App Modules
         RoutingModule,

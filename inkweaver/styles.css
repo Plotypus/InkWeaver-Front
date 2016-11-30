@@ -1,4 +1,80 @@
-/* Master Styles */
+/* -------------------- Custom Styles -------------------- */
+
+/* ----- Title ----- */
+.ui-panel-titlebar.ui-widget-header {
+    padding: 0;
+    background-color: #39404A;
+}
+
+.title {
+    height: 42px;
+    text-align: center;
+    background-color: #39404A;
+    color: white;
+    font-size: 1.2em;
+}
+
+
+/* ----- Menu ----- */
+.menu-wrapper {
+    padding: 0px;
+    background-color: #39404A;
+}
+
+.menu {
+    width: 100%;
+    height: 100%;
+    background-color: #39404A;
+}
+
+.ui-tabmenu-nav {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.ui-tabmenuitem {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 32.9%;
+    height: 40px;
+}
+
+    .ui-tabmenuitem .ui-menuitem-link {
+        text-align: center;
+        width: 100%;
+        padding: 10px 0 0 0 !important;
+    }
+
+/* ----- Editor ----- */
+.ui-panel-content.ui-widget-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 330px;
+}
+
+.editor {
+    padding: 5%;
+    width: 90%;
+    height: 200px;
+}
+
+/* ----- Navigation ----- */
+.navigation-wrapper {
+    padding: 0;
+}
+
+.navigation {
+    width: 99.5%;
+    height: 286px;
+    padding: 0;
+}
+
+/* ----- Other ----- */
+.placeholder {
+    margin-left: 25px;
+}
+
+/* -------------------- Master Styles -------------------- */
 h1 {
     color: #369;
     font-family: Arial, Helvetica, sans-serif;

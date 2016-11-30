@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\app.component.html" />
-    <Content Include="app\edit\edit-panel.component.html" />
     <Content Include="app\edit\edit.component.html" />
     <Content Include="app\settings\settings.component.html" />
     <Content Include="app\wiki\wiki.component.html" />
@@ -102,7 +101,6 @@
     <TypeScriptCompile Include="app\app.component.ts" />
     <TypeScriptCompile Include="app\app.module.ts" />
     <TypeScriptCompile Include="app\core\core.module.ts" />
-    <TypeScriptCompile Include="app\edit\edit-panel.component.ts" />
     <TypeScriptCompile Include="app\edit\edit.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.service.ts" />
     <TypeScriptCompile Include="app\models\author-summary.model.ts" />
