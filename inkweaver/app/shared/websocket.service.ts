@@ -5,9 +5,7 @@ import { Subject, Observable, Observer } from 'rxjs/Rx';
 export class WebSocketService {
     private subject: Subject<MessageEvent>;
 
-    constructor() {
-        console.log('Initializing WebSocketService');
-    }
+    constructor() { }
 
     public connect(url: string): Subject<MessageEvent> {
         if (!this.subject) {

@@ -1,4 +1,1 @@
-﻿API Calls
- - Create Story
- - Get All Stories
- - Get Story
+﻿

@@ -24,7 +24,6 @@
             '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
             '@angular/upgrade': 'npm:@angular/upgrade/bundles/upgrade.umd.js',
             'primeng': 'npm:primeng',
-            'quill': 'npm:quill',
 
             // other libraries
             'rxjs': 'npm:rxjs',
@@ -41,10 +40,7 @@
             },
             primeng: {
                 defaultExtension: 'js'
-            },
-            quill: {
-                defaultExtension: 'js'
-            },
+            }
         }
     });
 })(this);

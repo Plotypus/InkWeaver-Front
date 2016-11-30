@@ -8,7 +8,6 @@ import {
 } from 'primeng/primeng';
 
 import { EditService } from './edit.service';
-
 import { EditComponent } from './edit.component';
 
 @NgModule({

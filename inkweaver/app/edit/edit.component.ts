@@ -15,7 +15,6 @@ export class EditComponent {
     private paragraph: string;
     private replies: string[];
     private chapters: MenuItem[];
-    private extendDisplay: string;
 
     constructor(private editService: EditService, private parser: ParserService) {
         this.paragraphs = {
@@ -47,7 +46,6 @@ export class EditComponent {
             ]
         }];
         this.replies = parser.replies;
-        this.extendDisplay = '';
     }
 
     private saveParagraph() {
