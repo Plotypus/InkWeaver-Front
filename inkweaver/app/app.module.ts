@@ -2,8 +2,13 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
-import { ButtonsModule } from '@progress/kendo-angular-buttons';
-import { LayoutModule } from '@progress/kendo-angular-layout';
+import {
+    TabMenuModule,
+    TabViewModule,
+    EditorModule,
+    SharedModule,
+    ButtonModule
+} from 'primeng/primeng';
 
 import { RoutingModule } from './routing.module';
 import { EditModule } from './edit/edit.module';
@@ -17,10 +22,18 @@ import { AppComponent } from './app.component';
 
 @NgModule({
     imports: [
+        // Angular Modules
         BrowserModule,
         FormsModule,
-        ButtonsModule,
-        LayoutModule,
+
+        // PrimeNG Modules
+        TabMenuModule,
+        TabViewModule,
+        EditorModule,
+        SharedModule,
+        ButtonModule,
+
+        // App Modules
         RoutingModule,
         EditModule,
         WikiModule,

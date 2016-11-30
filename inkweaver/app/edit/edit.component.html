@@ -1,7 +1,7 @@
 ﻿<div class="content">
     <div class="main">
-        <textarea class="story" [(ngModel)]="paragraph"></textarea>
-        <button kendoButton (click)="saveParagraph()">Send</button>
+        <p-editor [(ngModel)]="paragraph"></p-editor>
+        <button pButton type="button" label="Send" (click)="saveParagraph()"></button>
         <div>{{replies}}</div>
     </div>
     <div class="panel">

@@ -11,7 +11,6 @@ export class EditComponent {
     private replies: string[];
 
     constructor(private editService: EditService, private parser: ParserService) {
-        console.log(parser.replies);
         this.replies = parser.replies;
     }
 

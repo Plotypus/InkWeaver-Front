@@ -1,13 +1,9 @@
 ﻿<div class="header">
     <div class="title">
-        My Great Story
+        {{title}}
     </div>
     <div class="navigation">
-        <kendo-button-group [selection]="'single'">
-            <button kendoButton routerLink="/edit">Edit</button>
-            <button kendoButton routerLink="/wiki">Wiki</button>
-            <button kendoButton routerLink="/settings">Settings</button>
-        </kendo-button-group>
+        <p-tabMenu [model]="items"></p-tabMenu>
     </div>
 </div>
 

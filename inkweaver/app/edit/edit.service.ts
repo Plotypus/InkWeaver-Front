@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 
-import { ParserService } from '../shared/parser.service';
 import { BSON } from '../models/bson.model';
+import { ParserService } from '../shared/parser.service';
 
 @Injectable()
 export class EditService {
