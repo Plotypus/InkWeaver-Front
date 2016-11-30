@@ -1,7 +1,7 @@
 ﻿import { Component } from '@angular/core';
 
 @Component({
-    selector: 'ink-settings',
+    selector: 'settings',
     templateUrl: './app/settings/settings.component.html'
 })
 export class SettingsComponent { }

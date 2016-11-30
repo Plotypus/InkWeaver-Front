@@ -1,10 +1,7 @@
-﻿<div class="content">
-    <div class="main">
-        <textarea class="story" [(ngModel)]="message"></textarea>
-        <button kendoButton (click)="sendMessage()">Send</button>
-        <div>{{ messages }}</div>
-    </div>
-    <div class="panel">
-        <edit-panel></edit-panel>
-    </div>
+﻿<div class="editor-wrapper ui-g-8">
+    <textarea pInputTextarea class="editor" [(ngModel)]="paragraph"></textarea>
+    <button pButton type="button" label="Send" (click)="saveParagraph()"></button>
+</div>
+<div class="navigation-wrapper ui-g-4">
+    <p-menu styleClass="navigation" [model]="chapters"></p-menu>
 </div>

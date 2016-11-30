@@ -1,14 +1,12 @@
-﻿<div class="header">
-    <div class="title">
-        My Great Story
-    </div>
-    <div class="navigation">
-        <kendo-button-group [selection]="'single'">
-            <button kendoButton routerLink="/edit">Edit</button>
-            <button kendoButton routerLink="/wiki">Wiki</button>
-            <button kendoButton routerLink="/settings">Settings</button>
-        </kendo-button-group>
-    </div>
-</div>
-
-<router-outlet></router-outlet>
+﻿<p-panel>
+    <header>
+        <div class="title ui-g-8">
+            {{title}}
+        </div>
+        <div class="menu-wrapper ui-g-4">
+            <p-tabMenu styleClass="menu" [model]="items"></p-tabMenu>
+        </div>
+    </header>
+    <router-outlet></router-outlet>
+    <br />
+</p-panel>
