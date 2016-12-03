@@ -9,7 +9,8 @@ const routes: Routes = [
     { path: '', redirectTo: '/edit', pathMatch: 'full' }, // temporary will need to go to you stories page in the future
     { path: 'edit', component: EditComponent },
     { path: 'wiki', component: WikiComponent },
-    { path: 'settings', component: SettingsComponent }
+    { path: 'settings', component: SettingsComponent },
+    { path: "**", component: EditComponent }
 ];
 
 @NgModule({
