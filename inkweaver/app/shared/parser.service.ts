@@ -16,6 +16,7 @@ export class ParserService {
             .connect(url).map((response: MessageEvent): string => response.data);
 
         this.messages.subscribe(reply => {
+            console.log(reply);
             this.replies.push(reply)
         })
     }

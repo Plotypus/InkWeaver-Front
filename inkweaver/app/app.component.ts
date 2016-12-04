@@ -10,11 +10,11 @@ export class AppComponent {
     private items: MenuItem[];
 
     constructor() {
-        this.title = 'My Great Story';
+        this.title = 'Mos Eisley Trip';
         this.items = [
-            { label: 'Edit', icon: 'fa-pencil-square-o', routerLink: ['/edit'] },
-            { label: 'Wiki', icon: 'fa-book', routerLink: ['/wiki'] },
-            { label: 'Settings', icon: 'fa-cogs', routerLink: ['/settings'] }
+            { label: '', icon: 'fa-pencil-square-o', routerLink: ['/edit'] },
+            { label: '', icon: 'fa-book', routerLink: ['/wiki'] },
+            { label: '', icon: 'fa-ellipsis-v', routerLink: ['/settings'] }
         ];
     }
 }

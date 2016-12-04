@@ -1,80 +1,126 @@
 /* -------------------- Custom Styles -------------------- */
+:root {
+    --light-gray: #D3D3D3;
+    --dark-gray: #939393;
+    --light-blue: #39404A;
+    --dark-blue: #252E3B;
+}
+
+.ui-panel {
+    border: none;
+}
 
 /* ----- Title ----- */
 .ui-panel-titlebar.ui-widget-header {
     padding: 0;
-    background-color: #39404A;
-}
-
-.title {
-    height: 42px;
+    color: var(--light-gray);
+    font-size: 2em;
     text-align: center;
-    background-color: #39404A;
-    color: white;
-    font-size: 1.2em;
 }
 
+.ui-widget-header {
+    border: none;
+    background: var(--light-blue) !important;
+}
 
 /* ----- Menu ----- */
-.menu-wrapper {
-    padding: 0px;
-    background-color: #39404A;
-}
-
 .menu {
-    width: 100%;
-    height: 100%;
-    background-color: #39404A;
+    padding: 0;
 }
 
 .ui-tabmenu-nav {
-    margin: 0 !important;
-    padding: 0 !important;
+    padding: 2px 0 0 0 !important;
 }
 
 .ui-tabmenuitem {
+    width: 33%;
     margin: 0 !important;
-    padding: 0 !important;
-    width: 32.9%;
-    height: 40px;
+    border: none !important;
+    background-color: var(--light-blue) !important;
 }
 
     .ui-tabmenuitem .ui-menuitem-link {
-        text-align: center;
         width: 100%;
-        padding: 10px 0 0 0 !important;
+        height: 75px;
+        padding: 0 !important;
     }
 
-/* ----- Editor ----- */
-.ui-panel-content.ui-widget-content {
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 330px;
+    .ui-tabmenuitem.ui-state-active {
+        background-color: var(--dark-blue) !important;
+    }
+
+.ui-menuitem-icon {
+    margin-top: 10%;
+    font-size: 1.5em;
+    color: var(--dark-gray);
 }
 
+.ui-state-active .ui-menuitem-icon {
+    color: var(--light-gray);
+}
+
+/* ----- Editor ----- */
 .editor {
-    padding: 5%;
+    padding: 0;
+}
+
+.ui-panel-content.ui-widget-content {
+    padding: 0 !important;
+}
+
+.ui-inputtext {
     width: 90%;
+    padding: 5%;
     height: 200px;
+    border: none !important;
 }
 
 /* ----- Navigation ----- */
-.navigation-wrapper {
-    padding: 0;
+.navigation {
+    height: 1000px;
+    background: var(--dark-blue) !important;
 }
 
-.navigation {
-    width: 99.5%;
-    height: 286px;
-    padding: 0;
+.ui-menu {
+    width: 100%;
+    border: none;
+    padding: 0 !important;
+    background: var(--dark-blue) !important;
+}
+
+.ui-menu-list .ui-widget-header {
+    background: var(--dark-blue) !important;
+}
+
+    .ui-menu-list .ui-widget-header h3 {
+        color: var(--light-gray);
+    }
+
+.ui-menuitem-link.ui-state-hover {
+    background: var(--dark-blue) !important;
+}
+
+.ui-menu .ui-menuitem-text {
+    margin-left: 20px;
+    color: var(--dark-gray);
 }
 
 /* ----- Other ----- */
+.ui-button {
+    background: var(--dark-blue) !important;
+    border: none !important;
+    margin-left: 40px;
+}
+
 .placeholder {
     margin-left: 25px;
 }
 
 /* -------------------- Master Styles -------------------- */
+html {
+    overflow-y: scroll;
+}
+
 h1 {
     color: #369;
     font-family: Arial, Helvetica, sans-serif;
@@ -88,7 +134,8 @@ h2, h3 {
 }
 
 body {
-    margin: 2em;
+    padding: 0;
+    margin: 0;
 }
 
 body, input[text], button {

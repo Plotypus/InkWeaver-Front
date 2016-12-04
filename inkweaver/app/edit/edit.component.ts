@@ -24,9 +24,10 @@ export class EditComponent {
         };
         this.paragraph = this.paragraphs['Chapter 1'];
         this.chapters = [{
-            label: 'My Great Story', items: [
+            label: 'Mos Eisley Trip', items: [
                 {
-                    label: 'Chapter 1', command: (event: any) => {
+                    label: 'Chapter 1',
+                    command: (event: any) => {
                         let chapter: string = event.item.label;
                         this.paragraph = this.paragraphs[chapter];
                     }

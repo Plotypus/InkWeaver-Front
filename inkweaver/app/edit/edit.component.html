@@ -1,7 +1,7 @@
-﻿<div class="editor-wrapper ui-g-8">
-    <textarea pInputTextarea class="editor" [(ngModel)]="paragraph"></textarea>
+﻿<div class="editor ui-g-9">
+    <textarea pInputTextarea [(ngModel)]="paragraph"></textarea>
     <button pButton type="button" label="Send" (click)="saveParagraph()"></button>
 </div>
-<div class="navigation-wrapper ui-g-4">
-    <p-menu styleClass="navigation" [model]="chapters"></p-menu>
+<div class="navigation ui-g-3">
+    <p-menu [model]="chapters"></p-menu>
 </div>
