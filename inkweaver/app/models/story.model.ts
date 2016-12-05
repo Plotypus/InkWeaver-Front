@@ -1,13 +1,14 @@
-﻿import { BSON } from './bson.model';
-import { AuthorSummary } from './author-summary.model';
+﻿import { WikiSummary } from './wiki-summary.model';
 import { ChapterSummary } from './chapter-summary.model';
 
 export class Story {
-    "story_id": BSON;
+    "id": string;
     "title": string;
-    "authors": AuthorSummary[];
-    "wiki_id": BSON;
-    "synopsis": string;
-    "chapters": ChapterSummary[];
+    "owner": string;
+    "coauthors": string[];
     "statistics": string;
+    "settings": string;
+    "synopsis": string;
+    "wiki": WikiSummary;
+    "chapters": ChapterSummary[];
 }

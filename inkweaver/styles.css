@@ -4,6 +4,8 @@
     --dark-gray: #939393;
     --light-blue: #39404A;
     --dark-blue: #252E3B;
+    --darker-blue: #14191f;
+    --orange: #ED6E2B;
 }
 
 .ui-panel {
@@ -71,45 +73,32 @@
 .ui-inputtext {
     width: 90%;
     padding: 5%;
-    height: 200px;
+    height: 250px;
     border: none !important;
 }
 
 /* ----- Navigation ----- */
 .navigation {
     height: 1000px;
-    background: var(--dark-blue) !important;
+    padding: 15px 0 0 0;
+    background: var(--dark-blue);
 }
 
-.ui-menu {
-    width: 100%;
-    border: none;
-    padding: 0 !important;
-    background: var(--dark-blue) !important;
-}
-
-.ui-menu-list .ui-widget-header {
-    background: var(--dark-blue) !important;
-}
-
-    .ui-menu-list .ui-widget-header h3 {
-        color: var(--light-gray);
-    }
-
-.ui-menuitem-link.ui-state-hover {
-    background: var(--dark-blue) !important;
-}
-
-.ui-menu .ui-menuitem-text {
-    margin-left: 20px;
-    color: var(--dark-gray);
-}
-
-/* ----- Other ----- */
-.ui-button {
-    background: var(--dark-blue) !important;
+.ui-datatable thead, tbody, tr, th, td {
+    padding-left: 20px !important;
+    color: var(--dark-gray) !important;
     border: none !important;
-    margin-left: 40px;
+    text-align: left !important;
+    background: var(--dark-blue) !important;
+}
+
+.ui-state-highlight td {
+    background: var(--darker-blue) !important;
+    color: var(--orange) !important;
+}
+
+.ui-cell-data {
+    padding-left: 20px !important;
 }
 
 .placeholder {

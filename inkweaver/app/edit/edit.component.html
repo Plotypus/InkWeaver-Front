@@ -1,7 +1,13 @@
 ﻿<div class="editor ui-g-9">
-    <textarea pInputTextarea [(ngModel)]="paragraph"></textarea>
-    <button pButton type="button" label="Send" (click)="saveParagraph()"></button>
+    <textarea pInputTextarea [(ngModel)]="data.display"></textarea>
 </div>
 <div class="navigation ui-g-3">
-    <p-menu [model]="chapters"></p-menu>
+    <p-dataTable [value]="data.story.chapters" selectionMode="single" [(selection)]="data.selectedChapter" (onRowSelect)="switchChapter($event)">
+        <p-headerColumnGroup>
+            <p-row>
+                <p-column [header]="data.story.title"></p-column>
+            </p-row>
+        </p-headerColumnGroup>
+        <p-column field="title"></p-column>
+    </p-dataTable>
 </div>

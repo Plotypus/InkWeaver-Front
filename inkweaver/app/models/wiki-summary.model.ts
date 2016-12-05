@@ -1,8 +1,4 @@
-﻿import { BSON } from './bson.model';
-import { CategorySummary } from './category-summary.model';
-
-export class WikiSummary {
-    "wiki_id": BSON;
+﻿export class WikiSummary {
+    "id": string;
     "title": string;
-    "categories": CategorySummary[];
 }

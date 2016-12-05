@@ -1,46 +1,64 @@
 ﻿import { Injectable } from '@angular/core';
 
-import { BSON } from '../models/bson.model';
 import { ParserService } from '../shared/parser.service';
 
 @Injectable()
 export class EditService {
     constructor(private parser: ParserService) { }
 
+    public getUserInfo() {
+        this.parser.send({
+            "action": "get_user_info"
+        });
+    }
+
+    // -------------------- STORY -------------------- //
+    public loadStory(story_id: string) {
+        this.parser.send({
+            "action": "load_story",
+            "story": story_id
+        });
+    }
+
+    public loadStoryWithChapters(story_id: string) {
+        this.parser.send({
+            "action": "load_story_with_chapters",
+            "story": story_id
+        });
+    }
+
+    // -------------------- CHAPTERS -------------------- //
+    public getAllChapters() {
+        this.parser.send({
+            "action": "get_all_chapters"
+        });
+    }
+
+    public loadChapter(chapter_id: string) {
+        this.parser.send({
+            "action": "load_chapter",
+            "chapter": chapter_id
+        });
+    }
+
+    public loadChapterWithParagraphs(chapter_id: string) {
+        this.parser.send({
+            "action": "load_chapter_with_paragraphs",
+            "chapter": chapter_id
+        });
+    }
+
     // -------------------- PARAGRAPH -------------------- //
-    public createParagraph(chapId: BSON, precId: BSON, succId: BSON) {
+    public getAllParagraphs() {
         this.parser.send({
-            "id": 1,
-            "type": "create_paragraph",
-            "chapter_id": chapId,
-            "preceding_id": precId,
-            "succeeding_id": succId
-        }.toString());
+            "action": "get_all_paragraphs"
+        });
     }
 
-    public getParagraph(pid: BSON) {
+    public loadParagraph(paragraph_id: string) {
         this.parser.send({
-            "id": 1,
-            "type": "get_paragraph",
-            "paragraph_id": pid
-        }.toString());
-    }
-
-    // -------------------- CHAPTER -------------------- //
-    public createChapter(storyId: BSON, title: string) {
-        this.parser.send({
-            "id": 1,
-            "type": "create_chapter",
-            "story_id": storyId,
-            "title": title
-        }.toString());
-    }
-
-    public getChapter(chapId: BSON) {
-        this.parser.send({
-            "id": 1,
-            "type": "get_chapter",
-            "chapter_id": chapId
-        }.toString());
+            "action": "load_paragraph",
+            "paragraph": paragraph_id
+        });
     }
 }

@@ -7,9 +7,5 @@ import { ParserService } from '../shared/parser.service';
     templateUrl: './app/wiki/wiki.component.html'
 })
 export class WikiComponent {
-    private replies: string[];
-
-    constructor(private wikiService: WikiService, private parser: ParserService) {
-        this.replies = this.parser.replies;
-    }
+    constructor(private wikiService: WikiService, private parser: ParserService) { }
 }

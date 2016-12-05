@@ -1,9 +1,8 @@
-﻿import { BSON } from './bson.model';
-import { Paragraph } from './paragraph.model';
+﻿import { Paragraph } from './paragraph.model';
 
 export class Chapter {
-    "chapter_id": BSON;
+    "id": string;
     "title": string;
-    "paragraphs": Paragraph[]; // Should be ParagraphSummary
     "statistics": string;
+    "paragraphs": Paragraph[];
 }

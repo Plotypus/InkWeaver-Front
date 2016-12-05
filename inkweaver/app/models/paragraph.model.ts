@@ -1,7 +1,5 @@
-﻿import { BSON } from './bson.model';
-
-export class Paragraph {
-    "paragraph_id": BSON;
+﻿export class Paragraph {
+    "id": string;
     "text": string;
     "statistics": string;
 }
