@@ -1,13 +1,14 @@
 ﻿import { Component } from '@angular/core';
+
+import { MenuItem } from 'primeng/primeng';
 import { WikiService } from './wiki.service';
 import { ParserService } from '../shared/parser.service';
-import { MenuItem } from 'primeng/primeng';
+
 @Component({
     selector: 'wiki',
     templateUrl: './app/wiki/wiki.component.html'
 })
 export class WikiComponent {
-    private replies: string[];
     private wiki_pages: any;
     private chapters: MenuItem[];
     private tabs: any;
@@ -22,7 +23,6 @@ export class WikiComponent {
         };
 
         this.page = this.wiki_pages['Luke Walker'];
-        this.replies = this.parser.replies;
         this.tabs = [{
             id: 1,
             header: 'Characters',
@@ -32,12 +32,12 @@ export class WikiComponent {
                     this.page = this.wiki_pages[chapter];
                 }
             },
-                {
-                    label: "Ben Kenobi", command: (event: any) => {
-                        let chapter: string = event.item.label;
-                        this.page = this.wiki_pages[chapter];
-                    }
+            {
+                label: "Ben Kenobi", command: (event: any) => {
+                    let chapter: string = event.item.label;
+                    this.page = this.wiki_pages[chapter];
                 }
+            }
             ]
         }, {
             id: 2,
@@ -46,15 +46,15 @@ export class WikiComponent {
                 label: "Planet A", command: (event: any) => {
                     let chapter: string = event.item.label;
                     this.page = this.wiki_pages[chapter];
-                } },
-                {
-                    label: "Planet B", command: (event: any) => {
-                        let chapter: string = event.item.label;
-                        this.page = this.wiki_pages[chapter];
-                    } }
+                }
+            },
+            {
+                label: "Planet B", command: (event: any) => {
+                    let chapter: string = event.item.label;
+                    this.page = this.wiki_pages[chapter];
+                }
+            }
             ]
         }];
-
     }
-
 }

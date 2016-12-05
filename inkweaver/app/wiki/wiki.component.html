@@ -3,13 +3,12 @@
 </div>
 <div class="navigation-wrapper ui-g-4">
     <p-accordion>
-       <p-accordionTab *ngFor="let tab of tabs;let i = index;">
-           <header>
-               {{tab.header}}
-               <button>+</button>
-           </header>
-           <p-menu styleClass="navigation" [model]="tab.items"></p-menu>
+        <p-accordionTab *ngFor="let tab of tabs;let i = index;">
+            <header>
+                {{tab.header}}
+                <button>+</button>
+            </header>
+            <p-menu styleClass="navigation" [model]="tab.items"></p-menu>
         </p-accordionTab>
     </p-accordion>
-
 </div>

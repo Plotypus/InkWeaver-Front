@@ -101,6 +101,15 @@
     padding-left: 20px !important;
 }
 
+/* -------------------- Accordian -------------------- */
+.ui-accordion .ui-accordion-content {
+    padding: 0;
+    border-top: 0;
+    overflow: auto;
+    zoom: 1;
+}
+
+/* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;
 }

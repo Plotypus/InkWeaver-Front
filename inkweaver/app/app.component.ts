@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { MenuItem } from 'primimport { Router, NavigationStart, Event} from '@angular/router';
-import 'rxjs/add/operator/filter'; eng / primeng';
+import { Router, NavigationStart, Event } from '@angular/router';
+
+import { MenuItem } from 'primeng/primeng';
 import { ParserService } from './shared/parser.service';
+
 @Component({
     selector: 'ink-app',
     templateUrl: './app/app.component.html'
@@ -26,8 +28,7 @@ export class AppComponent {
         router.events
             .filter(event => event instanceof NavigationStart)
             .subscribe((event: Event) => {
-                if (event.url === '/' || event.url === '/edit' )
-                {
+                if (event.url === '/' || event.url === '/edit') {
                     this.activeItem = this.items[0];
                 }
                 else if (event.url === '/wiki')
@@ -35,6 +36,6 @@ export class AppComponent {
                 else if (event.url === '/settings')
                     this.activeItem = this.items[2];
             });
-         
+
     }
 }
