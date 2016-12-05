@@ -57,9 +57,9 @@ export class WikiComponent {
 
     }
 
-    private clicked()
+    private clicked(header:any)
     {
-        alert(this.header);
+        alert(header);
         return false;
     }
 }
