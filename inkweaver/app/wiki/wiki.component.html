@@ -6,7 +6,7 @@
        <p-accordionTab *ngFor="let tab of tabs;let i = index;">
            <header>
                {{tab.header}}
-               <button>+</button>
+               <button (click)="clicked({{tab.header}}); false">+</button>
            </header>
            <p-menu styleClass="navigation" [model]="tab.items"></p-menu>
         </p-accordionTab>

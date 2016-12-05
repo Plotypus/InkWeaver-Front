@@ -51,4 +51,6 @@ export class EditComponent {
     private saveParagraph() {
         this.parser.send(this.paragraph);
     }
+
+
 }
