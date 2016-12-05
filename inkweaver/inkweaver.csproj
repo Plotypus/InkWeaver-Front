@@ -75,7 +75,6 @@
     <Content Include="packages.config" />
     <Content Include=".gitignore" />
     <Content Include="systemjs.config.js" />
-    <Content Include="todo.txt" />
     <Content Include="tsconfig.json" />
     <Content Include="package.json" />
     <None Include="compilerconfig.json" />
