@@ -4,11 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { WikiService } from './wiki.service';
 import { WikiComponent } from './wiki.component';
+import { AccordionModule, MenuModule, SharedModule } from 'primeng/primeng';
 
 @NgModule({
     imports: [
         CommonModule,
-        FormsModule
+        FormsModule,
+
+        //Prime
+        AccordionModule,
+        MenuModule,
+        SharedModule
     ],
     providers: [
         WikiService

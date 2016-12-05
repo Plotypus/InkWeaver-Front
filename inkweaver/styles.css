@@ -30,12 +30,14 @@
 .ui-tabmenu-nav {
     margin: 0 !important;
     padding: 0 !important;
+    display: flex;
+    justify-content: space-between;
 }
 
 .ui-tabmenuitem {
     margin: 0 !important;
     padding: 0 !important;
-    width: 32.9%;
+    width: 32.5%;
     height: 40px;
 }
 
@@ -69,10 +71,19 @@
     padding: 0;
 }
 
+/*--------Accordion---------*/
+.ui-accordion .ui-accordion-content { 
+    padding: 0; 
+    border-top: 0; 
+    overflow: auto; 
+    zoom: 1; 
+}
+
 /* ----- Other ----- */
 .placeholder {
     margin-left: 25px;
 }
+
 
 /* -------------------- Master Styles -------------------- */
 h1 {
