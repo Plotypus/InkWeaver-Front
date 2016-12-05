@@ -75,11 +75,6 @@
     <Content Include="packages.config" />
     <Content Include=".gitignore" />
     <Content Include="systemjs.config.js" />
-<<<<<<< Updated upstream
-=======
-    <Content Include="Problem_Solution.txt" />
-    <Content Include="todo.txt" />
->>>>>>> Stashed changes
     <Content Include="tsconfig.json" />
     <Content Include="package.json" />
     <None Include="compilerconfig.json" />
