@@ -1,23 +1,26 @@
 import { Component } from '@angular/core';
+import { Router, NavigationStart, Event } from '@angular/router';
+
 import { MenuItem } from 'primeng/primeng';
-import { Router, NavigationStart, Event} from '@angular/router';
-import 'rxjs/add/operator/filter';
+import { ParserService } from './shared/parser.service';
+
 @Component({
     selector: 'ink-app',
     templateUrl: './app/app.component.html'
 })
 export class AppComponent {
-    private title: string;
+    private data: any;
     private items: MenuItem[];
     private activeItem: MenuItem;
 
-    constructor(private router: Router) {
-        this.title = 'My Great Story';
+    constructor(private router: Router, parser: ParserService) {
+        this.data = parser.data;
         this.items = [
-            { label: 'Edit', icon: 'fa-pencil-square-o', routerLink: ['/edit'] },
-            { label: 'Wiki', icon: 'fa-book', routerLink: ['/wiki'] },
-            { label: 'Settings', icon: 'fa-cogs', routerLink: ['/settings'] }
+            { label: '', icon: 'fa-pencil-square-o', routerLink: ['/edit'] },
+            { label: '', icon: 'fa-book', routerLink: ['/wiki'] },
+            { label: '', icon: 'fa-ellipsis-v', routerLink: ['/settings'] }
         ];
+
         this.activeItem = this.items[0];
 
 
@@ -25,8 +28,7 @@ export class AppComponent {
         router.events
             .filter(event => event instanceof NavigationStart)
             .subscribe((event: Event) => {
-                if (event.url === '/' || event.url === '/edit' )
-                {
+                if (event.url === '/' || event.url === '/edit') {
                     this.activeItem = this.items[0];
                 }
                 else if (event.url === '/wiki')
@@ -34,6 +36,6 @@ export class AppComponent {
                 else if (event.url === '/settings')
                     this.activeItem = this.items[2];
             });
-         
+
     }
 }
