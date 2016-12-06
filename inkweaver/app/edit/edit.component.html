@@ -1,7 +1,19 @@
-﻿<div class="editor-wrapper ui-g-8">
-    <textarea pInputTextarea class="editor" [(ngModel)]="paragraph"></textarea>
-    <button pButton type="button" label="Send" (click)="saveParagraph()"></button>
+﻿<div class="editor ui-g-9">
+    <p-editor [(ngModel)]="data.display"></p-editor>
 </div>
-<div class="navigation-wrapper ui-g-4">
-    <p-menu styleClass="navigation" [model]="chapters"></p-menu>
+<div class="navigation ui-g-3">
+    <input #gb type="text" pInputText placeholder="Search Chapter Titles">
+    <i class="search fa fa-search"></i>
+    <p-dataTable [value]="data.story.chapters"
+                 selectionMode="single"
+                 [(selection)]="data.selectedChapter"
+                 (onRowSelect)="switchChapter($event)"
+                 [globalFilter]="gb">
+        <p-headerColumnGroup>
+            <p-row>
+                <p-column [header]="data.story.title"></p-column>
+            </p-row>
+        </p-headerColumnGroup>
+        <p-column field="title"></p-column>
+    </p-dataTable>
 </div>

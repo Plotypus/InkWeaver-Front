@@ -1,249 +1,140 @@
 /* -------------------- Custom Styles -------------------- */
+:root {
+    --light-gray: #D3D3D3;
+    --dark-gray: #939393;
+    --light-blue: #39404A;
+    --dark-blue: #252E3B;
+    --darker-blue: #14191f;
+    --orange: #ED6E2B;
+}
+
+.ui-panel {
+    border: none;
+}
 
 /* ----- Title ----- */
 .ui-panel-titlebar.ui-widget-header {
     padding: 0;
-    background-color: #39404A;
-}
-
-.title {
-    height: 42px;
+    color: var(--light-gray);
+    font-size: 2em;
     text-align: center;
-    background-color: #39404A;
-    color: white;
-    font-size: 1.2em;
 }
 
+.ui-widget-header {
+    border: none;
+    background: var(--light-blue) !important;
+}
 
 /* ----- Menu ----- */
-.menu-wrapper {
-    padding: 0px;
-    background-color: #39404A;
-}
-
 .menu {
-    width: 100%;
-    height: 100%;
-    background-color: #39404A;
+    padding: 0;
 }
 
 .ui-tabmenu-nav {
-    margin: 0 !important;
     padding: 0 !important;
-    display: flex;
-    justify-content: space-between;
 }
 
 .ui-tabmenuitem {
+    width: 33%;
     margin: 0 !important;
-    padding: 0 !important;
-    width: 32.5%;
-    height: 40px;
+    border: none !important;
+    background-color: var(--light-blue) !important;
 }
 
     .ui-tabmenuitem .ui-menuitem-link {
-        text-align: center;
         width: 100%;
-        padding: 10px 0 0 0 !important;
+        height: 69px;
+        padding: 0 !important;
     }
 
-/* ----- Editor ----- */
-.ui-panel-content.ui-widget-content {
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 330px;
+    .ui-tabmenuitem.ui-state-active {
+        background-color: var(--dark-blue) !important;
+    }
+
+.ui-menuitem-icon {
+    margin-top: 11%;
+    font-size: 1.5em;
+    color: var(--dark-gray);
 }
 
+.ui-state-active .ui-menuitem-icon {
+    color: var(--light-gray);
+}
+
+/* ----- Editor ----- */
 .editor {
-    padding: 5%;
-    width: 90%;
-    height: 200px;
+    padding: 0;
+}
+
+.ui-panel-content.ui-widget-content {
+    padding: 0 !important;
+}
+
+.ui-editor-toolbar {
+    border-radius: 0px;
+    background: var(--light-gray) !important;
+}
+
+.ui-editor-content p {
+    padding: 10px;
 }
 
 /* ----- Navigation ----- */
-.navigation-wrapper {
-    padding: 0;
-}
-
 .navigation {
-    width: 99.5%;
-    height: 286px;
     padding: 0;
+    height: 1000px;
+    background: var(--dark-blue);
 }
 
-/*--------Accordion---------*/
-.ui-accordion .ui-accordion-content { 
-    padding: 0; 
-    border-top: 0; 
-    overflow: auto; 
-    zoom: 1; 
+.ui-inputtext {
+    width: 90%;
+    margin: 8px;
+    font-family: 'FontAwesome' fa-search !important;
 }
 
-/* ----- Other ----- */
+.search {
+    float: right;
+    position: relative;
+    margin-top: -30px;
+    margin-right: 20px;
+}
+
+.ui-datatable thead, tbody, tr, th, td {
+    padding-left: 20px !important;
+    color: var(--dark-gray) !important;
+    border: none !important;
+    text-align: left !important;
+    background: var(--dark-blue) !important;
+}
+
+.ui-state-highlight td {
+    color: var(--orange) !important;
+    background: var(--darker-blue) !important;
+}
+
+.ui-cell-data {
+    padding-left: 20px !important;
+}
+
+/* -------------------- Accordian -------------------- */
+.ui-accordion .ui-accordion-content {
+    padding: 0;
+    border-top: 0;
+    overflow: auto;
+    zoom: 1;
+}
+
+/* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;
 }
 
-
 /* -------------------- Master Styles -------------------- */
-h1 {
-    color: #369;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 250%;
-}
-
-h2, h3 {
-    color: #444;
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: lighter;
+html {
+    overflow-y: scroll;
 }
 
 body {
-    margin: 2em;
-}
-
-body, input[text], button {
-    color: #888;
-    font-family: Cambria, Georgia;
-}
-
-a {
-    cursor: pointer;
-    cursor: hand;
-}
-
-button {
-    font-family: Arial;
-    background-color: #eee;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    cursor: hand;
-}
-
-    button:hover {
-        background-color: #cfd8dc;
-    }
-
-    button:disabled {
-        background-color: #eee;
-        color: #aaa;
-        cursor: auto;
-    }
-
-/* Navigation link styles */
-nav a {
-    padding: 5px 10px;
-    text-decoration: none;
-    margin-top: 10px;
-    display: inline-block;
-    background-color: #eee;
-    border-radius: 4px;
-}
-
-    nav a:visited, a:link {
-        color: #607D8B;
-    }
-
-    nav a:hover {
-        color: #039be5;
-        background-color: #CFD8DC;
-    }
-
-    nav a.router-link-active {
-        color: #039be5;
-    }
-
-/* items class */
-.items {
-    margin: 0 0 2em 0;
-    list-style-type: none;
     padding: 0;
-    width: 24em;
-}
-
-    .items li {
-        cursor: pointer;
-        position: relative;
-        left: 0;
-        background-color: #EEE;
-        margin: .5em;
-        padding: .3em 0;
-        height: 1.6em;
-        border-radius: 4px;
-    }
-
-        .items li:hover {
-            color: #607D8B;
-            background-color: #DDD;
-            left: .1em;
-        }
-
-        .items li.selected:hover {
-            background-color: #BBD8DC;
-            color: white;
-        }
-
-    .items .text {
-        position: relative;
-        top: -3px;
-    }
-
-.items {
-    margin: 0 0 2em 0;
-    list-style-type: none;
-    padding: 0;
-    width: 24em;
-}
-
-    .items li {
-        cursor: pointer;
-        position: relative;
-        left: 0;
-        background-color: #EEE;
-        margin: .5em;
-        padding: .3em 0;
-        height: 1.6em;
-        border-radius: 4px;
-    }
-
-        .items li:hover {
-            color: #607D8B;
-            background-color: #DDD;
-            left: .1em;
-        }
-
-        .items li.selected {
-            background-color: #CFD8DC;
-            color: white;
-        }
-
-            .items li.selected:hover {
-                background-color: #BBD8DC;
-            }
-
-    .items .text {
-        position: relative;
-        top: -3px;
-    }
-
-    .items .badge {
-        display: inline-block;
-        font-size: small;
-        color: white;
-        padding: 0.8em 0.7em 0 0.7em;
-        background-color: #607D8B;
-        line-height: 1em;
-        position: relative;
-        left: -1px;
-        top: -4px;
-        height: 1.8em;
-        margin-right: .8em;
-        border-radius: 4px 0 0 4px;
-    }
-
-/* everywhere else */
-* {
-    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
 }

@@ -1,1 +1,2 @@
-﻿
+﻿Problem: equally distributing space between objects
+Solutions: http://stackoverflow.com/questions/7245018/how-to-evenly-distribute-elements-in-a-div-next-to-each-other

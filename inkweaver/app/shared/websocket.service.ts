@@ -27,11 +27,25 @@ export class WebSocketService {
 
         let observer = {
             next: (data: Object) => {
-                if (ws.readyState === WebSocket.OPEN) {
+                waitForSocketConnection(ws, function () {
                     ws.send(JSON.stringify(data));
-                }
-            },
+                });
+            }
         };
+
+        function waitForSocketConnection(ws: any, callback: any) {
+            setTimeout(
+                function () {
+                    if (ws.readyState === 1) {
+                        if (callback != null) {
+                            callback();
+                        }
+                        return;
+                    } else {
+                        waitForSocketConnection(ws, callback);
+                    }
+                }, 500);
+        }
 
         return Subject.create(observer, observable);
     }

@@ -72,27 +72,15 @@
     <Content Include="app\edit\edit.component.html" />
     <Content Include="app\settings\settings.component.html" />
     <Content Include="app\wiki\wiki.component.html" />
-    <Content Include="packages.config" />
     <Content Include=".gitignore" />
     <Content Include="systemjs.config.js" />
-    <Content Include="todo.txt" />
-    <Content Include="tsconfig.json" />
     <Content Include="package.json" />
-    <None Include="compilerconfig.json" />
-    <None Include="compilerconfig.json.defaults">
-      <DependentUpon>compilerconfig.json</DependentUpon>
-    </None>
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
+    <Content Include="tsconfig.json" />
+    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
     <Content Include="styles.css" />
-    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -103,19 +91,13 @@
     <TypeScriptCompile Include="app\core\core.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.service.ts" />
-    <TypeScriptCompile Include="app\models\author-summary.model.ts" />
-    <TypeScriptCompile Include="app\models\bson.model.ts" />
-    <TypeScriptCompile Include="app\models\category-summary.model.ts" />
-    <TypeScriptCompile Include="app\models\category.model.ts" />
+    <TypeScriptCompile Include="app\models\user.model.ts" />
     <TypeScriptCompile Include="app\models\chapter-summary.model.ts" />
     <TypeScriptCompile Include="app\models\chapter.model.ts" />
-    <TypeScriptCompile Include="app\models\page-summary.model.ts" />
-    <TypeScriptCompile Include="app\models\paragraph-summary.model.ts" />
     <TypeScriptCompile Include="app\models\paragraph.model.ts" />
     <TypeScriptCompile Include="app\models\story.model.ts" />
     <TypeScriptCompile Include="app\models\story-summary.model.ts" />
     <TypeScriptCompile Include="app\models\wiki-summary.model.ts" />
-    <TypeScriptCompile Include="app\models\wiki.model.ts" />
     <TypeScriptCompile Include="app\routing.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.component.ts" />
     <TypeScriptCompile Include="app\settings\settings.component.ts" />
@@ -132,7 +114,20 @@
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="tslint.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
