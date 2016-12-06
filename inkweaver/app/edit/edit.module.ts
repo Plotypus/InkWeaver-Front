@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import {
-    InputTextareaModule,
+    InputTextModule,
     EditorModule,
     SharedModule,
     DataTableModule
@@ -18,7 +18,7 @@ import { EditComponent } from './edit.component';
         FormsModule,
 
         // PrimeNG Modules
-        InputTextareaModule,
+        InputTextModule,
         EditorModule,
         SharedModule,
         DataTableModule

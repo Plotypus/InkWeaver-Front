@@ -1,8 +1,14 @@
 ﻿<div class="editor ui-g-9">
-    <textarea pInputTextarea [(ngModel)]="data.display"></textarea>
+    <p-editor [(ngModel)]="data.display"></p-editor>
 </div>
 <div class="navigation ui-g-3">
-    <p-dataTable [value]="data.story.chapters" selectionMode="single" [(selection)]="data.selectedChapter" (onRowSelect)="switchChapter($event)">
+    <input #gb type="text" pInputText placeholder="Search Chapter Titles">
+    <i class="search fa fa-search"></i>
+    <p-dataTable [value]="data.story.chapters"
+                 selectionMode="single"
+                 [(selection)]="data.selectedChapter"
+                 (onRowSelect)="switchChapter($event)"
+                 [globalFilter]="gb">
         <p-headerColumnGroup>
             <p-row>
                 <p-column [header]="data.story.title"></p-column>

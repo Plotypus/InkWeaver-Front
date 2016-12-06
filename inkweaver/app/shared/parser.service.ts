@@ -44,8 +44,10 @@ export class ParserService {
                     break
 
                 case 'load_story_with_chapters':
-                    this.send({ 'action': 'load_chapter_with_paragraphs', 'chapter': reply.chapters[0].id });
-                    this.data.selectedChapter = reply.chapters[0];
+                    let chapter = reply.chapters[0];
+
+                    this.send({ 'action': 'load_chapter_with_paragraphs', 'chapter': chapter.id });
+                    this.data.selectedChapter = chapter;
                 case 'load_story':
                     this.data.story = reply;
                     break;
@@ -59,8 +61,8 @@ export class ParserService {
                 case 'load_chapter_with_paragraphs':
                     this.data.display = '';
                     this.data.paragraph = reply.paragraphs[0];
-                    for (let paragraph of reply.paragraphs) {
-                        this.data.display += paragraph.text + '\n\n';
+                    for (let i = 0; i < reply.paragraphs.length; i++) {
+                        this.data.display += '<p>' + reply.paragraphs[i].text + '</p>';
                     }
                 case 'load_chapter':
                     this.data.chapter = reply;
@@ -68,10 +70,10 @@ export class ParserService {
 
                 case 'get_all_paragraphs':
                     this.data.display = '';
+                    this.data.paragraph = reply[0];
                     this.data.chapter.paragraphs = reply;
-                    this.data.paragraph = reply.paragraphs[0];
-                    for (let paragraph of reply.paragraphs) {
-                        this.data.display += paragraph.text + '\n\n';
+                    for (let i = 0; i < reply.paragraphs.length; i++) {
+                        this.data.display += '<p>' + reply.paragraphs[i].text + '</p>';
                     }
                     break;
 
