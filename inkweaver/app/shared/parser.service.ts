@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Rx';
+import { Subject, Observable } from 'rxjs/Rx';
 
 import { Story } from '../models/story.model';
 import { ChapterSummary } from '../models/chapter-summary.model';
@@ -32,8 +32,10 @@ export class ParserService {
     constructor(socket: WebSocketService) {
         this.messages = <Subject<string>>socket
             .connect(url).map((response: MessageEvent): string => response.data);
+    }
 
-        this.messages.subscribe(response => {
+    public receive(): Observable<string> {
+        return this.messages.map(response => {
             let reply = JSON.parse(response);
             let message_id: number = reply.reply_to;
             let action: string = this.outgoing[message_id];
@@ -62,7 +64,7 @@ export class ParserService {
                     this.data.display = '';
                     this.data.paragraph = reply.paragraphs[0];
                     for (let i = 0; i < reply.paragraphs.length; i++) {
-                        this.data.display += '<p>' + reply.paragraphs[i].text + '</p>';
+                        this.data.display += '<p>My name is <a href="bob">Bob</a> ' + reply.paragraphs[i].text + '</p>';
                     }
                 case 'load_chapter':
                     this.data.chapter = reply;
@@ -87,7 +89,8 @@ export class ParserService {
                     break;
             }
             delete this.outgoing[message_id];
-        })
+            return response;
+        }).delay(1000);
     }
 
     public send(message: any) {
