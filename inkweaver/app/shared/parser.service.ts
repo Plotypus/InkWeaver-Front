@@ -7,7 +7,7 @@ import { Chapter } from '../models/chapter.model';
 import { Paragraph } from '../models/paragraph.model';
 import { WebSocketService } from './websocket.service';
 
-const url = 'ws://localhost:8080/ws/v2/test';
+const url: string = 'ws://localhost:8080/ws/v2/test';
 
 @Injectable()
 export class ParserService {
@@ -35,7 +35,7 @@ export class ParserService {
     }
 
     public receive(): Observable<string> {
-        return this.messages.map(response => {
+        return this.messages.map((response: string) => {
             let reply = JSON.parse(response);
             let message_id: number = reply.reply_to;
             let action: string = this.outgoing[message_id];
@@ -46,7 +46,7 @@ export class ParserService {
                     break
 
                 case 'load_story_with_chapters':
-                    let chapter = reply.chapters[0];
+                    let chapter: ChapterSummary = reply.chapters[0];
 
                     this.send({ 'action': 'load_chapter_with_paragraphs', 'chapter': chapter.id });
                     this.data.selectedChapter = chapter;
@@ -89,8 +89,8 @@ export class ParserService {
                     break;
             }
             delete this.outgoing[message_id];
-            return response;
-        }).delay(1000);
+            return action;
+        }).delay(500);
     }
 
     public send(message: any) {

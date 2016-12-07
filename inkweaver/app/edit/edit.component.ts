@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Editor } from 'primeng/primeng';
 import { MenuItem } from 'primeng/primeng';
 import { EditService } from './edit.service';
+import { WikiService } from '../wiki/wiki.service';
 import { ParserService } from '../shared/parser.service';
 
 @Component({
@@ -11,19 +12,25 @@ import { ParserService } from '../shared/parser.service';
     templateUrl: './app/edit/edit.component.html'
 })
 export class EditComponent {
-    @ViewChild(Editor) editor: Editor;
     private data: any;
+    @ViewChild(Editor) editor: Editor;
 
     constructor(
-        private editService: EditService,
-        private parser: ParserService,
+        private router: Router,
         private elRef: ElementRef,
-        private router: Router) {
+        private parser: ParserService,
+        private editService: EditService,
+        private wikiService: WikiService) {
 
         this.data = parser.data;
-        parser.receive().subscribe(response => this.clickableLinks());
+        parser.receive().subscribe((action: string) => {
+            if (action == 'load_chapter_with_paragraphs' || action == 'get_all_paragraphs')
+                this.clickableLinks();
+        });
 
-        editService.getUserInfo();
+        if (this.data.story.id == '') {
+            editService.getUserInfo();
+        }
     }
 
     public switchChapter(event: any) {
@@ -31,20 +38,12 @@ export class EditComponent {
     }
 
     public clickableLinks() {
-        let threads = this.elRef.nativeElement.querySelectorAll('a');
+        let threads: Element[] = this.elRef.nativeElement.querySelectorAll('a[href]');
         for (let thread of threads) {
-            thread.removeEventListener('click', (event: any) => {
-                event.stopPropagation();
-                this.router.navigate(['/wiki']);
-            });
             thread.addEventListener('click', (event: any) => {
                 event.preventDefault();
                 this.router.navigate(['/wiki']);
             });
         }
-    }
-
-    public followLink(event: any) {
-
     }
 }
