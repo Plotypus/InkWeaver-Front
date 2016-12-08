@@ -117,11 +117,36 @@
 }
 
 /* -------------------- Accordian -------------------- */
-.ui-accordion .ui-accordion-content {
+/*.ui-accordion .ui-accordion-content {
     padding: 0;
     border-top: 0;
     overflow: auto;
     zoom: 1;
+}
+*/
+.ui-accordion .ui-accordion-header a{
+    display: block;
+    font-size: 1em;
+    padding: .5em .5em .5em 2em;
+    font-weight: bold;
+    background:var(--dark-blue);
+    border-top:none;
+}
+
+.ui-accordion .ui-accordion-content.ui-widget-content{
+    border: 0 none;
+    padding:0;
+}
+
+.ui-accordion-menu{
+
+}
+.ui-menu{
+
+   width: 100%;
+    padding: 0;
+    border: none;
+    margin:0;
 }
 
 /* -------------------- Other -------------------- */
