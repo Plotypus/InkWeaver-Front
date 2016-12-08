@@ -1,5 +1,35 @@
 ﻿<div class="editor ui-g-9">
-    <p-editor [(ngModel)]="data.display"></p-editor>
+    <p-editor [(ngModel)]="data.display">
+        <header>
+            <span class="ql-formats">
+                <button class="ql-link"></button>
+            </span>
+            <span class="ql-formats">
+                <select class="ql-header"></select>
+                <select class="ql-font"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-indent" value="+1"></button>
+                <button class="ql-indent" value="-1"></button>
+                <select class="ql-align"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+                <button class="ql-clean"></button>
+            </span>
+            <!--<select class="ql-size"></select>-->
+            <!--<button class="ql-direction" value="rtl"></button>-->
+        </header>
+    </p-editor>
 </div>
 <div class="navigation ui-g-3">
     <input #gb type="text" pInputText placeholder="Search Chapter Titles">
