@@ -3,7 +3,6 @@
     --light-gray: #D3D3D3;
     --dark-gray: #939393;
     --light-blue: #39404A;
-    --blue: #0076FF;
     --dark-blue: #252E3B;
     --darker-blue: #14191f;
     --orange: #ED6E2B;
@@ -76,14 +75,6 @@
     background: var(--light-gray) !important;
 }
 
-.ql-link {
-    height: 2em !important;
-}
-
-    .ql-link path, .ql-link line {
-        stroke: var(--blue) !important;
-    }
-
 .ui-editor-content p {
     padding: 10px;
 }
@@ -136,15 +127,6 @@
 /* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;
-}
-
-.ql-tooltip {
-    display: none;
-}
-
-.ql-editor a {
-    cursor: pointer;
-    color: var(--blue);
 }
 
 /* -------------------- Master Styles -------------------- */

@@ -23,19 +23,19 @@ export class AppComponent {
 
         this.activeItem = this.items[0];
 
-        // This changes the navigation bar highlight
+
+        //this changes the navigation bar highlight
         router.events
             .filter(event => event instanceof NavigationStart)
             .subscribe((event: Event) => {
                 if (event.url === '/' || event.url === '/edit') {
                     this.activeItem = this.items[0];
                 }
-                else if (event.url === '/wiki') {
+                else if (event.url === '/wiki')
                     this.activeItem = this.items[1];
-                }
-                else if (event.url === '/settings') {
+                else if (event.url === '/settings')
                     this.activeItem = this.items[2];
-                }
             });
+
     }
 }
