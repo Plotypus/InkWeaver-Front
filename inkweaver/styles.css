@@ -131,6 +131,7 @@
     font-weight: bold;
     background:var(--dark-blue);
     border-top:none;
+    color:var(--light-gray);
 }
 
 .ui-accordion .ui-accordion-content.ui-widget-content{
@@ -139,15 +140,20 @@
 }
 
 .ui-accordion-menu{
-
+    background:var(--dark-blue);
+    color: var(--light-gray);
 }
 .ui-menu{
-
-   width: 100%;
+    width: 100%;
     padding: 0;
     border: none;
     margin:0;
+    background:var(--dark-blue);
+    color: var(--light-gray);
 }
+
+.ui-menuitem-link{
+     color: var(--light-gray) !important;
 
 /* -------------------- Other -------------------- */
 .placeholder {
