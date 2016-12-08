@@ -19,6 +19,7 @@ export class ParserService {
 
     public data = {
         'story': this.story,
+        'storySelected': false,
         'selectedChapter': this.selectedChapter,
         'chapter': this.chapter,
         'paragraph': this.paragraph,
@@ -47,16 +48,14 @@ export class ParserService {
 
                 case 'load_story_with_chapters':
                     let chapter: ChapterSummary = reply.chapters[0];
-
-                    this.send({ 'action': 'load_chapter_with_paragraphs', 'chapter': chapter.id });
-                    this.data.selectedChapter = chapter;
                 case 'load_story':
                     this.data.story = reply;
+                    this.data.storySelected = true;
+                    this.setStoryDisplay();
                     break;
 
                 case 'get_all_chapters':
                     this.data.story.chapters = reply;
-                    this.data.selectedChapter = reply[0];
                     this.send({ 'action': 'load_chapter_with_paragraphs', 'chapter': reply[0].id });
                     break;
 
@@ -64,7 +63,7 @@ export class ParserService {
                     this.data.display = '';
                     this.data.paragraph = reply.paragraphs[0];
                     for (let i = 0; i < reply.paragraphs.length; i++) {
-                        this.data.display += '<p>My name is <a href="bob">Bob</a> ' + reply.paragraphs[i].text + '</p>';
+                        this.data.display += '<p>' + reply.paragraphs[i].text + '</p>';
                     }
                 case 'load_chapter':
                     this.data.chapter = reply;
@@ -90,7 +89,19 @@ export class ParserService {
             }
             delete this.outgoing[message_id];
             return action;
-        }).delay(500);
+        });
+    }
+
+    public setStoryDisplay() {
+        this.data.display =
+            '<h1>Title</h1><h2>' + this.data.story.title + '</h2><br>' +
+            '<h1>Owner</h1><h2>' + this.data.story.owner + '</h2><br>' +
+            '<h1>Synopsis</h1><h2>' + this.data.story.synopsis + '</h2><br>' +
+            '<h1>Chapters</h1>';
+        for (let chapter of this.data.story.chapters) {
+            this.data.display += '<h2>' + chapter.title + '</h2>';
+        }
+        this.data.display += '<br>';
     }
 
     public send(message: any) {
