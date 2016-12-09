@@ -79,6 +79,25 @@
     padding: 10px;
 }
 
+.ui-editor-content h1 {
+    width: 95%;
+    color: var(--darker-blue);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.ui-editor-content h2 {
+    padding: 0 0 0 20px;
+    color: var(--light-blue);
+}
+
+.stats {
+    padding: 5px 15px 5px 0px;
+    text-align: right;
+    font-style: italic;
+    color: var(--dark-gray);
+    background: #e6e6e6;
+}
+
 /* ----- Navigation ----- */
 .navigation {
     padding: 0;
@@ -86,11 +105,11 @@
     background: var(--dark-blue);
 }
 
-.ui-inputtext {
-    width: 90%;
-    margin: 8px;
-    font-family: 'FontAwesome' fa-search !important;
-}
+    .navigation .ui-inputtext {
+        width: 90%;
+        margin: 8px;
+        font-family: 'FontAwesome' fa-search !important;
+    }
 
 .search {
     float: right;
@@ -100,20 +119,27 @@
 }
 
 .ui-datatable thead, tbody, tr, th, td {
-    padding-left: 20px !important;
+    padding-left: 0 !important;
     color: var(--dark-gray) !important;
     border: none !important;
     text-align: left !important;
     background: var(--dark-blue) !important;
 }
 
-.ui-state-highlight td {
+.story-title {
+    cursor: pointer;
+    width: 100% !important;
+    padding: 5px 0 5px 15px;
+}
+
+.ui-state-highlight td, div.ui-state-highlight {
+    border: none !important;
     color: var(--orange) !important;
     background: var(--darker-blue) !important;
 }
 
 .ui-cell-data {
-    padding-left: 20px !important;
+    padding-left: 30px !important;
 }
 
 /* -------------------- Accordian -------------------- */
@@ -158,6 +184,18 @@
 /* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;
+}
+
+.ui-dropdown {
+    width: 90% !important;
+}
+
+.ui-dropdown-filter-container {
+    width: 97%;
+}
+
+.ui-dialog-content {
+    height: 60%;
 }
 
 /* -------------------- Master Styles -------------------- */
