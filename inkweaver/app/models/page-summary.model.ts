@@ -1,4 +1,4 @@
-﻿export class WikiSummary {
+﻿export class PageSummary {
     "id": any;
     "title": string;
 }

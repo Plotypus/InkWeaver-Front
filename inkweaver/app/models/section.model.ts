@@ -1,8 +1,7 @@
 ﻿import { Paragraph } from './paragraph.model';
 
-export class Chapter {
+export class Section {
     "id": any;
     "title": string;
-    "statistics": string;
     "paragraphs": Paragraph[];
 }

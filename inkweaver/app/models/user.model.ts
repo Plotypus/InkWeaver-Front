@@ -2,7 +2,7 @@
 import { WikiSummary } from './wiki-summary.model';
 
 export class AuthorSummary {
-    "id": string;
+    "id": any;
     "username": string;
     "avatar": string;
     "email": string;

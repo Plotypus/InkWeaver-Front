@@ -1,4 +1,4 @@
 ﻿export class ChapterSummary {
-    "id": string;
+    "id": any;
     "title": string;
 }

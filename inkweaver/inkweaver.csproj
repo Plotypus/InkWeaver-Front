@@ -91,7 +91,9 @@
     <TypeScriptCompile Include="app\core\core.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.service.ts" />
+    <TypeScriptCompile Include="app\models\page-summary.model.ts" />
     <TypeScriptCompile Include="app\models\page.model.ts" />
+    <TypeScriptCompile Include="app\models\section.model.ts" />
     <TypeScriptCompile Include="app\models\user.model.ts" />
     <TypeScriptCompile Include="app\models\chapter-summary.model.ts" />
     <TypeScriptCompile Include="app\models\chapter.model.ts" />

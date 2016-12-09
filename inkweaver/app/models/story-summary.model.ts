@@ -1,4 +1,4 @@
 ﻿export class StorySummary {
-    "id": string;
+    "id": any;
     "title": string;
 }

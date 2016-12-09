@@ -1,27 +1,54 @@
 ﻿<div class="editor ui-g-9">
-    <p-editor [(ngModel)]="page"></p-editor>
+    <p-editor [(ngModel)]="data.wikiDisplay">
+        <header>
+            <span class="ql-formats">
+                <button class="ql-link" (click)="openLink()"></button>
+            </span>
+            <span class="ql-formats">
+                <select class="ql-size"></select>
+                <select class="ql-font"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-indent" value="+1"></button>
+                <button class="ql-indent" value="-1"></button>
+                <select class="ql-align"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+                <button class="ql-clean"></button>
+            </span>
+        </header>
+    </p-editor>
 </div>
+
 <div class="navigation ui-g-3">
-    <p style="color:#D3D3D3">{{structure.title}}</p>
+    <div class="wiki-title" (click)="selectWiki()"
+         [ngClass]="{'ui-state-highlight': data.wikiSelected}">
+        {{data.wiki.title}}
+    </div>
     <p-accordion>
-        <p-accordionTab *ngFor="let element of structure.segments" >
+        <p-accordionTab *ngFor="let segment of data.wiki.segments"
+                        [selected]="data.selectedSegment.id == segment.id">
             <header>
-                {{element.title}}
+                {{segment.title}}
             </header>
-            <p-menu class="ui-accordion-menu" [model]="element.pages"></p-menu>
+            <div *ngFor="let page of segment.pages" (click)="switchPage(page)"
+                 [ngClass]="{'ui-state-highlight': data.selectedPage.id.$oid == page.id.$oid}">
+                {{page.title}}
+            </div>
         </p-accordionTab>
     </p-accordion>
-
-    <p-menu class="ui-accordion-menu" [model]="structure.pages"></p-menu>
-    <!---
-    <p-accordion>
-        <p-accordionTab *ngFor="let tab of tabs;let i = index;">
-            <header>
-                {{tab.header}}
-                <button style="float:right">+</button>
-            </header>
-            <p-menu class="ui-accordion-menu" [model]="tab.items"></p-menu>
-        </p-accordionTab>
-    </p-accordion>-->
-    <!--[structure]="element"-->
+    <div *ngFor="let page of data.wiki.pages" (click)="switchPage(page)"
+         [ngClass]="{'ui-state-highlight': data.selectedPage.id.$oid == page.id.$oid}">
+        {{page.title}}
+    </div>
 </div>

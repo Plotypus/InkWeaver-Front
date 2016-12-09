@@ -131,6 +131,8 @@
 .navigation {
     padding: 0;
     height: 1000px;
+    font-size: 1.1em;
+    font-weight: bold;
     background: var(--dark-blue);
 }
 
@@ -157,7 +159,7 @@
 
 .story-title {
     cursor: pointer;
-    font-size: 1.1em;
+    font-weight: bold;
     width: 100% !important;
     padding: 5px 0 5px 15px;
 }
@@ -169,73 +171,38 @@
 }
 
 .ui-cell-data {
-    font-size: 1.1em;
     padding-left: 30px !important;
 }
 
 /* -------------------- Accordion -------------------- */
-/*.ui-accordion .ui-accordion-content {
-    padding: 0;
-    border-top: 0;
-    overflow: auto;
-    zoom: 1;
-}
-*/
-.ui-accordion .ui-accordion-header a {
-    display: block;
-    font-size: 1em;
-    padding: .5em .5em .5em 2em;
-    font-weight: bold;
-    background: var(--dark-blue);
-    border-top: none;
-    color: var(--light-gray);
-    border: none;
+.wiki-title {
+    cursor: pointer;
+    padding: 0.8em;
+    color: var(--dark-gray) !important;
 }
 
-.ui-accordion .ui-accordion-content.ui-widget-content {
-    border: 0 none;
-    padding: 0;
-}
-
-.ui-state-default {
+.ui-accordion-header {
     border: none !important;
-}
-.ui-accordion .ui-accordion-header .ui-state-hover{
-    border:none;
-    color: var(--orange);
-    background: var(--darker-blue);
+    color: var(--dark-gray) !important;
+    background: var(--dark-blue) !important;
 }
 
-.ui-accordion-menu {
+    .ui-accordion-header a {
+        padding: 2px 0 2px 2em !important;
+        color: var(--dark-gray) !important;
+    }
+
+.ui-accordion-content {
+    cursor: pointer;
     background: var(--dark-blue);
-    color: var(--light-gray);
+    color: var(--dark-gray);
+    padding: 0 0 0 0 !important;
 }
 
-.ui-menu {
-    width: 100%;
-    padding: 0;
-    border: none;
-    margin: 0;
-    background: var(--dark-blue);
-    color: var(--light-gray);
+    .ui-accordion-content div {
+        padding: 0 0 0 3em !important;
+    }
 
-}
-
-.ui-m.ui-menu .ui-state-highlight{
-     border: none !important;
-    color: var(--orange) !important;
-    background: var(--darker-blue) !important;
-}
-.ui-menu a.ui-state-hover{
-    background-color: transparent;
-    border: none;
-    outline:none;
-    color: var(--light-gray);
-}
-.ui-menuitem-link {
-    color: var(--light-gray) !important;
-    text-indent: 2.5em;
-}
 /* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;

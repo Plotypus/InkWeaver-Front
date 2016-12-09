@@ -1,8 +1,8 @@
-﻿import { Page } from './page.model';
+﻿import { PageSummary } from './page-summary.model';
 
 export class Wiki {
+    "id": any;
     "title": string;
-    "id": string;
     "segments": Wiki[];
-    "pages": Page[];
+    "pages": PageSummary[];
 }

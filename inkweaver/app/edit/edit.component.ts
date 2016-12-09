@@ -39,7 +39,7 @@ export class EditComponent {
         this.data = this.parser.data;
         this.editorRef = this.elRef.nativeElement.querySelector('.ui-editor-content');
         this.wikiPages = [
-            { label: 'Atticus Finch', value: { id: 1 } },
+            { label: 'Atticus Finch', value: { id: '{"$oid": "584a521273f8aa1bcc773158"}' } },
             { label: 'Eliza Doolittle', value: { id: 2 } },
             { label: 'Captain Ahab', value: { id: 3 } },
             { label: 'Huckleberry Finn', value: { id: 4 } },
@@ -47,6 +47,9 @@ export class EditComponent {
             { label: 'Jay Gatsby', value: { id: 6 } }
         ];
         this.newLink = this.wikiPages[0].value;
+
+        //{action: "load_wiki_page_with_sections", wiki_page: Object, message_id: 5}
+        //{action: "load_wiki_page_with_sections", wiki_page: "{"$oid": 584a521273f8aa1bcc773158}", message_id: 6}
 
         // Subscribe to observables
         this.parser.receive().subscribe((action: string) => {
@@ -61,6 +64,7 @@ export class EditComponent {
                 for (let thread of threads) {
                     thread.addEventListener('click', (event: any) => {
                         event.preventDefault();
+                        this.wikiService.loadWikiPageWithSections(JSON.parse(thread.getAttribute('href')));
                         this.router.navigate(['/wiki']);
                     });
                 }

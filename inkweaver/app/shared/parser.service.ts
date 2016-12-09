@@ -1,33 +1,47 @@
 ﻿import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs/Rx';
 
+// Story
 import { Story } from '../models/story.model';
 import { ChapterSummary } from '../models/chapter-summary.model';
 import { Chapter } from '../models/chapter.model';
 import { Paragraph } from '../models/paragraph.model';
+
+// Wiki
+import { Wiki } from '../models/wiki.model';
+import { PageSummary } from '../models/page-summary.model';
+import { Page } from '../models/page.model';
+import { Section } from '../models/section.model';
+
 import { WebSocketService } from './websocket.service';
-import { WikiSummary } from '../models/wiki-summary.model';
 
 const url: string = 'ws://localhost:8080/ws/v2/test';
 
 @Injectable()
 export class ParserService {
+    // Story
     public paragraph: Paragraph = { 'id': '', 'text': '', 'statistics': '' };
     public chapter: Chapter = { 'id': '', 'title': '', 'statistics': '', 'paragraphs': [this.paragraph] };
     public selectedChapter: ChapterSummary = { 'id': '', 'title': '' };
     public story: Story = { 'id': '', 'title': '', 'owner': '', 'coauthors': [], 'statistics': '', 'settings': '', 'synopsis': '', 'wiki': { 'id': '', 'title': '' }, 'chapters': [this.chapter] };
-    public selectedPage: WikiSummary = { 'id': '', 'title': '' };
-    public wiki = {};
+
+    // Wiki
+    public wiki: Wiki = { 'id': '', 'title': '', 'segments': [], 'pages': [] };
+
     public data = {
         'name': '',
         'display': '',
+        'wikiDisplay': '',
         'story': this.story,
         'storySelected': false,
         'selectedChapter': this.selectedChapter,
         'chapter': this.chapter,
         'paragraph': this.paragraph,
-        'selectedPage': this.selectedPage,
-        'wiki': this.wiki
+
+        'wiki': this.wiki,
+        'wikiSelected': false,
+        'selectedPage': { 'id': '' },
+        'selectedSegment': {}
     }
 
     public outgoing = {};
@@ -56,8 +70,9 @@ export class ParserService {
                 case 'load_story':
                     this.data.story = reply;
                     this.data.storySelected = true;
+                    this.data.wikiSelected = true;
                     this.setStoryDisplay();
-                    this.send({ 'action': 'get_wiki_hierarchy', 'wiki': this.data.story.wiki });
+                    this.send({ 'action': 'get_wiki_hierarchy', 'wiki': reply.wiki });
                     break;
 
                 case 'get_all_chapters':
@@ -90,10 +105,14 @@ export class ParserService {
                     break;
 
                 case 'get_wiki_hierarchy':
-                    this.data.wiki = reply;
+                    this.data.wiki = reply.hierarchy;
+                    this.setWikiDisplay();
                     break;
                 case 'load_wiki_page_with_sections':
-                    this.data.selectedPage = reply;
+                    this.data.wikiSelected = false;
+                    this.data.selectedPage = reply.wiki_page;
+                    this.data.selectedSegment = this.getSegment(reply.wiki_page);
+                    this.setPageDisplay(reply.wiki_page);
                     break;
 
                 default:
@@ -115,6 +134,47 @@ export class ParserService {
             this.data.display += '<h2>' + chapter.title + '</h2>';
         }
         this.data.display += '<br>';
+    }
+
+    public setWikiDisplay() {
+        this.data.wikiDisplay =
+            '<h1>Title</h1><h2>' + this.data.wiki.title + '</h2><br>' +
+            '<h1>Segments</h1>';
+        for (let segment of this.data.wiki.segments) {
+            this.data.wikiDisplay += '<h2>' + segment.title + '</h2>';
+        }
+        this.data.wikiDisplay += '<br>';
+    }
+
+    public setPageDisplay(page: Page) {
+        this.data.wikiDisplay =
+            '<h1>Name</h1><h2>' + page.title + '</h2><br>' +
+            '<h1>Aliases</h1>';
+        for (let alias of page.aliases) {
+            this.data.wikiDisplay += '<h2>' + alias + '</h2>';
+        }
+        this.data.wikiDisplay += '<br>';
+        for (let section of page.sections) {
+            this.data.wikiDisplay += '<h1>' + section.title + '</h1>';
+            for (let paragraph of section.paragraphs) {
+                this.data.wikiDisplay += '<h2>' + paragraph.text + '</h2>';
+            }
+            this.data.wikiDisplay += '<br>';
+        }
+        this.data.wikiDisplay += '<h1>References</h1>';
+        for (let reference of page.references) {
+            this.data.wikiDisplay += '<h2>' + reference + '</h2>';
+        }
+        this.data.wikiDisplay += '<br>';
+    }
+
+    public getSegment(page: any) {
+        for (let segment of this.data.wiki.segments) {
+            for (let pageCheck of segment.pages) {
+                if (page.id.$oid == pageCheck.id.$oid) return segment;
+            }
+        }
+        return {};
     }
 
     public send(message: any) {

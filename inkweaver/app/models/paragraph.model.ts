@@ -1,5 +1,5 @@
 ﻿export class Paragraph {
-    "id": string;
+    "id": any;
     "text": string;
     "statistics": string;
 }

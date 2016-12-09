@@ -2,7 +2,7 @@
 import { ChapterSummary } from './chapter-summary.model';
 
 export class Story {
-    "id": string;
+    "id": any;
     "title": string;
     "owner": string;
     "coauthors": string[];
