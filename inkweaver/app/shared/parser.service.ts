@@ -26,7 +26,7 @@ export class ParserService {
         'selectedChapter': this.selectedChapter,
         'chapter': this.chapter,
         'paragraph': this.paragraph,
-        'display': this.display,
+        'selectedPage': this.selectedPage,
         'wiki': this.wiki
     }
 
@@ -57,7 +57,7 @@ export class ParserService {
                     this.data.story = reply;
                     this.data.storySelected = true;
                     this.setStoryDisplay();
-                    this.send({ 'action': 'get_wiki_hierarchy', 'wiki': this.data.story.wiki});
+                    this.send({ 'action': 'get_wiki_hierarchy', 'wiki': this.data.story.wiki });
                     break;
 
                 case 'get_all_chapters':
@@ -88,9 +88,14 @@ export class ParserService {
                     this.data.paragraph = reply;
                     this.data.display = reply.text;
                     break;
+
                 case 'get_wiki_hierarchy':
                     this.data.wiki = reply;
                     break;
+                case 'load_wiki_page_with_sections':
+                    this.data.selectedPage = reply;
+                    break;
+
                 default:
                     console.log('Unknown action: ' + action)
                     break;

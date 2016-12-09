@@ -3,7 +3,7 @@
 import { MenuItem } from 'primeng/primeng';
 import { WikiService } from './wiki.service';
 import { ParserService } from '../shared/parser.service';
-import { Pages } from '../models/pages.model';
+import { Page } from '../models/page.model';
 import { Wiki } from '../models/wiki.model';
 
 @Component({
@@ -23,7 +23,7 @@ export class WikiComponent {
 
     constructor(private wikiService: WikiService, private parser: ParserService) {
 
-       
+
         this.data = this.parser.data;
         this.wiki_nav = this.data.wiki.hierarchy;
         console.log(this.wiki_nav.title);
@@ -99,7 +99,7 @@ export class WikiComponent {
             }
             else if (field == "pages") {
                 var pagesJsons = wikiJson[field];
-                var wikiPages = new Array<Pages>();
+                var wikiPages = new Array<Page>();
                 for (let page in pagesJsons) {
                     var leafpage = this.jsonToPage(pagesJsons[page]);
                     wikiPages.push(leafpage);
@@ -110,29 +110,28 @@ export class WikiComponent {
         return wiki
     }
 
-    public jsonToPage(pageJson: any)
-    {
-        var page = new Pages();
+    public jsonToPage(pageJson: any) {
+        var page = new Page();
         page.id = pageJson['id'];
         page.label = pageJson['title'];
         return page;
     }
-/*
-    public traverse(wiki: any) {
-        for (let i in wiki) {
-            console.log(i, wiki[i])
-            if (wiki[i].length > 0 && i == "segments") {
-                console.log(i, wiki[i]);
-                this.traverse(wiki[i]);
-            }
-            if (wiki[i].length > 0 && i == "pages")
-            {
-                console.log(i, wiki[i]);
-                this.traverse(wiki[i]);
+    /*
+        public traverse(wiki: any) {
+            for (let i in wiki) {
+                console.log(i, wiki[i])
+                if (wiki[i].length > 0 && i == "segments") {
+                    console.log(i, wiki[i]);
+                    this.traverse(wiki[i]);
+                }
+                if (wiki[i].length > 0 && i == "pages")
+                {
+                    console.log(i, wiki[i]);
+                    this.traverse(wiki[i]);
+                }
             }
         }
-    }
-    */
+        */
     public setStoryDisplay() {
         this.data.display =
             '<h1>Title</h1><h2>' + this.data.story.title + '</h2><br>' +

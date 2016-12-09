@@ -173,6 +173,56 @@
     padding-left: 30px !important;
 }
 
+/* -------------------- Accordion -------------------- */
+/*.ui-accordion .ui-accordion-content {
+    padding: 0;
+    border-top: 0;
+    overflow: auto;
+    zoom: 1;
+}
+*/
+.ui-accordion .ui-accordion-header a {
+    display: block;
+    font-size: 1em;
+    padding: .5em .5em .5em 2em;
+    font-weight: bold;
+    background: var(--dark-blue);
+    border-top: none;
+    color: var(--light-gray);
+    border: none;
+}
+
+.ui-accordion .ui-accordion-content.ui-widget-content {
+    border: 0 none;
+    padding: 0;
+}
+
+.ui-state-default {
+    border: none !important;
+}
+
+.ui-accordion .ui-accordion-header .ui-state-hover {
+    border: none;
+}
+
+.ui-accordion-menu {
+    background: var(--dark-blue);
+    color: var(--light-gray);
+}
+
+.ui-menu {
+    width: 100%;
+    padding: 0;
+    border: none;
+    margin: 0;
+    background: var(--dark-blue);
+    color: var(--light-gray);
+}
+
+.ui-menuitem-link {
+    color: var(--light-gray) !important;
+}
+
 /* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;
