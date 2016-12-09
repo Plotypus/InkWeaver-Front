@@ -3,7 +3,6 @@
     --light-gray: #D3D3D3;
     --dark-gray: #939393;
     --light-blue: #39404A;
-    --blue: #0076FF;
     --dark-blue: #252E3B;
     --darker-blue: #14191f;
     --orange: #ED6E2B;
@@ -76,14 +75,6 @@
     background: var(--light-gray) !important;
 }
 
-.ql-link {
-    height: 2em !important;
-}
-
-    .ql-link path, .ql-link line {
-        stroke: var(--blue) !important;
-    }
-
 .ui-editor-content p {
     padding: 10px;
 }
@@ -152,25 +143,55 @@
 }
 
 /* -------------------- Accordian -------------------- */
-.ui-accordion .ui-accordion-content {
+/*.ui-accordion .ui-accordion-content {
     padding: 0;
     border-top: 0;
     overflow: auto;
     zoom: 1;
 }
+*/
+.ui-accordion .ui-accordion-header a{
+    display: block;
+    font-size: 1em;
+    padding: .5em .5em .5em 2em;
+    font-weight: bold;
+    background:var(--dark-blue);
+    border-top:none;
+    color:var(--light-gray);
+    border: none;
+   
+}
+
+.ui-accordion .ui-accordion-content.ui-widget-content{
+    border: 0 none;
+    padding:0;
+}
+
+.ui-state-default{
+    border:none !important;
+}
+.ui-accordion .ui-accordion-header .ui-state-hover{
+    border:none;
+}
+.ui-accordion-menu{
+    background:var(--dark-blue);
+    color: var(--light-gray);
+}
+.ui-menu{
+    width: 100%;
+    padding: 0;
+    border: none;
+    margin:0;
+    background:var(--dark-blue);
+    color: var(--light-gray);
+}
+
+.ui-menuitem-link{
+     color: var(--light-gray) !important;
 
 /* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;
-}
-
-.ql-tooltip {
-    display: none;
-}
-
-.ql-editor a {
-    cursor: pointer;
-    color: var(--blue);
 }
 
 .ui-dropdown {
