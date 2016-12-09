@@ -16,9 +16,10 @@
 /* ----- Title ----- */
 .ui-panel-titlebar.ui-widget-header {
     padding: 0;
-    color: var(--light-gray);
     font-size: 2em;
+    color: var(--light-gray);
     text-align: center;
+    text-transform: uppercase !important;
 }
 
 .ui-widget-header {
@@ -44,7 +45,7 @@
 
     .ui-tabmenuitem .ui-menuitem-link {
         width: 100%;
-        height: 69px;
+        height: 80px !important;
         padding: 0 !important;
     }
 
@@ -65,6 +66,7 @@
 /* ----- Editor ----- */
 .editor {
     padding: 0;
+    background: white;
 }
 
 .ui-panel-content.ui-widget-content {
@@ -76,6 +78,25 @@
     background: var(--light-gray) !important;
 }
 
+.ui-editor-content {
+    min-height: 400px;
+}
+
+    .ui-editor-content p {
+        padding: 10px;
+    }
+
+    .ui-editor-content h1 {
+        width: 95%;
+        color: var(--dark-gray);
+        border-bottom: 1px solid var(--light-gray);
+    }
+
+    .ui-editor-content h2 {
+        padding: 0 0 0 20px;
+        color: var(--light-blue);
+    }
+
 .ql-link {
     height: 2em !important;
 }
@@ -84,27 +105,21 @@
         stroke: var(--blue) !important;
     }
 
-.ui-editor-content p {
-    padding: 10px;
+.ql-tooltip {
+    display: none;
 }
 
-.ui-editor-content h1 {
-    width: 95%;
-    color: var(--darker-blue);
-    border-bottom: 1px solid var(--light-gray);
-}
-
-.ui-editor-content h2 {
-    padding: 0 0 0 20px;
-    color: var(--light-blue);
+.ql-editor a {
+    cursor: pointer;
+    color: var(--blue);
 }
 
 .stats {
     padding: 5px 15px 5px 0px;
     text-align: right;
     font-style: italic;
-    color: var(--dark-gray);
     background: #e6e6e6;
+    color: var(--light-blue);
 }
 
 /* ----- Navigation ----- */
@@ -116,7 +131,7 @@
 
     .navigation .ui-inputtext {
         width: 90%;
-        margin: 8px;
+        margin: 9px;
         font-family: 'FontAwesome' fa-search !important;
     }
 
@@ -129,14 +144,15 @@
 
 .ui-datatable thead, tbody, tr, th, td {
     padding-left: 0 !important;
-    color: var(--dark-gray) !important;
     border: none !important;
     text-align: left !important;
+    color: var(--dark-gray) !important;
     background: var(--dark-blue) !important;
 }
 
 .story-title {
     cursor: pointer;
+    font-size: 1.1em;
     width: 100% !important;
     padding: 5px 0 5px 15px;
 }
@@ -148,15 +164,8 @@
 }
 
 .ui-cell-data {
+    font-size: 1.1em;
     padding-left: 30px !important;
-}
-
-/* -------------------- Accordian -------------------- */
-.ui-accordion .ui-accordion-content {
-    padding: 0;
-    border-top: 0;
-    overflow: auto;
-    zoom: 1;
 }
 
 /* -------------------- Other -------------------- */
@@ -164,13 +173,8 @@
     margin-left: 25px;
 }
 
-.ql-tooltip {
-    display: none;
-}
-
-.ql-editor a {
-    cursor: pointer;
-    color: var(--blue);
+.ui-dialog-content {
+    height: 60%;
 }
 
 .ui-dropdown {
@@ -181,16 +185,17 @@
     width: 97%;
 }
 
-.ui-dialog-content {
-    height: 60%;
-}
-
 /* -------------------- Master Styles -------------------- */
 html {
     overflow-y: scroll;
 }
 
 body {
-    padding: 0;
     margin: 0;
+    padding: 0;
+    background: var(--darker-blue);
+}
+
+* {
+    font-family: 'Lato', Helvetica, sans-serif;
 }
