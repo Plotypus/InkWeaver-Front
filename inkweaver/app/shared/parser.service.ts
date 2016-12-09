@@ -171,7 +171,7 @@ export class ParserService {
     public getSegment(page: any) {
         for (let segment of this.data.wiki.segments) {
             for (let pageCheck of segment.pages) {
-                if (page.id.$oid == pageCheck.id.$oid) return segment;
+                if (page.id == pageCheck.id) return segment;
             }
         }
         return {};

@@ -42,13 +42,13 @@
                 {{segment.title}}
             </header>
             <div *ngFor="let page of segment.pages" (click)="switchPage(page)"
-                 [ngClass]="{'ui-state-highlight': data.selectedPage.id.$oid == page.id.$oid}">
+                 [ngClass]="{'ui-state-highlight': data.selectedPage.id == page.id}">
                 {{page.title}}
             </div>
         </p-accordionTab>
     </p-accordion>
     <div *ngFor="let page of data.wiki.pages" (click)="switchPage(page)"
-         [ngClass]="{'ui-state-highlight': data.selectedPage.id.$oid == page.id.$oid}">
+         [ngClass]="{'ui-state-highlight': data.selectedPage.id == page.id}">
         {{page.title}}
     </div>
 </div>
