@@ -1,14 +1,27 @@
-﻿<div class="editor-wrapper ui-g-8">
-    <textarea pInputTextarea class="editor" [(ngModel)]="page"></textarea>
+﻿<div class="editor ui-g-9">
+    <p-editor [(ngModel)]="page"></p-editor>
 </div>
-<div class="navigation-wrapper ui-g-4">
+<div class="navigation ui-g-3">
+    {{structure.title}}
+    <p-accordion>
+        <p-accordionTab *ngFor="let element of structure.segments" >
+            <header>
+                {{element.title}}
+            </header>
+            <p-menu class="ui-accordion-menu" [model]="element.pages"></p-menu>
+        </p-accordionTab>
+    </p-accordion>
+
+    <p-menu class="ui-accordion-menu" [model]="structure.pages"></p-menu>
+    <!---
     <p-accordion>
         <p-accordionTab *ngFor="let tab of tabs;let i = index;">
             <header>
                 {{tab.header}}
-                <button>+</button>
+                <button style="float:right">+</button>
             </header>
-            <p-menu styleClass="navigation" [model]="tab.items"></p-menu>
+            <p-menu class="ui-accordion-menu" [model]="tab.items"></p-menu>
         </p-accordionTab>
-    </p-accordion>
+    </p-accordion>-->
+    <!--[structure]="element"-->
 </div>

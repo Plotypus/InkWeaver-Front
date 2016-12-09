@@ -6,6 +6,7 @@ import { ChapterSummary } from '../models/chapter-summary.model';
 import { Chapter } from '../models/chapter.model';
 import { Paragraph } from '../models/paragraph.model';
 import { WebSocketService } from './websocket.service';
+import { WikiSummary } from '../models/wiki-summary.model';
 
 const url: string = 'ws://localhost:8080/ws/v2/test';
 
@@ -15,7 +16,8 @@ export class ParserService {
     public chapter: Chapter = { 'id': '', 'title': '', 'statistics': '', 'paragraphs': [this.paragraph] };
     public selectedChapter: ChapterSummary = { 'id': '', 'title': '' };
     public story: Story = { 'id': '', 'title': '', 'owner': '', 'coauthors': [], 'statistics': '', 'settings': '', 'synopsis': '', 'wiki': { 'id': '', 'title': '' }, 'chapters': [this.chapter] };
-
+    public selectedPage: WikiSummary = { 'id': '', 'title': '' };
+    public wiki = {};
     public data = {
         'name': '',
         'display': '',
@@ -23,7 +25,9 @@ export class ParserService {
         'storySelected': false,
         'selectedChapter': this.selectedChapter,
         'chapter': this.chapter,
-        'paragraph': this.paragraph
+        'paragraph': this.paragraph,
+        'display': this.display,
+        'wiki': this.wiki
     }
 
     public outgoing = {};
@@ -45,7 +49,7 @@ export class ParserService {
                 case 'get_user_info':
                     this.data.name = reply.name;
                     this.send({ 'action': 'load_story_with_chapters', 'story': reply.stories[0].id });
-                    break
+                    break;
 
                 case 'load_story_with_chapters':
                     let chapter: ChapterSummary = reply.chapters[0];
@@ -53,6 +57,7 @@ export class ParserService {
                     this.data.story = reply;
                     this.data.storySelected = true;
                     this.setStoryDisplay();
+                    this.send({ 'action': 'get_wiki_hierarchy', 'wiki': this.data.story.wiki});
                     break;
 
                 case 'get_all_chapters':
@@ -83,7 +88,9 @@ export class ParserService {
                     this.data.paragraph = reply;
                     this.data.display = reply.text;
                     break;
-
+                case 'get_wiki_hierarchy':
+                    this.data.wiki = reply;
+                    break;
                 default:
                     console.log('Unknown action: ' + action)
                     break;
