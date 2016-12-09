@@ -1,33 +1,38 @@
-﻿<div class="editor ui-g-9">
-    <p-editor [(ngModel)]="data.wikiDisplay">
-        <header>
-            <span class="ql-formats">
-                <button class="ql-link" (click)="openLink()"></button>
-            </span>
-            <span class="ql-formats">
-                <select class="ql-size"></select>
-                <select class="ql-font"></select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-                <button class="ql-strike"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-list" value="ordered"></button>
-                <button class="ql-list" value="bullet"></button>
-                <button class="ql-indent" value="+1"></button>
-                <button class="ql-indent" value="-1"></button>
-                <select class="ql-align"></select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-script" value="sub"></button>
-                <button class="ql-script" value="super"></button>
-                <button class="ql-clean"></button>
-            </span>
-        </header>
-    </p-editor>
+﻿<div class="editor ui-g-9" [ngSwitch]="!!data.inflight">
+    <div *ngSwitchCase="false">
+        <p-editor [(ngModel)]="data.wikiDisplay">
+            <header>
+                <span class="ql-formats">
+                    <button class="ql-link" (click)="openLink()"></button>
+                </span>
+                <span class="ql-formats">
+                    <select class="ql-size"></select>
+                    <select class="ql-font"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-indent" value="+1"></button>
+                    <button class="ql-indent" value="-1"></button>
+                    <select class="ql-align"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-script" value="sub"></button>
+                    <button class="ql-script" value="super"></button>
+                    <button class="ql-clean"></button>
+                </span>
+            </header>
+        </p-editor>
+    </div>
+    <div class="loader" *ngSwitchCase="true">
+        <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+    </div>
 </div>
 
 <div class="navigation ui-g-3">

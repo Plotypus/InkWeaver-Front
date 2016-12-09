@@ -41,7 +41,9 @@ export class ParserService {
         'wiki': this.wiki,
         'wikiSelected': false,
         'selectedPage': { 'id': '' },
-        'selectedSegment': {}
+        'selectedSegment': {},
+
+        'inflight': false
     }
 
     public outgoing = {};
@@ -55,6 +57,8 @@ export class ParserService {
 
     public receive(): Observable<string> {
         return this.messages.map((response: string) => {
+            this.data.inflight = false;
+
             let reply = JSON.parse(response);
             let message_id: number = reply.reply_to;
             let action: string = this.outgoing[message_id];
@@ -181,6 +185,7 @@ export class ParserService {
         message.message_id = ++this.message_id;
         this.outgoing[message.message_id] = message.action;
 
+        this.data.inflight = true;
         this.messages.next(message);
     }
 }

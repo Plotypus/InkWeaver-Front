@@ -74,6 +74,13 @@
     background: white;
 }
 
+.loader {
+    background: var(--darker-blue);
+    color: white;
+    text-align: center;
+    padding-top: 100px;
+}
+
 .ui-panel-content.ui-widget-content {
     padding: 0 !important;
 }
