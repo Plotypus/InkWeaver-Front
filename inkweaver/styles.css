@@ -158,6 +158,8 @@
     background:var(--dark-blue);
     border-top:none;
     color:var(--light-gray);
+    border: none;
+   
 }
 
 .ui-accordion .ui-accordion-content.ui-widget-content{
@@ -165,6 +167,12 @@
     padding:0;
 }
 
+.ui-state-default{
+    border:none !important;
+}
+.ui-accordion .ui-accordion-header .ui-state-hover{
+    border:none;
+}
 .ui-accordion-menu{
     background:var(--dark-blue);
     color: var(--light-gray);

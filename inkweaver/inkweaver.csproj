@@ -91,6 +91,7 @@
     <TypeScriptCompile Include="app\core\core.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.service.ts" />
+    <TypeScriptCompile Include="app\models\pages.model.ts" />
     <TypeScriptCompile Include="app\models\user.model.ts" />
     <TypeScriptCompile Include="app\models\chapter-summary.model.ts" />
     <TypeScriptCompile Include="app\models\chapter.model.ts" />
@@ -98,6 +99,7 @@
     <TypeScriptCompile Include="app\models\story.model.ts" />
     <TypeScriptCompile Include="app\models\story-summary.model.ts" />
     <TypeScriptCompile Include="app\models\wiki-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\wiki.model.ts" />
     <TypeScriptCompile Include="app\routing.module.ts" />
     <TypeScriptCompile Include="app\edit\edit.component.ts" />
     <TypeScriptCompile Include="app\settings\settings.component.ts" />
