@@ -162,7 +162,7 @@
     padding: 5px 0 5px 15px;
 }
 
-.ui-state-highlight td, div.ui-state-highlight {
+.ui-state-highlight td, div.ui-state-highlight, .ui-state-highlight {
     border: none !important;
     color: var(--orange) !important;
     background: var(--darker-blue) !important;
@@ -200,9 +200,10 @@
 .ui-state-default {
     border: none !important;
 }
-
-.ui-accordion .ui-accordion-header .ui-state-hover {
-    border: none;
+.ui-accordion .ui-accordion-header .ui-state-hover{
+    border:none;
+    color: var(--orange);
+    background: var(--darker-blue);
 }
 
 .ui-accordion-menu {
@@ -217,12 +218,24 @@
     margin: 0;
     background: var(--dark-blue);
     color: var(--light-gray);
+
 }
 
+.ui-m.ui-menu .ui-state-highlight{
+     border: none !important;
+    color: var(--orange) !important;
+    background: var(--darker-blue) !important;
+}
+.ui-menu a.ui-state-hover{
+    background-color: transparent;
+    border: none;
+    outline:none;
+    color: var(--light-gray);
+}
 .ui-menuitem-link {
     color: var(--light-gray) !important;
+    text-indent: 2.5em;
 }
-
 /* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;

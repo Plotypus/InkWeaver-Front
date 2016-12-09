@@ -2,7 +2,7 @@
     <p-editor [(ngModel)]="page"></p-editor>
 </div>
 <div class="navigation ui-g-3">
-    {{structure.title}}
+    <p style="color:#D3D3D3">{{structure.title}}</p>
     <p-accordion>
         <p-accordionTab *ngFor="let element of structure.segments" >
             <header>
