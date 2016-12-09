@@ -22,6 +22,11 @@
     text-transform: uppercase !important;
 }
 
+    .ui-panel-titlebar.ui-widget-header p {
+        margin: 5px 0 0 0;
+        font-size: 0.5em !important;
+    }
+
 .ui-widget-header {
     border: none;
     background: var(--light-blue) !important;
@@ -45,7 +50,7 @@
 
     .ui-tabmenuitem .ui-menuitem-link {
         width: 100%;
-        height: 80px !important;
+        height: 100px !important;
         padding: 0 !important;
     }
 
@@ -54,8 +59,8 @@
     }
 
 .ui-menuitem-icon {
-    margin-top: 11%;
-    font-size: 1.5em;
+    margin-top: 20%;
+    font-size: 1.75em;
     color: var(--dark-gray);
 }
 
@@ -79,7 +84,7 @@
 }
 
 .ui-editor-content {
-    min-height: 400px;
+    height: 425px !important;
 }
 
     .ui-editor-content p {

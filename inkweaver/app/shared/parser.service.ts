@@ -11,19 +11,19 @@ const url: string = 'ws://localhost:8080/ws/v2/test';
 
 @Injectable()
 export class ParserService {
-    public display: string = '';
     public paragraph: Paragraph = { 'id': '', 'text': '', 'statistics': '' };
     public chapter: Chapter = { 'id': '', 'title': '', 'statistics': '', 'paragraphs': [this.paragraph] };
     public selectedChapter: ChapterSummary = { 'id': '', 'title': '' };
     public story: Story = { 'id': '', 'title': '', 'owner': '', 'coauthors': [], 'statistics': '', 'settings': '', 'synopsis': '', 'wiki': { 'id': '', 'title': '' }, 'chapters': [this.chapter] };
 
     public data = {
+        'name': '',
+        'display': '',
         'story': this.story,
         'storySelected': false,
         'selectedChapter': this.selectedChapter,
         'chapter': this.chapter,
-        'paragraph': this.paragraph,
-        'display': this.display
+        'paragraph': this.paragraph
     }
 
     public outgoing = {};
@@ -43,6 +43,7 @@ export class ParserService {
 
             switch (action) {
                 case 'get_user_info':
+                    this.data.name = reply.name;
                     this.send({ 'action': 'load_story_with_chapters', 'story': reply.stories[0].id });
                     break
 
