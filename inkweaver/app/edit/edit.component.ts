@@ -50,6 +50,7 @@ export class EditComponent {
             if (action == 'load_chapter_with_paragraphs' || action == 'get_all_paragraphs')
                 this.setLinks = true;
         });
+        //See if you click on a link
         this.editor.onTextChange.subscribe((event: any) => {
             if (this.setLinks) {
                 this.setLinks = false;
@@ -70,22 +71,35 @@ export class EditComponent {
         if (this.data.story.id == '') this.editService.getUserInfo();
     }
 
+    /**
+     * Selects a story
+     */
     public selectStory() {
         this.data.storySelected = true;
         this.parser.setStoryDisplay();
         this.data.selectedChapter = { 'id': '', 'title': '' };
     }
 
+    /**
+     * Loads the chapter content for a specific chapter
+     * @param event
+     */
     public switchChapter(event: any) {
         this.data.storySelected = false;
         this.editService.loadChapterWithParagraphs(event.data.id);
     }
 
+    /**
+     * Gets the link
+     */
     public openLink() {
         this.displayLink = true
         this.range = this.editor.quill.getSelection();
     }
 
+    /**
+     * Creates a link
+     */
     public createLink() {
         this.setLinks = true;
         this.displayLink = false;

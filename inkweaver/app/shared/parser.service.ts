@@ -64,6 +64,7 @@ export class ParserService {
             let action: string = this.outgoing[message_id];
 
             switch (action) {
+                //message for editor
                 case 'get_user_info':
                     this.data.name = reply.name;
                     this.send({ 'action': 'load_story_with_chapters', 'story': reply.stories[0].id });
@@ -108,6 +109,7 @@ export class ParserService {
                     this.data.display = reply.text;
                     break;
 
+                //message for wiki
                 case 'get_wiki_hierarchy':
                     this.data.wiki = reply.hierarchy;
                     this.setWikiDisplay();
@@ -128,6 +130,9 @@ export class ParserService {
         });
     }
 
+    /**
+     * Set the disply for the story
+     */
     public setStoryDisplay() {
         this.data.display =
             '<h1>Title</h1><h2>' + this.data.story.title + '</h2><br>' +
@@ -139,7 +144,9 @@ export class ParserService {
         }
         this.data.display += '<br>';
     }
-
+    /**
+     * Set the disply for the wiki
+     */
     public setWikiDisplay() {
         this.data.wikiDisplay =
             '<h1>Title</h1><h2>' + this.data.wiki.title + '</h2><br>' +
@@ -150,6 +157,10 @@ export class ParserService {
         this.data.wikiDisplay += '<br>';
     }
 
+    /**
+     * Set the wiki diplay to a specific page
+     * @param page - page to be displayed
+     */
     public setPageDisplay(page: Page) {
         this.data.wikiDisplay =
             '<h1>Name</h1><h2>' + page.title + '</h2><br>' +
@@ -172,6 +183,10 @@ export class ParserService {
         this.data.wikiDisplay += '<br>';
     }
 
+    /**
+     * Find segment that contain the wiki page
+     * @param page 
+     */
     public getSegment(page: any) {
         for (let segment of this.data.wiki.segments) {
             for (let pageCheck of segment.pages) {

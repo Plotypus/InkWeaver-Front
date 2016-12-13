@@ -14,13 +14,19 @@ export class WikiComponent {
     constructor(private wikiService: WikiService, private parser: ParserService) {
         this.data = this.parser.data;
     }
-
+    /**
+     * Selects the wiki page based on wiki navigation bar clicking
+     */
     public selectWiki() {
         this.data.wikiSelected = true;
         this.data.selectedPage = {'id': ''};
         this.parser.setWikiDisplay();
     }
 
+    /**
+     * Switch between pages for the wiki
+     * @param page
+     */
     public switchPage(page: any) {
         this.data.wikiSelected = false;
         this.data.selectedPage = page;
