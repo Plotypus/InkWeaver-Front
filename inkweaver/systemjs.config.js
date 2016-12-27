@@ -11,7 +11,7 @@
         // map tells the System loader where to look for things
         map: {
             // our app is within the app folder
-            app: 'app',
+            'app': 'app',
 
             // angular bundles
             '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
@@ -27,20 +27,25 @@
             // other libraries
             'rxjs': 'npm:rxjs',
             'primeng': 'npm:primeng',
+            'ng2-ckeditor': 'npm:ng2-ckeditor',
             'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js'
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
-            app: {
+            'app': {
                 main: './main.js',
                 defaultExtension: 'js'
             },
-            rxjs: {
+            'rxjs': {
                 defaultExtension: 'js'
             },
-            primeng: {
+            'primeng': {
                 defaultExtension: 'js'
-            }
+            },
+            'ng2-ckeditor': {
+                main: 'lib/index.js',
+                defaultExtension: 'js',
+            },
         }
     });
 })(this);

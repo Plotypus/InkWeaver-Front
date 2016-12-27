@@ -46,7 +46,6 @@ export class WebSocketService {
                     }
                 }, 500);
         }
-
         return Subject.create(observer, observable);
     }
 }

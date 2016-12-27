@@ -1,65 +1,93 @@
 ﻿<div class="editor ui-g-9">
-    <p-dialog header="Create Link" [(visible)]="displayLink" modal="true"
-              width="450" height="450" responsive="true">
-        <p-dropdown [options]="wikiPages" [(ngModel)]="newLink" filter="true"></p-dropdown>
+    <!-- Link Creator Dialog -->
+    <p-dialog modal="true" header="Create Link" [(visible)]="displayLinkCreator" width="450" height="450" responsive="true">
+        <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkId" filter="true"></p-dropdown>
         <footer>
             <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-                <button pButton type="button" label="Create Link"
-                        icon="fa-link" iconPos="right" (click)="createLink()"></button>
+                <button pButton type="button" label="Create Link" icon="fa-link" iconPos="right" (click)="createLink()"></button>
             </div>
         </footer>
     </p-dialog>
 
-    <p-editor [(ngModel)]="data.display">
-        <header>
-            <span class="ql-formats">
-                <button class="ql-link" (click)="openLink()"></button>
-            </span>
-            <span class="ql-formats">
-                <!--<select class="ql-header"></select>-->
-                <select class="ql-size"></select>
-                <select class="ql-font"></select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-                <button class="ql-strike"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-list" value="ordered"></button>
-                <button class="ql-list" value="bullet"></button>
-                <button class="ql-indent" value="+1"></button>
-                <button class="ql-indent" value="-1"></button>
-                <select class="ql-align"></select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-script" value="sub"></button>
-                <button class="ql-script" value="super"></button>
-                <button class="ql-clean"></button>
-            </span>
-            <!--<button class="ql-direction" value="rtl"></button>-->
-        </header>
-    </p-editor>
+    <!-- Editor -->
+    <ckeditor [(ngModel)]="display"
+              [config]="{allowedContent: 'button[!(click)]'}" debounce="500"></ckeditor>
+
+    <!-- Word Count -->
     <div class="stats">Word Count: {{wordCount}}</div>
 </div>
 
+<!-- Navigation -->
 <div class="navigation ui-g-3">
-    <input #gb type="text" pInputText placeholder="Search Chapter Titles">
+    <input pInputText #globalFilter type="text" placeholder="Search Chapter Titles" />
     <i class="search fa fa-search"></i>
 
     <p-dataTable [value]="data.story.chapters"
                  selectionMode="single"
+                 [globalFilter]="globalFilter"
                  [(selection)]="data.selectedChapter"
-                 (onRowSelect)="switchChapter($event)"
-                 [globalFilter]="gb">
+                 (onRowSelect)="selectChapter($event)">
         <p-column field="title">
             <template pTemplate type="header">
-                <div (click)="selectStory()" class="story-title"
-                     [ngClass]="{'ui-state-highlight':data.storySelected}">
+                <div (click)="selectStory()" class="story-title" [ngClass]="{'ui-state-highlight':data.storySelected}">
                     {{data.story.title}}
                 </div>
             </template>
         </p-column>
     </p-dataTable>
 </div>
+
+<!--
+/**
+     * Set the display for the story
+     */
+    public setStoryDisplay() {
+        this.data.display =
+            "<h1>Title</h1><h2>" + this.data.story.title + "</h2><br>" +
+            "<h1>Owner</h1><h2>" + this.data.story.owner + "</h2><br>" +
+            "<h1>Synopsis</h1><h2>" + this.data.story.synopsis + "</h2><br>" +
+            "<h1>Chapters</h1>";
+        for (let chapter of this.data.story.chapters) {
+            this.data.display += "<h2>" + chapter.title + "</h2>";
+        }
+        this.data.display += "<br>";
+    }
+    /**
+     * Set the disply for the wiki
+     */
+    public setWikiDisplay() {
+        this.data.wikiDisplay =
+            "<h1>Title</h1><h2>" + this.data.wiki.title + "</h2><br>" +
+            "<h1>Segments</h1>";
+        for (let segment of this.data.wiki.segments) {
+            this.data.wikiDisplay += "<h2>" + segment.title + "</h2>";
+        }
+        this.data.wikiDisplay += "<br>";
+    }
+
+    /**
+     * Set the wiki diplay to a specific page
+     * @param page - page to be displayed
+     */
+    public setPageDisplay(page: Page) {
+        this.data.wikiDisplay =
+            "<h1>Name</h1><h2>" + page.title + "</h2><br>" +
+            "<h1>Aliases</h1>";
+        for (let alias of page.aliases) {
+            this.data.wikiDisplay += "<h2>" + alias + "</h2>";
+        }
+        this.data.wikiDisplay += "<br>";
+        for (let section of page.sections) {
+            this.data.wikiDisplay += "<h1>" + section.title + "</h1>";
+            for (let paragraph of section.paragraphs) {
+                this.data.wikiDisplay += "<h2>" + paragraph.text + "</h2>";
+            }
+            this.data.wikiDisplay += "<br>";
+        }
+        this.data.wikiDisplay += "<h1>References</h1>";
+        for (let reference of page.references) {
+            this.data.wikiDisplay += "<h2>" + reference + "</h2>";
+        }
+        this.data.wikiDisplay += "<br>";
+    }
+-->

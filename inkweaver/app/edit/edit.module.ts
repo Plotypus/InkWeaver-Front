@@ -1,11 +1,11 @@
 ﻿import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CKEditorModule } from 'ng2-ckeditor';
 
 import {
     ButtonModule,
     DialogModule,
-    EditorModule,
     SharedModule,
     DropdownModule,
     DataTableModule,
@@ -21,11 +21,11 @@ import { EditComponent } from './edit.component';
     imports: [
         CommonModule,
         FormsModule,
+        CKEditorModule,
 
         // PrimeNG Modules
         ButtonModule,
         DialogModule,
-        EditorModule,
         SharedModule,
         DropdownModule,
         DataTableModule,

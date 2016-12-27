@@ -20,7 +20,6 @@ export class WikiComponent {
     public selectWiki() {
         this.data.wikiSelected = true;
         this.data.selectedPage = {'id': ''};
-        this.parser.setWikiDisplay();
     }
 
     /**
