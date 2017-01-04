@@ -1,6 +1,6 @@
 ﻿import { Component } from '@angular/core';
 
-import { MenuItem } from 'primeng/primeng';
+import { MenuItem, TreeNode } from 'primeng/primeng';
 import { WikiService } from './wiki.service';
 import { ParserService } from '../shared/parser.service';
 
@@ -66,11 +66,48 @@ export class WikiComponent {
       }
     ]
   }
-}`
+}`;
+
+        response = `{
+    "data":
+    [  
+        {  
+            "data":{  
+                "name":"Documents",
+                
+            },
+            "children":[
+                        {
+                            "data":{
+                                "name":"Nested"
+                                   }
+                            
+                        }
+                       ]
+        },
+ {  
+            "data":{  
+                "name":"People",
+                "size":"75kb",
+                "type":"Folder"
+            },
+            "children":[
+                        {
+                            "data":{
+                                "name":"Nested"
+                                   }
+                            
+                        }
+                       ]
+        }
+  
+    ]
+}
+            `;
         let reply = JSON.parse(response);
        
-        this.parser.data.wiki = reply.hierarchy;
-        this.data = this.parser.data;
+        this.parser.data.wiki = reply.data;
+        this.data = reply.data;
     }
     /**
      * Selects the wiki page based on wiki navigation bar clicking

@@ -34,7 +34,13 @@
         <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
     </div>
 </div>
-
+<div class="navigation ui-g-3">
+    <h1>TreeTable</h1>
+    <p-treeTable [value]="data">
+        <p-column field="name"></p-column>
+    </p-treeTable>
+</div>
+<!--
 <div class="navigation ui-g-3">
     <div class="wiki-title" (click)="selectWiki()"
          [ngClass]="{'ui-state-highlight': data.wikiSelected}">
@@ -57,3 +63,4 @@
         {{page.title}}
     </div>
 </div>
+    -->
