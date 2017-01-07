@@ -1,6 +1,8 @@
 ﻿import { Component } from '@angular/core';
-
 import { MenuItem } from 'primeng/primeng';
+
+import { Wiki } from '../models/wiki.model';
+import { PageSummary } from '../models/page-summary.model'
 import { WikiService } from './wiki.service';
 import { ParserService } from '../shared/parser.service';
 
@@ -18,8 +20,6 @@ export class WikiComponent {
      * Selects the wiki page based on wiki navigation bar clicking
      */
     public selectWiki() {
-        this.data.wikiSelected = true;
-        this.data.selectedPage = {'id': ''};
         this.parser.setWikiDisplay();
     }
 
@@ -27,9 +27,17 @@ export class WikiComponent {
      * Switch between pages for the wiki
      * @param page
      */
-    public switchPage(page: any) {
+    public selectPage(page: PageSummary) {
+        this.data.pageSummary = page;
         this.data.wikiSelected = false;
-        this.data.selectedPage = page;
         this.wikiService.loadWikiPageWithSections(page.id);
+    }
+
+    public unsetSegment() {
+        this.data.segment = new Wiki();
+    }
+
+    public setSegment(event: any) {
+        this.data.segment = this.data.wiki.segments[event.index];
     }
 }

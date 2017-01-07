@@ -1,5 +1,8 @@
-﻿<div class="editor ui-g-9" [ngSwitch]="!!data.inflight">
-    <div *ngSwitchCase="false">
+﻿<div class="editor ui-g-9">
+    <div class="loader" *ngIf="data.inflight">
+        <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+    </div>
+    <div [ngClass]="{'loading-editor': data.inflight}">
         <p-editor [(ngModel)]="data.wikiDisplay">
             <header>
                 <span class="ql-formats">
@@ -30,30 +33,30 @@
             </header>
         </p-editor>
     </div>
-    <div class="loader" *ngSwitchCase="true">
-        <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-    </div>
 </div>
 
 <div class="navigation ui-g-3">
-    <div class="wiki-title" (click)="selectWiki()"
+    <input pInputText #globalFilter type="text" placeholder="Search Wiki Pages" />
+    <i class="search fa fa-search"></i>
+
+    <div class="story-title wiki-title" (click)="selectWiki()"
          [ngClass]="{'ui-state-highlight': data.wikiSelected}">
         {{data.wiki.title}}
     </div>
-    <p-accordion>
+    <p-accordion (onOpen)="setSegment($event)" (onClose)="unsetSegment()">
         <p-accordionTab *ngFor="let segment of data.wiki.segments"
-                        [selected]="data.selectedSegment.id == segment.id">
+                        [selected]="data.segment.id && segment.id.$oid === data.segment.id.$oid">
             <header>
                 {{segment.title}}
             </header>
-            <div *ngFor="let page of segment.pages" (click)="switchPage(page)"
-                 [ngClass]="{'ui-state-highlight': data.selectedPage.id == page.id}">
+            <div *ngFor="let page of segment.pages" (click)="selectPage(page)"
+                 [ngClass]="{'ui-state-highlight': data.page.id && page.id.$oid === data.pageSummary.id.$oid}">
                 {{page.title}}
             </div>
         </p-accordionTab>
     </p-accordion>
-    <div *ngFor="let page of data.wiki.pages" (click)="switchPage(page)"
-         [ngClass]="{'ui-state-highlight': data.selectedPage.id == page.id}">
+    <div *ngFor="let page of data.wiki.pages" (click)="selectPage(page)"
+         [ngClass]="{'ui-state-highlight': data.page.id && page.id.$oid === data.pageSummary.id.$oid}">
         {{page.title}}
     </div>
 </div>

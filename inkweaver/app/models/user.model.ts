@@ -1,7 +1,7 @@
 ﻿import { StorySummary } from './story-summary.model';
 import { WikiSummary } from './wiki-summary.model';
 
-export class AuthorSummary {
+export class User {
     "id": any;
     "username": string;
     "avatar": string;
