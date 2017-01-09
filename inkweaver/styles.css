@@ -9,6 +9,10 @@
     --orange: #ED6E2B;
 }
 
+code {
+    display: none;
+}
+
 .ui-panel {
     border: none;
 }
@@ -254,15 +258,25 @@
     margin-left: 25px;
 }
 
-.ui-dialog-content {
+p-dialog .ui-dialog-content {
     height: 60%;
 }
 
-.ui-dropdown {
+p-dialog input.ui-inputtext {
+    width: 96%;
+    margin-bottom: 15px;
+}
+
+p-dialog input.ui-dropdown-filter {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+p-dialog .ui-dropdown {
     width: 90% !important;
 }
 
-.ui-dropdown-filter-container {
+p-dialog .ui-dropdown-filter-container {
     width: 97%;
 }
 

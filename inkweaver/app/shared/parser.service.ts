@@ -143,7 +143,7 @@ export class ParserService {
         let paragraphs = this.data.chapter.paragraphs;
         this.data.display = '';
         for (let i = 0; i < paragraphs.length; i++) {
-            this.data.display += '<p>' + paragraphs[i].text + '</p>';
+            this.data.display += '<p><code>' + paragraphs[i].id + '</code>' + paragraphs[i].text + '</p>';
         }
     }
 

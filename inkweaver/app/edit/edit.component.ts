@@ -1,7 +1,8 @@
-﻿import { Component, ViewChild, AfterViewInit } from '@angular/core';
+﻿import { Component, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Editor } from 'primeng/primeng';
+import { Dialog } from 'primeng/primeng';
 import { MenuItem } from 'primeng/primeng';
 import { Chapter } from '../models/chapter.model';
 
@@ -15,8 +16,11 @@ import { ParserService } from '../shared/parser.service';
 })
 export class EditComponent {
     @ViewChild(Editor) editor: Editor;
+    @ViewChild(Dialog) dialog: Dialog;
 
     private data: any;
+
+    private inputRef: any;
     private editorRef: any;
     private tooltipRef: any;
     private setLinks: boolean;
@@ -24,6 +28,7 @@ export class EditComponent {
     private displayLinkCreator: boolean;
 
     private range: any;
+    private word: string;
     private newLinkId: any;
     private newLinkPages: any;
 
@@ -31,7 +36,8 @@ export class EditComponent {
         private router: Router,
         private editService: EditService,
         private wikiService: WikiService,
-        private parserService: ParserService) { }
+        private parserService: ParserService,
+        private changeDetectorRef: ChangeDetectorRef) { }
 
     ngOnInit() {
         let editComponent = this;
@@ -42,6 +48,9 @@ export class EditComponent {
         // Initialize variables
         let editComponent = this;
         editComponent.setLinks = true;
+
+        editComponent.inputRef = editComponent.dialog.domHandler.findSingle(
+            editComponent.dialog.el.nativeElement, "input")
         editComponent.editorRef = editComponent.editor.domHandler.findSingle(
             editComponent.editor.el.nativeElement, 'div.ql-editor');
         editComponent.tooltipRef = editComponent.editor.domHandler.findSingle(
@@ -126,6 +135,12 @@ export class EditComponent {
 
         editor.range = editor.editor.quill.getSelection();
         if (editor.range) {
+            // Set the range and display the link creator
+            editor.word = editor.editor.quill.getText(editor.range.index, editor.range.length);
+            editor.range.index += editor.word.search(/\S|$/);
+            editor.word = editor.word.trim();
+            editor.range.length = editor.word.length;
+
             // Set the wiki pages in the dropdown
             editor.newLinkId = 0;
             editor.newLinkPages = [];
@@ -140,12 +155,9 @@ export class EditComponent {
                 }
             }
 
-            // Set the range and display the link creator
-            let word: string = editor.editor.quill.getText(editor.range.index, editor.range.length);
-            editor.range.index += word.search(/\S|$/);
-            word = word.trim();
-            editor.range.length = word.length;
+            this.editor.quill.disable();
             editor.displayLinkCreator = true;
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -153,8 +165,20 @@ export class EditComponent {
      * Creates a link
      */
     public createLink() {
+        this.editor.quill.enable();
+        this.editor.quill.deleteText(this.range.index, this.range.length);
+
         this.setLinks = true;
+        this.editor.quill.insertText(this.range.index, this.word, 'link', JSON.stringify(this.newLinkId.id));
+        this.editor.quill.setSelection(this.range.index + this.word.length, 0);
         this.displayLinkCreator = false;
-        this.editor.quill.formatText(this.range.index, this.range.length, 'link', JSON.stringify(this.newLinkId.id));
+    }
+
+    public showDialog() {
+        this.inputRef.focus();
+    }
+
+    public hideDialog() {
+        this.editor.quill.enable();
     }
 }

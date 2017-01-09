@@ -1,5 +1,8 @@
 ﻿<!-- Link Creator Dialog -->
-<p-dialog modal="true" header="Create Link" [(visible)]="displayLinkCreator" width="450" height="450" responsive="true">
+<p-dialog modal="true" header="Create Link" [(visible)]="displayLinkCreator" (onAfterShow)="showDialog()" (onBeforeHide)="hideDialog()"
+          width="450" height="450" responsive="true" (keyup.enter)="createLink()">
+
+    <input type="text" pInputText [(ngModel)]="word" />
     <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkId" filter="true"></p-dropdown>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
