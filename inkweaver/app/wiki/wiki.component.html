@@ -36,9 +36,12 @@
 </div>
 <div class="navigation ui-g-3">
     <h1>TreeTable</h1>
-    <p-treeTable [value]="data">
-        <p-column field="name"></p-column>
+    <p-treeTable [value]="data" selectionMode="single" [(selection)]="selectedEntry">
+        <p-column field="title"></p-column>
     </p-treeTable>
+    Selected Node Title: {{selectedEntry ? selectedEntry.data.title : 'none'}}
+    <br />
+    Selected Node ID: {{selectedEntry ? selectedEntry.data.id['$oid'] : 'none'}}
 </div>
 <!--
 <div class="navigation ui-g-3">
