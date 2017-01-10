@@ -11,136 +11,25 @@ import { PageSummary } from '../models/page-summary.model';
     
 })
 export class WikiComponent {
-    private data: any;
+    private nav: any;
     private selectedEntry: TreeNode;
+    private data: any;
 
     constructor(private wikiService: WikiService, private parser: ParserService) {
-       
-        let response = `{"reply_to": 1,
-  "hierarchy": {
-    "title": "My Wiki",
-    "id": {"$oid": 1},
-    "segments": [
-      {
-        "title": "Character",
-        "id": {"$oid":2},
-        "segments": [
-          {
-              "title": " Sub Character",
-              "id": {"$oid":2},
-              "segments": [],
-              "pages": [
-              {
-                 "title": "Alice",
-                 "id": {"$oid":3}
-              }]
-          }
-        ],
-         "pages": [
-              {
-                 "title": "John",
-                 "id": {"$oid":4}
-              },
-              {
-                 "title": "Blake",
-                 "id": {"$oid":5}
-              }]
-      },
-      {
-        "title": "Location",
-        "id": {"$oid":2},
-        "segments": [],
-        "pages": [
-          {
-                 "title": "John Home",
-                 "id": {"$oid":6}
-              },
-              {
-                 "title": "Blake Home",
-                 "id": {"$oid":7}
-              }]
-      }
-    ],
-    "pages": [
-      {
-        "title": "Uncategorized Wiki Page",
-        "id": {"$oid":8}
-      }
-    ]
-  }
-}`;
-
-       /* let test = new Array<Data>();
-        let temp = new Data();
-        temp.data = new PageSummary();
-        temp.data.id = "hi";
-        temp.data.title = "Title";
-        temp.children = [];
-        test.push(temp);
-        test.push(temp);
-        temp.children = new Array<Data>();
-        temp.data.title = "Chapter 1";
-        test.push(temp);
-        this.data = test;
-        */
-        let reply = JSON.parse(response);
-        let json = reply.hierarchy
-        this.data = new Array<Data>();
+     
+        //let reply = JSON.parse(response);
+        this.data = this.parser.data;
+        let json = this.data.wiki;
+        this.nav = new Array<Data>();
         let temp = new Data();
         temp.data = new PageSummary();
         temp.data.id = json['id'];
         temp.data.title = json['title'];
-        this.data.push(temp);
+        this.nav.push(temp);
         for (let index in json['segments']) {
-            this.data.push(this.jsonToWiki(json['segments'][index]));
-
+            this.nav.push(this.jsonToWiki(json['segments'][index]));
         }
-        /*
-        response = `{
-    "data":
-    [  {
-            "data": {
-                "name":"Title"
-                    },
-            "children":[]
-        },
-        {  
-            "data":{  
-                "name":"Documents"
-                
-            },
-            "children":[
-                        {
-                            "data":{
-                                "name":"Nested"
-                                   }
-                            
-                        }
-                       ]
-        },
- {  
-            "data":{  
-                "name":"People",
-                "size":"75kb",
-                "type":"Folder"
-            },
-            "children":[
-                        {
-                            "data":{
-                                "name":"Nested"
-                                   }
-                            
-                        }
-                       ]
-        }
-  
-    ]
-}
-            `;*/
-        //let reply = JSON.parse(response);
-       
-       // this.parser.data.wiki = reply.data;
-      //  this.data = reply.data;
+        
     }
 
     public jsonToWiki(wikiJson: any) {
@@ -184,7 +73,7 @@ export class WikiComponent {
      * Selects the wiki page based on wiki navigation bar clicking
      */
     public selectWiki() {
-        this.data.wikiSelected = true;
+        
         this.data.selectedPage = {'id': ''};
         this.parser.setWikiDisplay();
     }
@@ -194,8 +83,16 @@ export class WikiComponent {
      * @param page
      */
     public switchPage(page: any) {
-        this.data.wikiSelected = false;
-        this.data.selectedPage = page;
-        this.wikiService.loadWikiPageWithSections(page.id);
+
+        if (this.data.wiki.title == page.node.data.title) {
+            // this.selectWiki();
+            this.data.selectedPage = { 'id': '' };
+            this.parser.setWikiDisplay();
+        }
+        else if(page.node.)
+        else {
+            this.data.selectedPage = page.node.data.id;
+            this.wikiService.loadWikiPageWithSections(page.node.data.id);
+        }
     }
 }

@@ -36,7 +36,7 @@
 </div>
 <div class="navigation ui-g-3">
     <h1>TreeTable</h1>
-    <p-treeTable [value]="data" selectionMode="single" [(selection)]="selectedEntry">
+    <p-treeTable [value]="nav" selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="switchPage($event)">
         <p-column field="title"></p-column>
     </p-treeTable>
     Selected Node Title: {{selectedEntry ? selectedEntry.data.title : 'none'}}

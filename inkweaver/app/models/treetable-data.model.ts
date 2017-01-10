@@ -3,8 +3,5 @@
 export class Data {
     "data": PageSummary;
     "children": Data[];
-
-   
-
-
+    "expanded": boolean;
 }
