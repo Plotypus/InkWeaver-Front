@@ -94,6 +94,7 @@
     <TypeScriptCompile Include="app\models\page-summary.model.ts" />
     <TypeScriptCompile Include="app\models\page.model.ts" />
     <TypeScriptCompile Include="app\models\section.model.ts" />
+    <TypeScriptCompile Include="app\models\treetable-data.model.ts" />
     <TypeScriptCompile Include="app\models\user.model.ts" />
     <TypeScriptCompile Include="app\models\chapter-summary.model.ts" />
     <TypeScriptCompile Include="app\models\chapter.model.ts" />

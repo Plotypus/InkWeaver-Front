@@ -34,26 +34,12 @@
         <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
     </div>
 </div>
-
 <div class="navigation ui-g-3">
-    <div class="wiki-title" (click)="selectWiki()"
-         [ngClass]="{'ui-state-highlight': data.wikiSelected}">
-        {{data.wiki.title}}
-    </div>
-    <p-accordion>
-        <p-accordionTab *ngFor="let segment of data.wiki.segments"
-                        [selected]="data.selectedSegment.id == segment.id">
-            <header>
-                {{segment.title}}
-            </header>
-            <div *ngFor="let page of segment.pages" (click)="switchPage(page)"
-                 [ngClass]="{'ui-state-highlight': data.selectedPage.id == page.id}">
-                {{page.title}}
-            </div>
-        </p-accordionTab>
-    </p-accordion>
-    <div *ngFor="let page of data.wiki.pages" (click)="switchPage(page)"
-         [ngClass]="{'ui-state-highlight': data.selectedPage.id == page.id}">
-        {{page.title}}
-    </div>
+    <h1>TreeTable</h1>
+    <p-treeTable [value]="nav" selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
+        <p-column field="title"></p-column>
+    </p-treeTable>
+    Selected Node Title: {{selectedEntry ? selectedEntry.data.title : 'none'}}
+    <br/>
+    Selected Node ID: {{selectedEntry ? selectedEntry.data.id['$oid'] : 'none'}}
 </div>
