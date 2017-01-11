@@ -1,4 +1,5 @@
 ﻿import { Component } from '@angular/core';
+import { MenuItem } from 'primeng/primeng';
 
 import { MenuItem, TreeNode } from 'primeng/primeng';
 import { WikiService } from './wiki.service';
@@ -97,5 +98,13 @@ export class WikiComponent {
             this.data.selectedPage = page.node.data.id;
             this.wikiService.loadWikiPageWithSections(page.node.data.id);
         }
+    }
+
+    public unsetSegment() {
+        this.data.segment = new Wiki();
+    }
+
+    public setSegment(event: any) {
+        this.data.segment = this.data.wiki.segments[event.index];
     }
 }

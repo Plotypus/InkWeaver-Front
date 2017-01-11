@@ -1,5 +1,8 @@
-﻿<div class="editor ui-g-9" [ngSwitch]="!!data.inflight">
-    <div *ngSwitchCase="false">
+﻿<div class="editor ui-g-9">
+    <div class="loader" *ngIf="data.inflight">
+        <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+    </div>
+    <div [ngClass]="{'loading-editor': data.inflight}">
         <p-editor [(ngModel)]="data.wikiDisplay">
             <header>
                 <span class="ql-formats">
@@ -29,9 +32,6 @@
                 </span>
             </header>
         </p-editor>
-    </div>
-    <div class="loader" *ngSwitchCase="true">
-        <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
     </div>
 </div>
 <div class="navigation ui-g-3">

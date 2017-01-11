@@ -1,49 +1,43 @@
 ﻿import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs/Rx';
+import { WebSocketService } from './websocket.service';
 
 // Story
+import { User } from '../models/user.model';
+import { StorySummary } from '../models/story-summary.model';
 import { Story } from '../models/story.model';
 import { ChapterSummary } from '../models/chapter-summary.model';
 import { Chapter } from '../models/chapter.model';
 import { Paragraph } from '../models/paragraph.model';
 
 // Wiki
+import { WikiSummary } from '../models/wiki-summary.model';
 import { Wiki } from '../models/wiki.model';
 import { PageSummary } from '../models/page-summary.model';
 import { Page } from '../models/page.model';
 import { Section } from '../models/section.model';
 
-import { WebSocketService } from './websocket.service';
-
 const url: string = 'ws://localhost:8080/ws/v2/test';
 
 @Injectable()
 export class ParserService {
-    // Story
-    public paragraph: Paragraph = { 'id': '', 'text': '', 'statistics': '' };
-    public chapter: Chapter = { 'id': '', 'title': '', 'statistics': '', 'paragraphs': [this.paragraph] };
-    public selectedChapter: ChapterSummary = { 'id': '', 'title': '' };
-    public story: Story = { 'id': '', 'title': '', 'owner': '', 'coauthors': [], 'statistics': '', 'settings': '', 'synopsis': '', 'wiki': { 'id': '', 'title': '' }, 'chapters': [this.chapter] };
-
-    // Wiki
-    public wiki: Wiki = { 'id': '', 'title': '', 'segments': [], 'pages': [] };
-
     public data = {
         'name': '',
         'display': '',
         'wikiDisplay': '',
-        'story': this.story,
+        'inflight': false,
+
         'storySelected': false,
-        'selectedChapter': this.selectedChapter,
-        'chapter': this.chapter,
-        'paragraph': this.paragraph,
+        'story': new Story(),
+        'chapterSummary': new ChapterSummary(),
+        'chapter': new Chapter(),
+        'paragraph': new Paragraph(),
 
-        'wiki': this.wiki,
         'wikiSelected': false,
-        'selectedPage': { 'id': '' },
-        'selectedSegment': {},
-
-        'inflight': false
+        'wiki': new Wiki(),
+        'pageSummary': new PageSummary(),
+        'page': new Page(),
+        'segment': new Wiki()
     }
 
     public outgoing = {};
@@ -71,37 +65,30 @@ export class ParserService {
                     break;
 
                 case 'load_story_with_chapters':
-                    let chapter: ChapterSummary = reply.chapters[0];
                 case 'load_story':
                     this.data.story = reply;
-                    this.data.storySelected = true;
-                    this.data.wikiSelected = true;
+
                     this.setStoryDisplay();
                     this.send({ 'action': 'get_wiki_hierarchy', 'wiki': reply.wiki });
                     break;
 
                 case 'get_all_chapters':
                     this.data.story.chapters = reply;
-                    this.send({ 'action': 'load_chapter_with_paragraphs', 'chapter': reply[0].id });
                     break;
 
                 case 'load_chapter_with_paragraphs':
-                    this.data.display = '';
                     this.data.paragraph = reply.paragraphs[0];
-                    for (let i = 0; i < reply.paragraphs.length; i++) {
-                        this.data.display += '<p>' + reply.paragraphs[i].text + '</p>';
-                    }
                 case 'load_chapter':
                     this.data.chapter = reply;
+
+                    this.setChapterDisplay();
                     break;
 
                 case 'get_all_paragraphs':
-                    this.data.display = '';
                     this.data.paragraph = reply[0];
                     this.data.chapter.paragraphs = reply;
-                    for (let i = 0; i < reply.paragraphs.length; i++) {
-                        this.data.display += '<p>' + reply.paragraphs[i].text + '</p>';
-                    }
+
+                    this.setChapterDisplay();
                     break;
 
                 case 'load_paragraph':
@@ -109,16 +96,20 @@ export class ParserService {
                     this.data.display = reply.text;
                     break;
 
-                //message for wiki
+                // Messages for the wiki
                 case 'get_wiki_hierarchy':
+                    this.data.wikiSelected = true;
                     this.data.wiki = reply.hierarchy;
+
                     this.setWikiDisplay();
                     break;
                 case 'load_wiki_page_with_sections':
                     this.data.wikiSelected = false;
-                    this.data.selectedPage = reply.wiki_page;
-                    this.data.selectedSegment = this.getSegment(reply.wiki_page);
-                    this.setPageDisplay(reply.wiki_page);
+                    this.data.page = reply.wiki_page;
+                    this.data.pageSummary.id = reply.wiki_page.id;
+                    this.data.segment = this.getSegment(reply.wiki_page);
+
+                    this.setPageDisplay();
                     break;
 
                 default:
@@ -131,9 +122,12 @@ export class ParserService {
     }
 
     /**
-     * Set the disply for the story
+     * Set the display for the story
      */
     public setStoryDisplay() {
+        this.data.storySelected = true;
+        this.data.chapterSummary = new ChapterSummary();
+
         this.data.display =
             '<h1>Title</h1><h2>' + this.data.story.title + '</h2><br>' +
             '<h1>Owner</h1><h2>' + this.data.story.owner + '</h2><br>' +
@@ -144,10 +138,24 @@ export class ParserService {
         }
         this.data.display += '<br>';
     }
+
+    public setChapterDisplay() {
+        let paragraphs = this.data.chapter.paragraphs;
+        this.data.display = '';
+        for (let i = 0; i < paragraphs.length; i++) {
+            this.data.display += '<p><code>' + paragraphs[i].id + '</code>' + paragraphs[i].text + '</p>';
+        }
+    }
+
     /**
-     * Set the disply for the wiki
+     * Set the display for the wiki
      */
     public setWikiDisplay() {
+        this.data.wikiSelected = true;
+        this.data.page = new Page();
+        this.data.segment = new Wiki();
+        this.data.pageSummary = new PageSummary();
+
         this.data.wikiDisplay =
             '<h1>Title</h1><h2>' + this.data.wiki.title + '</h2><br>' +
             '<h1>Segments</h1>';
@@ -159,9 +167,10 @@ export class ParserService {
 
     /**
      * Set the wiki diplay to a specific page
-     * @param page - page to be displayed
      */
-    public setPageDisplay(page: Page) {
+    public setPageDisplay() {
+        let page = this.data.page;
+
         this.data.wikiDisplay =
             '<h1>Name</h1><h2>' + page.title + '</h2><br>' +
             '<h1>Aliases</h1>';
@@ -184,18 +193,24 @@ export class ParserService {
     }
 
     /**
-     * Find segment that contain the wiki page
-     * @param page 
+     * Find the segment that contains the specified wiki page
+     * @param {Page} page - The wiki page of which to find the segment
      */
-    public getSegment(page: any) {
+    public getSegment(page: any): Wiki {
         for (let segment of this.data.wiki.segments) {
-            for (let pageCheck of segment.pages) {
-                if (page.id == pageCheck.id) return segment;
+            for (let currentPage of segment.pages) {
+                if (page.id.$oid === currentPage.id.$oid) {
+                    return segment;
+                }
             }
         }
-        return {};
+        return new Wiki();
     }
 
+    /**
+     * Send a message on the WebSocket
+     * @param {JSON} message - A JSON-formatted message
+     */
     public send(message: any) {
         message.message_id = ++this.message_id;
         this.outgoing[message.message_id] = message.action;

@@ -12,7 +12,6 @@ import { AccordionModule, MenuModule, EditorModule, TreeTableModule, SharedModul
         FormsModule,
 
         //Prime
-        AccordionModule,
         MenuModule,
         EditorModule,
         TreeTableModule,
