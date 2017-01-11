@@ -82,14 +82,17 @@ export class WikiComponent {
      * Switch between pages for the wiki
      * @param page
      */
-    public switchPage(page: any) {
+    public onSelected(page: any) {
 
         if (this.data.wiki.title == page.node.data.title) {
             // this.selectWiki();
             this.data.selectedPage = { 'id': '' };
             this.parser.setWikiDisplay();
         }
-        else if(page.node.)
+        else if (typeof page.node.children !== 'undefined' && page.node.children.length)
+        {
+            page.node.expanded = !page.node.expanded;
+        }
         else {
             this.data.selectedPage = page.node.data.id;
             this.wikiService.loadWikiPageWithSections(page.node.data.id);
