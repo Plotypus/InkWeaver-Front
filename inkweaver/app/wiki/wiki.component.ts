@@ -15,6 +15,11 @@ export class WikiComponent {
     private selectedEntry: TreeNode;
     private data: any;
     private button: any;
+    private showAddDialog: any;
+    private addOptions: any;
+    private addContent: any;
+    private page_name: any;
+    
 
     constructor(private wikiService: WikiService, private parser: ParserService) {
         
@@ -32,7 +37,11 @@ export class WikiComponent {
         for (let index in json['segments']) {
             this.nav.push(this.jsonToWiki(json['segments'][index]));
         }
-        
+
+        this.addOptions = [];
+        this.addOptions.push({ label: 'Category', value: 'category' });
+        this.addOptions.push({ label: 'Page', value: 'page' });
+        this.addContent = this.addOptions[0]['value'];
     }
 
     public jsonToWiki(wikiJson: any) {
@@ -99,15 +108,15 @@ export class WikiComponent {
      */
     public onSelected(page: any) {
 
-        if (this.data.wiki.title == page.node.data.title) {
+        if (page.node.type == "category" && this.button == 1) {
+            this.showAddDialog = true;
+        }
+        else if (this.data.wiki.title == page.node.data.title && this.button == 0) {
             // this.selectWiki();
             this.data.selectedPage = { 'id': '' };
             this.parser.setWikiDisplay();
         }
-        else if (page.node.type == "category" && this.button == 1)
-        {
-
-        }
+        
         else if (page.node.type == "page" && this.button == -1) {
             this.deletePage(page.node);
         }
@@ -134,6 +143,28 @@ export class WikiComponent {
         this.button = -1;
     }
 
+    public addToWiki()
+    {
+        //creating the new node to be added to the navigation
+        this.showAddDialog = false;
+        let toAdd: TreeNode = {};
+        let toParent: TreeNode = {};
+        toAdd.label = this.page_name;
+        toAdd.data = new PageSummary();
+        toAdd.data.title = this.page_name;
+        toAdd.type = this.addContent;
+        if(toAdd.type == 'category')
+            toAdd.children = [];
+        toParent.label = this.selectedEntry.label;
+        toParent.parent = this.selectedEntry.parent;
+        toAdd.parent = toParent;
+        this.selectedEntry.children.push(toAdd);
+        toAdd.data.id = { 'oid': '0' };
+
+        //need to send this info over network and get id;
+        this.addContent = this.addOptions[0]['value'];
+        this.page_name = "";
+    }
     public deletePage(page: any)
     {
         //need to find location of page
@@ -156,7 +187,7 @@ export class WikiComponent {
 
     private findPage(search: any, path: Array<String>, index: any): boolean
     {
-        if (typeof search.children == 'undefined')
+        if (typeof search.children == 'undefined' && search.type != "page")
             return false;
 
         else if (search.label == path[index] && index != path.length-1)
@@ -166,7 +197,7 @@ export class WikiComponent {
                 if (this.findPage(search.children[page], path, index+1))
                 {
                     search.children.splice(page, 1);
-                    return true;
+                    return false;
                 }
             }
         }
@@ -176,7 +207,7 @@ export class WikiComponent {
         }
         else
         {
-           
+            return false;
         }
             
        

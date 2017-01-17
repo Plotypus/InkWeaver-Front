@@ -4,7 +4,16 @@ import { FormsModule } from '@angular/forms';
 
 import { WikiService } from './wiki.service';
 import { WikiComponent } from './wiki.component';
-import { AccordionModule, MenuModule, EditorModule, TreeTableModule,  ButtonModule,SharedModule } from 'primeng/primeng';
+import { MenuModule,
+         EditorModule,
+         TreeTableModule,
+         ButtonModule,
+         DialogModule,
+         DropdownModule,
+         ConfirmDialogModule,
+         ConfirmationService,
+         SharedModule
+    } from 'primeng/primeng';
 
 @NgModule({
     imports: [
@@ -15,12 +24,15 @@ import { AccordionModule, MenuModule, EditorModule, TreeTableModule,  ButtonModu
         MenuModule,
         EditorModule,
         TreeTableModule,
-       
+        DialogModule,
         ButtonModule,
+        ConfirmDialogModule,
+        DropdownModule,
         SharedModule
     ],
     providers: [
-        WikiService
+        WikiService,
+        ConfirmationService
     ],
     declarations: [
         WikiComponent
