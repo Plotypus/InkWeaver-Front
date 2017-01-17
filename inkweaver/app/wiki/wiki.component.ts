@@ -1,5 +1,4 @@
 ﻿import { Component } from '@angular/core';
-import { MenuItem } from 'primeng/primeng';
 
 import { MenuItem, TreeNode } from 'primeng/primeng';
 import { WikiService } from './wiki.service';
@@ -15,17 +14,20 @@ export class WikiComponent {
     private nav: any;
     private selectedEntry: TreeNode;
     private data: any;
+    private button: any;
 
     constructor(private wikiService: WikiService, private parser: ParserService) {
-     
+        
         //let reply = JSON.parse(response);
         this.data = this.parser.data;
         let json = this.data.wiki;
-        this.nav = new Array<Data>();
-        let temp = new Data();
+        this.nav = new Array<TreeNode>();
+        let temp : TreeNode = {};
         temp.data = new PageSummary();
         temp.data.id = json['id'];
         temp.data.title = json['title'];
+        temp.label = json['title'];
+        temp.type = "category"
         this.nav.push(temp);
         for (let index in json['segments']) {
             this.nav.push(this.jsonToWiki(json['segments'][index]));
@@ -34,40 +36,52 @@ export class WikiComponent {
     }
 
     public jsonToWiki(wikiJson: any) {
-        let wiki = new Data();
+        let wiki: TreeNode = {};
+        let parent: TreeNode = {};
         wiki.data = new PageSummary();
+        wiki.children = new Array<TreeNode>();
+        wiki.data.id = wikiJson["id"];
+        wiki.data.title = wikiJson["title"];
+        wiki.label = wikiJson["title"];
         for (let field in wikiJson) {
-            if (field === "id")
-                wiki.data.id = wikiJson[field];
-            else if (field === "title")
-                wiki.data.title = wikiJson[field];
-            else if (field === "segments") {
+           if (field === "segments") {
                 let segmentJsons = wikiJson[field];
-                let wikiSegments = new Array<Data>();
                 for (let segment in segmentJsons) {
                     var subsegment = this.jsonToWiki(segmentJsons[segment]);
-                    wikiSegments.push(subsegment);
+                    parent.label = wiki.label;
+                    parent.parent = wiki.parent;
+                    subsegment.parent = parent;
+                    wiki.children.push(subsegment);
                 }
-                wiki.children = wikiSegments;
+                 
             }
             else if (field == "pages") {
                 var pagesJsons = wikiJson[field];
-                
                 for (let page in pagesJsons) {
                     var leafpage = this.jsonToPage(pagesJsons[page]);
+                    parent.label = wiki.label;
+                    parent.parent = wiki.parent;
+                    leafpage.parent = parent;
                     wiki.children.push(leafpage);
                 }
                
             }
         }
+        if (typeof wiki.children !== 'undefined' && wiki.children.length != 0)
+        {
+          
+           wiki.type = "category";
+        }
         return wiki
     }
 
     public jsonToPage(pageJson: any) {
-        let page = new Data();
+        let page: TreeNode = {};
         page.data = new PageSummary();
         page.data.id = pageJson['id'];
         page.data.title = pageJson['title'];
+        page.label = pageJson['title'];
+        page.type = "page";
         return page;
     }
     /**
@@ -90,7 +104,14 @@ export class WikiComponent {
             this.data.selectedPage = { 'id': '' };
             this.parser.setWikiDisplay();
         }
-        else if (typeof page.node.children !== 'undefined' && page.node.children.length)
+        else if (page.node.type == "category" && this.button == 1)
+        {
+
+        }
+        else if (page.node.type == "page" && this.button == -1) {
+            this.deletePage(page.node);
+        }
+        else if (page.node.type == "category")
         {
             page.node.expanded = !page.node.expanded;
         }
@@ -98,13 +119,67 @@ export class WikiComponent {
             this.data.selectedPage = page.node.data.id;
             this.wikiService.loadWikiPageWithSections(page.node.data.id);
         }
+        this.button = 0;
     }
 
-    public unsetSegment() {
-        this.data.segment = new Wiki();
+    /*
+        Will toogle value of button variable to indicate whether something needs to be added or not
+    */
+    public onAdd(page: any)
+    {
+        this.button = 1;
+    }
+    public onDelete(page: any)
+    {
+        this.button = -1;
     }
 
-    public setSegment(event: any) {
-        this.data.segment = this.data.wiki.segments[event.index];
+    public deletePage(page: any)
+    {
+        //need to find location of page
+        let path = Array<String>();
+        let parent = page;
+        while (typeof parent !== 'undefined')
+        {
+            path.push(parent.label);
+            parent = parent.parent;
+        }
+        path = path.reverse();
+
+        let level = 0;
+        for (let index in this.nav) {
+            if (this.findPage(this.nav[index], path, level))
+                break;
+        }
+        
     }
+
+    private findPage(search: any, path: Array<String>, index: any): boolean
+    {
+        if (typeof search.children == 'undefined')
+            return false;
+
+        else if (search.label == path[index] && index != path.length-1)
+        {
+            for (let page in search.children) {
+                
+                if (this.findPage(search.children[page], path, index+1))
+                {
+                    search.children.splice(page, 1);
+                    return true;
+                }
+            }
+        }
+        else if (search.label == path[index] && index == path.length-1)
+        {
+            return true;
+        }
+        else
+        {
+           
+        }
+            
+       
+    }
+
 }
