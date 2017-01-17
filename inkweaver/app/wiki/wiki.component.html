@@ -1,5 +1,4 @@
-﻿
-<div class="editor ui-g-9">
+﻿<div class="editor ui-g-9">
     <div class="loader" *ngIf="data.inflight">
         <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
     </div>
@@ -38,23 +37,9 @@
 <div class="navigation ui-g-3">
     <h1>TreeTable</h1>
     <p-treeTable [value]="nav" selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
-        <p-column field="data.title">
-             <template let-node="rowData" pTemplate="body">
-                    <div *ngIf="node.type == 'page'">
-                        {{node.data.title}}
-                        <button pButton type="button" label="-" (click)="onDelete($event)"></button>
-                    </div>
-                    <div *ngIf="node.type == 'category'">
-                        {{node.data.title}}
-                        <button pButton type="button" label="+" (click)="onAdd($event)"></button>
-                    </div>
-                </template>
-           
-        </p-column>
+        <p-column field="title"></p-column>
     </p-treeTable>
-
     Selected Node Title: {{selectedEntry ? selectedEntry.data.title : 'none'}}
     <br/>
     Selected Node ID: {{selectedEntry ? selectedEntry.data.id['$oid'] : 'none'}}
 </div>
-   
