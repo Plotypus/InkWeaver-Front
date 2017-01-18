@@ -1,7 +1,7 @@
 ﻿<p-dialog modal="true" header="Create for {{selectedEntry ? selectedEntry.label : 'none'}}" [(visible)]="showAddDialog"
-          width="450" height="450" responsive="true" >
+          width="450" height="450" responsive="true">
 
-    
+
     <p-dropdown [options]="addOptions" [(ngModel)]="addContent" filter="true" required="true"></p-dropdown>
     <input type="text" pInputText [(ngModel)]="page_name" />
     <footer>
@@ -51,24 +51,25 @@
     <h1>TreeTable</h1>
     <p-treeTable [value]="nav" selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
         <p-column field="data.title">
-             <template let-node="rowData" pTemplate="body">
-                    <span *ngIf="node.type == 'page'">
-                        {{node.data.title}}
-                        <button pButton type="button" label="-" (click)="onDelete($event)"></button>
-                    </span>
-                    <span *ngIf="node.type == 'category'">
-                        {{node.data.title}}
-                        <button pButton type="button" label="+" (click)="onAdd($event)"></button>
-                    </span>
-                    <span *ngIf="node.type == 'title'">
-                         {{node.data.title}}
-                         <button pButton type="button" label="+" (click)="onAdd($event)"></button>
-                    </span>
-                </template>
-           
+            <template let-node="rowData" pTemplate="body">
+                <span *ngIf="node.type == 'page'">
+                    {{node.data.title}}
+                    <button pButton type="button" label="-" (click)="onDelete($event)"></button>
+                </span>
+                <span *ngIf="node.type == 'category'">
+                    {{node.data.title}}
+                    <button pButton type="button" label="+" (click)="onAdd($event)"></button>
+                </span>
+                <span *ngIf="node.type == 'title'">
+                    {{node.data.title}}
+                    <button pButton type="button" label="+" (click)="onAdd($event)"></button>
+                </span>
+            </template>
+
         </p-column>
     </p-treeTable>
+
     Selected Node Title: {{selectedEntry ? selectedEntry.data.title : 'none'}}
-    <br/>
+    <br />
     Selected Node ID: {{selectedEntry ? selectedEntry.data.id['$oid'] : 'none'}}
 </div>
