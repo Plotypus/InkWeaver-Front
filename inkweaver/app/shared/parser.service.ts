@@ -165,6 +165,7 @@ export class ParserService {
         this.data.wikiDisplay += '<br>';
     }
 
+
     /**
      * Set the wiki diplay to a specific page
      */

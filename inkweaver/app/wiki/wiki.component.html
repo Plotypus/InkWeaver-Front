@@ -1,4 +1,17 @@
-﻿<div class="editor ui-g-9">
+﻿<p-dialog modal="true" header="Create for {{selectedEntry ? selectedEntry.label : 'none'}}" [(visible)]="showAddDialog"
+          width="450" height="450" responsive="true" >
+
+    
+    <p-dropdown [options]="addOptions" [(ngModel)]="addContent" filter="true" required="true"></p-dropdown>
+    <input type="text" pInputText [(ngModel)]="page_name" />
+    <footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button pButton type="button" label="Create Content" icon="fa-link" iconPos="right" (click)="addToWiki($event)"></button>
+        </div>
+    </footer>
+</p-dialog>
+
+<div class="editor ui-g-9">
     <div class="loader" *ngIf="data.inflight">
         <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
     </div>
@@ -37,7 +50,23 @@
 <div class="navigation ui-g-3">
     <h1>TreeTable</h1>
     <p-treeTable [value]="nav" selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
-        <p-column field="title"></p-column>
+        <p-column field="data.title">
+             <template let-node="rowData" pTemplate="body">
+                    <span *ngIf="node.type == 'page'">
+                        {{node.data.title}}
+                        <button pButton type="button" label="-" (click)="onDelete($event)"></button>
+                    </span>
+                    <span *ngIf="node.type == 'category'">
+                        {{node.data.title}}
+                        <button pButton type="button" label="+" (click)="onAdd($event)"></button>
+                    </span>
+                    <span *ngIf="node.type == 'title'">
+                         {{node.data.title}}
+                         <button pButton type="button" label="+" (click)="onAdd($event)"></button>
+                    </span>
+                </template>
+           
+        </p-column>
     </p-treeTable>
     Selected Node Title: {{selectedEntry ? selectedEntry.data.title : 'none'}}
     <br/>

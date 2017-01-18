@@ -4,7 +4,6 @@ import { MenuItem } from 'primeng/primeng';
 import { MenuItem, TreeNode } from 'primeng/primeng';
 import { WikiService } from './wiki.service';
 import { ParserService } from '../shared/parser.service';
-import { Data } from '../models/treetable-data.model';
 import { PageSummary } from '../models/page-summary.model';
 @Component({
     selector: 'wiki',
@@ -15,6 +14,12 @@ export class WikiComponent {
     private nav: any;
     private selectedEntry: TreeNode;
     private data: any;
+    private button: any;
+    private showAddDialog: any;
+    private addOptions: any;
+    private addContent: any;
+    private page_name: any;
+    
 
     constructor(private wikiService: WikiService, private parser: ParserService) {
      
@@ -26,16 +31,31 @@ export class WikiComponent {
         temp.data = new PageSummary();
         temp.data.id = json['id'];
         temp.data.title = json['title'];
+        temp.label = json['title'];
+        temp.type = "title"
         this.nav.push(temp);
         for (let index in json['segments']) {
             this.nav.push(this.jsonToWiki(json['segments'][index]));
         }
-        
+
+        this.addOptions = [];
+        this.addOptions.push({ label: 'Category', value: 'category' });
+        this.addOptions.push({ label: 'Page', value: 'page' });
+        this.addContent = this.addOptions[0]['value'];
     }
 
+    /**
+     * Parses the Json and populates TreeNode objects so TreeTable can be used
+     * @param wikiJson
+     */
     public jsonToWiki(wikiJson: any) {
         let wiki = new Data();
         wiki.data = new PageSummary();
+        wiki.children = new Array<TreeNode>();
+        wiki.data.id = wikiJson["id"];
+        wiki.data.title = wikiJson["title"];
+        wiki.label = wikiJson["title"];
+
         for (let field in wikiJson) {
             if (field === "id")
                 wiki.data.id = wikiJson[field];
@@ -63,6 +83,10 @@ export class WikiComponent {
         return wiki
     }
 
+    /**
+     * Parses the Json for Pages
+     * @param pageJson
+     */
     public jsonToPage(pageJson: any) {
         let page = new Data();
         page.data = new PageSummary();
@@ -85,12 +109,20 @@ export class WikiComponent {
      */
     public onSelected(page: any) {
 
-        if (this.data.wiki.title == page.node.data.title) {
-            // this.selectWiki();
-            this.data.selectedPage = { 'id': '' };
-            this.parser.setWikiDisplay();
+        //Take care of adding pages or categories to a category
+        if (page.node.type == "category" && this.button == 1) {
+            this.showAddDialog = true;
         }
-        else if (typeof page.node.children !== 'undefined' && page.node.children.length)
+
+        //Take care of when the title page is clicked
+        else if (this.data.wiki.title == page.node.data.title && this.button == 0) {
+            this.selectWiki();
+        }
+        //deletes pages 
+        else if (page.node.type == "page" && this.button == -1) {
+            this.deletePage(page.node);
+        }
+        else if (page.node.type == "category")
         {
             page.node.expanded = !page.node.expanded;
         }
@@ -104,7 +136,74 @@ export class WikiComponent {
         this.data.segment = new Wiki();
     }
 
-    public setSegment(event: any) {
-        this.data.segment = this.data.wiki.segments[event.index];
+    public addToWiki()
+    {
+        //creating the new node to be added to the navigation
+        this.showAddDialog = false;
+        let toAdd: TreeNode = {};
+        let toParent: TreeNode = {};
+        toAdd.label = this.page_name;
+        toAdd.data = new PageSummary();
+        toAdd.data.title = this.page_name;
+        toAdd.type = this.addContent;
+        if(toAdd.type == 'category')
+            toAdd.children = [];
+        toParent.label = this.selectedEntry.label;
+        toParent.parent = this.selectedEntry.parent;
+        toAdd.parent = toParent;
+        this.selectedEntry.children.push(toAdd);
+        toAdd.data.id = { 'oid': '0' };
+
+        //need to send this info over network and get id;
+        this.addContent = this.addOptions[0]['value'];
+        this.page_name = "";
     }
+    public deletePage(page: any)
+    {
+        //need to find location of page
+        let path = Array<String>();
+        let parent = page;
+        while (typeof parent !== 'undefined')
+        {
+            path.push(parent.label);
+            parent = parent.parent;
+        }
+        path = path.reverse();
+
+        let level = 0;
+        for (let index in this.nav) {
+            if (this.findPage(this.nav[index], path, level))
+                break;
+        }
+        
+    }
+
+    private findPage(search: any, path: Array<String>, index: any): boolean
+    {
+        if (typeof search.children == 'undefined' && search.type != "page")
+            return false;
+
+        else if (search.label == path[index] && index != path.length-1)
+        {
+            for (let page in search.children) {
+                
+                if (this.findPage(search.children[page], path, index+1))
+                {
+                    search.children.splice(page, 1);
+                    return false;
+                }
+            }
+        }
+        else if (search.label == path[index] && index == path.length-1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+            
+       
+    }
+
 }
