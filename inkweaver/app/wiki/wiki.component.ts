@@ -3,7 +3,6 @@
 import { MenuItem, TreeNode } from 'primeng/primeng';
 import { WikiService } from './wiki.service';
 import { ParserService } from '../shared/parser.service';
-import { Data } from '../models/treetable-data.model';
 import { PageSummary } from '../models/page-summary.model';
 @Component({
     selector: 'wiki',
@@ -32,7 +31,7 @@ export class WikiComponent {
         temp.data.id = json['id'];
         temp.data.title = json['title'];
         temp.label = json['title'];
-        temp.type = "category"
+        temp.type = "title"
         this.nav.push(temp);
         for (let index in json['segments']) {
             this.nav.push(this.jsonToWiki(json['segments'][index]));
@@ -44,6 +43,10 @@ export class WikiComponent {
         this.addContent = this.addOptions[0]['value'];
     }
 
+    /**
+     * Parses the Json and populates TreeNode objects so TreeTable can be used
+     * @param wikiJson
+     */
     public jsonToWiki(wikiJson: any) {
         let wiki: TreeNode = {};
         let parent: TreeNode = {};
@@ -52,6 +55,7 @@ export class WikiComponent {
         wiki.data.id = wikiJson["id"];
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
+
         for (let field in wikiJson) {
            if (field === "segments") {
                 let segmentJsons = wikiJson[field];
@@ -84,6 +88,10 @@ export class WikiComponent {
         return wiki
     }
 
+    /**
+     * Parses the Json for Pages
+     * @param pageJson
+     */
     public jsonToPage(pageJson: any) {
         let page: TreeNode = {};
         page.data = new PageSummary();
@@ -108,15 +116,16 @@ export class WikiComponent {
      */
     public onSelected(page: any) {
 
+        //Take care of adding pages or categories to a category
         if (page.node.type == "category" && this.button == 1) {
             this.showAddDialog = true;
         }
+
+        //Take care of when the title page is clicked
         else if (this.data.wiki.title == page.node.data.title && this.button == 0) {
-            // this.selectWiki();
-            this.data.selectedPage = { 'id': '' };
-            this.parser.setWikiDisplay();
+            this.selectWiki();
         }
-        
+        //deletes pages 
         else if (page.node.type == "page" && this.button == -1) {
             this.deletePage(page.node);
         }

@@ -6,7 +6,7 @@
     <input type="text" pInputText [(ngModel)]="page_name" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button pButton type="button" label="Create Link" icon="fa-link" iconPos="right" (click)="addToWiki($event)"></button>
+            <button pButton type="button" label="Create Content" icon="fa-link" iconPos="right" (click)="addToWiki($event)"></button>
         </div>
     </footer>
 </p-dialog>
@@ -59,6 +59,10 @@
                     <span *ngIf="node.type == 'category'">
                         {{node.data.title}}
                         <button pButton type="button" label="+" (click)="onAdd($event)"></button>
+                    </span>
+                    <span *ngIf="node.type == 'title'">
+                         {{node.data.title}}
+                         <button pButton type="button" label="+" (click)="onAdd($event)"></button>
                     </span>
                 </template>
            
