@@ -3,9 +3,15 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import {
+    MenuModule,
     SharedModule,
     EditorModule,
-    TreeTableModule
+    TreeTableModule,
+    ButtonModule,
+    DialogModule,
+    DropdownModule,
+    ConfirmDialogModule,
+    ConfirmationService
 } from 'primeng/primeng';
 import { WikiService } from './wiki.service';
 import { WikiComponent } from './wiki.component';
@@ -14,9 +20,15 @@ import { WikiComponent } from './wiki.component';
     imports: [
         FormsModule,
         CommonModule,
+        MenuModule,
         SharedModule,
         EditorModule,
-        TreeTableModule
+        TreeTableModule,
+        ButtonModule,
+        DialogModule,
+        DropdownModule,
+        ConfirmDialogModule,
+        ConfirmationService
     ],
     providers: [WikiService],
     declarations: [WikiComponent],

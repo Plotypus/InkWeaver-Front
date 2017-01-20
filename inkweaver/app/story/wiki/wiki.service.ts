@@ -13,6 +13,13 @@ export class WikiService {
         });
     }
 
+    public getWikiHierarchy(wiki_id: string) {
+        this.parserService.send({
+            action: 'get_wiki_hierarchy',
+            wiki_id: wiki_id
+        });
+    }
+
     public getWikiSegmentHierarchy(segment_id: string) {
         this.parserService.send({
             action: 'get_wiki_segment_hierarchy',
