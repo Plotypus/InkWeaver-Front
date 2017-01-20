@@ -172,6 +172,7 @@ export class ParserService {
         return 'Wiki';
     }
 
+
     /**
      * Set the display for a page
      */
