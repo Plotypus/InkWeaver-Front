@@ -69,10 +69,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\app.component.html" />
-    <Content Include="app\edit\edit.component.html" />
-    <Content Include="app\settings\settings.component.html" />
-    <Content Include="app\wiki\wiki.component.html" />
+    <Content Include="app\login\login.component.html" />
+    <Content Include="app\story\edit\edit.component.html" />
+    <Content Include="app\story\settings\settings.component.html" />
+    <Content Include="app\story\story.component.html" />
+    <Content Include="app\story\wiki\wiki.component.html" />
     <Content Include=".gitignore" />
+    <Content Include="app\user\user.component.html" />
     <Content Include="systemjs.config.js" />
     <Content Include="package.json" />
     <Content Include="tsconfig.json" />
@@ -88,33 +91,40 @@
   <ItemGroup>
     <TypeScriptCompile Include="app\app.component.ts" />
     <TypeScriptCompile Include="app\app.module.ts" />
-    <TypeScriptCompile Include="app\core\core.module.ts" />
-    <TypeScriptCompile Include="app\edit\edit.module.ts" />
-    <TypeScriptCompile Include="app\edit\edit.service.ts" />
+    <TypeScriptCompile Include="app\login\login.component.ts" />
+    <TypeScriptCompile Include="app\login\login.module.ts" />
+    <TypeScriptCompile Include="app\login\login.service.ts" />
+    <TypeScriptCompile Include="app\story\edit\edit.module.ts" />
+    <TypeScriptCompile Include="app\story\edit\edit.service.ts" />
+    <TypeScriptCompile Include="app\models\collaborator.model.ts" />
+    <TypeScriptCompile Include="app\models\heading.model.ts" />
     <TypeScriptCompile Include="app\models\page-summary.model.ts" />
     <TypeScriptCompile Include="app\models\page.model.ts" />
-    <TypeScriptCompile Include="app\models\section.model.ts" />
-    <TypeScriptCompile Include="app\models\treetable-data.model.ts" />
-    <TypeScriptCompile Include="app\models\user.model.ts" />
-    <TypeScriptCompile Include="app\models\chapter-summary.model.ts" />
-    <TypeScriptCompile Include="app\models\chapter.model.ts" />
     <TypeScriptCompile Include="app\models\paragraph.model.ts" />
-    <TypeScriptCompile Include="app\models\story.model.ts" />
+    <TypeScriptCompile Include="app\models\section.model.ts" />
+    <TypeScriptCompile Include="app\models\segment.model.ts" />
     <TypeScriptCompile Include="app\models\story-summary.model.ts" />
+    <TypeScriptCompile Include="app\models\story.model.ts" />
+    <TypeScriptCompile Include="app\models\user.model.ts" />
     <TypeScriptCompile Include="app\models\wiki-summary.model.ts" />
     <TypeScriptCompile Include="app\models\wiki.model.ts" />
     <TypeScriptCompile Include="app\routing.module.ts" />
-    <TypeScriptCompile Include="app\edit\edit.component.ts" />
-    <TypeScriptCompile Include="app\settings\settings.component.ts" />
-    <TypeScriptCompile Include="app\settings\settings.module.ts" />
-    <TypeScriptCompile Include="app\settings\settings.service.ts" />
+    <TypeScriptCompile Include="app\story\edit\edit.component.ts" />
+    <TypeScriptCompile Include="app\story\settings\settings.component.ts" />
+    <TypeScriptCompile Include="app\story\settings\settings.module.ts" />
+    <TypeScriptCompile Include="app\story\settings\settings.service.ts" />
     <TypeScriptCompile Include="app\shared\parser.service.ts" />
     <TypeScriptCompile Include="app\shared\shared.module.ts" />
     <TypeScriptCompile Include="app\shared\websocket.service.ts" />
-    <TypeScriptCompile Include="app\wiki\wiki.component.ts" />
+    <TypeScriptCompile Include="app\story\story.component.ts" />
+    <TypeScriptCompile Include="app\story\story.module.ts" />
+    <TypeScriptCompile Include="app\story\wiki\wiki.component.ts" />
     <TypeScriptCompile Include="app\main.ts" />
-    <TypeScriptCompile Include="app\wiki\wiki.module.ts" />
-    <TypeScriptCompile Include="app\wiki\wiki.service.ts" />
+    <TypeScriptCompile Include="app\story\wiki\wiki.module.ts" />
+    <TypeScriptCompile Include="app\story\wiki\wiki.service.ts" />
+    <TypeScriptCompile Include="app\user\user.component.ts" />
+    <TypeScriptCompile Include="app\user\user.module.ts" />
+    <TypeScriptCompile Include="app\user\user.service.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
@@ -133,6 +143,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

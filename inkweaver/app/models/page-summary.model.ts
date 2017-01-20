@@ -1,4 +1,4 @@
 ﻿export class PageSummary {
-    "id": any;
-    "title": string;
+    title: string;
+    page_id: string;
 }

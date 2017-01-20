@@ -34,17 +34,16 @@ export class WebSocketService {
         };
 
         function waitForSocketConnection(ws: any, callback: any) {
-            setTimeout(
-                function () {
-                    if (ws.readyState === 1) {
-                        if (callback != null) {
-                            callback();
-                        }
-                        return;
-                    } else {
-                        waitForSocketConnection(ws, callback);
+            setTimeout(function () {
+                if (ws.readyState === 1) {
+                    if (callback != null) {
+                        callback();
                     }
-                }, 500);
+                    return;
+                } else {
+                    waitForSocketConnection(ws, callback);
+                }
+            }, 500);
         }
         return Subject.create(observer, observable);
     }

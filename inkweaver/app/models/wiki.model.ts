@@ -1,8 +1,8 @@
-﻿import { PageSummary } from './page-summary.model';
+﻿import { Collaborator } from './collaborator.model';
 
 export class Wiki {
-    "id": any;
-    "title": string;
-    "segments": Wiki[];
-    "pages": PageSummary[];
+    wiki_title: string;
+    segment_id: string;
+    users: Collaborator[];
+    summary: string;
 }

@@ -2,6 +2,6 @@
 
 @Component({
     selector: 'settings',
-    templateUrl: './app/settings/settings.component.html'
+    templateUrl: './app/story/settings/settings.component.html'
 })
 export class SettingsComponent { }

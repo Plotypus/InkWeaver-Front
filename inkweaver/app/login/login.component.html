@@ -1,0 +1,22 @@
+﻿<div class="login">
+    <p-panel header="Sign In">
+        <form (ngSubmit)="signIn()" #loginForm="ngForm">
+
+            <label for="username">Username</label>
+            <input type="text" [(ngModel)]="login.username" required
+                   id="username" name="username" #username="ngModel"><br />
+            <div [hidden]="username.valid || username.pristine">
+                Username is required
+            </div><br />
+
+            <label for="password">Password</label>
+            <input type="password" [(ngModel)]="login.password" required
+                   id="password" name="password" #password="ngModel"><br />
+            <div [hidden]="password.valid || password.pristine">
+                Password is required
+            </div><br />
+
+            <button pButton type="submit" label="Sign In" [disabled]="!loginForm.form.valid"></button>
+        </form>
+    </p-panel>
+</div>

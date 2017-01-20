@@ -1,4 +1,5 @@
 ﻿export class WikiSummary {
-    "id": any;
-    "title": string;
+    wiki_id: string;
+    title: string;
+    access_level: string;
 }

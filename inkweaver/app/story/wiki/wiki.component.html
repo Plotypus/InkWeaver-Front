@@ -35,11 +35,7 @@
     </div>
 </div>
 <div class="navigation ui-g-3">
-    <h1>TreeTable</h1>
-    <p-treeTable [value]="nav" selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
-        <p-column field="title"></p-column>
-    </p-treeTable>
-    Selected Node Title: {{selectedEntry ? selectedEntry.data.title : 'none'}}
-    <br/>
-    Selected Node ID: {{selectedEntry ? selectedEntry.data.id['$oid'] : 'none'}}
+    <p-treeTable [value]="data.wikiNode"
+                 selectionMode="single"
+                 (onNodeSelect)="selectPage($event)"></p-treeTable>
 </div>

@@ -23,7 +23,6 @@
                     <button class="ql-link" (click)="openLink()"></button>
                 </span>
                 <span class="ql-formats">
-                    <!--<select class="ql-header"></select>-->
                     <select class="ql-size"></select>
                     <select class="ql-font"></select>
                 </span>
@@ -45,7 +44,6 @@
                     <button class="ql-script" value="super"></button>
                     <button class="ql-clean"></button>
                 </span>
-                <!--<button class="ql-direction" value="rtl"></button>-->
             </header>
         </p-editor>
 
@@ -56,20 +54,7 @@
 
 <!-- Navigation -->
 <div class="navigation ui-g-3">
-    <input pInputText #globalFilter type="text" placeholder="Search Chapter Titles" />
-    <i class="search fa fa-search"></i>
-
-    <p-dataTable [value]="data.story.chapters"
+    <p-treeTable [value]="data.storyNode"
                  selectionMode="single"
-                 [globalFilter]="globalFilter"
-                 [(selection)]="data.chapterSummary"
-                 (onRowSelect)="selectChapter($event)">
-        <p-column field="title">
-            <template pTemplate type="header">
-                <div (click)="selectStory()" class="story-title" [ngClass]="{'ui-state-highlight':data.storySelected}">
-                    {{data.story.title}}
-                </div>
-            </template>
-        </p-column>
-    </p-dataTable>
+                 (onNodeSelect)="selectSection($event)"></p-treeTable>
 </div>
