@@ -1,0 +1,11 @@
+﻿<p-panel>
+    <header>
+        <div class="title ui-g-9">
+            {{data.story.story_title}}<p>By: {{data.user.name}}</p>
+        </div>
+        <div class="menu ui-g-3">
+            <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+        </div>
+    </header>
+    <router-outlet></router-outlet>
+</p-panel>

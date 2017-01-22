@@ -1,6 +1,6 @@
 ﻿import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import {
     ButtonModule,
@@ -8,10 +8,8 @@ import {
     EditorModule,
     SharedModule,
     DropdownModule,
-    DataTableModule,
     InputTextModule,
-    ConfirmDialogModule,
-    ConfirmationService
+    TreeTableModule
 } from 'primeng/primeng';
 
 import { EditService } from './edit.service';
@@ -19,25 +17,18 @@ import { EditComponent } from './edit.component';
 
 @NgModule({
     imports: [
-        CommonModule,
         FormsModule,
-
-        // PrimeNG Modules
+        CommonModule,
         ButtonModule,
         DialogModule,
         EditorModule,
         SharedModule,
         DropdownModule,
-        DataTableModule,
         InputTextModule,
-        ConfirmDialogModule
+        TreeTableModule
     ],
-    providers: [
-        EditService,
-        ConfirmationService
-    ],
-    declarations: [
-        EditComponent
-    ]
+    providers: [EditService],
+    declarations: [EditComponent],
+    bootstrap: [EditComponent]
 })
 export class EditModule { }

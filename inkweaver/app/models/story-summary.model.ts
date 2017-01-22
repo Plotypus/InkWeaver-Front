@@ -1,4 +1,5 @@
 ﻿export class StorySummary {
-    "id": any;
-    "title": string;
+    story_id: string;
+    title: string;
+    access_level: string;
 }

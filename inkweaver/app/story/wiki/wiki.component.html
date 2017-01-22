@@ -1,7 +1,6 @@
 ﻿<p-dialog modal="true" header="Create for {{selectedEntry ? selectedEntry.label : 'none'}}" [(visible)]="showAddDialog"
           width="450" height="450" responsive="true">
 
-
     <p-dropdown [options]="addOptions" [(ngModel)]="addContent" filter="true" required="true"></p-dropdown>
     <input type="text" pInputText [(ngModel)]="page_name" />
     <footer>

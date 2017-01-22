@@ -1,14 +1,9 @@
-﻿import { WikiSummary } from './wiki-summary.model';
-import { ChapterSummary } from './chapter-summary.model';
+﻿import { Collaborator } from './collaborator.model';
 
 export class Story {
-    "id": any;
-    "title": string;
-    "owner": string;
-    "coauthors": string[];
-    "statistics": string;
-    "settings": string;
-    "synopsis": string;
-    "wiki": WikiSummary;
-    "chapters": ChapterSummary[];
+    story_title: string;
+    section_id: string;
+    wiki_id: string;
+    users: Collaborator[];
+    summary: string;
 }

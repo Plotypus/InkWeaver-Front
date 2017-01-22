@@ -3,34 +3,31 @@ import { Router } from '@angular/router';
 
 import { Editor } from 'primeng/primeng';
 import { Dialog } from 'primeng/primeng';
-import { MenuItem } from 'primeng/primeng';
-import { Chapter } from '../models/chapter.model';
-
 import { EditService } from './edit.service';
 import { WikiService } from '../wiki/wiki.service';
-import { ParserService } from '../shared/parser.service';
+import { ParserService } from '../../shared/parser.service';
 
 @Component({
     selector: 'edit',
-    templateUrl: './app/edit/edit.component.html'
+    templateUrl: './app/story/edit/edit.component.html'
 })
 export class EditComponent {
     @ViewChild(Editor) editor: Editor;
     @ViewChild(Dialog) dialog: Dialog;
 
     private data: any;
-
     private inputRef: any;
     private editorRef: any;
     private tooltipRef: any;
     private setLinks: boolean;
     private wordCount: number;
-    private displayLinkCreator: boolean;
 
+    // For creating links
     private range: any;
     private word: string;
     private newLinkId: any;
     private newLinkPages: any;
+    private displayLinkCreator: boolean;
 
     constructor(
         private router: Router,
@@ -40,94 +37,74 @@ export class EditComponent {
         private changeDetectorRef: ChangeDetectorRef) { }
 
     ngOnInit() {
-        let editComponent = this;
-        editComponent.data = editComponent.parserService.data;
+        this.data = this.parserService.data;
+        if (!(this.data.inflight || this.data.story.story_title)) {
+            this.router.navigate(['/user']);
+        }
     }
 
     ngAfterViewInit() {
         // Initialize variables
-        let editComponent = this;
-        editComponent.setLinks = true;
+        this.setLinks = true;
 
-        editComponent.inputRef = editComponent.dialog.domHandler.findSingle(
-            editComponent.dialog.el.nativeElement, "input")
-        editComponent.editorRef = editComponent.editor.domHandler.findSingle(
-            editComponent.editor.el.nativeElement, 'div.ql-editor');
-        editComponent.tooltipRef = editComponent.editor.domHandler.findSingle(
-            editComponent.editor.el.nativeElement, 'div.ql-tooltip');
+        this.inputRef = this.dialog.domHandler.findSingle(
+            this.dialog.el.nativeElement, 'input')
+        this.editorRef = this.editor.domHandler.findSingle(
+            this.editor.el.nativeElement, 'div.ql-editor');
+        this.tooltipRef = this.editor.domHandler.findSingle(
+            this.editor.el.nativeElement, 'div.ql-tooltip');
 
         // Add click event handlers to links when necessary
-        editComponent.editor.onTextChange.subscribe((event: any) => {
-            if (editComponent.setLinks) {
-                editComponent.setLinks = false;
-                let threads = editComponent.editor.domHandler.find(
-                    editComponent.editorRef, 'a[href]');
+        this.editor.onTextChange.subscribe((event: any) => {
+            if (this.setLinks) {
+                this.setLinks = false;
+                let threads = this.editor.domHandler.find(this.editorRef, 'a[href]');
 
                 for (let thread of threads) {
                     thread.addEventListener('click', (event: any) => {
-                        event.preventDefault();
                         let pageId: string = thread.getAttribute('href');
-                        editComponent.wikiService.loadWikiPageWithSections(JSON.parse(pageId));
-                        editComponent.router.navigate(['/wiki']);
+                        this.wikiService.getWikiPage(pageId);
+                        this.router.navigate(['/story/wiki']);
                     });
                     thread.addEventListener('mouseenter', (event: any) => {
-                        editComponent.tooltipRef.innerHTML = thread.innerHTML;
+                        this.tooltipRef.innerHTML = thread.innerHTML;
 
-                        editComponent.tooltipRef.style.visibility = 'visible';
-                        editComponent.tooltipRef.classList.remove('ql-hidden');
-                        editComponent.tooltipRef.classList.remove('ql-editing');
+                        this.tooltipRef.style.visibility = 'visible';
+                        this.tooltipRef.classList.remove('ql-hidden');
+                        this.tooltipRef.classList.remove('ql-editing');
 
                         let top: number = event.target.offsetTop + 10;
-                        editComponent.tooltipRef.style.top = top + 'px';
-                        editComponent.tooltipRef.style.left = event.target.offsetLeft + 'px';
+                        this.tooltipRef.style.top = top + 'px';
+                        this.tooltipRef.style.left = event.target.offsetLeft + 'px';
                     });
                     thread.addEventListener('mouseleave', (event: any) => {
-                        editComponent.tooltipRef.style.visibility = 'hidden';
-                        editComponent.tooltipRef.classList.add('ql-hidden');
+                        this.tooltipRef.style.visibility = 'hidden';
+                        this.tooltipRef.classList.add('ql-hidden');
                     });
                 }
             }
-            editComponent.wordCount = event.textValue.split(/\s+/).length;
+            this.wordCount = event.textValue.split(/\s+/).length;
         });
 
         // Add hotkey for creating links (Alt+L)
-        editComponent.editor.quill.keyboard.addBinding({
+        let editComp = this;
+        this.editor.quill.keyboard.addBinding({
             key: 'L',
             altKey: true
-        }, function () { editComponent.openLink(editComponent) });
+        }, function () { editComp.openLink(editComp) });
 
         // Subscribe to observables
-        editComponent.parserService.receive().subscribe((action: string) => {
-            if (action == 'load_chapter_with_paragraphs' || action == 'get_all_paragraphs') {
-                editComponent.setLinks = true;
+        this.parserService.receive().subscribe((action: string) => {
+            if (action == 'get_section_content') {
+                this.setLinks = true;
             }
         });
-
-        // If story isn't loaded, load it
-        if (!editComponent.data.story.title) {
-            editComponent.editService.getUserInfo();
-        }
     }
 
-    /**
-     * Selects a story
-     */
-    public selectStory() {
-        this.parserService.setStoryDisplay();
+    public selectSection(event: any) {
+        this.editService.getSectionContent(event.node.data.section_id);
     }
 
-    /**
-     * Loads the chapter content for a specific chapter
-     * @param event - The click event associated with clicking on a chapter
-     */
-    public selectChapter(event: any) {
-        this.data.storySelected = false;
-        this.editService.loadChapterWithParagraphs(event.data.id);
-    }
-
-    /**
-     * Opens the link creator
-     */
     public openLink(editor: any) {
         if (!editor) {
             editor = this;
@@ -161,15 +138,12 @@ export class EditComponent {
         }
     }
 
-    /**
-     * Creates a link
-     */
     public createLink() {
         this.editor.quill.enable();
         this.editor.quill.deleteText(this.range.index, this.range.length);
 
         this.setLinks = true;
-        this.editor.quill.insertText(this.range.index, this.word, 'link', JSON.stringify(this.newLinkId.id));
+        this.editor.quill.insertText(this.range.index, this.word, 'link', this.newLinkId.id);
         this.editor.quill.setSelection(this.range.index + this.word.length, 0);
         this.displayLinkCreator = false;
     }

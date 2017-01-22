@@ -1,39 +1,26 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-
-// Third party
-import { PanelModule, TabMenuModule } from 'primeng/primeng';
+import { BrowserModule } from '@angular/platform-browser';
 
 // Modules, services, and components
 import { RoutingModule } from './routing.module';
-import { EditModule } from './edit/edit.module';
-import { WikiModule } from './wiki/wiki.module';
-import { SettingsModule } from './settings/settings.module';
-import { ParserService } from './shared/parser.service';
-import { WebSocketService } from './shared/websocket.service';
+import { SharedModule } from './shared/shared.module';
+import { LoginModule } from './login/login.module';
+import { UserModule } from './user/user.module';
+import { StoryModule } from './story/story.module';
 import { AppComponent } from './app.component';
 
 @NgModule({
     imports: [
-        BrowserModule,
         FormsModule,
-        PanelModule,
-        TabMenuModule,
-
-        // App Modules
+        BrowserModule,
         RoutingModule,
-        EditModule,
-        WikiModule,
-        SettingsModule
+        SharedModule,
+        LoginModule,
+        UserModule,
+        StoryModule,
     ],
-    providers: [
-        ParserService,
-        WebSocketService
-    ],
-    declarations: [
-        AppComponent
-    ],
+    declarations: [AppComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

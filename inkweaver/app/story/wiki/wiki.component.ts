@@ -1,29 +1,31 @@
-﻿import { Component } from '@angular/core';
-
+﻿import { Component, OnInit } from '@angular/core';
 import { MenuItem, TreeNode } from 'primeng/primeng';
+
 import { WikiService } from './wiki.service';
-import { ParserService } from '../shared/parser.service';
-import { PageSummary } from '../models/page-summary.model';
+import { ParserService } from '../../shared/parser.service';
+import { PageSummary } from '../../models/page-summary.model';
+
 @Component({
     selector: 'wiki',
-    templateUrl: './app/wiki/wiki.component.html'
-
+    templateUrl: './app/story/wiki/wiki.component.html'
 })
 export class WikiComponent {
+    private data: any;
     private nav: any;
     private selectedEntry: TreeNode;
-    private data: any;
     private button: any;
     private showAddDialog: any;
     private addOptions: any;
     private addContent: any;
     private page_name: any;
 
+    constructor(
+        private wikiService: WikiService,
+        private parserService: ParserService) { }
 
-    constructor(private wikiService: WikiService, private parser: ParserService) {
-
+    ngOnInit() {
         //let reply = JSON.parse(response);
-        this.data = this.parser.data;
+        this.data = this.parserService.data;
         let json = this.data.wiki;
         this.nav = new Array<TreeNode>();
         let temp: TreeNode = {};
@@ -41,6 +43,12 @@ export class WikiComponent {
         this.addOptions.push({ label: 'Category', value: 'category' });
         this.addOptions.push({ label: 'Page', value: 'page' });
         this.addContent = this.addOptions[0]['value'];
+    }
+
+    public selectPage(event: any) {
+        if (event.node.leaf) {
+            this.wikiService.getWikiPage(event.node.data.page_id);
+        }
     }
 
     /**
@@ -104,9 +112,8 @@ export class WikiComponent {
      * Selects the wiki page based on wiki navigation bar clicking
      */
     public selectWiki() {
-
         this.data.selectedPage = { 'id': '' };
-        this.parser.setWikiDisplay();
+        this.parserService.setWikiDisplay();
     }
 
     /**
@@ -133,7 +140,7 @@ export class WikiComponent {
         }
         else {
             this.data.selectedPage = page.node.data.id;
-            this.wikiService.loadWikiPageWithSections(page.node.data.id);
+            this.wikiService.getWikiPage(page.node.data.id);
         }
         this.button = 0;
     }
@@ -206,8 +213,5 @@ export class WikiComponent {
         else {
             return false;
         }
-
-
     }
-
 }

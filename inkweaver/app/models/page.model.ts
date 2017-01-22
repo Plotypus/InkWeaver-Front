@@ -1,9 +1,8 @@
-﻿import { Section } from './section.model';
+﻿import { Heading } from './heading.model';
 
 export class Page {
-    "id": any;
-    "title": string;
-    "aliases": string[];
-    "references": string[];
-    "sections": Section[];
+    title: string;
+    aliases: string[];
+    references: string[];
+    headings: Heading[];
 }
