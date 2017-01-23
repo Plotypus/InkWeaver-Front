@@ -13,24 +13,51 @@ export class WikiComponent {
     private data: any;
     private nav: any;
     private selectedEntry: TreeNode;
-    private button: any;
     private showAddDialog: any;
     private addOptions: any;
     private addContent: any;
     private page_name: any;
+    private addTo: any;
+    private wiki_page: any;
 
-    constructor(
-        private wikiService: WikiService,
-        private parserService: ParserService) { }
+    constructor(private wikiService: WikiService, private parserService: ParserService) { }
 
     ngOnInit() {
-        //let reply = JSON.parse(response);
+        let response = `
+                        {
+                          "reply_to_id": 1,
+                          "hierarchy": {
+                            "title": "Jurassic Park Wiki",
+                            "segment_id": "efg456",
+                            "segments": [
+                              {
+                                "title": "Location",
+                                "segment_id": "hji136",
+                                "segments": [],
+                                "pages": [
+                                  {
+                                    "title": "Costa Rica",
+                                    "page_id": "123454321"
+                                  },
+                                  {
+                                    "title": "Jurassic Park",
+                                    "page_id": "543212345"
+                                  }
+                                ]
+                              }
+                            ],
+                            "pages": []
+                          }
+                        }
+                        `
+        let reply = JSON.parse(response);
         this.data = this.parserService.data;
-        let json = this.data.wiki;
+        //let json = this.data.wiki;
+        let json = reply.hierarchy;
         this.nav = new Array<TreeNode>();
         let temp: TreeNode = {};
         temp.data = new PageSummary();
-        temp.data.id = json['id'];
+        temp.data.id = json['segment_id'];
         temp.data.title = json['title'];
         temp.label = json['title'];
         temp.type = "title"
@@ -43,6 +70,32 @@ export class WikiComponent {
         this.addOptions.push({ label: 'Category', value: 'category' });
         this.addOptions.push({ label: 'Page', value: 'page' });
         this.addContent = this.addOptions[0]['value'];
+
+
+        response = `{
+                      "reply_to_id": 1,
+                      "title": "Costa Rica",
+                      "aliases": [],
+                      "references": [],
+                      "headings": [
+                        {
+                          "title": "Description",
+                          "text": "Costa Rica is a beautiful country.\\n\\nOr at least... it was."
+                        },
+                        {
+                          "title": "Plot",
+                          "text": "Costa Rica is a beautiful country.\\n\\nOr at least... it was."
+                        },
+                        {
+                          "title": "Motives",
+                          "text": "Costa Rica is a beautiful country.\\n\\nOr at least... it was."
+                        }
+                        
+                      ]
+                    }`;
+        this.wiki_page = JSON.parse(response);
+
+
     }
 
     public selectPage(event: any) {
@@ -60,7 +113,7 @@ export class WikiComponent {
         let parent: TreeNode = {};
         wiki.data = new PageSummary();
         wiki.children = new Array<TreeNode>();
-        wiki.data.id = wikiJson["id"];
+        wiki.data.id = wikiJson["segment_id"];
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
 
@@ -102,7 +155,7 @@ export class WikiComponent {
     public jsonToPage(pageJson: any) {
         let page: TreeNode = {};
         page.data = new PageSummary();
-        page.data.id = pageJson['id'];
+        page.data.id = pageJson['page_id'];
         page.data.title = pageJson['title'];
         page.label = pageJson['title'];
         page.type = "page";
@@ -122,41 +175,39 @@ export class WikiComponent {
      */
     public onSelected(page: any) {
 
-        //Take care of adding pages or categories to a category
-        if (page.node.type == "category" && this.button == 1) {
-            this.showAddDialog = true;
-        }
-
         //Take care of when the title page is clicked
-        else if (this.data.wiki.title == page.node.data.title && this.button == 0) {
+        if (this.data.wiki.wiki_title == page.node.data.title) {
             this.selectWiki();
-        }
-        //deletes pages 
-        else if (page.node.type == "page" && this.button == -1) {
-            this.deletePage(page.node);
         }
         else if (page.node.type == "category") {
             page.node.expanded = !page.node.expanded;
+            //get information for the page. 
         }
         else {
             this.data.selectedPage = page.node.data.id;
             this.wikiService.getWikiPage(page.node.data.id);
         }
-        this.button = 0;
+      
     }
 
     /*
         Will toogle value of button variable to indicate whether something needs to be added or not
     */
-    public onAdd(page: any) {
-        this.button = 1;
+    public onAdd(event:any, page: any) {
+        this.addTo = page.label;
+        this.showAddDialog = true;
+        this.selectedEntry = page;
+        event.stopPropagation();
     }
-    public onDelete(page: any) {
-        this.button = -1;
+    public onDelete(event:any,page: any) {
+        this.deletePage(page);
+        event.stopPropagation();
+
     }
 
     public addToWiki() {
         //creating the new node to be added to the navigation
+        
         this.showAddDialog = false;
         let toAdd: TreeNode = {};
         let toParent: TreeNode = {};
@@ -166,11 +217,16 @@ export class WikiComponent {
         toAdd.type = this.addContent;
         if (toAdd.type == 'category')
             toAdd.children = [];
-        toParent.label = this.selectedEntry.label;
-        toParent.parent = this.selectedEntry.parent;
-        toAdd.parent = toParent;
-        this.selectedEntry.children.push(toAdd);
-        toAdd.data.id = { 'oid': '0' };
+        if (this.selectedEntry.type == "title") {
+            this.nav.push(toAdd);
+        }
+        else {
+            toParent.label = this.selectedEntry.label;
+            toParent.parent = this.selectedEntry.parent;
+            toAdd.parent = toParent;
+            this.selectedEntry.children.push(toAdd);
+            toAdd.data.id = { 'oid': '0' };
+        }
 
         //need to send this info over network and get id;
         this.addContent = this.addOptions[0]['value'];
@@ -187,7 +243,7 @@ export class WikiComponent {
         path = path.reverse();
 
         let level = 0;
-        for (let index in this.nav) {
+        for (let index = 1; index < this.nav.length; index++) {
             if (this.findPage(this.nav[index], path, level))
                 break;
         }
@@ -195,10 +251,8 @@ export class WikiComponent {
     }
 
     private findPage(search: any, path: Array<String>, index: any): boolean {
-        if (typeof search.children == 'undefined' && search.type != "page")
-            return false;
-
-        else if (search.label == path[index] && index != path.length - 1) {
+        
+        if (search.label == path[index] && index != path.length - 1) {
             for (let page in search.children) {
 
                 if (this.findPage(search.children[page], path, index + 1)) {

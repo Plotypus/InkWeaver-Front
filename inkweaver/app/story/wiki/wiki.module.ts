@@ -10,9 +10,10 @@ import {
     ButtonModule,
     DialogModule,
     DropdownModule,
-    ConfirmDialogModule,
-    ConfirmationService
+    ConfirmDialogModule
+    
 } from 'primeng/primeng';
+
 import { WikiService } from './wiki.service';
 import { WikiComponent } from './wiki.component';
 
@@ -27,8 +28,8 @@ import { WikiComponent } from './wiki.component';
         ButtonModule,
         DialogModule,
         DropdownModule,
-        ConfirmDialogModule,
-        ConfirmationService
+        ConfirmDialogModule
+        
     ],
     providers: [WikiService],
     declarations: [WikiComponent],
