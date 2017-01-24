@@ -38,9 +38,30 @@ export class EditComponent {
 
     ngOnInit() {
         this.data = this.parserService.data;
-        if (!(this.data.inflight || this.data.story.story_title)) {
-            this.router.navigate(['/user']);
-        }
+        //if (!(this.data.inflight || this.data.story.story_title)) {
+        //    this.router.navigate(['/user']);
+        //}
+
+        this.data.storyNode = [{
+            data: { title: 'My Cool Story', section_id: '' },
+            children: [
+                {
+                    data: { title: 'Section 1', section_id: '' },
+                    children: [
+                        {
+                            data: { title: 'Chapter 1', section_id: '' },
+                            leaf: true
+                        }
+                    ],
+                    leaf: false
+                },
+                {
+                    data: { title: 'Section 2', section_id: '' },
+                    leaf: true
+                }
+            ],
+            leaf: false
+        }];
     }
 
     ngAfterViewInit() {
@@ -94,11 +115,11 @@ export class EditComponent {
         }, function () { editComp.openLink(editComp) });
 
         // Subscribe to observables
-        this.parserService.receive().subscribe((action: string) => {
-            if (action == 'get_section_content') {
-                this.setLinks = true;
-            }
-        });
+        //this.parserService.receive().subscribe((action: string) => {
+        //    if (action == 'get_section_content') {
+        //        this.setLinks = true;
+        //    }
+        //});
     }
 
     public selectSection(event: any) {

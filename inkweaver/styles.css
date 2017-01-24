@@ -9,49 +9,56 @@
     --tan: #fddc9b;
 }
 
-code {
-    display: none;
-}
-
 .ui-panel {
     border: none;
 }
 
+.ui-widget-header {
+    border: none;
+    color: var(--light-gray);
+    background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
+}
+
+.ui-panel, .ui-panel-content-wrapper, .ui-panel-content, .ui-grid, .ui-grid-row {
+    height: 100% !important;
+}
+
+.ui-grid-col-9 {
+    background: var(--dark-blue);
+}
+
 /* ----- Login ----- */
 .login {
-    position: absolute;
     top: 25%;
     left: 25%;
     width: 50%;
+    position: absolute;
     text-align: center;
 }
 
-    .login label {
-        margin-right: 2%;
-        color: var(--light-blue);
+    .login .ui-panel-titlebar {
+        background: var(--light-gray) !important;
     }
 
     .login .ui-panel-content {
         padding: 5%;
     }
 
-    .login .ui-panel-titlebar {
-        background: var(--light-gray) !important;
-    }
-
     .login table {
         margin-left: 25%;
     }
 
+    .login label {
+        margin-right: 2%;
+        color: var(--light-blue);
+    }
+
 .login-warn {
+    text-align: left;
     color: var(--orange);
 }
 
 /* ----- User ----- */
-user > p-panel > .ui-panel > .ui-panel-titlebar {
-    color: var(--light-gray);
-}
-
 user > p-panel > .ui-panel > .ui-panel-content-wrapper > .ui-panel-content {
     padding: 0 !important;
 }
@@ -60,7 +67,8 @@ user .ui-datagrid-header,
 user .ui-carousel-header {
     border-radius: 0;
     margin: 0 !important;
-    background: var(--tan) !important;
+    color: var(--dark-blue);
+    background: var(--light-gray) !important;
 }
 
 user .ui-paginator {
@@ -81,12 +89,8 @@ user .ui-carousel-item {
 .story-tile {
     cursor: pointer;
     text-align: center;
-    background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
+    background: var(--light-blue);
 }
-
-    .story-tile .ui-panel-titlebar {
-        background: var(--light-gray) !important;
-    }
 
     .story-tile .fa-book {
         margin: 5%;
@@ -98,28 +102,19 @@ story .ui-panel-titlebar {
     position: relative;
     min-height: 95px !important;
     border-radius: 0px !important;
+    padding: 0;
+    font-size: 2em;
+    text-align: center;
+    text-transform: uppercase;
 }
 
-    story .ui-panel-titlebar.ui-widget-header {
-        padding: 0;
-        font-size: 2em;
-        color: var(--light-gray);
-        text-align: center;
-        text-transform: uppercase;
+    story .ui-panel-titlebar p {
+        margin: 5px 0 0 0;
+        font-size: 0.5em;
     }
 
-        story .ui-panel-titlebar.ui-widget-header p {
-            margin: 5px 0 0 0;
-            font-size: 0.5em;
-        }
-
-story .ui-panel-content.ui-widget-content {
+story .ui-panel-content {
     padding: 0 !important;
-}
-
-.ui-widget-header {
-    border: none;
-    background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
 }
 
 /* ----- Menu ----- */
@@ -138,7 +133,6 @@ story .ui-panel-content.ui-widget-content {
     .menu .ui-tabmenu-nav {
         height: 100%;
         padding: 0 !important;
-        border: none !important;
         border-radius: 0px !important;
     }
 
@@ -177,7 +171,6 @@ story .ui-panel-content.ui-widget-content {
     padding: 0;
     z-index: 15;
     position: relative;
-    background: white;
 }
 
 .loading-editor {
@@ -200,6 +193,7 @@ story .ui-panel-content.ui-widget-content {
 }
 
 .ui-editor-content {
+    background: white;
     height: 425px !important;
 }
 
@@ -249,28 +243,16 @@ story .ui-panel-content.ui-widget-content {
     color: var(--light-blue);
 }
 
+code {
+    display: none;
+}
+
 /* ----- Navigation ----- */
 .navigation {
     padding: 0;
-    height: 1000px;
-    font-size: 1.1em;
-    font-weight: bold;
     background: var(--light-blue);
     position: relative;
     z-index: 15 !important;
-}
-
-    .navigation .ui-inputtext {
-        width: 90%;
-        margin: 9px;
-        font-family: 'FontAwesome' fa-search !important;
-    }
-
-.search {
-    float: right;
-    position: relative;
-    margin-top: -30px;
-    margin-right: 20px;
 }
 
 /* -------------------- Other -------------------- */
@@ -302,12 +284,14 @@ p-dialog .ui-dropdown-filter-container {
 
 /* -------------------- Master Styles -------------------- */
 html {
+    height: 100%;
     overflow-y: scroll;
 }
 
 body {
     margin: 0;
     padding: 0;
+    height: 100%;
     background: var(--dark-blue);
 }
 
