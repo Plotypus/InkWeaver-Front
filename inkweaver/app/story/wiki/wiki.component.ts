@@ -20,6 +20,7 @@ export class WikiComponent {
     private addTo: any;
     private wiki_page: any;
 
+    //http://stackoverflow.com/questions/39396908/how-to-scroll-element-into-view-when-its-clicked  look at this for scrolling
     constructor(private wikiService: WikiService, private parserService: ParserService) { }
 
     ngOnInit() {
