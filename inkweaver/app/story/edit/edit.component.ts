@@ -16,6 +16,7 @@ export class EditComponent {
     @ViewChild(Dialog) dialog: Dialog;
 
     private data: any;
+    private content: any;
     private inputRef: any;
     private editorRef: any;
     private tooltipRef: any;
@@ -38,10 +39,7 @@ export class EditComponent {
 
     ngOnInit() {
         this.data = this.parserService.data;
-        //if (!(this.data.inflight || this.data.story.story_title)) {
-        //    this.router.navigate(['/user']);
-        //}
-
+        this.content = '<p>Hello, my name is <a href="http://www.google.com">Kyle</a></p>';
         this.data.storyNode = [{
             data: { title: 'My Cool Story', section_id: '' },
             children: [
@@ -62,118 +60,25 @@ export class EditComponent {
             ],
             leaf: false
         }];
+
+        // if (!(this.data.inflight || this.data.story.story_title)) {
+        //     this.router.navigate(['/user']);
+        // }
     }
 
-    ngAfterViewInit() {
-        // Initialize variables
-        this.setLinks = true;
+    public turn(event: any) {
+        let node = event.target;
 
-        this.inputRef = this.dialog.domHandler.findSingle(
-            this.dialog.el.nativeElement, 'input')
-        this.editorRef = this.editor.domHandler.findSingle(
-            this.editor.el.nativeElement, 'div.ql-editor');
-        this.tooltipRef = this.editor.domHandler.findSingle(
-            this.editor.el.nativeElement, 'div.ql-tooltip');
+        while (node.tagName != 'DIV') {
+            node = node.parentElement;
+        }
 
-        // Add click event handlers to links when necessary
-        this.editor.onTextChange.subscribe((event: any) => {
-            if (this.setLinks) {
-                this.setLinks = false;
-                let threads = this.editor.domHandler.find(this.editorRef, 'a[href]');
-
-                for (let thread of threads) {
-                    thread.addEventListener('click', (event: any) => {
-                        let pageId: string = thread.getAttribute('href');
-                        this.wikiService.getWikiPage(pageId);
-                        this.router.navigate(['/story/wiki']);
-                    });
-                    thread.addEventListener('mouseenter', (event: any) => {
-                        this.tooltipRef.innerHTML = thread.innerHTML;
-
-                        this.tooltipRef.style.visibility = 'visible';
-                        this.tooltipRef.classList.remove('ql-hidden');
-                        this.tooltipRef.classList.remove('ql-editing');
-
-                        let top: number = event.target.offsetTop + 10;
-                        this.tooltipRef.style.top = top + 'px';
-                        this.tooltipRef.style.left = event.target.offsetLeft + 'px';
-                    });
-                    thread.addEventListener('mouseleave', (event: any) => {
-                        this.tooltipRef.style.visibility = 'hidden';
-                        this.tooltipRef.classList.add('ql-hidden');
-                    });
-                }
-            }
-            this.wordCount = event.textValue.split(/\s+/).length;
-        });
-
-        // Add hotkey for creating links (Alt+L)
-        let editComp = this;
-        this.editor.quill.keyboard.addBinding({
-            key: 'L',
-            altKey: true
-        }, function () { editComp.openLink(editComp) });
-
-        // Subscribe to observables
-        //this.parserService.receive().subscribe((action: string) => {
-        //    if (action == 'get_section_content') {
-        //        this.setLinks = true;
-        //    }
-        //});
+        if (!node.className.startsWith('cke_editable')) {
+            CKEDITOR.inline(node);
+        }
     }
 
     public selectSection(event: any) {
         this.editService.getSectionContent(event.node.data.section_id);
-    }
-
-    public openLink(editor: any) {
-        if (!editor) {
-            editor = this;
-        }
-
-        editor.range = editor.editor.quill.getSelection();
-        if (editor.range) {
-            // Set the range and display the link creator
-            editor.word = editor.editor.quill.getText(editor.range.index, editor.range.length);
-            editor.range.index += editor.word.search(/\S|$/);
-            editor.word = editor.word.trim();
-            editor.range.length = editor.word.length;
-
-            // Set the wiki pages in the dropdown
-            editor.newLinkId = 0;
-            editor.newLinkPages = [];
-            if (editor.data.wiki.segments) {
-                for (let segment of editor.data.wiki.segments) {
-                    for (let page of segment.pages) {
-                        editor.newLinkPages.push({ label: page.title, value: { id: page.id } });
-                        if (editor.newLinkId === 0) {
-                            editor.newLinkId = page;
-                        }
-                    }
-                }
-            }
-
-            this.editor.quill.disable();
-            editor.displayLinkCreator = true;
-            this.changeDetectorRef.detectChanges();
-        }
-    }
-
-    public createLink() {
-        this.editor.quill.enable();
-        this.editor.quill.deleteText(this.range.index, this.range.length);
-
-        this.setLinks = true;
-        this.editor.quill.insertText(this.range.index, this.word, 'link', this.newLinkId.id);
-        this.editor.quill.setSelection(this.range.index + this.word.length, 0);
-        this.displayLinkCreator = false;
-    }
-
-    public showDialog() {
-        this.inputRef.focus();
-    }
-
-    public hideDialog() {
-        this.editor.quill.enable();
     }
 }

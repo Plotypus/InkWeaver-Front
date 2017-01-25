@@ -27,6 +27,7 @@
             // other libraries
             'rxjs': 'npm:rxjs',
             'primeng': 'npm:primeng',
+            'ng2-ckeditor': 'npm:ng2-ckeditor',
             'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js'
         },
         // packages tells the System loader how to load when no filename and/or no extension
@@ -40,7 +41,11 @@
             },
             'primeng': {
                 defaultExtension: 'js'
-            }
+            },
+            'ng2-ckeditor': {
+                main: 'lib/index.js',
+                defaultExtension: 'js',
+            },
         }
     });
 })(this);
