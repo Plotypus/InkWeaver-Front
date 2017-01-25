@@ -9,7 +9,8 @@ const url: string = 'http://localhost:8080/api/login';
 @Injectable()
 export class LoginService {
     private options = new RequestOptions({
-        headers: new Headers({ 'Content-Type': 'text/plain' })
+        headers: new Headers({ 'Content-Type': 'text/plain' }),
+        withCredentials: true
     });
 
     constructor(private parser: ParserService, private http: Http) { }

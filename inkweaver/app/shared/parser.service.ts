@@ -15,7 +15,7 @@ import { Segment } from '../models/segment.model';
 import { PageSummary } from '../models/page-summary.model';
 import { Page } from '../models/page.model';
 
-const url: string = 'ws://localhost:8080/ws/demo';
+const url: string = 'ws://localhost:8080/ws';
 
 @Injectable()
 export class ParserService {

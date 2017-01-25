@@ -113,7 +113,7 @@ export class WikiComponent {
      */
     public selectWiki() {
         this.data.selectedPage = { 'id': '' };
-        this.parserService.setWikiDisplay();
+        //this.parserService.setWikiDisplay();
     }
 
     /**
