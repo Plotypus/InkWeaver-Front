@@ -28,13 +28,16 @@ export class LoginComponent {
     }
 
     public signIn() {
-        this.loginService.login(this.login.username, this.login.password)
-            .subscribe(response => {
-                this.parserService.connect();
-                this.userService.getUserPreferences();
-                this.userService.getUserStories();
-                this.userService.getUserWikis();
-                this.router.navigate(['/user']);
-            });
+        //this.loginService.login(this.login.username, this.login.password)
+        //    .subscribe(response => {
+        //        document.cookie = response.headers.get('Set-Cookie');
+        //        console.log(document.cookie);
+        //    });
+
+        this.parserService.connect();
+        this.userService.getUserPreferences();
+        this.userService.getUserStories();
+        this.userService.getUserWikis();
+        this.router.navigate(['/user']);
     }
 }

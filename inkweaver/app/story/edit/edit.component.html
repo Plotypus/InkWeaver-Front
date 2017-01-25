@@ -20,7 +20,7 @@
                 <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
             </div>
             <div [ngClass]="{'loading-editor': data.inflight}">
-                <p-editor [(ngModel)]="data.display">
+                <p-editor [(ngModel)]="data.storyDisplay">
                     <header>
                         <span class="ql-formats">
                             <button class="ql-link" (click)="openLink()"></button>
@@ -59,6 +59,7 @@
         <div class="navigation ui-grid-col-3">
             <p-treeTable [value]="data.storyNode"
                          selectionMode="single"
+                         [(selection)]="selectedSection"
                          (onNodeSelect)="selectSection($event)">
                 <p-column field="title"></p-column>
             </p-treeTable>

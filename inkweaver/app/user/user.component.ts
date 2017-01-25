@@ -4,6 +4,7 @@ import { Header } from 'primeng/primeng';
 
 import { UserService } from './user.service';
 import { EditService } from '../story/edit/edit.service';
+import { WikiService } from '../story/wiki/wiki.service';
 import { ParserService } from '../shared/parser.service';
 
 @Component({
@@ -18,18 +19,11 @@ export class UserComponent {
         private router: Router,
         private userService: UserService,
         private editService: EditService,
+        private wikiService: WikiService,
         private parserService: ParserService) { }
 
     ngOnInit() {
         this.data = this.parserService.data;
-
-        for (let i = 1; i <= 10; i++) {
-            this.data.stories.push({
-                title: 'Story ' + i,
-                story_id: i
-            });
-        }
-
         this.colors = [
             "#b0c9dd", // light blue
             "#fdd17c", // yellow
@@ -39,7 +33,7 @@ export class UserComponent {
             "#8779c3", // purple
             "#8c744e", // brown
             "#cb735c", // red-orange
-            "#4d6b61" // green
+            "#4d6b61"  // green
         ];
     }
 
@@ -49,7 +43,7 @@ export class UserComponent {
         this.router.navigate(['/story/edit']);
     }
 
-    public randomColor(story_id: number) {
-        return this.colors[story_id % this.colors.length];
+    public randomColor(title: string) {
+        return this.colors[title.length % this.colors.length];
     }
 }

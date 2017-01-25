@@ -18,6 +18,6 @@ export class LoginService {
         return this.http.post(url, {
             username: username,
             password: password
-        }, this.options).map((r: Response) => r);
+        }, this.options);
     }
 }
