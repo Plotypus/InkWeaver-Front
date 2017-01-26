@@ -51,10 +51,10 @@ export class WikiComponent {
                           }
                         }
                         `
-        let reply = JSON.parse(response);
+       // let reply = JSON.parse(response);
         this.data = this.parserService.data;
         //let json = this.data.wiki;
-        let json = reply.hierarchy;
+        let json = this.data.segment;
         this.nav = new Array<TreeNode>();
         let temp: TreeNode = {};
         temp.data = new PageSummary();

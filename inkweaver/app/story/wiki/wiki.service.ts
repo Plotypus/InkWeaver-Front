@@ -6,6 +6,7 @@ import { ParserService } from '../../shared/parser.service';
 export class WikiService {
     constructor(private parserService: ParserService) { }
 
+    //All the GETS
     public getWikiInformation(wiki_id: string) {
         this.parserService.send({
             action: 'get_wiki_information',
@@ -33,4 +34,21 @@ export class WikiService {
             page_id: page_id
         });
     }
+
+    //EDITS
+    public editSegment(segment_id: string, update_type:string, new_text: String)
+    {
+        this.parserService.send({
+                action: 'edit_segment',
+                "segment_id": segment_id,
+                "update": {
+                    "update_type": "set_title",
+                    "title": new_text
+                    }
+                });
+    }
+
+    //CREATES
+
+
 }
