@@ -100,9 +100,9 @@ user .ui-carousel-item {
 /* ----- Title ----- */
 story .ui-panel-titlebar {
     position: relative;
+    padding: 0 !important;
     min-height: 95px !important;
     border-radius: 0px !important;
-    padding: 0;
     font-size: 2em;
     text-align: center;
     text-transform: uppercase;
@@ -255,17 +255,31 @@ code {
     z-index: 15 !important;
 }
 
+.navigation table,
+.navigation tr,
+.navigation th,
+.navigation td {
+    border: none !important;
+    color: var(--light-gray);
+    background: var(--light-blue) !important;
+}
+
+.navigation .ui-state-highlight td {
+    color: var(--orange);
+    background: var(--dark-blue) !important;
+}
+
 /* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;
 }
 
 p-dialog .ui-dialog-content {
-    height: 60%;
+    height: 70%;
 }
 
 p-dialog input.ui-inputtext {
-    width: 96%;
+    width: 100%;
     margin-bottom: 15px;
 }
 
@@ -275,11 +289,11 @@ p-dialog input.ui-dropdown-filter {
 }
 
 p-dialog .ui-dropdown {
-    width: 90% !important;
+    width: 100% !important;
 }
 
 p-dialog .ui-dropdown-filter-container {
-    width: 97%;
+    width: 100% !important;
 }
 
 /* -------------------- Master Styles -------------------- */

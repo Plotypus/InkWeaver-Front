@@ -2,7 +2,7 @@
 import { Router, NavigationStart, Event } from '@angular/router';
 
 import { MenuItem } from 'primeng/primeng';
-import { ParserService } from '../shared/parser.service';
+import { ApiService } from '../shared/api.service';
 
 @Component({
     selector: 'story',
@@ -13,10 +13,10 @@ export class StoryComponent {
     private items: MenuItem[];
     private activeItem: MenuItem;
 
-    constructor(private router: Router, private parserService: ParserService) { }
+    constructor(private router: Router, private apiService: ApiService) { }
 
     ngOnInit() {
-        this.data = this.parserService.data;
+        this.data = this.apiService.data;
         this.items = [
             { label: '', icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
             { label: '', icon: 'fa-book', routerLink: ['/story/wiki'] },

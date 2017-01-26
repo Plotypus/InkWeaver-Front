@@ -14,7 +14,7 @@
                             <p-panel styleClass="story-tile" (click)="selectStory(story.story_id)">
                                 <header>{{story.title}}</header>
                                 <div>
-                                    <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.story_id)}"></i>
+                                    <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>
                                 </div>
                             </p-panel>
                         </div>

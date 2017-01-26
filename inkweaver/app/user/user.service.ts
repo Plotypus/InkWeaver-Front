@@ -1,25 +1,25 @@
 ﻿import { Injectable } from '@angular/core';
 
-import { ParserService } from '../shared/parser.service';
+import { ApiService } from '../shared/api.service';
 
 @Injectable()
 export class UserService {
-    constructor(private parserService: ParserService) { }
+    constructor(private apiService: ApiService) { }
 
     public getUserPreferences() {
-        this.parserService.send({
+        this.apiService.send({
             action: 'get_user_preferences'
         });
     }
 
     public getUserStories() {
-        this.parserService.send({
+        this.apiService.send({
             action: 'get_user_stories'
         });
     }
 
     public getUserWikis() {
-        this.parserService.send({
+        this.apiService.send({
             action: 'get_user_wikis'
         });
     }

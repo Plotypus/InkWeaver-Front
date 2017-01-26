@@ -2,7 +2,7 @@
 import { MenuItem, TreeNode } from 'primeng/primeng';
 
 import { WikiService } from './wiki.service';
-import { ParserService } from '../../shared/parser.service';
+import { ApiService } from '../../shared/api.service';
 import { PageSummary } from '../../models/page-summary.model';
 
 @Component({
@@ -20,8 +20,9 @@ export class WikiComponent {
     private addTo: any;
     private wiki_page: any;
 
-    //http://stackoverflow.com/questions/39396908/how-to-scroll-element-into-view-when-its-clicked  look at this for scrolling
-    constructor(private wikiService: WikiService, private parserService: ParserService) { }
+    constructor(
+        private wikiService: WikiService,
+        private apiService: ApiService) { }
 
     ngOnInit() {
         let response = `
@@ -55,6 +56,9 @@ export class WikiComponent {
         this.data = this.parserService.data;
         //let json = this.data.wiki;
         let json = this.data.segment;
+        //let reply = JSON.parse(response);
+        this.data = this.apiService.data;
+        let json = this.data.wiki;
         this.nav = new Array<TreeNode>();
         let temp: TreeNode = {};
         temp.data = new PageSummary();
@@ -167,7 +171,7 @@ export class WikiComponent {
      */
     public selectWiki() {
         this.data.selectedPage = { 'id': '' };
-        this.parserService.setWikiDisplay();
+        //this.apiService.setWikiDisplay();
     }
 
     /**

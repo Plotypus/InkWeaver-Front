@@ -1,14 +1,15 @@
 ﻿import { NgModule } from '@angular/core';
 
 // Modules, services, and components
-import { ParserService } from './parser.service';
+import { ApiService } from './api.service';
 import { WebSocketService } from './websocket.service';
-import { HierarchyParserService } from './hierarchy-parser.service';
+import { ParserService } from './parser.service';
+
 @NgModule({
     providers: [
-        ParserService,
+        ApiService,
         WebSocketService,
-        HierarchyParserService
+        ParserService
     ]
 })
 export class SharedModule { }
