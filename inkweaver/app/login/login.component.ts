@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { LoginService } from './login.service';
 import { UserService } from '../user/user.service';
+import { ApiService } from '../shared/api.service';
 import { ParserService } from '../shared/parser.service';
 
 @Component({
@@ -17,10 +18,11 @@ export class LoginComponent {
         private router: Router,
         private loginService: LoginService,
         private userService: UserService,
+        private apiService: ApiService,
         private parserService: ParserService) { }
 
     ngOnInit() {
-        this.data = this.parserService.data;
+        this.data = this.apiService.data;
         this.login = {
             username: '',
             password: ''
@@ -28,16 +30,16 @@ export class LoginComponent {
     }
 
     public signIn() {
-        this.loginService.login(this.login.username, this.login.password)
-            .subscribe(response => {
-                document.cookie = response.headers.get('Set-Cookie');
-                console.log(document.cookie);
+        //this.loginService.login(this.login.username, this.login.password)
+        //    .subscribe(response => {
+        //        document.cookie = response.headers.get('Set-Cookie');
+        //        console.log(document.cookie);
+        //    });
 
-                this.parserService.connect();
-                this.userService.getUserPreferences();
-                this.userService.getUserStories();
-                this.userService.getUserWikis();
-                this.router.navigate(['/user']);
-            });
+        this.apiService.connect();
+        this.userService.getUserPreferences();
+        this.userService.getUserStories();
+        this.userService.getUserWikis();
+        this.router.navigate(['/user']);
     }
 }

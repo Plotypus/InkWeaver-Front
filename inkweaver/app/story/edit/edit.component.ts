@@ -6,6 +6,7 @@ import { Dialog } from 'primeng/primeng';
 import { TreeNode } from 'primeng/primeng';
 import { EditService } from './edit.service';
 import { WikiService } from '../wiki/wiki.service';
+import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
 import { Segment } from '../../models/segment.model';
@@ -37,11 +38,12 @@ export class EditComponent {
         private router: Router,
         private editService: EditService,
         private wikiService: WikiService,
+        private apiService: ApiService,
         private parserService: ParserService,
         private changeDetectorRef: ChangeDetectorRef) { }
 
     ngOnInit() {
-        this.data = this.parserService.data;
+        this.data = this.apiService.data;
         //let values: string[] = Object.values(this.data.outgoing);
         //values.includes('get_story_hierarchy')
 
@@ -102,7 +104,7 @@ export class EditComponent {
         }, function () { editComp.openLink(editComp) });
 
         // Subscribe to observables
-        this.parserService.messages.subscribe((action: string) => {
+        this.apiService.messages.subscribe((action: string) => {
             if (action == 'get_section_content') {
                 this.setLinks = true;
             }
@@ -164,4 +166,6 @@ export class EditComponent {
     public hideDialog() {
         this.editor.quill.enable();
     }
+
+    public save() { }
 }

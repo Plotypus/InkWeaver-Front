@@ -5,7 +5,7 @@ import { Header } from 'primeng/primeng';
 import { UserService } from './user.service';
 import { EditService } from '../story/edit/edit.service';
 import { WikiService } from '../story/wiki/wiki.service';
-import { ParserService } from '../shared/parser.service';
+import { ApiService } from '../shared/api.service';
 
 @Component({
     selector: 'user',
@@ -20,10 +20,10 @@ export class UserComponent {
         private userService: UserService,
         private editService: EditService,
         private wikiService: WikiService,
-        private parserService: ParserService) { }
+        private apiService: ApiService) { }
 
     ngOnInit() {
-        this.data = this.parserService.data;
+        this.data = this.apiService.data;
         this.colors = [
             "#b0c9dd", // light blue
             "#fdd17c", // yellow

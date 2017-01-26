@@ -2,7 +2,7 @@
 import { MenuItem, TreeNode } from 'primeng/primeng';
 
 import { WikiService } from './wiki.service';
-import { ParserService } from '../../shared/parser.service';
+import { ApiService } from '../../shared/api.service';
 import { PageSummary } from '../../models/page-summary.model';
 
 @Component({
@@ -21,11 +21,11 @@ export class WikiComponent {
 
     constructor(
         private wikiService: WikiService,
-        private parserService: ParserService) { }
+        private apiService: ApiService) { }
 
     ngOnInit() {
         //let reply = JSON.parse(response);
-        this.data = this.parserService.data;
+        this.data = this.apiService.data;
         let json = this.data.wiki;
         this.nav = new Array<TreeNode>();
         let temp: TreeNode = {};
@@ -113,7 +113,7 @@ export class WikiComponent {
      */
     public selectWiki() {
         this.data.selectedPage = { 'id': '' };
-        //this.parserService.setWikiDisplay();
+        //this.apiService.setWikiDisplay();
     }
 
     /**

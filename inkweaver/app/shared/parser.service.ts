@@ -1,146 +1,109 @@
 ﻿import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs/Rx';
+import { TreeNode } from 'primeng/primeng';
 
-import { WebSocketService } from './websocket.service';
-import { DataParserService } from './data-parser.service';
-
-import { User } from '../models/user.model';
-import { StorySummary } from '../models/story-summary.model';
-import { Story } from '../models/story.model';
 import { Section } from '../models/section.model';
-import { Paragraph } from '../models/paragraph.model';
-import { WikiSummary } from '../models/wiki-summary.model';
-import { Wiki } from '../models/wiki.model';
 import { Segment } from '../models/segment.model';
+import { Paragraph } from '../models/paragraph.model';
 import { PageSummary } from '../models/page-summary.model';
-import { Page } from '../models/page.model';
-
-const url: string = 'ws://localhost:8080/ws';
 
 @Injectable()
 export class ParserService {
-    public data = {
-        inflight: false,
-        user: new User(),
-        stories: new Array<StorySummary>(),
-        wikis: new Array<WikiSummary>(),
+    public sectionToTree(parserService: ParserService, story: Section): TreeNode {
+        let treeNode: TreeNode = {};
 
-        storyNode: [],
-        storyDisplay: '',
-        story: new Story(),
-        section: new Section(),
-        content: new Array<Paragraph>(),
+        treeNode.data = {
+            title: story.title,
+            section_id: story.section_id
+        };
 
-        wikiNode: [],
-        wikiDisplay: '',
-        wiki: new Wiki(),
-        segment: new Segment(),
-        page: new Page()
+        let sectionToTree: (story: Section) => TreeNode = (story: Section) => {
+            return parserService.sectionToTree(parserService, story);
+        };
+
+        treeNode.children = story.preceding_subsections.map(sectionToTree)
+            .concat(story.inner_subsections.map(sectionToTree))
+            .concat(story.succeeding_subsections.map(sectionToTree));
+        treeNode.leaf = treeNode.children.length == 0;
+
+        return treeNode;
     }
 
-    public outgoing = {};
-    public message_id: number = 0;
-    public messages: Subject<string>;
+    public segmentToTree(parserService: ParserService, wiki: Segment): TreeNode {
+        let treeNode: TreeNode = {};
 
-    constructor(
-        private socket: WebSocketService,
-        private parser: DataParserService) { }
+        treeNode.data = {
+            title: wiki.title,
+            segment_id: wiki.segment_id
+        };
 
-    public connect() {
-        this.messages = <Subject<string>>this.socket.connect(url)
-            .map((res: MessageEvent) => {
-                this.data.inflight = false;
+        let segmentToTree: (wiki: Segment) => TreeNode = (wiki: Segment) => {
+            return parserService.segmentToTree(parserService, wiki);
+        };
 
-                let response: string = res.data;
-                let reply = JSON.parse(response);
-                let message_id: number = reply.with_reply_id;
-                let action: string = this.outgoing[message_id];
+        treeNode.children = wiki.segments.map(segmentToTree)
+            .concat(wiki.pages.map(parserService.pageToTree));
+        treeNode.leaf = false;
 
-                switch (action) {
-                    case 'get_user_preferences':
-                        this.data.user = reply;
-                        break;
-                    case 'get_user_stories':
-                        this.data.stories = reply.stories;
-                        break;
-                    case 'get_user_wikis':
-                        this.data.wikis = reply.wikis;
-                        break;
+        return treeNode;
+    }
 
-                    case 'get_story_information':
-                        this.data.story = reply;
-                        this.send({
-                            action: 'get_section_content',
-                            section_id: reply.section_id
-                        });
-                        this.send({
-                            action: 'get_wiki_information',
-                            wiki_id: reply.wiki_id
-                        });
-                        this.send({
-                            action: 'get_wiki_hierarchy',
-                            wiki_id: reply.wiki_id
-                        });
-                        break;
-                    case 'get_story_hierarchy':
-                        this.data.section = reply.hierarchy;
-                        this.data.storyNode = [
-                            this.parser.sectionToTree(this.parser, reply.hierarchy)
-                        ];
-                        break;
-                    case 'get_section_hierarchy':
-                        this.data.section = reply.hierarchy;
-                        this.data.storyNode = [
-                            this.parser.sectionToTree(this.parser, reply.hierarchy)
-                        ];
-                        break;
-                    case 'get_section_content':
-                        this.data.content = reply.content;
-                        this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
-                        break;
+    public pageToTree(page: PageSummary): TreeNode {
+        let treeNode: TreeNode = {};
 
-                    case 'get_wiki_information':
-                        this.data.wiki = reply;
-                        this.data.wikiDisplay = this.parser.setPageDisplay();
-                        break;
-                    case 'get_wiki_hierarchy':
-                        this.data.segment = reply.hierarchy;
-                        this.data.wikiNode = [
-                            this.parser.segmentToTree(this.parser, reply.hierarchy)
-                        ];
-                        break;
-                    case 'get_wiki_segment_hierarchy':
-                        this.data.segment = reply.hierarchy;
-                        this.data.wikiNode = [
-                            this.parser.segmentToTree(this.parser, reply.hierarchy)
-                        ];
-                        break;
-                    case 'get_wiki_page':
-                        this.data.page = reply;
-                        this.data.wikiDisplay = this.parser.setPageDisplay();
-                        break;
+        treeNode.data = {
+            title: page.title,
+            page_id: page.page_id
+        };
+        treeNode.leaf = true;
 
-                    default:
-                        console.log('Unknown action: ' + action)
-                        break;
-                }
-                delete this.outgoing[message_id];
-                return action;
-            });
-        this.messages.subscribe((message: string) => {
-            console.log(message);
-        });
+        return treeNode;
     }
 
     /**
-     * Send a message on the WebSocket
-     * @param {JSON} message - A JSON-formatted message
+     * Set the display for the content
      */
-    public send(message: any) {
-        message.message_id = ++this.message_id;
-        this.outgoing[message.message_id] = message.action;
+    public setContentDisplay(paragraphs: Paragraph[]): string {
+        let content: string = '';
+        for (let i = 0; i < paragraphs.length; i++) {
+            content += '<p><code>' + i + '</code>' + paragraphs[i].text + '</p>';
+        }
+        return content;
+    }
 
-        this.data.inflight = true;
-        this.messages.next(message);
+    /**
+     * Set the display for the wiki
+     */
+    public setPageDisplay(): string {
+        return 'Page';
+    }
+
+    public parseHtml(text: string): any {
+        let r1: RegExp = new RegExp('<p>(.*?)<\/p>', 'g');
+        let matches: RegExpMatchArray = r1.exec(text);
+
+        let obj: any = [];
+        while (matches) {
+            let match: string = matches[1];
+            let p: any = { text: match, links: [] };
+
+            let r2: RegExp = new RegExp('<code>(.+?)<\/code>');
+            let index: RegExpMatchArray = match.match(r2);
+            if (index) {
+                p.index = index[1];
+                p.text = match.replace(r2, '');
+            }
+
+            let r3: RegExp = new RegExp('<a href="(.+?)".*?>(.+?)<\/a>', 'g');
+            let link: RegExpMatchArray = r3.exec(match);
+            while (link) {
+                p.links.push(link[1] + link[2]);
+                link = r3.exec(match);
+            }
+            p.links.sort();
+            obj.push(p);
+
+            matches = r1.exec(text);
+        }
+        return obj;
     }
 }

@@ -1,8 +1,8 @@
 ﻿import { Injectable } from '@angular/core';
 
-import { ParserService } from '../../shared/parser.service';
+import { ApiService } from '../../shared/api.service';
 
 @Injectable()
 export class SettingsService {
-    constructor(private parser: ParserService) { }
+    constructor(private parser: ApiService) { }
 }

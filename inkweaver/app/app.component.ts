@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ParserService } from './shared/parser.service';
+import { ApiService } from './shared/api.service';
 
 @Component({
     selector: 'ink-app',
@@ -9,9 +9,9 @@ import { ParserService } from './shared/parser.service';
 export class AppComponent {
     private data: any;
 
-    constructor(private parserService: ParserService) { }
+    constructor(private apiService: ApiService) { }
 
     ngOnInit() {
-        this.data = this.parserService.data;
+        this.data = this.apiService.data;
     }
 }
