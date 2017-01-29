@@ -31,8 +31,8 @@ export class ApiService {
         section: new Section(),
         content: new Array<Paragraph>(),
 
+        tooltip: { text: '', display: 'none' },
         oldObj: [],
-        newObj: [],
 
         wikiNode: [],
         wikiDisplay: '',
@@ -121,6 +121,7 @@ export class ApiService {
                         break;
                     case 'get_wiki_page':
                         this.data.page = reply;
+                        this.data.tooltip.text = reply.title;
                         this.data.wikiDisplay = this.parser.setPageDisplay();
                         break;
 

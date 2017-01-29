@@ -10,6 +10,7 @@ import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
 import { Segment } from '../../models/segment.model';
+import { PageSummary } from '../../models/page-summary.model';
 
 @Component({
     selector: 'edit',
@@ -22,7 +23,6 @@ export class EditComponent {
     private data: any;
     private inputRef: any;
     private editorRef: any;
-    private tooltipRef: any;
     private setLinks: boolean;
     private wordCount: number;
     private selectedSection: TreeNode;
@@ -34,6 +34,8 @@ export class EditComponent {
     private newLinkPages: any;
     private displayLinkCreator: boolean;
 
+    private suggest: any;
+
     constructor(
         private router: Router,
         private editService: EditService,
@@ -44,27 +46,56 @@ export class EditComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+        this.suggest = {};
         //let values: string[] = Object.values(this.data.outgoing);
         //values.includes('get_story_hierarchy')
 
         if (!(this.data.inflight || this.data.story.story_title)) {
             this.router.navigate(['/login']);
         }
+
+        // Subscribe to observables
+        this.apiService.messages.subscribe((action: string) => {
+            if (action == 'get_section_content') {
+                this.setLinks = true;
+            }
+        });
     }
 
     ngAfterViewInit() {
         // Initialize variables
         this.setLinks = true;
-
         this.inputRef = this.dialog.domHandler.findSingle(
             this.dialog.el.nativeElement, 'input')
         this.editorRef = this.editor.domHandler.findSingle(
             this.editor.el.nativeElement, 'div.ql-editor');
-        this.tooltipRef = this.editor.domHandler.findSingle(
-            this.editor.el.nativeElement, 'div.ql-tooltip');
 
         // Add click event handlers to links when necessary
         this.editor.onTextChange.subscribe((event: any) => {
+            this.suggest.display = 'none';
+
+            let index = event.delta.ops[0].retain;
+            if (index) {
+                let text: string = this.editor.quill.getText(0, index + 1);
+                let predict: string = text.slice(text.lastIndexOf(' ') + 1);
+
+                if (predict) {
+                    this.loopPages(this, this.data.segment, (page: PageSummary) => {
+                        if (page.title.startsWith(predict)) {
+                            let bounds = this.editor.quill.getBounds(index);
+                            let top: number = bounds.top + 70;
+                            this.suggest = {
+                                text: page.title,
+                                id: page.page_id,
+                                display: 'block',
+                                top: top + 'px',
+                                left: bounds.left + 'px'
+                            };
+                        }
+                    });
+                }
+            }
+
             if (this.setLinks) {
                 this.setLinks = false;
                 let threads = this.editor.domHandler.find(this.editorRef, 'a[href]');
@@ -77,42 +108,60 @@ export class EditComponent {
                         this.router.navigate(['/story/wiki']);
                     });
                     thread.addEventListener('mouseenter', (event: any) => {
-                        this.tooltipRef.innerHTML = thread.innerHTML;
-
-                        this.tooltipRef.style.visibility = 'visible';
-                        this.tooltipRef.classList.remove('ql-hidden');
-                        this.tooltipRef.classList.remove('ql-editing');
-
-                        let top: number = event.target.offsetTop + 10;
-                        this.tooltipRef.style.top = top + 'px';
-                        this.tooltipRef.style.left = event.target.offsetLeft + 'px';
+                        let top: number = event.target.offsetTop + 70;
+                        this.data.tooltip = {
+                            text: thread.innerHTML,
+                            display: 'block',
+                            top: top + 'px',
+                            left: event.target.offsetLeft + 'px'
+                        };
+                        //this.wikiService.getWikiPage(thread.getAttribute('href'));
                     });
                     thread.addEventListener('mouseleave', (event: any) => {
-                        this.tooltipRef.style.visibility = 'hidden';
-                        this.tooltipRef.classList.add('ql-hidden');
+                        this.data.tooltip.display = 'none';
                     });
                 }
             }
             this.wordCount = event.textValue.split(/\s+/).length;
         });
 
-        // Add hotkey for creating links (Alt+L)
-        let editComp: EditComponent = this;
-        this.editor.quill.keyboard.addBinding({
-            key: 'L',
-            altKey: true
-        }, function () { editComp.openLink(editComp) });
-
-        // Subscribe to observables
-        this.apiService.messages.subscribe((action: string) => {
-            if (action == 'get_section_content') {
-                this.setLinks = true;
-            }
-        });
+        this.setHotkey(this);
     }
 
-    public selectSection(event: any) {
-        this.editService.getSectionContent(event.node.data.section_id);
+    public setHotkey(editComp: EditComponent) {
+        setTimeout(function () {
+            if (editComp.editor.quill) {
+                editComp.editor.quill.keyboard.addBinding({
+                    key: 'L',
+                    altKey: true
+                }, function () { editComp.openLink(editComp) });
+
+                delete editComp.editor.quill.keyboard.bindings['9'];
+                editComp.editor.quill.keyboard.addBinding({
+                    key: 'tab'
+                }, function (range, context) {
+                    if (editComp.suggest.display == 'block') {
+                        let word: string = context.prefix.slice(context.prefix.lastIndexOf(' ') + 1);
+                        let index: number = range.index - word.length;
+
+                        editComp.suggest.display = 'none';
+                        editComp.newLinkId = editComp.suggest.id;
+                        editComp.word = editComp.suggest.text;
+                        editComp.range = { index: index, length: word.length };
+                        editComp.createLink();
+                        editComp.editor.quill.insertText(index + editComp.word.length, ' ', 'link', false);
+                        editComp.editor.quill.setSelection(index + editComp.word.length + 1, 0);
+                    }
+                });
+            } else {
+                editComp.setHotkey(editComp);
+            }
+        }, 500);
+    }
+
+    /* ------------------------- Dialog ------------------------- */
+    public showDialog() {
+        this.inputRef.focus();
     }
 
     public openLink(editor: EditComponent) {
@@ -130,7 +179,9 @@ export class EditComponent {
 
             // Set the wiki pages in the dropdown
             editor.newLinkPages = [];
-            editor.populateLinkPages(editor, editor.data.segment);
+            editor.loopPages(editor, editor.data.segment, (page: PageSummary) => {
+                editor.newLinkPages.push({ label: page.title, value: page.page_id });
+            });
             editor.newLinkId = editor.newLinkPages[0].value;
 
             editor.editor.quill.disable();
@@ -139,8 +190,22 @@ export class EditComponent {
         }
     }
 
+    public loopPages(editor: EditComponent, segment: Segment, func: (page: PageSummary) => any) {
+        for (let page of segment.pages) {
+            func(page);
+        }
+        for (let seg of segment.segments) {
+            editor.loopPages(editor, seg, func);
+        }
+    }
+
+    public hideDialog() {
+        this.editor.quill.enable();
+    }
+
     public createLink() {
         this.editor.quill.enable();
+        this.word = this.word.trim();
         this.editor.quill.deleteText(this.range.index, this.range.length);
 
         this.setLinks = true;
@@ -150,22 +215,15 @@ export class EditComponent {
         this.displayLinkCreator = false;
     }
 
-    public populateLinkPages(editor: EditComponent, segment: Segment) {
-        for (let page of segment.pages) {
-            editor.newLinkPages.push({ label: page.title, value: page.page_id });
-        }
-        for (let seg of segment.segments) {
-            editor.populateLinkPages(editor, seg);
-        }
+    /* ------------------------------------------------------------ */
+
+    public selectSection(event: any) {
+        this.editService.getSectionContent(event.node.data.section_id);
     }
 
-    public showDialog() {
-        this.inputRef.focus();
+    public save() {
+        let newObj = this.parserService.parseHtml(this.editorRef.innerHTML);
+        this.editService.compare(this.data.oldObj, newObj);
+        this.data.oldObj = newObj;
     }
-
-    public hideDialog() {
-        this.editor.quill.enable();
-    }
-
-    public save() { }
 }

@@ -1,9 +1,9 @@
 ﻿<!-- Link Creator Dialog -->
-<p-dialog modal="true" header="Create Link" [(visible)]="displayLinkCreator" (onAfterShow)="showDialog()" (onBeforeHide)="hideDialog()"
+<p-dialog modal="true" header="Create New Link" [(visible)]="displayLinkCreator" (onAfterShow)="showDialog()" (onBeforeHide)="hideDialog()"
           width="450" height="450" responsive="true" (keyup.enter)="createLink()">
 
-    <input type="text" pInputText [(ngModel)]="word" />
-    <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkId" filter="true"></p-dropdown>
+    <input #link type="text" pInputText [(ngModel)]="word" />
+    <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkId" filter="link"></p-dropdown>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <button pButton type="button" label="Create Link" icon="fa-link" iconPos="right" (click)="createLink()"></button>
@@ -49,9 +49,17 @@
                         </span>
                     </header>
                 </p-editor>
+                <div class="tooltip" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}">
+                    {{data.tooltip.text}}
+                </div>
+
+                <div class="suggest" [ngStyle]="{'display': suggest.display,'top': suggest.top, 'left': suggest.left}">
+                    {{suggest.text}}
+                </div>
 
                 <!-- Word Count -->
                 <div class="stats">Word Count: {{wordCount}}</div>
+                <button pButton type="button" label="Save" (click)="save()"></button>
             </div>
         </div>
 

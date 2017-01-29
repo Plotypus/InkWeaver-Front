@@ -222,25 +222,41 @@ story .ui-panel-content {
 
 .ql-editor a {
     cursor: pointer;
-    color: var(--link-blue);
+    color: var(--link-blue) !important;
 }
 
 .ql-tooltip {
     visibility: hidden;
 }
 
-    .ql-tooltip::before {
-        content: "" !important;
-        line-height: 0px !important;
-        margin-right: 0px !important;
-    }
+.tooltip {
+    position: absolute;
+    padding: 0 5px 0 5px;
+    background: floralwhite;
+
+    font-size: 0.9em;
+    border-radius: 2px;
+    color: var(--light-blue);
+    border: 1px solid var(--light-blue);
+}
+
+.suggest {
+    position: absolute;
+    padding: 0 5px 0 5px;
+
+    color: white;
+    font-size: 0.9em;
+    border-radius: 2px;
+    border: 1px solid white;
+    background: var(--link-blue);
+}
 
 .stats {
-    padding: 5px 15px 5px 0px;
     text-align: right;
     font-style: italic;
     background: #e6e6e6;
     color: var(--light-blue);
+    padding: 5px 15px 5px 0px;
 }
 
 code {
@@ -255,19 +271,19 @@ code {
     z-index: 15 !important;
 }
 
-.navigation table,
-.navigation tr,
-.navigation th,
-.navigation td {
-    border: none !important;
-    color: var(--light-gray);
-    background: var(--light-blue) !important;
-}
+    .navigation table,
+    .navigation tr,
+    .navigation th,
+    .navigation td {
+        border: none !important;
+        color: var(--light-gray);
+        background: var(--light-blue) !important;
+    }
 
-.navigation .ui-state-highlight td {
-    color: var(--orange);
-    background: var(--dark-blue) !important;
-}
+    .navigation .ui-state-highlight td {
+        color: var(--orange);
+        background: var(--dark-blue) !important;
+    }
 
 /* -------------------- Other -------------------- */
 .placeholder {
@@ -294,6 +310,10 @@ p-dialog .ui-dropdown {
 
 p-dialog .ui-dropdown-filter-container {
     width: 100% !important;
+}
+
+p-dialog .ui-dropdown.ui-state-focus .ui-dropdown-panel {
+    display: block !important;
 }
 
 /* -------------------- Master Styles -------------------- */
