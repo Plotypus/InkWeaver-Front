@@ -53,12 +53,12 @@ export class WikiComponent {
                         }
                         `
        // let reply = JSON.parse(response);
-        this.data = this.parserService.data;
+        this.data = this.apiService.data;
         //let json = this.data.wiki;
         let json = this.data.segment;
         //let reply = JSON.parse(response);
         this.data = this.apiService.data;
-        let json = this.data.wiki;
+        // json = this.data.wiki;
         this.nav = new Array<TreeNode>();
         let temp: TreeNode = {};
         temp.data = new PageSummary();
@@ -230,6 +230,7 @@ export class WikiComponent {
             toParent.parent = this.selectedEntry.parent;
             toAdd.parent = toParent;
             this.selectedEntry.children.push(toAdd);
+           // this.wikiService.addPage(th)
             toAdd.data.id = { 'oid': '0' };
         }
 
