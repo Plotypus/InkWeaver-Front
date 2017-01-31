@@ -63,36 +63,45 @@ user > p-panel > .ui-panel > .ui-panel-content-wrapper > .ui-panel-content {
     padding: 0 !important;
 }
 
-user .ui-datagrid-header,
-user .ui-carousel-header {
+user .ui-datagrid-header {
     border-radius: 0;
     margin: 0 !important;
     color: var(--dark-blue);
-    background: var(--light-gray) !important;
+    background: moccasin !important;
 }
 
 user .ui-paginator {
     background: var(--dark-blue) !important;
 }
 
-user .ui-datagrid-content,
-user .ui-carousel {
+user .ui-datagrid-content {
     padding: 0;
     border: none;
-}
-
-user .ui-carousel-item {
-    border: none;
-    padding: 10px !important;
+    border-top: 3px solid var(--dark-blue);
 }
 
 .story-tile {
+    margin: 10px;
     cursor: pointer;
     text-align: center;
     background: var(--light-blue);
+    border: 2px solid var(--dark-blue);
 }
 
-    .story-tile .fa-book {
+.new-story-tile {
+    margin: 10px;
+    cursor: pointer;
+    text-align: center;
+    border: 2px dashed var(--dark-blue);
+}
+
+    .new-story-tile .ui-panel-titlebar, .story-tile .ui-panel-titlebar {
+        color: white;
+        border-radius: 0;
+        background: var(--dark-blue) !important;
+    }
+
+    .story-tile .fa-book, .new-story-tile .fa-plus-square-o {
         margin: 5%;
         font-size: 4em;
     }
@@ -102,7 +111,7 @@ story .ui-panel-titlebar {
     position: relative;
     padding: 0 !important;
     min-height: 95px !important;
-    border-radius: 0px !important;
+    border-radius: 0 !important;
     font-size: 2em;
     text-align: center;
     text-transform: uppercase;
@@ -233,7 +242,6 @@ story .ui-panel-content {
     position: absolute;
     padding: 0 5px 0 5px;
     background: floralwhite;
-
     font-size: 0.9em;
     border-radius: 2px;
     color: var(--light-blue);
@@ -243,7 +251,6 @@ story .ui-panel-content {
 .suggest {
     position: absolute;
     padding: 0 5px 0 5px;
-
     color: white;
     font-size: 0.9em;
     border-radius: 2px;
@@ -294,18 +301,9 @@ p-dialog .ui-dialog-content {
     height: 70%;
 }
 
-p-dialog input.ui-inputtext {
-    width: 100%;
-    margin-bottom: 15px;
-}
-
 p-dialog input.ui-dropdown-filter {
     width: 100%;
     margin-bottom: 0px;
-}
-
-p-dialog .ui-dropdown {
-    width: 100% !important;
 }
 
 p-dialog .ui-dropdown-filter-container {
@@ -314,6 +312,18 @@ p-dialog .ui-dropdown-filter-container {
 
 p-dialog .ui-dropdown.ui-state-focus .ui-dropdown-panel {
     display: block !important;
+}
+
+p-dialog .ui-dialog-titlebar-close {
+    color: white;
+}
+
+p-dialog table,
+p-dialog input,
+p-dialog textarea,
+p-dialog .ui-dropdown {
+    margin-bottom: 5px;
+    width: 100% !important;
 }
 
 /* -------------------- Master Styles -------------------- */

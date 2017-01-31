@@ -65,17 +65,23 @@ export class ApiService {
                         break;
                     case 'get_user_stories':
                         this.data.stories = reply.stories;
+                        this.data.stories.push({
+                            story_id: null,
+                            title: null,
+                            access_level: null
+                        });
                         break;
                     case 'get_user_wikis':
                         this.data.wikis = reply.wikis;
                         break;
 
+                    case 'create_story':
+                        this.send({
+                            action: 'get_story_hierarchy',
+                            story_id: reply.story_id
+                        });
                     case 'get_story_information':
                         this.data.story = reply;
-                        this.send({
-                            action: 'get_section_content',
-                            section_id: reply.section_id
-                        });
                         this.send({
                             action: 'get_wiki_information',
                             wiki_id: reply.wiki_id
@@ -103,6 +109,9 @@ export class ApiService {
                         this.data.oldObj = this.parser.parseHtml(this.data.storyDisplay);
                         break;
 
+                    case 'create_wiki':
+                        this.data.wiki = reply;
+                        break
                     case 'get_wiki_information':
                         this.data.wiki = reply;
                         this.data.wikiDisplay = this.parser.setPageDisplay();
@@ -132,8 +141,8 @@ export class ApiService {
                 delete this.outgoing[message_id];
                 return action;
             });
-        this.messages.subscribe((message: string) => {
-            console.log(message);
+        this.messages.subscribe((action: string) => {
+            console.log(action);
         });
     }
 

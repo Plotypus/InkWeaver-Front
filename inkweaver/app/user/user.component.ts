@@ -13,7 +13,16 @@ import { ApiService } from '../shared/api.service';
 })
 export class UserComponent {
     private data: any;
+
+    private wikis: any;
+    private newWiki: any;
+    private newWikiTitle: string;
+    private newWikiSummary: string;
+
+    private title: string;
+    private summary: string;
     private colors: string[];
+    private displayStoryCreator: boolean;
 
     constructor(
         private router: Router,
@@ -24,17 +33,25 @@ export class UserComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+        this.data.stories.push({ story_id: null, title: null, access_level: null });
         this.colors = [
-            "#b0c9dd", // light blue
-            "#fdd17c", // yellow
-            "#74b0b8", // muted blue
-            "#acd8b4", // pastel green
-            "#903737", // maroon
-            "#8779c3", // purple
-            "#8c744e", // brown
             "#cb735c", // red-orange
-            "#4d6b61"  // green
+            "#fdd17c", // yellow
+            "#acd8b4", // pastel green
+            "#4d6b61", // green
+            "#b0c9dd", // light blue
+            "#74b0b8", // muted blue
+            "#8779c3", // purple
+            "#903737"  // maroon
         ];
+
+        this.apiService.messages.subscribe((action: string) => {
+            if (action == 'create_wiki') {
+                this.displayStoryCreator = false;
+                this.editService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
+                this.router.navigate(['/story/edit']);
+            }
+        });
     }
 
     public selectStory(story_id: string) {
@@ -45,5 +62,25 @@ export class UserComponent {
 
     public randomColor(title: string) {
         return this.colors[title.length % this.colors.length];
+    }
+
+    /* -------------------- Create a new story -------------------- */
+    public openStoryCreator() {
+        this.displayStoryCreator = true;
+        this.wikis = [{ label: '[Create New Wiki]', value: 'new_wiki' }];
+        for (let wiki of this.data.wikis) {
+            this.wikis.push({ label: wiki.title, value: wiki.wiki_id });
+        }
+        this.newWiki = this.wikis[0].value;
+    }
+
+    public createStory() {
+        if (this.newWiki == 'new_wiki') {
+            this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary);
+        } else {
+            this.displayStoryCreator = false;
+            this.editService.createStory(this.title, this.newWiki, this.summary);
+            this.router.navigate(['/story/edit']);
+        }
     }
 }

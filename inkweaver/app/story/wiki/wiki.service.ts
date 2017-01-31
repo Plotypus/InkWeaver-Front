@@ -6,6 +6,14 @@ import { ApiService } from '../../shared/api.service';
 export class WikiService {
     constructor(private apiService: ApiService) { }
 
+    public createWiki(title: string, summary: string) {
+        this.apiService.send({
+            action: 'create_wiki',
+            title: title,
+            summary: summary
+        });
+    }
+
     public getWikiInformation(wiki_id: string) {
         this.apiService.send({
             action: 'get_wiki_information',

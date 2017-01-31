@@ -119,6 +119,7 @@
     <TypeScriptCompile Include="app\shared\websocket.service.ts" />
     <TypeScriptCompile Include="app\story\story.component.ts" />
     <TypeScriptCompile Include="app\story\story.module.ts" />
+    <TypeScriptCompile Include="app\story\story.service.ts" />
     <TypeScriptCompile Include="app\story\wiki\wiki.component.ts" />
     <TypeScriptCompile Include="app\main.ts" />
     <TypeScriptCompile Include="app\story\wiki\wiki.module.ts" />

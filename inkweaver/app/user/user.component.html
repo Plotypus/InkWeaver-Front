@@ -1,37 +1,69 @@
-﻿<p-panel>
+﻿<!-- Link Creator Dialog -->
+<p-dialog modal="true" header="Create New Story" [(visible)]="displayStoryCreator"
+          width="450" height="450" (keyup.enter)="createStory()">
+    <table>
+        <tbody>
+            <tr>
+                <td><label>Title</label></td>
+                <td><input pInputText type="text" [(ngModel)]="title" autofocus /></td>
+            </tr>
+            <tr>
+                <td><label>Summary</label></td>
+                <td><input pInputText type="text" [(ngModel)]="summary" /></td>
+            </tr>
+            <tr>
+                <td><label>Wiki</label></td>
+                <td><p-dropdown [options]="wikis" [(ngModel)]="newWiki"></p-dropdown></td>
+            </tr>
+            <tr *ngIf="newWiki == 'new_wiki'">
+                <td><label>New Wiki Title</label></td>
+                <td><input pInputText type="text" [(ngModel)]="newWikiTitle" /></td>
+            </tr>
+            <tr *ngIf="newWiki == 'new_wiki'">
+                <td><label>New Wiki Summary</label></td>
+                <td><textarea pInputTextarea [(ngModel)]="newWikiSummary"></textarea></td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button pButton type="button" label="Create Story" (click)="createStory()"></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</p-dialog>
+
+<p-panel>
     <header>Inkweaver by Plotypus</header>
     <div class="ui-grid ui-grid-responsive">
         <div class="ui-grid-row">
-            <div class="navigation ui-grid-col-3">
-                <button pButton type="button" label="Switch" (click)="carousel=!carousel"></button>
-            </div>
             <div class="ui-grid-col-9">
-
-                <p-dataGrid *ngIf="!carousel" [value]="data.stories" [paginator]="true" [rows]="6">
+                <p-dataGrid [value]="data.stories" [paginator]="true" [rows]="6">
                     <header>List of Stories</header>
                     <template let-story>
                         <div class="ui-g-12 ui-md-4">
-                            <p-panel styleClass="story-tile" (click)="selectStory(story.story_id)">
-                                <header>{{story.title}}</header>
-                                <div>
-                                    <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>
-                                </div>
-                            </p-panel>
+                            <div *ngIf="story.story_id">
+                                <p-panel styleClass="story-tile" (click)="selectStory(story.story_id)">
+                                    <header>{{story.title}}</header>
+                                    <div>
+                                        <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>
+                                    </div>
+                                </p-panel>
+                            </div>
+
+                            <div *ngIf="!story.story_id">
+                                <p-panel styleClass="new-story-tile" (click)="openStoryCreator()">
+                                    <header>Create Story</header>
+                                    <div><i class="fa fa-plus-square-o"></i></div>
+                                </p-panel>
+                            </div>
                         </div>
                     </template>
                 </p-dataGrid>
-
-                <p-carousel *ngIf="carousel" [value]="data.stories" headerText="List of Stories" circular="true" pageLinks="10">
-                    <template let-story>
-                        <p-panel styleClass="story-tile" (click)="selectStory(story.story_id)">
-                            <header>{{story.title}}</header>
-                            <div>
-                                <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.story_id)}"></i>
-                            </div>
-                        </p-panel>
-                    </template>
-                </p-carousel>
             </div>
+
+            <div class="navigation ui-grid-col-3"></div>
         </div>
     </div>
 </p-panel>

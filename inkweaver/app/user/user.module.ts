@@ -3,9 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
     PanelModule,
+    DialogModule,
     ButtonModule,
-    CarouselModule,
-    DataGridModule
+    DropdownModule,
+    DataGridModule,
+    InputTextareaModule
 } from 'primeng/primeng';
 
 import { UserService } from './user.service';
@@ -16,9 +18,11 @@ import { UserComponent } from './user.component';
         FormsModule,
         CommonModule,
         PanelModule,
+        DialogModule,
         ButtonModule,
-        CarouselModule,
-        DataGridModule
+        DropdownModule,
+        DataGridModule,
+        InputTextareaModule
     ],
     providers: [UserService],
     declarations: [UserComponent],

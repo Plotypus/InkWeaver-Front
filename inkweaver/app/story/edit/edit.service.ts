@@ -6,6 +6,36 @@ import { ApiService } from '../../shared/api.service';
 export class EditService {
     constructor(private apiService: ApiService) { }
 
+    public createStory(title: string, wiki_id: string, summary: string) {
+        this.apiService.send({
+            action: 'create_story',
+            title: title,
+            wiki_id: wiki_id,
+            summary: summary,
+        });
+    }
+
+    public addParagraph(section_id: string, text: string, succeeding_paragraph_id: string) {
+        this.apiService.send({
+            action: 'add_paragraph',
+            section_id: section_id,
+            text: text,
+            succeeding_paragraph_id: succeeding_paragraph_id
+        });
+    }
+
+    public editParagraph(section_id: string, text: string, paragraph_id: string) {
+        this.apiService.send({
+            action: 'add_paragraph',
+            section_id: section_id,
+            update: {
+                update_type: 'set_text',
+                text: text
+            },
+            paragraph_id: paragraph_id
+        });
+    }
+
     public getStoryInformation(story_id: string) {
         this.apiService.send({
             action: 'get_story_information',
@@ -33,6 +63,8 @@ export class EditService {
             section_id: section_id
         });
     }
+
+    /* -------------------- Helper methods -------------------- */
 
     public compare(obj1, obj2) {
         let expected: number = 0;
