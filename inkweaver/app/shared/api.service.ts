@@ -120,7 +120,6 @@ export class ApiService {
                         break;
                     case 'get_wiki_page':
                         this.data.page = reply;
-                        this.data.wikiDisplay = this.parser.setPageDisplay(reply);
                         break;
                     case 'get_wiki_segment':
                         reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));
@@ -130,10 +129,9 @@ export class ApiService {
                         this.data.pageid.push(reply.page_id);
                         break;
                     case 'add_segment':
+                        this.data.pageid.push(reply.segment_id);
                         break;
                     case 'add_template_heading':
-                        break;
-                    case 'add_page':
                         break;
                     case 'add_heading':
                         break;
@@ -162,6 +160,7 @@ export class ApiService {
      * @param {JSON} message - A JSON-formatted message
      */
     public send(message: any) {
+        console.log(message.action);
         message.message_id = ++this.message_id;
         this.outgoing[message.message_id] = message.action;
 

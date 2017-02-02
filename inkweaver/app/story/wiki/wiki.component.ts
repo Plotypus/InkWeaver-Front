@@ -75,9 +75,9 @@ export class WikiComponent {
                this.toAdd.data.id = this.apiService.data.pageid.pop();
                this.toAdd = {};
            }
-           else if (action == "get_wiki_segment")
+           else if (action == "get_wiki_segment" || action == 'get_wiki_page')
            {
-               this.wikiPage = this.temp;
+               this.wikiPage = this.data.page;
                this.disabled = [];
                this.icons = [];
                for (let i = 0; i < this.wikiPage.headings.length + 1; i++) {
@@ -86,31 +86,7 @@ export class WikiComponent {
                    this.wikiPageContent.push({});
                }
            }
-           else if (action == "get_wiki_page")
-           {
-               this.wikiPage = {
-                   "reply_to_id": 1,
-                   "title": "Costa Rica",
-                   "aliases": {
-                       "rich coast": "784539",
-                       "Costa Rica": "als3838"
-                   },
-                   "references": [
-                       {
-                           "link_id": "327abc",
-                           "section_id": "abc123",
-                           "paragraph_id": "abd",
-                           "text": "The rich coast ..."
-                       }
-                   ],
-                   "headings": [
-                       {
-                           "title": "Description",
-                           "text": "Costa Rica is a beautiful country.\n\nOr at least... it was."
-                       }
-                   ]
-               };
-           }
+           
        });
     }
 
@@ -250,23 +226,31 @@ export class WikiComponent {
         this.toAdd.type = this.addContent;
 
         //need to figure out how to send send new segment details
-        if (this.selectedEntry.type == "title") {
-            this.nav.push(this.toAdd);
-        }
-        else {
+        
             toParent.label = this.selectedEntry.label;
             toParent.parent = this.selectedEntry.parent;
             this.toAdd.parent = toParent;
             if (this.toAdd.type == 'category') {
                 this.toAdd.children = [];
-                this.wikiService.addSegment(this.pageName, this.nav[0].data.id);
+                this.wikiService.addSegment(this.pageName, this.selectedEntry.data.id);
             }
             else {
-                this.selectedEntry.children.push(this.toAdd);
                 this.wikiService.addPage(this.pageName, this.selectedEntry.data.id);
             }
+
+            if (this.selectedEntry.type == 'title')
+            {
+                this.nav.push(this.toAdd);
+                this.nav = this.nav.sort(this.sort);
+            }
+            else
+            {
+                this.selectedEntry.children.push(this.toAdd);
+                this.selectedEntry.children=this.selectedEntry.children.sort(this.sort);
+            }
             
-        }
+
+        
 
         //need to send this info over network and get id;
         this.addContent = this.addOptions[0]['value'];
@@ -308,4 +292,28 @@ export class WikiComponent {
             return false;
         }
     }
+
+    public sort(o1:any,o2:any)
+    {
+        if (o1.type == 'category' && o2.type == 'category')
+            return 0;
+        else if (o1.type == 'category' && o2.type == 'title')
+            return 1;
+        else if (o1.type == 'title' && o2.type == 'category')
+            return -1;
+        else if (o1.type == 'category' && o2.type == 'page')
+            return -1;
+        else if (o1.type == 'page' && o2.type == 'category')
+            return 1;
+        else if (o1.type == 'page' && o2.type == 'title')
+            return 1;
+        else if (o1.type == 'title' && o2.type == 'page')
+            return -1;
+        else
+            return 0;
+        
+    }
+
+
+
 }
