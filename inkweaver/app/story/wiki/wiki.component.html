@@ -10,14 +10,14 @@
     </footer>
 </p-dialog>
 
-<p-dialog modal="true" header="Create Heading for {{addTo}}" [(visible)]="showAddHeadingDialog"
+<p-dialog modal="true" header="Create Heading for {{addTo}}" [(visible)]="showAddHeadDialog"
           width="450" height="450" responsive="true">
 
     <input type="text" pInputText [(ngModel)]="pageName" />
     <input type="text" pInputText [(ngModel)]="addContent" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button pButton type="button" label="Create Heading" icon="fa-link" iconPos="right" (click)="addToWiki($event)"></button>
+            <button pButton type="button" label="Create Heading" icon="fa-link" iconPos="right" (click)="createHeading()"></button>
         </div>
     </footer>
 </p-dialog>
@@ -33,7 +33,7 @@
 
             
             <!--Editor-->
-            <ng-container *ngIf="wikiPage">
+            <ng-container *ngIf="wikiPage" style="max-height:400px">
                 <!--Title -->
                 <span>
                     <input type="text" size="30" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />

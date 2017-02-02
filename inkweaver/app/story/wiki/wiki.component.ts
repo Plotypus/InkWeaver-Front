@@ -162,7 +162,33 @@ export class WikiComponent {
     public addHeading()
     {
         this.addTo = this.selectedEntry.label;
+        this.addContent = "";
         this.showAddHeadDialog = true;
+    }
+
+    public createHeading() {
+        let temp = {};
+        if (this.selectedEntry.type == 'category')
+        {
+            this.wikiService.addTempleteHeading(this.pageName, this.selectedEntry.data.id);
+            temp = {
+                'title': this.pageName,
+                'text': this.addContent
+            };
+            this.wikiPage.headings.push(temp);
+        }
+        else
+        {
+            this.wikiService.addHeading(this.pageName, this.selectedEntry.data.id);
+            temp = {
+                'title': this.pageName,
+                'text': this.addContent
+            };
+            this.wikiPage.headings.push(temp);
+        }
+        this.disabled.push(true);
+        this.icons.push('fa-pencil');
+        this.wikiPageContent.push({});
     }
     public onDisable(idx: any)
     {
