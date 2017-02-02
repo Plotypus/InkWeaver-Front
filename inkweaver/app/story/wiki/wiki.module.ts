@@ -10,6 +10,7 @@ import {
     ButtonModule,
     DialogModule,
     DropdownModule,
+    InputTextModule,
     ConfirmDialogModule
     
 } from 'primeng/primeng';

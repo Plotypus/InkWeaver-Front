@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { MenuItem, TreeNode } from 'primeng/primeng';
+import { TreeNode } from 'primeng/primeng';
 
 import { WikiService } from './wiki.service';
 import { ApiService } from '../../shared/api.service';
@@ -16,163 +16,107 @@ export class WikiComponent {
     private showAddDialog: any;
     private addOptions: any;
     private addContent: any;
-    private page_name: any;
+    private pageName: any;
     private addTo: any;
-    private wiki_page: any;
+    private wikiPage: any;
+    private toAdd: TreeNode;
+    private disabled: any;
+    private icons: any;
+    private temp: any;
+    private wikiPageContent = [];
+    private showAddHeadDialog: any;
 
     constructor(
         private wikiService: WikiService,
         private apiService: ApiService) { }
 
     ngOnInit() {
-        let response = `
-                        {
-                          "reply_to_id": 1,
-                          "hierarchy": {
-                            "title": "Jurassic Park Wiki",
-                            "segment_id": "efg456",
-                            "segments": [
-                              {
-                                "title": "Location",
-                                "segment_id": "hji136",
-                                "segments": [],
-                                "pages": [
-                                  {
-                                    "title": "Costa Rica",
-                                    "page_id": "123454321"
-                                  },
-                                  {
-                                    "title": "Jurassic Park",
-                                    "page_id": "543212345"
-                                  }
-                                ]
-                              }
-                            ],
-                            "pages": []
-                          }
-                        }
-                        `
-       // let reply = JSON.parse(response);
-        this.data = this.apiService.data;
-        //let json = this.data.wiki;
-        let json = this.data.segment;
-        //let reply = JSON.parse(response);
-        this.data = this.apiService.data;
-        // json = this.data.wiki;
-        this.nav = new Array<TreeNode>();
-        let temp: TreeNode = {};
-        temp.data = new PageSummary();
-        temp.data.id = json['segment_id'];
-        temp.data.title = json['title'];
-        temp.label = json['title'];
-        temp.type = "title"
-        this.nav.push(temp);
-        for (let index in json['segments']) {
-            this.nav.push(this.jsonToWiki(json['segments'][index]));
-        }
 
+        this.data = this.apiService.data;
+        this.nav = this.data.wikiNode;
         this.addOptions = [];
         this.addOptions.push({ label: 'Category', value: 'category' });
         this.addOptions.push({ label: 'Page', value: 'page' });
         this.addContent = this.addOptions[0]['value'];
 
-
-        response = `{
-                      "reply_to_id": 1,
-                      "title": "Costa Rica",
-                      "aliases": [],
-                      "references": [],
-                      "headings": [
-                        {
-                          "title": "Description",
-                          "text": "Costa Rica is a beautiful country.\\n\\nOr at least... it was."
-                        },
-                        {
-                          "title": "Plot",
-                          "text": "Costa Rica is a beautiful country.\\n\\nOr at least... it was."
-                        },
-                        {
-                          "title": "Motives",
-                          "text": "Costa Rica is a beautiful country.\\n\\nOr at least... it was."
-                        }
-                        
-                      ]
-                    }`;
-        this.wiki_page = JSON.parse(response);
-
-
-    }
-
-    public selectPage(event: any) {
-        if (event.node.leaf) {
-            this.wikiService.getWikiPage(event.node.data.page_id);
-        }
-    }
-
-    /**
-     * Parses the Json and populates TreeNode objects so TreeTable can be used
-     * @param wikiJson
-     */
-    public jsonToWiki(wikiJson: any) {
-        let wiki: TreeNode = {};
-        let parent: TreeNode = {};
-        wiki.data = new PageSummary();
-        wiki.children = new Array<TreeNode>();
-        wiki.data.id = wikiJson["segment_id"];
-        wiki.data.title = wikiJson["title"];
-        wiki.label = wikiJson["title"];
-
-        for (let field in wikiJson) {
-            if (field === "segments") {
-                let segmentJsons = wikiJson[field];
-                for (let segment in segmentJsons) {
-                    var subsegment = this.jsonToWiki(segmentJsons[segment]);
-                    parent.label = wiki.label;
-                    parent.parent = wiki.parent;
-                    subsegment.parent = parent;
-                    wiki.children.push(subsegment);
+        this.temp = {
+            "reply_to_id": 1,
+            "title": "Character",
+            "segments": [],
+            "pages": [
+                {
+                    "title": "Costa Rica",
+                    "page_id": "123454321"
+                },
+                {
+                    "title": "Jurassic Park",
+                    "page_id": "543212345"
                 }
-
-            }
-            else if (field == "pages") {
-                var pagesJsons = wikiJson[field];
-                for (let page in pagesJsons) {
-                    var leafpage = this.jsonToPage(pagesJsons[page]);
-                    parent.label = wiki.label;
-                    parent.parent = wiki.parent;
-                    leafpage.parent = parent;
-                    wiki.children.push(leafpage);
+            ],
+            "headings": [
+                {
+                    "title": "Description",
+                    "text": "",
+                },
+                {
+                    "title": "History",
+                    "text": "",
                 }
+            ]
+        };
 
-            }
-        }
-        if (typeof wiki.children !== 'undefined' && wiki.children.length != 0) {
-
-            wiki.type = "category";
-        }
-        return wiki
+       this.apiService.messages.subscribe((action: string) => {
+           if (action == 'add_page') {
+               this.toAdd.data.id = this.apiService.data.pageid.pop();
+               this.toAdd = {};
+           }
+           else if(action == 'add_segment')
+           {
+               this.toAdd.data.id = this.apiService.data.pageid.pop();
+               this.toAdd = {};
+           }
+           else if (action == "get_wiki_segment")
+           {
+               this.wikiPage = this.temp;
+               this.disabled = [];
+               this.icons = [];
+               for (let i = 0; i < this.wikiPage.headings.length + 1; i++) {
+                   this.disabled.push(true);
+                   this.icons.push('fa-pencil');
+                   this.wikiPageContent.push({});
+               }
+           }
+           else if (action == "get_wiki_page")
+           {
+               this.wikiPage = {
+                   "reply_to_id": 1,
+                   "title": "Costa Rica",
+                   "aliases": {
+                       "rich coast": "784539",
+                       "Costa Rica": "als3838"
+                   },
+                   "references": [
+                       {
+                           "link_id": "327abc",
+                           "section_id": "abc123",
+                           "paragraph_id": "abd",
+                           "text": "The rich coast ..."
+                       }
+                   ],
+                   "headings": [
+                       {
+                           "title": "Description",
+                           "text": "Costa Rica is a beautiful country.\n\nOr at least... it was."
+                       }
+                   ]
+               };
+           }
+       });
     }
 
-    /**
-     * Parses the Json for Pages
-     * @param pageJson
-     */
-    public jsonToPage(pageJson: any) {
-        let page: TreeNode = {};
-        page.data = new PageSummary();
-        page.data.id = pageJson['page_id'];
-        page.data.title = pageJson['title'];
-        page.label = pageJson['title'];
-        page.type = "page";
-        return page;
-    }
-    /**
-     * Selects the wiki page based on wiki navigation bar clicking
-     */
-    public selectWiki() {
-        this.data.selectedPage = { 'id': '' };
-        //this.apiService.setWikiDisplay();
-    }
+
+
+ 
 
     /**
      * Switch between pages for the wiki
@@ -182,23 +126,28 @@ export class WikiComponent {
 
         //Take care of when the title page is clicked
         if (this.data.wiki.wiki_title == page.node.data.title) {
-            this.selectWiki();
+            this.wikiPage = null;
+            this.wikiService.getWikiInformation(this.data.story.wiki_id);
         }
         else if (page.node.type == "category") {
             page.node.expanded = !page.node.expanded;
             //get information for the page. 
+            this.wikiService.getWikiSegment(page.node.data.id);
+            
+            
         }
         else {
             this.data.selectedPage = page.node.data.id;
             this.wikiService.getWikiPage(page.node.data.id);
         }
+
       
     }
 
     /*
         Will toogle value of button variable to indicate whether something needs to be added or not
     */
-    public onAdd(event:any, page: any) {
+    public onAddPage(event:any, page: any) {
         this.addTo = page.label;
         this.showAddDialog = true;
         this.selectedEntry = page;
@@ -210,33 +159,92 @@ export class WikiComponent {
 
     }
 
+    public addHeading()
+    {
+        this.addTo = this.selectedEntry.label;
+        this.showAddHeadDialog = true;
+    }
+    public onDisable(idx: any)
+    {
+
+        let title = "";
+        let text = "";
+        //saving the previous state
+        if (this.disabled[idx])
+        {
+            this.icons[idx] = 'fa-check';
+            if (idx == 0) {
+                title = this.wikiPage.title;
+            }
+            else
+            {
+                title = this.wikiPage.headings[idx - 1].title;
+                text = this.wikiPage.headings[idx - 1].text;
+            }
+            let prev = {
+                        "title": title,
+                        "text": text,
+            }
+            this.wikiPageContent.splice(idx, 1, prev);
+        }
+        else {
+            //need to send the new state to the server
+            this.icons[idx] = 'fa-pencil';
+            if (this.selectedEntry.type == 'category')
+            {
+                if (idx == 0 && !(this.wikiPageContent[0].title === this.wikiPage.title)) {
+                    this.wikiService.editSegment(this.selectedEntry.data.id, 'set_title', this.wikiPage.title);
+                    this.selectedEntry.data.title = this.wikiPage.title;
+                }
+            }
+        }
+
+        this.disabled[idx] = !this.disabled[idx];
+    }
+
+    public onCancel(idx: any)
+    {
+        if (idx == 0)
+        {
+            this.wikiPage.title = this.wikiPageContent[0].title;
+        }
+        else {
+            this.wikiPage.headings[idx - 1].title = this.wikiPageContent[idx].title;
+        }
+    }
     public addToWiki() {
         //creating the new node to be added to the navigation
         
         this.showAddDialog = false;
-        let toAdd: TreeNode = {};
+        this.toAdd = {};
         let toParent: TreeNode = {};
-        toAdd.label = this.page_name;
-        toAdd.data = new PageSummary();
-        toAdd.data.title = this.page_name;
-        toAdd.type = this.addContent;
-        if (toAdd.type == 'category')
-            toAdd.children = [];
+        this.toAdd.label = this.pageName;
+        this.toAdd.data = new PageSummary();
+        this.toAdd.data.title = this.pageName;
+        this.toAdd.type = this.addContent;
+
+        //need to figure out how to send send new segment details
         if (this.selectedEntry.type == "title") {
-            this.nav.push(toAdd);
+            this.nav.push(this.toAdd);
         }
         else {
             toParent.label = this.selectedEntry.label;
             toParent.parent = this.selectedEntry.parent;
-            toAdd.parent = toParent;
-            this.selectedEntry.children.push(toAdd);
-           // this.wikiService.addPage(th)
-            toAdd.data.id = { 'oid': '0' };
+            this.toAdd.parent = toParent;
+            if (this.toAdd.type == 'category') {
+                this.toAdd.children = [];
+                this.wikiService.addSegment(this.pageName, this.nav[0].data.id);
+            }
+            else {
+                this.selectedEntry.children.push(this.toAdd);
+                this.wikiService.addPage(this.pageName, this.selectedEntry.data.id);
+            }
+            
         }
 
         //need to send this info over network and get id;
         this.addContent = this.addOptions[0]['value'];
-        this.page_name = "";
+        this.pageName = "";
     }
     public deletePage(page: any) {
         //need to find location of page

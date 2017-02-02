@@ -38,7 +38,8 @@ export class ApiService {
         wikiDisplay: '',
         wiki: new Wiki(),
         segment: new Segment(),
-        page: new Page()
+        page: new Page(),
+        pageid:[],
     }
 
     public outgoing = {};
@@ -105,13 +106,11 @@ export class ApiService {
 
                     case 'get_wiki_information':
                         this.data.wiki = reply;
-                        this.data.wikiDisplay = this.parser.setPageDisplay();
+                        this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
                         break;
                     case 'get_wiki_hierarchy':
                         this.data.segment = reply.hierarchy;
-                        this.data.wikiNode = [
-                            this.parser.segmentToTree(this.parser, reply.hierarchy)
-                        ];
+                        this.data.wikiNode = this.parser.parseWiki(reply.hierarchy);
                         break;
                     case 'get_wiki_segment_hierarchy':
                         this.data.segment = reply.hierarchy;
@@ -121,9 +120,31 @@ export class ApiService {
                         break;
                     case 'get_wiki_page':
                         this.data.page = reply;
-                        this.data.wikiDisplay = this.parser.setPageDisplay();
+                        this.data.wikiDisplay = this.parser.setPageDisplay(reply);
                         break;
-
+                    case 'get_wiki_segment':
+                        reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));
+                        this.data.page = reply;
+                        break;
+                    case 'add_page':
+                        this.data.pageid.push(reply.page_id);
+                        break;
+                    case 'add_segment':
+                        break;
+                    case 'add_template_heading':
+                        break;
+                    case 'add_page':
+                        break;
+                    case 'add_heading':
+                        break;
+                    case 'create_wiki':
+                        break;
+                    case 'edit_segment':
+                        break;
+                    case 'edit_page':
+                        break;
+                    case 'edit_heading':
+                        break;
                     default:
                         console.log('Unknown action: ' + action)
                         break;

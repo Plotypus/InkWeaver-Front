@@ -7,28 +7,28 @@ export class WikiService {
     constructor(private apiService: ApiService) { }
 
     //All the GETS
-    public getWikiInformation(wiki_id: string) {
+    public getWikiInformation(wiki_id: any) {
         this.apiService.send({
             action: 'get_wiki_information',
             wiki_id: wiki_id
         });
     }
 
-    public getWikiHierarchy(wiki_id: string) {
+    public getWikiHierarchy(wiki_id: any) {
         this.apiService.send({
             action: 'get_wiki_hierarchy',
             wiki_id: wiki_id
         });
     }
 
-    public getWikiSegmentHierarchy(segment_id: string) {
+    public getWikiSegmentHierarchy(segment_id: any) {
         this.apiService.send({
             action: 'get_wiki_segment_hierarchy',
             segment_id: segment_id
         });
     }
 
-    public getWikiSegment(sid: string)
+    public getWikiSegment(sid: any)
     {
         this.apiService.send({
            
@@ -36,7 +36,7 @@ export class WikiService {
             "segment_id": sid
         });
     }
-    public getWikiPage(page_id: string) {
+    public getWikiPage(page_id: any) {
         this.apiService.send({
             action: 'get_wiki_page',
             page_id: page_id
@@ -45,7 +45,7 @@ export class WikiService {
 
     //EDITS
     //update type: set_title;
-    public editSegment(segment_id: string, update_type:string, new_text: string)
+    public editSegment(segment_id: any, update_type:string, new_text: string)
     {
         this.apiService.send({
                 action: 'edit_segment',
@@ -57,7 +57,7 @@ export class WikiService {
                 });
     }
 
-    public editPage(page_id: string, update_type: string, new_text: string)
+    public editPage(page_id: any, update_type: string, new_text: string)
     {
         this.apiService.send({
 
@@ -72,7 +72,7 @@ export class WikiService {
 
     //update_type: {"set_title" | "set_text"
 
-    public editHeading(page_id: string, heading_title:string,update_type: string, new_text: string)
+    public editHeading(page_id: any, heading_title:string,update_type: string, new_text: string)
     {
         this.apiService.send({
 
@@ -90,7 +90,7 @@ export class WikiService {
     }
 
     //ADD
-    public addSegment(title:string, pid:string)
+    public addSegment(title:string, pid:any)
     {
         this.apiService.send({
 
@@ -100,7 +100,7 @@ export class WikiService {
         });
     }
 
-    public addTempleteHeading(title:string,sid:string)
+    public addTempleteHeading(title:string,sid:any)
     {
         this.apiService.send({
             "action": "add_template_heading",
@@ -110,7 +110,7 @@ export class WikiService {
     }
 
     //parent_id == segment_id
-    public addPage(title:string,sid:string)
+    public addPage(title:string,sid:any)
     {
         this.apiService.send({
 
@@ -120,7 +120,7 @@ export class WikiService {
         });
     }
 
-    public addHeading(title: string, page_id: string)
+    public addHeading(title: string, page_id: any)
     {
         this.apiService.send({
             

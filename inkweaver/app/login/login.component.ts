@@ -27,6 +27,14 @@ export class LoginComponent {
             username: '',
             password: ''
         };
+        
+        this.apiService.connect();
+        setTimeout(() => {
+            this.userService.getUserPreferences();
+            this.userService.getUserStories();
+            this.userService.getUserWikis();
+            this.router.navigate(['/user']); }, 3000);
+        
     }
 
     public signIn() {
@@ -36,10 +44,10 @@ export class LoginComponent {
         //        console.log(document.cookie);
         //    });
 
-        this.apiService.connect();
-        this.userService.getUserPreferences();
-        this.userService.getUserStories();
-        this.userService.getUserWikis();
-        this.router.navigate(['/user']);
+       
     }
+
+    public delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 }
