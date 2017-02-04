@@ -17,7 +17,19 @@
     <input type="text" pInputText [(ngModel)]="addContent" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button pButton type="button" label="Create Heading" icon="fa-link" iconPos="right" (click)="createHeading()"></button>
+            <button pButton type="button" label="Create Heading" icon="fa-link" iconPos="right" (click)="createHeading(false)"></button>
+            <button pButton type="button" label="Create Heading & Continue" icon="fa-link" iconPos="right" (click)="createHeading(true)"></button>
+        </div>
+    </footer>
+</p-dialog>
+
+<p-dialog modal="true" header="Do you want to delete {{toDelete}}" [(visible)]="showDeleteDialog"
+          width="450" height="450" responsive="true">
+        All the content in {{toDelete}} will be gone and impossible to recover. 
+    <footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button pButton type="button" label="Yes" icon="fa-link" iconPos="right" (click)="onDeletePage(true)"></button>
+            <button pButton type="button" label="Cancel" icon="fa-link" iconPos="right" (click)="onDeletePage(false)"></button>
         </div>
     </footer>
 </p-dialog>
@@ -60,6 +72,8 @@
                 <ng-container *ngIf="wikiPage.references">
                     <div>References</div>
                 </ng-container>
+                <button pButton type="button" icon="fa-floppy-o" (click)="onSavePage()"></button>
+                <button pButton type="button" icon="fa-trash-o" (click)="onShow()"></button>
             </ng-container>
             <div *ngIf="!wikiPage">
                 <p-editor [(ngModel)]="data.wikiDisplay">
@@ -132,15 +146,15 @@
                     <template let-node="rowData" pTemplate="body">
                         <span *ngIf="node.type == 'page'">
                             {{node.data.title}}
-                            <button pButton type="button" label="-" (click)="onDelete($event,node)"></button>
+                            
                         </span>
                         <span *ngIf="node.type == 'category'">
                             {{node.data.title}}
-                            <button pButton type="button" label="+" (click)="onAddPage($event,node)"></button>
+                            <button pButton type="button" icon="fa-plus" (click)="onAddPage($event,node)"></button>
                         </span>
                         <span *ngIf="node.type == 'title'">
                             {{node.data.title}}
-                            <button pButton type="button" label="+" (click)="onAddPage($event,node)"></button>
+                            <button pButton type="button" icon="fa-plus" (click)="onAddPage($event,node)"></button>
                         </span>
                     </template>
 

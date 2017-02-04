@@ -131,6 +131,41 @@ export class WikiService {
         });
     }
 
+    //Delete
+    public deleteSegment(sid: any)
+    {
+        this.apiService.send({
+            
+            "action": "delete_segment",
+            "segment_id": sid
+        });
+    }
+
+    public deletePage(pid: any) {
+        this.apiService.send({
+
+            "action": "delete_page",
+            "page_id": pid
+        });
+    }
+
+    public deleteHeading(pid: any,title:any) {
+        this.apiService.send({
+
+            "action": "delete_heading",
+            "page_id": pid,
+            "heading_title": title
+
+        });
+    }
+
+    public deleteAlias(aid: any) {
+        this.apiService.send({
+
+            "action": "delete_alias",
+            "alias_id": aid
+        });
+    }
     //CREATES
     public createWiki(title:string,summary:string)
     {

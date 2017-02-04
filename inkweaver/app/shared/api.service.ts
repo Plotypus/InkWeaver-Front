@@ -57,7 +57,7 @@ export class ApiService {
 
                 let response: string = res.data;
                 let reply = JSON.parse(response);
-                let message_id: number = reply.with_reply_id;
+                let message_id: number = reply.reply_to_id;
                 let action: string = this.outgoing[message_id];
 
                 switch (action) {
@@ -142,6 +142,14 @@ export class ApiService {
                     case 'edit_page':
                         break;
                     case 'edit_heading':
+                        break;
+                    case 'delete_segment':
+                        break;
+                    case 'delete_page':
+                        break;
+                    case 'delete_heading':
+                        break;
+                    case 'delete_alias':
                         break;
                     default:
                         console.log('Unknown action: ' + action)
