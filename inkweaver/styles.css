@@ -15,16 +15,22 @@
 
 .ui-widget-header {
     border: none;
+}
+
+.ui-panel-titlebar {
+    border: none;
     color: var(--light-gray);
-    background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
+    background: var(--dark-blue);
 }
 
 .ui-panel, .ui-panel-content-wrapper, .ui-panel-content, .ui-grid, .ui-grid-row {
+    padding: 0 !important;
     height: 100% !important;
+    background: var(--dark-blue);
 }
 
-.ui-grid-col-9 {
-    background: var(--dark-blue);
+.master-menu {
+    float: right;
 }
 
 /* ----- Login ----- */
@@ -37,20 +43,18 @@
 }
 
     .login .ui-panel-titlebar {
-        background: var(--light-gray) !important;
+        color: var(--dark-blue);
+        background: var(--light-gray);
     }
 
     .login .ui-panel-content {
-        padding: 5%;
+        background: white;
+        padding: 5% !important;
+        color: var(--light-blue);
     }
 
     .login table {
         margin-left: 25%;
-    }
-
-    .login label {
-        margin-right: 2%;
-        color: var(--light-blue);
     }
 
 .login-warn {
@@ -59,15 +63,10 @@
 }
 
 /* ----- User ----- */
-user > p-panel > .ui-panel > .ui-panel-content-wrapper > .ui-panel-content {
-    padding: 0 !important;
-}
-
 user .ui-datagrid-header {
     border-radius: 0;
-    margin: 0 !important;
+    background: moccasin;
     color: var(--dark-blue);
-    background: moccasin !important;
 }
 
 user .ui-paginator {
@@ -75,64 +74,69 @@ user .ui-paginator {
 }
 
 user .ui-datagrid-content {
-    padding: 0;
     border: none;
+    padding: 10px;
     border-top: 3px solid var(--dark-blue);
 }
 
-.story-tile {
-    margin: 10px;
+.story-tile .ui-panel-titlebar, .new-story-tile .ui-panel-titlebar {
+    color: white;
+    background: var(--dark-blue) !important;
+    cursor: pointer;
+    border-radius: 0;
+    text-align: center;
+}
+
+.story-tile .ui-panel-content-wrapper {
+    margin: 0;
     cursor: pointer;
     text-align: center;
     background: var(--light-blue);
     border: 2px solid var(--dark-blue);
 }
 
-.new-story-tile {
-    margin: 10px;
+.new-story-tile .ui-panel-content-wrapper {
+    margin: 10;
     cursor: pointer;
     text-align: center;
-    border: 2px dashed var(--dark-blue);
+    background: white;
+    border: 2px solid var(--dark-blue);
 }
 
-    .new-story-tile .ui-panel-titlebar, .story-tile .ui-panel-titlebar {
-        color: white;
-        border-radius: 0;
-        background: var(--dark-blue) !important;
-    }
-
-    .story-tile .fa-book, .new-story-tile .fa-plus-square-o {
-        margin: 5%;
-        font-size: 4em;
-    }
+.story-tile .fa-book, .new-story-tile .fa-plus-square-o {
+    margin: 5%;
+    font-size: 4em;
+}
 
 /* ----- Title ----- */
 story .ui-panel-titlebar {
+    min-height: 95px;
     position: relative;
     padding: 0 !important;
-    min-height: 95px !important;
-    border-radius: 0 !important;
     font-size: 2em;
     text-align: center;
     text-transform: uppercase;
 }
 
-    story .ui-panel-titlebar p {
-        margin: 5px 0 0 0;
-        font-size: 0.5em;
-    }
+story .ui-widget-header {
+    background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue));
+}
 
-story .ui-panel-content {
-    padding: 0 !important;
+story .ui-panel-titlebar p {
+    font-size: 0.5em;
+    margin: 5px 0 0 0;
 }
 
 /* ----- Menu ----- */
 .menu {
     right: 0;
-    bottom: 0;
     padding: 0;
     height: 100%;
     position: absolute;
+}
+
+.menu .ui-widget-header {
+    background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
 }
 
     .menu .ui-tabmenu {
@@ -140,23 +144,23 @@ story .ui-panel-content {
     }
 
     .menu .ui-tabmenu-nav {
+        padding: 0;
         height: 100%;
-        padding: 0 !important;
-        border-radius: 0px !important;
+        border-radius: 0px;
     }
 
     .menu .ui-tabmenuitem {
         width: 33%;
         height: 100%;
+        border: none;
         margin: 0 !important;
-        border: none !important;
         background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
     }
 
         .menu .ui-tabmenuitem.ui-state-active {
             z-index: 10;
             background: var(--light-blue) !important;
-            box-shadow: 0 0 10px 2px var(--dark-blue) !important;
+            box-shadow: 0 0 10px 2px var(--dark-blue);
         }
 
     .menu .ui-menuitem-link {
@@ -297,6 +301,14 @@ code {
     margin-left: 25px;
 }
 
+p-dialog table,
+p-dialog input,
+p-dialog textarea,
+p-dialog .ui-dropdown {
+    width: 100% !important;
+    margin-bottom: 5px !important;
+}
+
 p-dialog .ui-dialog-content {
     height: 70%;
 }
@@ -314,16 +326,9 @@ p-dialog .ui-dropdown.ui-state-focus .ui-dropdown-panel {
     display: block !important;
 }
 
-p-dialog .ui-dialog-titlebar-close {
+p-dialog .ui-dialog-titlebar, p-dialog .ui-dialog-titlebar-close {
     color: white;
-}
-
-p-dialog table,
-p-dialog input,
-p-dialog textarea,
-p-dialog .ui-dropdown {
-    margin-bottom: 5px;
-    width: 100% !important;
+    background: var(--light-blue);
 }
 
 /* -------------------- Master Styles -------------------- */

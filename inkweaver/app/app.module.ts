@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { PanelModule, MenuModule, ButtonModule } from 'primeng/primeng';
+
 // Modules, services, and components
 import { RoutingModule } from './routing.module';
 import { SharedModule } from './shared/shared.module';
@@ -14,6 +16,9 @@ import { AppComponent } from './app.component';
     imports: [
         FormsModule,
         BrowserModule,
+        PanelModule,
+        MenuModule,
+        ButtonModule,
         RoutingModule,
         SharedModule,
         LoginModule,

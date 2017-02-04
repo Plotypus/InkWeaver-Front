@@ -37,9 +37,15 @@ export class LoginComponent {
         //    });
 
         this.apiService.connect();
+        this.apiService.messages.subscribe((event: string) => {
+            this.userService.getUserPreferences();
+            this.userService.getUserStories();
+            this.userService.getUserWikis();
+            this.router.navigate(['/user']);
+        });
         this.userService.getUserPreferences();
         this.userService.getUserStories();
         this.userService.getUserWikis();
-        this.router.navigate(['/user']);
+        return false;
     }
 }

@@ -56,90 +56,94 @@ export class ApiService {
 
                 let response: string = res.data;
                 let reply = JSON.parse(response);
-                let message_id: number = reply.with_reply_id;
-                let action: string = this.outgoing[message_id];
+                if (reply.event) {
+                    return reply.event;
+                } else {
+                    let message_id: number = reply.reply_to_id;
+                    let action: string = this.outgoing[message_id];
 
-                switch (action) {
-                    case 'get_user_preferences':
-                        this.data.user = reply;
-                        break;
-                    case 'get_user_stories':
-                        this.data.stories = reply.stories;
-                        this.data.stories.push({
-                            story_id: null,
-                            title: null,
-                            access_level: null
-                        });
-                        break;
-                    case 'get_user_wikis':
-                        this.data.wikis = reply.wikis;
-                        break;
+                    switch (action) {
+                        case 'get_user_preferences':
+                            this.data.user = reply;
+                            break;
+                        case 'get_user_stories':
+                            this.data.stories = reply.stories;
+                            this.data.stories.push({
+                                story_id: null,
+                                title: null,
+                                access_level: null
+                            });
+                            break;
+                        case 'get_user_wikis':
+                            this.data.wikis = reply.wikis;
+                            break;
 
-                    case 'create_story':
-                        this.send({
-                            action: 'get_story_hierarchy',
-                            story_id: reply.story_id
-                        });
-                    case 'get_story_information':
-                        this.data.story = reply;
-                        this.send({
-                            action: 'get_wiki_information',
-                            wiki_id: reply.wiki_id
-                        });
-                        this.send({
-                            action: 'get_wiki_hierarchy',
-                            wiki_id: reply.wiki_id
-                        });
-                        break;
-                    case 'get_story_hierarchy':
-                        this.data.section = reply.hierarchy;
-                        this.data.storyNode = [
-                            this.parser.sectionToTree(this.parser, reply.hierarchy)
-                        ];
-                        break;
-                    case 'get_section_hierarchy':
-                        this.data.section = reply.hierarchy;
-                        this.data.storyNode = [
-                            this.parser.sectionToTree(this.parser, reply.hierarchy)
-                        ];
-                        break;
-                    case 'get_section_content':
-                        this.data.content = reply.content;
-                        this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
-                        this.data.oldObj = this.parser.parseHtml(this.data.storyDisplay);
-                        break;
+                        case 'create_story':
+                            this.send({
+                                action: 'get_story_hierarchy',
+                                story_id: reply.story_id
+                            });
+                        case 'get_story_information':
+                            this.data.story = reply;
+                            this.send({
+                                action: 'get_wiki_information',
+                                wiki_id: reply.wiki_id
+                            });
+                            this.send({
+                                action: 'get_wiki_hierarchy',
+                                wiki_id: reply.wiki_id
+                            });
+                            break;
+                        case 'get_story_hierarchy':
+                            this.data.section = reply.hierarchy;
+                            this.data.storyNode = [
+                                this.parser.sectionToTree(this.parser, reply.hierarchy)
+                            ];
+                            break;
+                        case 'get_section_hierarchy':
+                            this.data.section = reply.hierarchy;
+                            this.data.storyNode = [
+                                this.parser.sectionToTree(this.parser, reply.hierarchy)
+                            ];
+                            break;
+                        case 'get_section_content':
+                            this.data.content = reply.content;
+                            this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
+                            this.data.oldObj = this.parser.parseHtml(this.data.storyDisplay);
+                            break;
 
-                    case 'create_wiki':
-                        this.data.wiki = reply;
-                        break
-                    case 'get_wiki_information':
-                        this.data.wiki = reply;
-                        this.data.wikiDisplay = this.parser.setPageDisplay();
-                        break;
-                    case 'get_wiki_hierarchy':
-                        this.data.segment = reply.hierarchy;
-                        this.data.wikiNode = [
-                            this.parser.segmentToTree(this.parser, reply.hierarchy)
-                        ];
-                        break;
-                    case 'get_wiki_segment_hierarchy':
-                        this.data.segment = reply.hierarchy;
-                        this.data.wikiNode = [
-                            this.parser.segmentToTree(this.parser, reply.hierarchy)
-                        ];
-                        break;
-                    case 'get_wiki_page':
-                        this.data.page = reply;
-                        this.data.tooltip.text = reply.title;
-                        this.data.wikiDisplay = this.parser.setPageDisplay();
-                        break;
+                        case 'create_wiki':
+                            this.data.wiki = reply;
+                            break
+                        case 'get_wiki_information':
+                            this.data.wiki = reply;
+                            this.data.wikiDisplay = this.parser.setPageDisplay();
+                            break;
+                        case 'get_wiki_hierarchy':
+                            this.data.segment = reply.hierarchy;
+                            this.data.wikiNode = [
+                                this.parser.segmentToTree(this.parser, reply.hierarchy)
+                            ];
+                            break;
+                        case 'get_wiki_segment_hierarchy':
+                            this.data.segment = reply.hierarchy;
+                            this.data.wikiNode = [
+                                this.parser.segmentToTree(this.parser, reply.hierarchy)
+                            ];
+                            break;
+                        case 'get_wiki_page':
+                            this.data.page = reply;
+                            this.data.tooltip.text = reply.title;
+                            this.data.wikiDisplay = this.parser.setPageDisplay();
+                            break;
 
-                    default:
-                        console.log('Unknown action: ' + action)
-                        break;
+                        default:
+                            console.log('Unknown action: ' + action)
+                            break;
+                    }
+                    delete this.outgoing[message_id];
+                    return action;
                 }
-                delete this.outgoing[message_id];
-                return action;
             });
         this.messages.subscribe((action: string) => {
             console.log(action);

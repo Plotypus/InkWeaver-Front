@@ -16,12 +16,15 @@ export class EditService {
     }
 
     public addParagraph(section_id: string, text: string, succeeding_paragraph_id: string) {
-        this.apiService.send({
+        let p: any = {
             action: 'add_paragraph',
             section_id: section_id,
-            text: text,
-            succeeding_paragraph_id: succeeding_paragraph_id
-        });
+            text: text
+        };
+        if (succeeding_paragraph_id) {
+            p.succeeding_paragraph_id = succeeding_paragraph_id
+        }
+        this.apiService.send(p);
     }
 
     public editParagraph(section_id: string, text: string, paragraph_id: string) {
@@ -66,31 +69,46 @@ export class EditService {
 
     /* -------------------- Helper methods -------------------- */
 
-    public compare(obj1, obj2) {
-        let expected: number = 0;
-        for (let i = 0; i < obj2.length; i++) {
-            let obj: any = obj2[i];
+    public compare(obj1: any, obj2: any, section_id: string) {
+        // Delete paragraphs that no longer exist
+        for (let id of obj1) {
+            if (!obj2[id]) {
+                console.log('Delete paragraph ' + id);
+                for (let link of obj1[id].links) {
+                    console.log('Delete link ' + link.id);
+                }
+            }
+        }
 
-            if (obj.index) {
-                if (obj.index != expected) {
-                    console.log('Delete paragraph at index ' + i);
-                } else {
-                    let oldObj = obj1[expected];
+        // Edit existing paragraphs
+        for (let id of obj2) {
+            this.editParagraph(section_id, obj2[id].text, obj2[id].id);
 
-                    console.log('Edit paragraph at index ' + i);
-                    for (let link of oldObj.links) {
-                        console.log('Remove link ' + link + ' at paragraph ' + i);
-                    }
-                    for (let link of obj.links) {
-                        console.log('Add link ' + link + ' at paragraph ' + i);
+            // Links
+            let i: number = obj1[id].links.length;
+            while (i--) {
+                let j: number = obj2[id].links.length;
+                while (j--) {
+                    if (obj1[id].links[i].id == obj2[id].links[j].id &&
+                        obj1[id].links[i].text == obj2[id].links[j].text) {
+                        obj1[id].links = obj1[id].links.splice(i, 1);
+                        obj2[id].links = obj2[id].links.splice(j, 1);
                     }
                 }
-                expected++;
-            } else {
-                console.log('Add paragraph at index ' + i);
-                for (let link of obj.links) {
-                    console.log('Add link ' + link + ' at paragraph ' + i);
-                }
+            }
+            for (let i = 0; i < obj1[id].links.length; i++) {
+                console.log('Delete link ' + obj1[id].links[i].id);
+            }
+            for (let i = 0; i < obj2[id].links.length; i++) {
+                console.log('Add link ' + obj2[id].links[i].id)
+            }
+        }
+
+        // Add new paragraphs
+        for (let p of obj2.add) {
+            this.addParagraph(section_id, p.text, p.succeeding_paragraph_id);
+            for (let i = 0; i < p.links.length; i++) {
+                console.log('Add link ' + p.links[i].id);
             }
         }
     }

@@ -223,7 +223,7 @@ export class EditComponent {
 
     public save() {
         let newObj = this.parserService.parseHtml(this.editorRef.innerHTML);
-        this.editService.compare(this.data.oldObj, newObj);
+        this.editService.compare(this.data.oldObj, newObj, this.data.section.section_id);
         this.data.oldObj = newObj;
     }
 }
