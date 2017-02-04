@@ -185,8 +185,13 @@ export class ApiService {
     public send(message: any) {
         message.message_id = ++this.message_id;
         this.outgoing[message.message_id] = message.action;
+        console.log(message);
 
-        this.data.inflight = true;
+        if (!(message.action == 'get_wiki_page' && message.source == 'edit')) {
+            this.data.inflight = true;
+        }
+
+        delete message.source
         this.messages.next(message);
     }
 }

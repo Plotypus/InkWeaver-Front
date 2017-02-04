@@ -81,7 +81,7 @@ export class EditService {
         }
 
         // Edit existing paragraphs
-        for (let id of obj2) {
+        for (let id in obj2) {
             this.editParagraph(section_id, obj2[id].text, obj2[id].id);
 
             // Links

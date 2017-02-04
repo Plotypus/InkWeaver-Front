@@ -104,18 +104,18 @@ export class EditComponent {
                     thread.addEventListener('click', (event: any) => {
                         event.preventDefault();
                         let pageId: string = thread.getAttribute('href');
-                        this.wikiService.getWikiPage(pageId);
+                        this.wikiService.getWikiPage(JSON.parse(pageId), 'edit');
                         this.router.navigate(['/story/wiki']);
                     });
                     thread.addEventListener('mouseenter', (event: any) => {
                         let top: number = event.target.offsetTop + 70;
                         this.data.tooltip = {
-                            text: thread.innerHTML,
+                            text: '',
                             display: 'block',
                             top: top + 'px',
                             left: event.target.offsetLeft + 'px'
                         };
-                        //this.wikiService.getWikiPage(thread.getAttribute('href'));
+                        this.wikiService.getWikiPage(JSON.parse(thread.getAttribute('href')), 'edit');
                     });
                     thread.addEventListener('mouseleave', (event: any) => {
                         this.data.tooltip.display = 'none';

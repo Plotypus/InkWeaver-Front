@@ -28,37 +28,34 @@ export class WikiService {
         });
     }
 
-    public getWikiSegment(sid: any)
-    {
+    public getWikiSegment(sid: any) {
         this.apiService.send({
-           
             "action": "get_wiki_segment",
             "segment_id": sid
         });
     }
-    public getWikiPage(page_id: any) {
+    public getWikiPage(page_id: any, source: string = 'wiki') {
         this.apiService.send({
             action: 'get_wiki_page',
-            page_id: page_id
+            page_id: page_id,
+            source: source
         });
     }
 
     //EDITS
     //update type: set_title;
-    public editSegment(segment_id: any, update_type:string, new_text: string)
-    {
+    public editSegment(segment_id: any, update_type: string, new_text: string) {
         this.apiService.send({
-                action: 'edit_segment',
-                "segment_id": segment_id,
-                "update": {
-                    "update_type": "set_title",
-                    "title": new_text
-                    }
-                });
+            action: 'edit_segment',
+            "segment_id": segment_id,
+            "update": {
+                "update_type": "set_title",
+                "title": new_text
+            }
+        });
     }
 
-    public editPage(page_id: any, update_type: string, new_text: string)
-    {
+    public editPage(page_id: any, update_type: string, new_text: string) {
         this.apiService.send({
 
             "action": "edit_page",
@@ -72,8 +69,7 @@ export class WikiService {
 
     //update_type: {"set_title" | "set_text"
 
-    public editHeading(page_id: any, heading_title:string,update_type: string, new_text: string)
-    {
+    public editHeading(page_id: any, heading_title: string, update_type: string, new_text: string) {
         this.apiService.send({
 
             "action": "edit_heading",
@@ -90,8 +86,7 @@ export class WikiService {
     }
 
     //ADD
-    public addSegment(title:string, pid:any)
-    {
+    public addSegment(title: string, pid: any) {
         this.apiService.send({
 
             "action": "add_segment",
@@ -100,8 +95,7 @@ export class WikiService {
         });
     }
 
-    public addTempleteHeading(title:string,sid:any)
-    {
+    public addTempleteHeading(title: string, sid: any) {
         this.apiService.send({
             "action": "add_template_heading",
             "title": title,
@@ -110,8 +104,7 @@ export class WikiService {
     }
 
     //parent_id == segment_id
-    public addPage(title:string,sid:any)
-    {
+    public addPage(title: string, sid: any) {
         this.apiService.send({
 
             "action": "add_page",
@@ -120,10 +113,9 @@ export class WikiService {
         });
     }
 
-    public addHeading(title: string, page_id: any)
-    {
+    public addHeading(title: string, page_id: any) {
         this.apiService.send({
-            
+
             "action": "add_heading",
             "title": title,
             "page_id": page_id,
@@ -132,10 +124,9 @@ export class WikiService {
     }
 
     //Delete
-    public deleteSegment(sid: any)
-    {
+    public deleteSegment(sid: any) {
         this.apiService.send({
-            
+
             "action": "delete_segment",
             "segment_id": sid
         });
@@ -149,7 +140,7 @@ export class WikiService {
         });
     }
 
-    public deleteHeading(pid: any,title:any) {
+    public deleteHeading(pid: any, title: any) {
         this.apiService.send({
 
             "action": "delete_heading",
@@ -167,11 +158,10 @@ export class WikiService {
         });
     }
     //CREATES
-    public createWiki(title:string,summary:string)
-    {
+    public createWiki(title: string, summary: string) {
         this.apiService.send(
             {
-                
+
                 "action": "create_wiki",
                 "title": title,
                 "summary": summary

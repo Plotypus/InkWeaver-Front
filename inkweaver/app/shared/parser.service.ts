@@ -45,7 +45,7 @@ export class ParserService {
 
         return nav;
     }
-    public jsonToWiki(wikiJson: any, par:any): TreeNode {
+    public jsonToWiki(wikiJson: any, par: any): TreeNode {
         let wiki: TreeNode = {};
         let parent: TreeNode = {};
         wiki.data = new PageSummary();
@@ -59,8 +59,8 @@ export class ParserService {
                 for (let segment in segmentJsons) {
                     parent.label = wiki.label;
                     parent.parent = par;
-                    
-                    var subsegment = this.jsonToWiki(segmentJsons[segment],parent);
+
+                    var subsegment = this.jsonToWiki(segmentJsons[segment], parent);
                     subsegment.parent = parent;
                     wiki.children.push(subsegment);
                 }
@@ -72,9 +72,9 @@ export class ParserService {
                     parent.label = wiki.label;
                     parent.parent = par;
 
-                  
+
                     var leafpage = this.jsonToPage(pagesJsons[page]);
-                      leafpage.parent = parent;
+                    leafpage.parent = parent;
                     wiki.children.push(leafpage);
                 }
 
@@ -140,7 +140,7 @@ export class ParserService {
         let content: string = '';
         for (let i = 0; i < paragraphs.length; i++) {
             if (paragraphs[i].paragraph_id) {
-                content += '<p><code>' + paragraphs[i].paragraph_id + '</code>'
+                content += '<p><code>' + JSON.stringify(paragraphs[i].paragraph_id) + '</code>'
                     + paragraphs[i].text + '</p>';
             }
         }
@@ -153,7 +153,7 @@ export class ParserService {
     public setWikiDisplay(reply: any) {
         let html: string = "";
 
-             
+
         html += "<h1>" + reply["wiki_title"] + "</h1>";
 
         for (let idx in reply['users']) {
@@ -164,8 +164,8 @@ export class ParserService {
 
         return html;
 
-                
-            
+
+
     }
     public setPageDisplay(reply: any) {
 
