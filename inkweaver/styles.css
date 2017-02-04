@@ -201,7 +201,11 @@ story .ui-panel-content {
     background: var(--light-gray) !important;
 }
 
-.ui-editor-content {
+.wiki .ui-editor-content {
+    background: white;
+}
+
+.editor .ui-editor-content {
     background: white;
     height: 425px !important;
 }

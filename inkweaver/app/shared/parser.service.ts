@@ -28,6 +28,80 @@ export class ParserService {
         return treeNode;
     }
 
+    public parseWiki(json: any) {
+        let nav = new Array<TreeNode>();
+        let temp: TreeNode = {};
+        temp.data = new PageSummary();
+        temp.data.id = json['segment_id'];
+        temp.data.title = json['title'];
+        temp.label = json['title'];
+        temp.type = "title"
+        nav.push(temp);
+        for (let index in json['segments']) {
+            nav.push(this.jsonToWiki(json['segments'][index], {}));
+        }
+        for (let index in json['pages'])
+            nav.push(this.jsonToPage(json['pages'][index]));
+
+        return nav;
+    }
+    public jsonToWiki(wikiJson: any, par:any): TreeNode {
+        let wiki: TreeNode = {};
+        let parent: TreeNode = {};
+        wiki.data = new PageSummary();
+        wiki.children = new Array<TreeNode>();
+        wiki.data.id = wikiJson["segment_id"];
+        wiki.data.title = wikiJson["title"];
+        wiki.label = wikiJson["title"];
+        for (let field in wikiJson) {
+            if (field === "segments") {
+                let segmentJsons = wikiJson[field];
+                for (let segment in segmentJsons) {
+                    parent.label = wiki.label;
+                    parent.parent = par;
+                    
+                    var subsegment = this.jsonToWiki(segmentJsons[segment],parent);
+                    subsegment.parent = parent;
+                    wiki.children.push(subsegment);
+                }
+
+            }
+            else if (field == "pages") {
+                var pagesJsons = wikiJson[field];
+                for (let page in pagesJsons) {
+                    parent.label = wiki.label;
+                    parent.parent = par;
+
+                  
+                    var leafpage = this.jsonToPage(pagesJsons[page]);
+                      leafpage.parent = parent;
+                    wiki.children.push(leafpage);
+                }
+
+            }
+        }
+        if (typeof wiki.children !== 'undefined' && wiki.children.length != 0) {
+
+            wiki.type = "category";
+        }
+        return wiki
+    }
+
+    /**
+     * Parses the Json for Pages
+     * @param pageJson
+     */
+    public jsonToPage(pageJson: any): TreeNode {
+        let page: TreeNode = {};
+        page.data = new PageSummary();
+        page.data.id = pageJson['page_id'];
+        page.data.title = pageJson['title'];
+        page.label = pageJson['title'];
+        page.type = "page";
+
+        return page;
+    }
+
     public segmentToTree(parserService: ParserService, wiki: Segment): TreeNode {
         let treeNode: TreeNode = {};
 
@@ -73,7 +147,25 @@ export class ParserService {
     /**
      * Set the display for the wiki
      */
-    public setPageDisplay(): string {
+    public setWikiDisplay(reply: any) {
+        let html: string = "";
+
+             
+        html += "<h1>" + reply["wiki_title"] + "</h1>";
+
+        for (let idx in reply['users']) {
+            html += "<br> By " + reply['users'][idx].name;
+        }
+
+        html += "<br> <h2> Summary </h2> <br> " + reply["summary"];
+
+        return html;
+
+                
+            
+    }
+    public setPageDisplay(reply: any) {
+
         return 'Page';
     }
 
