@@ -38,12 +38,30 @@ export class ParserService {
         temp.type = "title"
         nav.push(temp);
         for (let index in json['segments']) {
-            nav.push(this.jsonToWiki(json['segments'][index], {}));
+            nav.push(this.jsonToWiki(json['segments'][index], null));
         }
         for (let index in json['pages'])
             nav.push(this.jsonToPage(json['pages'][index]));
 
         return nav;
+    }
+
+    public parseLinkTable(json: any) : any
+    { 
+        
+        let curr: any;
+        let links = {};
+        for (let i = 0; i < json.length; i++) {
+            curr = json[i];
+            
+            links[JSON.stringify(curr.link_id)] = {
+                    'name': curr.name,
+                    'page_id': curr.page_id
+                }
+            ;
+        }
+
+        return links;
     }
     public jsonToWiki(wikiJson: any, par: any): TreeNode {
         let wiki: TreeNode = {};
@@ -58,9 +76,11 @@ export class ParserService {
                 let segmentJsons = wikiJson[field];
                 for (let segment in segmentJsons) {
                     parent.label = wiki.label;
-                    parent.parent = par;
-
+                    if(par != null)
+                        parent.parent = par;
+                    
                     var subsegment = this.jsonToWiki(segmentJsons[segment], parent);
+                    subsegment.type = "category";
                     subsegment.parent = parent;
                     wiki.children.push(subsegment);
                 }

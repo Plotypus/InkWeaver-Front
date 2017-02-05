@@ -11,7 +11,6 @@ import { PageSummary } from '../../models/page-summary.model';
 })
 export class WikiComponent {
     private data: any;
-    private nav: any;
     private selectedEntry: TreeNode;
     private showAddDialog: any;
     private addOptions: any;
@@ -27,6 +26,7 @@ export class WikiComponent {
     private showAddHeadDialog: any;
     private showDeleteDialog: any;
     private toDelete: any;
+    private nav: any;
 
     constructor(
         private wikiService: WikiService,
@@ -35,49 +35,15 @@ export class WikiComponent {
     ngOnInit() {
 
         this.data = this.apiService.data;
-        this.nav = this.data.wikiNode;
+        this.nav = this.apiService.data.wikiNav;
         this.addOptions = [];
         this.addOptions.push({ label: 'Category', value: 'category' });
         this.addOptions.push({ label: 'Page', value: 'page' });
         this.addContent = this.addOptions[0]['value'];
 
-        this.temp = {
-            "reply_to_id": 1,
-            "title": "Character",
-            "segments": [],
-            "pages": [
-                {
-                    "title": "Costa Rica",
-                    "page_id": "123454321"
-                },
-                {
-                    "title": "Jurassic Park",
-                    "page_id": "543212345"
-                }
-            ],
-            "headings": [
-                {
-                    "title": "Description",
-                    "text": "",
-                },
-                {
-                    "title": "History",
-                    "text": "",
-                }
-            ]
-        };
 
        this.apiService.messages.subscribe((action: string) => {
-           if (action == 'add_page') {
-               this.toAdd.data.id = this.apiService.data.pageid.pop();
-               this.toAdd = {};
-           }
-           else if(action == 'add_segment')
-           {
-               this.toAdd.data.id = this.apiService.data.pageid.pop();
-               this.toAdd = {};
-           }
-           else if (action == "get_wiki_segment" || action == 'get_wiki_page')
+         if (action == "get_wiki_segment" || action == 'get_wiki_page')
            {
                this.wikiPage = this.data.page;
                this.disabled = [true];
@@ -96,6 +62,10 @@ export class WikiComponent {
                    });
                }
            }
+           else if (action == "get_wiki_hierarchy")
+         {
+             this.nav = this.apiService.data.wikiNav;
+         }
            
        });
     }
@@ -141,11 +111,7 @@ export class WikiComponent {
         this.pageName = "";
         event.stopPropagation();
     }
-    public onDelete(event:any,page: any) {
-        this.deletePage(page);
-        event.stopPropagation();
 
-    }
 
     public addHeading()
     {
@@ -270,7 +236,7 @@ export class WikiComponent {
             this.wikiService.deleteSegment(this.selectedEntry.data.id);
         else
             this.wikiService.deletePage(this.selectedEntry.data.id);
-        this.deletePage(this.selectedEntry);
+      
 
     }
 
@@ -282,36 +248,18 @@ export class WikiComponent {
         //creating the new node to be added to the navigation
         
         this.showAddDialog = false;
-        this.toAdd = {};
-        let toParent: TreeNode = {};
-        this.toAdd.label = this.pageName;
-        this.toAdd.data = new PageSummary();
-        this.toAdd.data.title = this.pageName;
-        this.toAdd.type = this.addContent;
-
-        //need to figure out how to send send new segment details
-        
-            toParent.label = this.selectedEntry.label;
-            toParent.parent = this.selectedEntry.parent;
-            this.toAdd.parent = toParent;
-            if (this.toAdd.type == 'category') {
-                this.toAdd.children = [];
+ 
+            if (this.addContent == 'category') {
+         
                 this.wikiService.addSegment(this.pageName, this.selectedEntry.data.id);
             }
             else {
                 this.wikiService.addPage(this.pageName, this.selectedEntry.data.id);
             }
 
-            if (this.selectedEntry.type == 'title')
-            {
-                this.nav.push(this.toAdd);
-                this.nav = this.nav.sort(this.sort);
-            }
-            else
-            {
-                this.selectedEntry.children.push(this.toAdd);
-                this.selectedEntry.children=this.selectedEntry.children.sort(this.sort);
-            }
+            
+            //    this.selectedEntry.children=this.selectedEntry.children.sort(this.sort);
+            
             
 
         
@@ -320,44 +268,7 @@ export class WikiComponent {
         this.addContent = this.addOptions[0]['value'];
         this.pageName = "";
     }
-    public deletePage(page: any) {
-        //need to find location of page
-        let path = Array<String>();
-        let parent = page;
-        while (typeof parent !== 'undefined') {
-            path.push(parent.label);
-            parent = parent.parent;
-        }
-        path = path.reverse();
-
-        let level = 0;
-        for (let index = 1; index < this.nav.length; index++) {
-            if (this.findPage(this.nav[index], path, level))
-                break;
-        }
-
-    }
-
-    //need to figure out a way to delete categories
-    private findPage(search: any, path: Array<String>, index: any): boolean {
-        
-        if (search.label == path[index] && index != path.length - 1) {
-            for (let page in search.children) {
-
-                if (this.findPage(search.children[page], path, index + 1)) {
-                    search.children.splice(page, 1);
-                    return false;
-                }
-            }
-        }
-        else if (search.label == path[index] && index == path.length - 1) {
-
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+   
 
     public sort(o1:any,o2:any)
     {
