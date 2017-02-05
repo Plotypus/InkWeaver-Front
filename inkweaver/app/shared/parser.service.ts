@@ -1,13 +1,19 @@
 ﻿import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
-import { Section } from '../models/section.model';
-import { Segment } from '../models/segment.model';
-import { Paragraph } from '../models/paragraph.model';
-import { PageSummary } from '../models/page-summary.model';
+import { Link } from '../models/link/link.model';
+import { LinkTable } from '../models/link/link-table.model';
+import { Section } from '../models/story/section.model';
+import { Paragraph } from '../models/story/paragraph.model';
+import { ContentObject } from '../models/story/content-object.model';
+import { Segment } from '../models/wiki/segment.model';
+import { PageSummary } from '../models/wiki/page-summary.model';
 
 @Injectable()
 export class ParserService {
+    // ----------------------------------------------- //
+    // -------------------- Story -------------------- //
+    // ----------------------------------------------- //
     public sectionToTree(parserService: ParserService, story: Section): TreeNode {
         let treeNode: TreeNode = {};
 
@@ -28,6 +34,80 @@ export class ParserService {
         return treeNode;
     }
 
+    public setContentDisplay(paragraphs: Paragraph[]): string {
+        let content: string = '';
+        for (let paragraph of paragraphs) {
+            if (paragraph.paragraph_id) {
+                content += '<p><code>' + JSON.stringify(paragraph.paragraph_id) + '</code>'
+                    + paragraph.text + '</p>';
+            }
+        }
+        return content;
+    }
+
+    public parseContent(paragraphs: Paragraph[], linkTable: LinkTable): ContentObject {
+        let contentObject: ContentObject = new ContentObject();
+
+        for (let paragraph of paragraphs) {
+            let r2: RegExp = new RegExp('\{"\$oid"\: "[a-f\d]{24}"\}', 'g');
+            let link_match: RegExpMatchArray = r2.exec(paragraph.text);
+            while (link_match) {
+                let link_id: string = link_match[0];
+
+                paragraph.links[link_id] = linkTable[link_id];
+                contentObject[paragraph.paragraph_id] = paragraph;
+                link_match = r2.exec(paragraph.text);
+            }
+        }
+        return contentObject;
+    }
+
+    public parseHtml(text: string): ContentObject {
+        let add: Paragraph[] = [];
+        let r1: RegExp = new RegExp('<p>(.*?)<\/p>', 'g');
+        let matches: RegExpMatchArray = r1.exec(text);
+
+        let obj: ContentObject = new ContentObject();
+        while (matches) {
+            let match: string = matches[1];
+            let p: Paragraph = {
+                paragraph_id: '', succeeding_id: '', text: match, links: new LinkTable()
+            };
+
+            let r2: RegExp = new RegExp('<a href="(.+?)".*?>(.+?)<\/a>', 'g');
+            let link: RegExpMatchArray = r2.exec(match);
+            while (link) {
+                let newLink: any = JSON.parse(link[1]);
+                p.links[JSON.stringify(newLink.link_id)] = {
+                    page_id: JSON.stringify(newLink.page_id), name: link[2]
+                };
+                link = r2.exec(match);
+            }
+
+            let r3: RegExp = new RegExp('<code>(.+?)<\/code>');
+            let id: RegExpMatchArray = match.match(r3);
+            if (id) {
+                for (let addP of add) {
+                    addP.succeeding_id = id[1];
+                    obj['new' + Math.random()] = addP;
+                }
+                add = [];
+                p.paragraph_id = id[1];
+                obj[id[1]] = p;
+            } else {
+                add.push(p);
+            }
+            matches = r1.exec(text);
+        }
+        add.forEach((p: Paragraph) => {
+            obj['new' + Math.random()] = p;
+        });
+        return obj;
+    }
+
+    // ---------------------------------------------- //
+    // -------------------- Wiki -------------------- //
+    // ---------------------------------------------- //
     public parseWiki(json: any) {
         let nav = new Array<TreeNode>();
         let temp: TreeNode = {};
@@ -45,6 +125,7 @@ export class ParserService {
 
         return nav;
     }
+
     public jsonToWiki(wikiJson: any, par: any): TreeNode {
         let wiki: TreeNode = {};
         let parent: TreeNode = {};
@@ -64,14 +145,12 @@ export class ParserService {
                     subsegment.parent = parent;
                     wiki.children.push(subsegment);
                 }
-
             }
             else if (field == "pages") {
                 var pagesJsons = wikiJson[field];
                 for (let page in pagesJsons) {
                     parent.label = wiki.label;
                     parent.parent = par;
-
 
                     var leafpage = this.jsonToPage(pagesJsons[page]);
                     leafpage.parent = parent;
@@ -81,7 +160,6 @@ export class ParserService {
             }
         }
         if (typeof wiki.children !== 'undefined' && wiki.children.length != 0) {
-
             wiki.type = "category";
         }
         return wiki
@@ -134,77 +212,21 @@ export class ParserService {
     }
 
     /**
-     * Set the display for the content
-     */
-    public setContentDisplay(paragraphs: Paragraph[]): string {
-        let content: string = '';
-        for (let i = 0; i < paragraphs.length; i++) {
-            if (paragraphs[i].paragraph_id) {
-                content += '<p><code>' + JSON.stringify(paragraphs[i].paragraph_id) + '</code>'
-                    + paragraphs[i].text + '</p>';
-            }
-        }
-        return content;
-    }
-
-    /**
      * Set the display for the wiki
      */
     public setWikiDisplay(reply: any) {
         let html: string = "";
 
-
         html += "<h1>" + reply["wiki_title"] + "</h1>";
-
         for (let idx in reply['users']) {
             html += "<br> By " + reply['users'][idx].name;
         }
 
         html += "<br> <h2> Summary </h2> <br> " + reply["summary"];
-
         return html;
-
-
-
     }
+
     public setPageDisplay(reply: any) {
-
         return 'Page';
-    }
-
-    public parseHtml(text: string): any {
-        let add: any[] = [];
-        let r1: RegExp = new RegExp('<p>(.*?)<\/p>', 'g');
-        let matches: RegExpMatchArray = r1.exec(text);
-
-        let obj: any = { add: [] };
-        while (matches) {
-            let match: string = matches[1];
-            let p: any = { text: match, links: [] };
-
-            let r2: RegExp = new RegExp('<a href="(.+?)".*?>(.+?)<\/a>', 'g');
-            let link: RegExpMatchArray = r2.exec(match);
-            while (link) {
-                p.links.push({ id: link[1], text: link[2] });
-                link = r2.exec(match);
-            }
-
-            let r3: RegExp = new RegExp('<code>(.+?)<\/code>');
-            let id: RegExpMatchArray = match.match(r3);
-            if (id) {
-                for (let addP of add) {
-                    addP.succeeding_id = id[1];
-                    obj.add.push(addP);
-                }
-                add = [];
-                obj[id[1]] = p;
-            } else {
-                add.push(p);
-            }
-            matches = r1.exec(text);
-        }
-
-        obj.add = obj.add.concat(add);
-        return obj;
     }
 }

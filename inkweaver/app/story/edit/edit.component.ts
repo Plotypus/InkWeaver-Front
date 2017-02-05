@@ -9,8 +9,8 @@ import { WikiService } from '../wiki/wiki.service';
 import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
-import { Segment } from '../../models/segment.model';
-import { PageSummary } from '../../models/page-summary.model';
+import { Segment } from '../../models/wiki/segment.model';
+import { PageSummary } from '../../models/wiki/page-summary.model';
 
 @Component({
     selector: 'edit',
@@ -85,11 +85,8 @@ export class EditComponent {
                             let bounds = this.editor.quill.getBounds(index);
                             let top: number = bounds.top + 70;
                             this.suggest = {
-                                text: page.title,
-                                id: page.page_id,
-                                display: 'block',
-                                top: top + 'px',
-                                left: bounds.left + 'px'
+                                title: page.title, page_id: page.page_id,
+                                display: 'block', top: top + 'px', left: bounds.left + 'px'
                             };
                         }
                     });
@@ -103,19 +100,20 @@ export class EditComponent {
                 for (let thread of threads) {
                     thread.addEventListener('click', (event: any) => {
                         event.preventDefault();
-                        let pageId: string = thread.getAttribute('href');
-                        this.wikiService.getWikiPage(JSON.parse(pageId), 'edit');
+                        let linkId: string = thread.getAttribute('href');
+                        let pageId: any = JSON.parse(linkId).page_id;
+                        this.wikiService.getWikiPage(pageId);
                         this.router.navigate(['/story/wiki']);
                     });
                     thread.addEventListener('mouseenter', (event: any) => {
                         let top: number = event.target.offsetTop + 70;
                         this.data.tooltip = {
                             text: '',
-                            display: 'block',
-                            top: top + 'px',
-                            left: event.target.offsetLeft + 'px'
+                            display: 'block', top: top + 'px', left: event.target.offsetLeft + 'px'
                         };
-                        this.wikiService.getWikiPage(JSON.parse(thread.getAttribute('href')), 'edit');
+                        let linkId: string = thread.getAttribute('href');
+                        let pageId: any = JSON.parse(linkId).page_id;
+                        this.wikiService.getWikiPage(pageId, 'edit');
                     });
                     thread.addEventListener('mouseleave', (event: any) => {
                         this.data.tooltip.display = 'none';
@@ -145,8 +143,8 @@ export class EditComponent {
                         let index: number = range.index - word.length;
 
                         editComp.suggest.display = 'none';
-                        editComp.newLinkId = editComp.suggest.id;
-                        editComp.word = editComp.suggest.text;
+                        editComp.newLinkId = editComp.suggest.page_id;
+                        editComp.word = editComp.suggest.title;
                         editComp.range = { index: index, length: word.length };
                         editComp.createLink();
                         editComp.editor.quill.insertText(index + editComp.word.length, ' ', 'link', false);
@@ -210,7 +208,9 @@ export class EditComponent {
 
         this.setLinks = true;
         this.editor.quill.insertText(
-            this.range.index, this.word, 'link', JSON.stringify(this.newLinkId));
+            this.range.index, this.word, 'link', JSON.stringify({
+                'link_id': 'new' + Math.random(), 'page_id': this.newLinkId
+            }));
         this.editor.quill.setSelection(this.range.index + this.word.length, 0);
         this.displayLinkCreator = false;
     }
@@ -218,12 +218,13 @@ export class EditComponent {
     /* ------------------------------------------------------------ */
 
     public selectSection(event: any) {
+        this.data.storyDisplay = '';
         this.editService.getSectionContent(event.node.data.section_id);
     }
 
     public save() {
-        let newObj = this.parserService.parseHtml(this.editorRef.innerHTML);
-        this.editService.compare(this.data.oldObj, newObj, this.data.section.section_id);
-        this.data.oldObj = newObj;
+        let newContentObject: any = this.parserService.parseHtml(this.editorRef.innerHTML);
+        this.editService.compare(this.data.contenObject, newContentObject, this.data.section.section_id);
+        this.data.contentObject = newContentObject;
     }
 }

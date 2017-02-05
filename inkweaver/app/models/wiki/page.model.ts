@@ -1,8 +1,9 @@
 ﻿import { Heading } from './heading.model';
+import { Reference } from './reference.model';
 
 export class Page {
     title: string;
-    aliases: string[];
-    references: string[];
+    aliases: any;
+    references: Reference[];
     headings: Heading[];
 }

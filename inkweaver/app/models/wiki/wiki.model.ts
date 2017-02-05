@@ -1,4 +1,4 @@
-﻿import { Collaborator } from './collaborator.model';
+﻿import { Collaborator } from '../user/collaborator.model';
 
 export class Wiki {
     wiki_title: string;

@@ -4,16 +4,27 @@ import { Subject, Observable } from 'rxjs/Rx';
 import { WebSocketService } from './websocket.service';
 import { ParserService } from './parser.service';
 
-import { User } from '../models/user.model';
-import { StorySummary } from '../models/story-summary.model';
-import { Story } from '../models/story.model';
-import { Section } from '../models/section.model';
-import { Paragraph } from '../models/paragraph.model';
-import { WikiSummary } from '../models/wiki-summary.model';
-import { Wiki } from '../models/wiki.model';
-import { Segment } from '../models/segment.model';
-import { PageSummary } from '../models/page-summary.model';
-import { Page } from '../models/page.model';
+// Models
+import { User } from '../models/user/user.model';
+import { Collaborator } from '../models/user/collaborator.model';
+
+import { LinkTable } from '../models/link/link-table.model';
+import { Link } from '../models/link/link.model';
+
+import { StorySummary } from '../models/story/story-summary.model';
+import { Story } from '../models/story/story.model';
+import { Section } from '../models/story/section.model';
+import { Paragraph } from '../models/story/paragraph.model';
+import { Tooltip } from '../models/story/tooltip.model';
+import { ContentObject } from '../models/story/content-object.model';
+
+import { WikiSummary } from '../models/wiki/wiki-summary.model';
+import { Wiki } from '../models/wiki/wiki.model';
+import { Segment } from '../models/wiki/segment.model';
+import { PageSummary } from '../models/wiki/page-summary.model';
+import { Page } from '../models/wiki/page.model';
+import { Heading } from '../models/wiki/heading.model';
+import { Reference } from '../models/wiki/reference.model';
 
 const url: string = 'ws://localhost:8080/ws/demo';
 
@@ -24,6 +35,7 @@ export class ApiService {
         user: new User(),
         stories: new Array<StorySummary>(),
         wikis: new Array<WikiSummary>(),
+        linkTable: new LinkTable(),
 
         storyNode: [],
         storyDisplay: '',
@@ -31,15 +43,15 @@ export class ApiService {
         section: new Section(),
         content: new Array<Paragraph>(),
 
-        tooltip: { text: '', display: 'none' },
-        oldObj: [],
-
         wikiNode: [],
         wikiDisplay: '',
         wiki: new Wiki(),
         segment: new Segment(),
         page: new Page(),
         pageid: [],
+
+        tooltip: new Tooltip(),
+        contentObject: new ContentObject()
     }
 
     public outgoing = {};
@@ -96,11 +108,6 @@ export class ApiService {
                             });
                             break;
                         case 'get_story_hierarchy':
-                            this.data.section = reply.hierarchy;
-                            this.data.storyNode = [
-                                this.parser.sectionToTree(this.parser, reply.hierarchy)
-                            ];
-                            break;
                         case 'get_section_hierarchy':
                             this.data.section = reply.hierarchy;
                             this.data.storyNode = [
@@ -109,8 +116,8 @@ export class ApiService {
                             break;
                         case 'get_section_content':
                             this.data.content = reply.content;
+                            this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
                             this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
-                            this.data.oldObj = this.parser.parseHtml(this.data.storyDisplay);
                             break;
 
                         case 'create_wiki':
@@ -121,22 +128,19 @@ export class ApiService {
                             this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
                             break;
                         case 'get_wiki_hierarchy':
-                            this.data.segment = reply.hierarchy;
-                            this.data.wikiNode = this.parser.parseWiki(reply.hierarchy);
-                            break;
                         case 'get_wiki_segment_hierarchy':
                             this.data.segment = reply.hierarchy;
-                            this.data.wikiNode = [
-                                this.parser.segmentToTree(this.parser, reply.hierarchy)
-                            ];
-                            break;
-                        case 'get_wiki_page':
-                            this.data.page = reply;
-                            this.data.tooltip.text = reply.title;
+                            this.data.linkTable = reply.link_table;
+                            this.data.wikiNode = this.parser.parseWiki(reply.hierarchy);
                             break;
                         case 'get_wiki_segment':
                             reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));
                             this.data.page = reply;
+                            break;
+                        case 'get_wiki_page':
+                            this.data.page = reply;
+                            this.data.tooltip.text = reply.title + '<br/><br/>'
+                                + reply.headings[0].title + '<br/>' + reply.headings[0].text;
                             break;
                         case 'add_page':
                             this.data.pageid.push(reply.page_id);
