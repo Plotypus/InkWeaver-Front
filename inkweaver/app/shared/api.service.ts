@@ -190,6 +190,7 @@ export class ApiService {
                             break;
                         case 'change_alias_name':
                             this.refreshWiki();
+                            this.refreshContent();
                             break;
 
                         default:
