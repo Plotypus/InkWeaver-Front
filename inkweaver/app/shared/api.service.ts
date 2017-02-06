@@ -106,6 +106,7 @@ export class ApiService {
                             reply.story_id = this.data.story.story_id;
                             this.data.story = reply;
                             this.data.wiki.wiki_id = reply.wiki_id;
+                            this.data.storyDisplay = '<h1>Summary</h1>' + reply.summary;
                             this.refreshWiki(reply.wiki_id, true);
                             break;
                         case 'get_story_hierarchy':
@@ -120,6 +121,10 @@ export class ApiService {
                             this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
                             this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
                             break;
+
+                        case 'add_inner_subsection':
+                            this.refreshStory();
+                            break
 
                         case 'add_paragraph':
                             callback(reply);

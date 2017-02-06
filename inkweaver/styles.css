@@ -327,6 +327,11 @@ code {
         background: var(--dark-blue) !important;
     }
 
+    .navigation .fa-plus-square-o {
+        float: right;
+        padding: 1%;
+    }
+
 /* -------------------- Other -------------------- */
 .placeholder {
     margin-left: 25px;

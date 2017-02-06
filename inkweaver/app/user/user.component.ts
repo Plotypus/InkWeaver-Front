@@ -35,7 +35,11 @@ export class UserComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
-        this.data.stories.push({ story_id: null, title: null, access_level: null });
+        if (this.data.stories.length == 0 ||
+            this.data.stories[this.data.stories.length - 1].story_id) {
+            this.data.stories.push({ story_id: null, title: null, access_level: null });
+        }
+
         this.colors = [
             "#cb735c", // red-orange
             "#fdd17c", // yellow

@@ -9,6 +9,7 @@ import { WikiService } from '../wiki/wiki.service';
 import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
+import { ID } from '../../models/id.model';
 import { Link } from '../../models/link/link.model';
 import { Segment } from '../../models/wiki/segment.model';
 import { PageSummary } from '../../models/wiki/page-summary.model';
@@ -34,6 +35,10 @@ export class EditComponent {
     private newLinkId: any;
     private newLinkPages: any;
     private displayLinkCreator: boolean;
+
+    private displaySectionCreator: boolean;
+    private sectionTitle: string;
+    private newSectionId: ID;
 
     private suggest: any;
 
@@ -227,5 +232,17 @@ export class EditComponent {
     public save() {
         let newContentObject: any = this.parserService.parseHtml(this.editorRef.innerHTML);
         this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.section.section_id);
+    }
+
+    /* ------------------------------------------------------------ */
+
+    public addSection() {
+        this.editService.addSection(this.sectionTitle, this.newSectionId);
+        this.displaySectionCreator = false;
+    }
+
+    public openSectionCreator(sectionId: ID) {
+        this.newSectionId = sectionId;
+        this.displaySectionCreator = true;
     }
 }

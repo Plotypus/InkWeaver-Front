@@ -11,6 +11,18 @@
     </footer>
 </p-dialog>
 
+<!-- Section Creator Dialog -->
+<p-dialog modal="true" header="Add New Section" [(visible)]="displaySectionCreator"
+          width="450" height="450" responsive="true" (keyup.enter)="addSection()">
+
+    <input #link type="text" pInputText [(ngModel)]="sectionTitle" />
+    <footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button pButton type="button" label="Add Section" icon="fa-link" iconPos="right" (click)="addSection()"></button>
+        </div>
+    </footer>
+</p-dialog>
+
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
 
@@ -67,7 +79,12 @@
                          selectionMode="single"
                          [(selection)]="selectedSection"
                          (onNodeSelect)="selectSection($event)">
-                <p-column field="title"></p-column>
+                <p-column field="title">
+                    <template let-col let-node="rowData" pTemplate="body">
+                        {{node.data.title}}
+                        <i class="fa fa-plus-square-o" (click)="openSectionCreator(node.data.section_id)"></i>
+                    </template>
+                </p-column>
             </p-treeTable>
         </div>
     </div>

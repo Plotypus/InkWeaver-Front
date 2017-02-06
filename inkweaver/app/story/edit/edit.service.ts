@@ -18,6 +18,14 @@ export class EditService {
         });
     }
 
+    public addSection(title: string, parent_id: ID) {
+        this.apiService.send({
+            action: 'add_inner_subsection',
+            title: title,
+            parent_id: parent_id
+        });
+    }
+
     public addParagraph(section_id: ID, text: string, succeeding_paragraph_id: ID, callback: any) {
         let p: any = {
             action: 'add_paragraph',
