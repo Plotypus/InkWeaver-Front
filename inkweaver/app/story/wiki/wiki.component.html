@@ -75,7 +75,7 @@
                     </p-dataGrid>
                 </ng-container>
                 <!--Taking care of headings -->
-                <div *ngFor="let section of wikiPage.headings; let i = index">
+                <div *ngFor="let section of wikiPage.headings; let i = index;">
                     <span>
                         <input type="text" size="30" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
                         <button pButton type="button" [icon]="icons[i+1]" (click)="onDisable(i+1)"></button>
