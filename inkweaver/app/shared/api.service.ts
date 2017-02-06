@@ -192,6 +192,9 @@ export class ApiService {
                             this.refreshWiki();
                             this.refreshContent();
                             break;
+                        case 'delete_alias':
+                            this.refreshContent();
+                            break
 
                         default:
                             console.log('Unknown action: ' + action)
