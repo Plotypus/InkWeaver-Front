@@ -3,7 +3,7 @@ import { TreeNode } from 'primeng/primeng';
 
 import { WikiService } from './wiki.service';
 import { ApiService } from '../../shared/api.service';
-import { PageSummary } from '../../models/page-summary.model';
+import { PageSummary } from '../../models/wiki/page-summary.model';
 
 @Component({
     selector: 'wiki',

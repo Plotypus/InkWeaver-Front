@@ -1,5 +1,7 @@
-﻿export class StorySummary {
-    story_id: string;
+﻿import { ID } from '../id.model';
+
+export class StorySummary {
+    story_id: ID;
     title: string;
     access_level: string;
 }

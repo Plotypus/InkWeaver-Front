@@ -11,6 +11,7 @@ import { EditModule } from './edit/edit.module';
 import { WikiModule } from './wiki/wiki.module';
 import { SettingsModule } from './settings/settings.module';
 import { StoryComponent } from './story.component';
+import { StoryService } from './story.service';
 
 @NgModule({
     imports: [
@@ -23,6 +24,7 @@ import { StoryComponent } from './story.component';
         WikiModule,
         SettingsModule
     ],
+    providers: [StoryService],
     declarations: [StoryComponent],
     bootstrap: [StoryComponent]
 })

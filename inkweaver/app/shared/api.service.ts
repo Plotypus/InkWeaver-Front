@@ -72,8 +72,14 @@ export class ApiService {
                 if (reply.event) {
                     return reply.event;
                 } else {
+                    if (!reply.reply_to_id) {
+                        reply = JSON.parse(reply);
+                    }
+
                     let message_id: number = reply.reply_to_id;
-                    let action: string = this.outgoing[message_id];
+                    let out: any = this.outgoing[message_id];
+                    let action: string = out.action;
+                    let callback: (reply: any) => {} = out.callback;
 
                     switch (action) {
                         case 'get_user_preferences':
@@ -97,7 +103,9 @@ export class ApiService {
                                 story_id: reply.story_id
                             });
                         case 'get_story_information':
+                            reply.story_id = this.data.story.story_id;
                             this.data.story = reply;
+                            this.data.wiki.wiki_id = reply.wiki_id;
                             this.send({
                                 action: 'get_wiki_information',
                                 wiki_id: reply.wiki_id
@@ -120,18 +128,38 @@ export class ApiService {
                             this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
                             break;
 
+                        case 'add_paragraph':
+                            callback(reply);
+                            break;
+                        case 'edit_paragraph':
+                            break;
+                        case 'delete_paragraph':
+                            break;
+
+                        case 'create_link':
+                            callback(reply);
+                            this.send({
+                                action: 'get_wiki_hierarchy',
+                                wiki_id: this.data.wiki.wiki_id
+                            });
+                            break;
+                        case 'delete_link':
+                            break;
+
                         case 'create_wiki':
+                            reply.wiki_id = this.data.wiki.wiki_id;
                             this.data.wiki = reply;
                             break
                         case 'get_wiki_information':
+                            reply.wiki_id = this.data.wiki.wiki_id;
                             this.data.wiki = reply;
                             this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
                             break;
                         case 'get_wiki_hierarchy':
                         case 'get_wiki_segment_hierarchy':
                             this.data.segment = reply.hierarchy;
-                            this.data.linkTable = reply.link_table;
                             this.data.wikiNode = this.parser.parseWiki(reply.hierarchy);
+                            this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
                             break;
                         case 'get_wiki_segment':
                             reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));
@@ -139,8 +167,10 @@ export class ApiService {
                             break;
                         case 'get_wiki_page':
                             this.data.page = reply;
-                            this.data.tooltip.text = reply.title + '<br/><br/>'
-                                + reply.headings[0].title + '<br/>' + reply.headings[0].text;
+                            this.data.tooltip.text = '<b>' + reply.title + '</b>';
+                            if (reply.headings && reply.headings[0]) {
+                                this.data.tooltip.text += '<br/><u>' + reply.headings[0].title + '</u><br/>' + reply.headings[0].text;
+                            }
                             break;
                         case 'add_page':
                             this.data.pageid.push(reply.page_id);
@@ -186,9 +216,12 @@ export class ApiService {
      * Send a message on the WebSocket
      * @param {JSON} message - A JSON-formatted message
      */
-    public send(message: any) {
+    public send(message: any, callback: (reply: any) => {} = (reply: any) => { return reply }) {
         message.message_id = ++this.message_id;
-        this.outgoing[message.message_id] = message.action;
+        this.outgoing[message.message_id] = {
+            action: message.action,
+            callback: callback
+        };
         console.log(message);
 
         if (!(message.action == 'get_wiki_page' && message.source == 'edit')) {

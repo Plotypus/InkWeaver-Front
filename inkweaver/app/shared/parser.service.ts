@@ -1,6 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
+import { ID } from '../models/id.model';
 import { Link } from '../models/link/link.model';
 import { LinkTable } from '../models/link/link-table.model';
 import { Section } from '../models/story/section.model';
@@ -49,50 +50,62 @@ export class ParserService {
         let contentObject: ContentObject = new ContentObject();
 
         for (let paragraph of paragraphs) {
-            let r2: RegExp = new RegExp('\{"\$oid"\: "[a-f\d]{24}"\}', 'g');
-            let link_match: RegExpMatchArray = r2.exec(paragraph.text);
-            while (link_match) {
-                let link_id: string = link_match[0];
+            paragraph.links = new LinkTable();
 
-                paragraph.links[link_id] = linkTable[link_id];
-                contentObject[paragraph.paragraph_id] = paragraph;
-                link_match = r2.exec(paragraph.text);
+            let text: string = paragraph.text;
+            let r1: RegExp = /\s+/g;
+            let r2: RegExp = /{"\$oid":\s*"[a-z0-9]{24}"}/g;
+            let linkMatch: RegExpMatchArray = r2.exec(text);
+            while (linkMatch) {
+                let linkId: string = linkMatch[0].replace(r1, '');
+                let link: Link = linkTable[linkId];
+                paragraph.links[linkId] = link;
+
+                let linkIdStr: string = JSON.parse(linkId).$oid;
+                let pageIdStr: string = link.page_id.$oid;
+                paragraph.text = paragraph.text.replace(linkMatch[0],
+                    '<a href="' + linkIdStr + '-' + pageIdStr + '" target="_blank">' + link.name + '</a>');
+                linkMatch = r2.exec(text);
             }
+            contentObject[JSON.stringify(paragraph.paragraph_id)] = paragraph;
         }
         return contentObject;
     }
 
     public parseHtml(text: string): ContentObject {
         let add: Paragraph[] = [];
-        let r1: RegExp = new RegExp('<p>(.*?)<\/p>', 'g');
+        let r1: RegExp = /<p>(.*?)<\/p>/g;
         let matches: RegExpMatchArray = r1.exec(text);
 
         let obj: ContentObject = new ContentObject();
         while (matches) {
             let match: string = matches[1];
             let p: Paragraph = {
-                paragraph_id: '', succeeding_id: '', text: match, links: new LinkTable()
+                paragraph_id: new ID(), succeeding_id: new ID(), text: match, links: new LinkTable()
             };
 
-            let r2: RegExp = new RegExp('<a href="(.+?)".*?>(.+?)<\/a>', 'g');
+            let r2: RegExp = /<a href="(.+?)" target="_blank">(.+?)<\/a>/g;
             let link: RegExpMatchArray = r2.exec(match);
             while (link) {
-                let newLink: any = JSON.parse(link[1]);
-                p.links[JSON.stringify(newLink.link_id)] = {
-                    page_id: JSON.stringify(newLink.page_id), name: link[2]
-                };
+                let ids: string[] = link[1].split('-');
+                if (ids[0].startsWith('new')) {
+                    p.links[ids[0]] = { page_id: { $oid: ids[1] }, name: link[2] };
+                } else {
+                    p.links['{"$oid":"' + ids[0] + '"}'] = { page_id: { $oid: ids[1] }, name: link[2] };
+                }
                 link = r2.exec(match);
             }
 
-            let r3: RegExp = new RegExp('<code>(.+?)<\/code>');
+            let r3: RegExp = /<code>(.+?)<\/code>/;
             let id: RegExpMatchArray = match.match(r3);
             if (id) {
+                p.text = p.text.replace(r3, '');
                 for (let addP of add) {
-                    addP.succeeding_id = id[1];
+                    addP.succeeding_id = JSON.parse(id[1]);
                     obj['new' + Math.random()] = addP;
                 }
                 add = [];
-                p.paragraph_id = id[1];
+                p.paragraph_id = JSON.parse(id[1]);
                 obj[id[1]] = p;
             } else {
                 add.push(p);
@@ -103,6 +116,14 @@ export class ParserService {
             obj['new' + Math.random()] = p;
         });
         return obj;
+    }
+
+    public parseLinkTable(linkArray: any): LinkTable {
+        let linkTable: LinkTable = new LinkTable();
+        for (let link of linkArray) {
+            linkTable[JSON.stringify(link.link_id)] = { page_id: link.page_id, name: link.name }
+        }
+        return linkTable;
     }
 
     // ---------------------------------------------- //

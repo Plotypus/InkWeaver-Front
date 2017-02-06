@@ -37,7 +37,7 @@ export class LoginComponent {
         //    });
 
         this.apiService.connect();
-        this.apiService.messages.subscribe((event: string) => {
+        this.apiService.messages.subscribe((action: string) => {
             this.userService.getUserPreferences();
             this.userService.getUserStories();
             this.userService.getUserWikis();

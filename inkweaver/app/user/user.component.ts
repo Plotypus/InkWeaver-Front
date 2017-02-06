@@ -55,6 +55,7 @@ export class UserComponent {
     }
 
     public selectStory(story_id: string) {
+        this.data.story.story_id = story_id;
         this.editService.getStoryInformation(story_id);
         this.editService.getStoryHierarchy(story_id);
         this.router.navigate(['/story/edit']);
