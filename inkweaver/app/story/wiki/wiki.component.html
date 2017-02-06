@@ -64,10 +64,9 @@
                                         <input type="text" size="30" pInputText [(ngModel)]="alias.name" [disabled]="alias.state" />
                                     </header>
                                     <div>
-                                        <button pButton type="button" [icon]="alias.icon" (click)="editAlias(alias)"></button>
-                                        <button *ngIf="!alias.state" pButton type="button" icon="fa-times" (click)="cancelAlias(alias)"></button>
-                                        <button pButton type="button" icon="fa-trash-o" (click)="deleteAlias(alias)"></button>
-
+                                         <i class="fa {{alias.icon}}" (click)="editAlias(alias)"></i>
+                                         <i *ngIf="!alias.state" class="fa fa-times" (click)="cancelAlias(alias)"></i>
+                                         <i class="fa fa-trash-o" (click)="deleteAlias(alias)"></i>
                                     </div>
 
                                 </p-panel>
