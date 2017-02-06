@@ -166,23 +166,12 @@ export class ApiService {
                             break;
                         case 'edit_heading':
                             break;
-                        case 'delete_segment':
+                        case 'change_alias_name':
                             this.send({
                                 action: 'get_wiki_hierarchy',
                                 wiki_id: this.data.story.wiki_id
                             });
                             break;
-                        case 'delete_page':
-                            this.send({
-                                action: 'get_wiki_hierarchy',
-                                wiki_id: this.data.story.wiki_id
-                            });
-                            break;
-                        case 'delete_heading':
-                            break;
-                        case 'delete_alias':
-                            break;
-
                         default:
                             console.log('Unknown action: ' + action)
                             break;
@@ -203,7 +192,7 @@ export class ApiService {
     public send(message: any) {
         message.message_id = ++this.message_id;
         this.outgoing[message.message_id] = message.action;
-        console.log(message);
+        console.log(message.action);
 
         if (!(message.action == 'get_wiki_page' && message.source == 'edit')) {
             this.data.inflight = true;

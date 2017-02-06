@@ -205,9 +205,7 @@ story .ui-panel-titlebar p {
     background: var(--light-gray) !important;
 }
 
-.wiki .ui-editor-content {
-    background: white;
-}
+
 
 .editor .ui-editor-content {
     background: white;
@@ -277,6 +275,35 @@ story .ui-panel-titlebar p {
 code {
     display: none;
 }
+
+/*------Wiki------*/
+
+.wiki .ui-editor-content {
+    background: white;
+}
+.wiki .ui-panel-titlebar {
+    min-height:1em !important
+
+}
+
+.wiki .span .ui-widget input
+{
+    width: 25%;
+    color: var(--light-gray);
+    background-color:var(--light-blue);
+    border: none;
+}
+.wiki .ui-widget input{
+    width: 100%;
+    color: var(--light-gray);
+    background-color:var(--light-blue);
+    border: none;
+    font-size:.5em;
+    text-align:center;
+
+}
+
+
 
 /* ----- Navigation ----- */
 .navigation {

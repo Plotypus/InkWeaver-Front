@@ -27,6 +27,7 @@ export class WikiComponent {
     private showDeleteDialog: any;
     private toDelete: any;
     private nav: any;
+   
 
     constructor(
         private wikiService: WikiService,
@@ -45,7 +46,8 @@ export class WikiComponent {
        this.apiService.messages.subscribe((action: string) => {
          if (action == "get_wiki_segment" || action == 'get_wiki_page')
            {
-               this.wikiPage = this.data.page;
+             this.wikiPage = this.data.page;
+             
                this.disabled = [true];
                this.icons = ['fa-pencil'];
                this.wikiPageContent.push({
@@ -61,11 +63,32 @@ export class WikiComponent {
                        'text': this.wikiPage.headings[i].text
                    });
                }
-           }
-           else if (action == "get_wiki_hierarchy")
-         {
-             this.nav = this.apiService.data.wikiNav;
+
+               //getting the alias
+               if (this.wikiPage.aliases) {
+                   let temp = [];
+                   let count = 0;
+                   for (let i in this.wikiPage.aliases) {
+                       temp.push({
+                           'index': count,
+                           'state': true,
+                           'name': i,
+                           'icon': 'fa-pencil',
+                           'prev': '',
+                           'id': this.wikiPage.aliases[i]
+                       })
+                       count++;
+                   }
+                   this.wikiPage.aliases = temp;
+                   }
+             //getting the references
+
          }
+         else if (action.includes("delete"))
+         {
+             this.wikiService.getWikiHierarchy(this.data.story.wiki_id);
+         }
+       
            
        });
     }
@@ -100,6 +123,35 @@ export class WikiComponent {
       
     }
 
+    /**
+     * All adding methods
+     */
+
+    public addToWiki() {
+        //creating the new node to be added to the navigation
+
+        this.showAddDialog = false;
+
+        if (this.addContent == 'category') {
+
+            this.wikiService.addSegment(this.pageName, this.selectedEntry.data.id);
+        }
+        else {
+            this.wikiService.addPage(this.pageName, this.selectedEntry.data.id);
+        }
+
+
+        //    this.selectedEntry.children=this.selectedEntry.children.sort(this.sort);
+
+
+
+
+
+        //need to send this info over network and get id;
+        this.addContent = this.addOptions[0]['value'];
+        this.pageName = "";
+    }
+
     /*
         Will toogle value of button variable to indicate whether something needs to be added or not
     */
@@ -129,6 +181,7 @@ export class WikiComponent {
         if (this.selectedEntry.type == 'category')
         {
             this.wikiService.addTempleteHeading(this.pageName, this.selectedEntry.data.id);
+            
             temp = {
                 'title': this.pageName,
                 'text': this.addContent
@@ -182,17 +235,22 @@ export class WikiComponent {
                     this.wikiService.editSegment(this.selectedEntry.data.id, 'set_title', this.wikiPage.title);
                     this.selectedEntry.data.title = this.wikiPage.title;
                 }
+                else if (idx != 0 && !(this.wikiPageContent[idx].title === this.wikiPage.title))
+                {
+                    this.wikiService.editTempleteHeading(this.selectedEntry.data.id, this.wikiPageContent[idx].title, "set_title", this.wikiPage.headings[idx - 1].title);
+                    //editing templete heading
+                }
 
-                //editing templete heading
+               
             }
             //saving page information
             else {
                 if (idx == 0 && !(this.wikiPageContent[0].title === this.wikiPage.title)) {
-                    this.wikiService.editPage(this.selectedEntry.data.id, 'set_title', this.wikiPage.title);
+                    //this.wikiService.editPage(this.selectedEntry.data.id, 'set_title', this.wikiPage.title);
                     this.selectedEntry.data.title = this.wikiPage.title;
                 }
-                else {
-                    this.wikiService.editHeading(this.selectedEntry.data.id, this.wikiPageContent[0].title, 'set_title', this.wikiPage.headings[idx - 1].title);
+                else if (idx != 0 && !(this.wikiPageContent[idx].title === this.wikiPage.title)) {
+                    this.wikiService.editHeading(this.selectedEntry.data.id, this.wikiPageContent[idx].title, 'set_title', this.wikiPage.headings[idx - 1].title);
                 }
             }
         }
@@ -217,16 +275,51 @@ export class WikiComponent {
         {
             if (!(this.wikiPageContent[i + 1].text === this.wikiPage.headings[i].text))
             {
+                if (this.selectedEntry.type == 'category')
+                    this.wikiService.editTempleteHeading(this.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
+
+                    else
                 this.wikiService.editHeading(this.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
             }
         }
     }
 
+
+    public editAlias(alias:any)
+    {
+        //enable the textbox
+        if (alias.state)
+        {
+            alias.state = !alias.state;
+            alias.icon = "fa-check"
+            alias.prev = alias.name;
+        }
+        //disable textbox
+        else {
+            alias.state = !alias.state;
+            alias.icon = "fa-pencil"
+            if(!(alias.prev === alias.name))
+                this.wikiService.editAlias(alias.id, alias.name);
+            alias.prev = "";
+        }
+    }
+
+    public cancelAlias(alias: any)
+    {
+        alias.name = alias.prev;
+    }
+
+    public deleteAlias(alias: any)
+    {
+        this.wikiService.deleteAlias(alias.id);
+    }
+
+    //Delete Methods
     public onShow()
     {
         this.showDeleteDialog = true;
     }
-    //need to ask Kyle why this cant be delete
+   
     public onDeletePage(page:any)
     {
         this.showDeleteDialog = false;
@@ -236,38 +329,15 @@ export class WikiComponent {
             this.wikiService.deleteSegment(this.selectedEntry.data.id);
         else
             this.wikiService.deletePage(this.selectedEntry.data.id);
-      
-
     }
+
+
 
     public onDeleteHeading()
     {
 
     }
-    public addToWiki() {
-        //creating the new node to be added to the navigation
-        
-        this.showAddDialog = false;
- 
-            if (this.addContent == 'category') {
-         
-                this.wikiService.addSegment(this.pageName, this.selectedEntry.data.id);
-            }
-            else {
-                this.wikiService.addPage(this.pageName, this.selectedEntry.data.id);
-            }
-
-            
-            //    this.selectedEntry.children=this.selectedEntry.children.sort(this.sort);
-            
-            
-
-        
-
-        //need to send this info over network and get id;
-        this.addContent = this.addOptions[0]['value'];
-        this.pageName = "";
-    }
+    
    
 
     public sort(o1:any,o2:any)
