@@ -139,7 +139,7 @@ export class ParserService {
         temp.type = "title"
         nav.push(temp);
         for (let index in json['segments']) {
-            nav.push(this.jsonToWiki(json['segments'][index], {}));
+            nav.push(this.jsonToWiki(json['segments'][index], null));
         }
         for (let index in json['pages'])
             nav.push(this.jsonToPage(json['pages'][index]));
@@ -160,9 +160,11 @@ export class ParserService {
                 let segmentJsons = wikiJson[field];
                 for (let segment in segmentJsons) {
                     parent.label = wiki.label;
-                    parent.parent = par;
+                    if (par != null)
+                        parent.parent = par;
 
                     var subsegment = this.jsonToWiki(segmentJsons[segment], parent);
+                    subsegment.type = "category";
                     subsegment.parent = parent;
                     wiki.children.push(subsegment);
                 }

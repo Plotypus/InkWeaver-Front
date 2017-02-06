@@ -43,6 +43,7 @@ export class ApiService {
         section: new Section(),
         content: new Array<Paragraph>(),
 
+        wikiNav: [],
         wikiNode: [],
         wikiDisplay: '',
         wiki: new Wiki(),
@@ -140,14 +141,14 @@ export class ApiService {
                             callback(reply);
                             this.send({
                                 action: 'get_wiki_hierarchy',
-                                wiki_id: this.data.wiki.wiki_id
+                                wiki_id: this.data.story.wiki_id
                             });
                             break;
                         case 'delete_link':
                             break;
 
                         case 'create_wiki':
-                            reply.wiki_id = this.data.wiki.wiki_id;
+                            reply.wiki_id = this.data.story.wiki_id;
                             this.data.wiki = reply;
                             break
                         case 'get_wiki_information':
@@ -158,7 +159,7 @@ export class ApiService {
                         case 'get_wiki_hierarchy':
                         case 'get_wiki_segment_hierarchy':
                             this.data.segment = reply.hierarchy;
-                            this.data.wikiNode = this.parser.parseWiki(reply.hierarchy);
+                            this.data.wikiNav = this.parser.parseWiki(reply.hierarchy);
                             this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
                             break;
                         case 'get_wiki_segment':
@@ -174,9 +175,17 @@ export class ApiService {
                             break;
                         case 'add_page':
                             this.data.pageid.push(reply.page_id);
+                            this.send({
+                                action: 'get_wiki_hierarchy',
+                                wiki_id: this.data.story.wiki_id
+                            });
                             break;
                         case 'add_segment':
                             this.data.pageid.push(reply.segment_id);
+                            this.send({
+                                action: 'get_wiki_hierarchy',
+                                wiki_id: this.data.story.wiki_id
+                            });
                             break;
                         case 'add_template_heading':
                             break;
@@ -190,13 +199,11 @@ export class ApiService {
                             break;
                         case 'edit_heading':
                             break;
-                        case 'delete_segment':
-                            break;
-                        case 'delete_page':
-                            break;
-                        case 'delete_heading':
-                            break;
-                        case 'delete_alias':
+                        case 'change_alias_name':
+                            this.send({
+                                action: 'get_wiki_hierarchy',
+                                wiki_id: this.data.story.wiki_id
+                            });
                             break;
 
                         default:
