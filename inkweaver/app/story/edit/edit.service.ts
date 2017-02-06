@@ -46,10 +46,11 @@ export class EditService {
         });
     }
 
-    public deleteParagraph(paragraph_id: ID) {
+    public deleteParagraph(paragraph_id: ID, section_id: ID) {
         this.apiService.send({
             action: 'delete_paragraph',
-            paragraph_id: paragraph_id
+            paragraph_id: paragraph_id,
+            section_id: section_id
         });
     }
 
@@ -87,7 +88,7 @@ export class EditService {
         // Delete paragraphs that no longer exist
         for (let id in obj1) {
             if (!obj2[id]) {
-                this.deleteParagraph(JSON.parse(id));
+                this.deleteParagraph(JSON.parse(id), section_id);
                 for (let link in obj1[id].links) {
                     this.storyService.deleteLink(JSON.parse(link));
                 }
@@ -103,6 +104,11 @@ export class EditService {
                             this.storyService.createLink(story_id, section_id,
                                 reply1.paragraph_id, obj2[id].links[link].name,
                                 obj2[id].links[link].page_id, (reply2) => {
+                                    this.apiService.data.linkTable[JSON.stringify(reply2.link_id)] = {
+                                        page_id: obj2[id].links[link].page_id,
+                                        name: obj2[id].links[link].name
+                                    };
+
                                     let newText: string = obj2[id].text.replace(
                                         link, reply2.link_id.$oid);
                                     this.editParagraph(section_id, newText, reply1.paragraph_id);
@@ -123,6 +129,11 @@ export class EditService {
                         if (link.startsWith('new')) {
                             this.storyService.createLink(story_id, section_id, JSON.parse(id),
                                 obj2[id].links[link].name, obj2[id].links[link].page_id, (reply) => {
+                                    this.apiService.data.linkTable[JSON.stringify(reply.link_id)] = {
+                                        page_id: obj2[id].links[link].page_id,
+                                        name: obj2[id].links[link].name
+                                    };
+
                                     let newText: string = obj2[id].text.replace(
                                         link, reply.link_id.$oid);
                                     this.editParagraph(section_id, newText, JSON.parse(id));

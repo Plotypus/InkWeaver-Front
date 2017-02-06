@@ -7,6 +7,8 @@ import { EditService } from '../story/edit/edit.service';
 import { WikiService } from '../story/wiki/wiki.service';
 import { ApiService } from '../shared/api.service';
 
+import { ID } from '../models/id.model';
+
 @Component({
     selector: 'user',
     templateUrl: './app/user/user.component.html'
@@ -54,7 +56,7 @@ export class UserComponent {
         });
     }
 
-    public selectStory(story_id: string) {
+    public selectStory(story_id: ID) {
         this.data.story.story_id = story_id;
         this.editService.getStoryInformation(story_id);
         this.editService.getStoryHierarchy(story_id);

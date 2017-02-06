@@ -10,6 +10,7 @@ import { Collaborator } from '../models/user/collaborator.model';
 
 import { LinkTable } from '../models/link/link-table.model';
 import { Link } from '../models/link/link.model';
+import { ID } from '../models/id.model';
 
 import { StorySummary } from '../models/story/story-summary.model';
 import { Story } from '../models/story/story.model';
@@ -80,7 +81,7 @@ export class ApiService {
                     let message_id: number = reply.reply_to_id;
                     let out: any = this.outgoing[message_id];
                     let action: string = out.action;
-                    let callback: (reply: any) => {} = out.callback;
+                    let callback: Function = out.callback;
 
                     switch (action) {
                         case 'get_user_preferences':
@@ -99,22 +100,13 @@ export class ApiService {
                             break;
 
                         case 'create_story':
-                            this.send({
-                                action: 'get_story_hierarchy',
-                                story_id: reply.story_id
-                            });
+                            this.data.story = reply;
+                            this.refreshStory(reply.story_id);
                         case 'get_story_information':
                             reply.story_id = this.data.story.story_id;
                             this.data.story = reply;
                             this.data.wiki.wiki_id = reply.wiki_id;
-                            this.send({
-                                action: 'get_wiki_information',
-                                wiki_id: reply.wiki_id
-                            });
-                            this.send({
-                                action: 'get_wiki_hierarchy',
-                                wiki_id: reply.wiki_id
-                            });
+                            this.refreshWiki(reply.wiki_id, true);
                             break;
                         case 'get_story_hierarchy':
                         case 'get_section_hierarchy':
@@ -131,26 +123,19 @@ export class ApiService {
 
                         case 'add_paragraph':
                             callback(reply);
-                            break;
                         case 'edit_paragraph':
-                            break;
                         case 'delete_paragraph':
+                            this.refreshContent();
                             break;
 
                         case 'create_link':
                             callback(reply);
-                            this.send({
-                                action: 'get_wiki_hierarchy',
-                                wiki_id: this.data.story.wiki_id
-                            });
-                            break;
                         case 'delete_link':
                             break;
 
                         case 'create_wiki':
-                            reply.wiki_id = this.data.story.wiki_id;
                             this.data.wiki = reply;
-                            break
+                            this.refreshWiki(reply.wiki_id);
                         case 'get_wiki_information':
                             reply.wiki_id = this.data.wiki.wiki_id;
                             this.data.wiki = reply;
@@ -175,17 +160,11 @@ export class ApiService {
                             break;
                         case 'add_page':
                             this.data.pageid.push(reply.page_id);
-                            this.send({
-                                action: 'get_wiki_hierarchy',
-                                wiki_id: this.data.story.wiki_id
-                            });
+                            this.refreshWiki();
                             break;
                         case 'add_segment':
                             this.data.pageid.push(reply.segment_id);
-                            this.send({
-                                action: 'get_wiki_hierarchy',
-                                wiki_id: this.data.story.wiki_id
-                            });
+                            this.refreshWiki();
                             break;
                         case 'add_template_heading':
                             break;
@@ -200,10 +179,7 @@ export class ApiService {
                         case 'edit_heading':
                             break;
                         case 'change_alias_name':
-                            this.send({
-                                action: 'get_wiki_hierarchy',
-                                wiki_id: this.data.story.wiki_id
-                            });
+                            this.refreshWiki();
                             break;
 
                         default:
@@ -217,6 +193,24 @@ export class ApiService {
         this.messages.subscribe((action: string) => {
             console.log(action);
         });
+    }
+
+    public refreshStory(storyId: ID = this.data.story.story_id, info: boolean = false) {
+        if (info) {
+            this.send({ action: 'get_story_information', story_id: storyId });
+        }
+        this.send({ action: 'get_story_hierarchy', story_id: storyId });
+    }
+
+    public refreshContent(sectionId: ID = this.data.section.section_id) {
+        this.send({ action: 'get_section_content', section_id: sectionId });
+    }
+
+    public refreshWiki(wikiId: ID = this.data.story.wiki_id, info: boolean = false) {
+        if (info) {
+            this.send({ action: 'get_wiki_information', wiki_id: wikiId });
+        }
+        this.send({ action: 'get_wiki_hierarchy', wiki_id: wikiId });
     }
 
     /**
