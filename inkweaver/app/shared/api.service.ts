@@ -190,7 +190,11 @@ export class ApiService {
                             break;
                         case 'change_alias_name':
                             this.refreshWiki();
+                            this.refreshContent();
                             break;
+                        case 'delete_alias':
+                            this.refreshContent();
+                            break
 
                         default:
                             console.log('Unknown action: ' + action)
