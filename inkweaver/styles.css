@@ -296,12 +296,15 @@ code {
 .wiki .ui-widget input{
     width: 100%;
     color: var(--light-gray);
-    background-color:var(--light-blue);
+    background:var(--light-blue) !important;
     border: none;
     font-size:.5em;
     text-align:center;
 
 }
+    .wiki .fa {
+        color:white;
+    }
 
 
 

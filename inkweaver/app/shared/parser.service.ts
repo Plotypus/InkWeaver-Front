@@ -182,7 +182,7 @@ export class ParserService {
 
             }
         }
-        if (typeof wiki.children !== 'undefined' && wiki.children.length != 0) {
+        if (typeof wiki.children !== 'undefined' && (wiki.children.length == 0 || wiki.children.length != 0)) {
             wiki.type = "category";
         }
         return wiki
