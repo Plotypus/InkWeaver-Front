@@ -327,9 +327,10 @@ code {
         background: var(--dark-blue) !important;
     }
 
-    .navigation .fa-plus-square-o {
+    .navigation .fa-plus-square-o, .navigation .fa-minus-square-o {
         float: right;
         padding-top: 1%;
+        padding-right: 2%;
     }
 
 /* -------------------- Other -------------------- */

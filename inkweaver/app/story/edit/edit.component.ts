@@ -246,4 +246,8 @@ export class EditComponent {
         this.newSectionId = sectionId;
         this.displaySectionCreator = true;
     }
+
+    public deleteSection(sectionId: ID) {
+        //this.editService.deleteSection(sectionId);
+    }
 }

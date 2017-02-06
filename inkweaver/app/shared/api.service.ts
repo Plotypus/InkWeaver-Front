@@ -72,6 +72,11 @@ export class ApiService {
                 let response: string = res.data;
                 let reply = JSON.parse(response);
                 if (reply.event) {
+                    if (reply.event == 'alias_deleted') {
+                        this.refreshContent();
+                    } else if (reply.event == 'section_deleted') {
+                        this.refreshStory();
+                    }
                     return reply.event;
                 } else {
                     if (!reply.reply_to_id) {
@@ -192,9 +197,6 @@ export class ApiService {
                             this.refreshWiki();
                             this.refreshContent();
                             break;
-                        case 'delete_alias':
-                            this.refreshContent();
-                            break
 
                         default:
                             console.log('Unknown action: ' + action)

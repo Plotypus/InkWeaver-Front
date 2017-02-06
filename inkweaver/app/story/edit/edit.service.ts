@@ -26,6 +26,13 @@ export class EditService {
         });
     }
 
+    public deleteSection(sectionId: ID) {
+        this.apiService.send({
+            action: 'delete_section',
+            section_id: sectionId
+        });
+    }
+
     public addParagraph(section_id: ID, text: string, succeeding_paragraph_id: ID, callback: any) {
         let p: any = {
             action: 'add_paragraph',

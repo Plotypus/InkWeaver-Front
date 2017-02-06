@@ -82,6 +82,7 @@
                 <p-column field="title">
                     <template let-col let-node="rowData" pTemplate="body">
                         {{node.data.title}}
+                        <i class="fa fa-minus-square-o" (click)="deleteSection(node.data.section_id)"></i>
                         <i class="fa fa-plus-square-o" (click)="openSectionCreator(node.data.section_id)"></i>
                     </template>
                 </p-column>
