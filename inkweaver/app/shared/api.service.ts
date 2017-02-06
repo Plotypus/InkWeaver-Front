@@ -100,6 +100,11 @@ export class ApiService {
                             break;
 
                         case 'create_story':
+                            this.data.stories.unshift({
+                                story_id: reply.story_id,
+                                title: reply.story_title,
+                                access_level: reply.access_level
+                            });
                             this.data.story = reply;
                             this.refreshStory(reply.story_id);
                         case 'get_story_information':

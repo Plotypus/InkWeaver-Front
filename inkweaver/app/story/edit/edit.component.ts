@@ -53,6 +53,7 @@ export class EditComponent {
     ngOnInit() {
         this.data = this.apiService.data;
         this.suggest = {};
+        this.data.tooltip.display = 'none';
         //let values: string[] = Object.values(this.data.outgoing);
         //values.includes('get_story_hierarchy')
 
