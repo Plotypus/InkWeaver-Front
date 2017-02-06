@@ -11,7 +11,10 @@ import {
     DialogModule,
     DropdownModule,
     InputTextModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    PanelModule,
+    DataListModule,
+    DataGridModule
     
 } from 'primeng/primeng';
 
@@ -29,6 +32,9 @@ import { WikiComponent } from './wiki.component';
         ButtonModule,
         DialogModule,
         DropdownModule,
+        DataGridModule,
+        PanelModule,
+        DataListModule,
         ConfirmDialogModule
         
     ],

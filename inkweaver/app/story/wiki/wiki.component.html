@@ -13,8 +13,8 @@
 <p-dialog modal="true" header="Create Heading for {{addTo}}" [(visible)]="showAddHeadDialog"
           width="450" height="450" responsive="true">
 
-    <input type="text" pInputText [(ngModel)]="pageName" />
-    <input type="text" pInputText [(ngModel)]="addContent" />
+    Heading: <input type="text" pInputText [(ngModel)]="pageName" />
+    Summary: <input type="text" pInputText [(ngModel)]="addContent" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <button pButton type="button" label="Create Heading" icon="fa-link" iconPos="right" (click)="createHeading(false)"></button>
@@ -45,9 +45,9 @@
 
             
             <!--Editor-->
-            <ng-container *ngIf="wikiPage" style="max-height:400px">
+            <ng-container *ngIf="wikiPage" >
                 <!--Title -->
-                <span>
+                <span class="header">
                     <input type="text" size="30" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
                     <button pButton type="button" [icon]="icons[0]" (click)="onDisable(0)"></button>
                     <button  *ngIf="!disabled[0]" pButton type="button" icon="fa-times" (click)="onCancel(0)"></button>
@@ -55,11 +55,29 @@
                 </span>
                 <!--Alias-->
                 <ng-container *ngIf="wikiPage.aliases">
-                    <div>Alias</div>
+                    <p-dataGrid [value]="wikiPage.aliases" [rows]="3">
+                        <header style="color:var(--light-gray); text-align: left;">Aliases</header>
+                        <template let-alias pTemplate="item";>
+                            <div class="ui-g-12 ui-md-4">
+                                <p-panel class="ui-g-6">
+                                    <header>
+                                        <input type="text" size="30" pInputText [(ngModel)]="alias.name" [disabled]="alias.state" />
+                                    </header>
+                                        <div>
+                                            <button pButton type="button" [icon]="alias.icon" (click)="editAlias(alias)"></button>
+                                            <button *ngIf="!alias.state" pButton type="button" icon="fa-times" (click)="cancelAlias(alias)"></button>
+                                            <button pButton type="button" icon="fa-trash-o" (click)="deleteAlias(alias)"></button>
+                                     
+                                        </div>
+
+                                </p-panel>
+                           </div>
+                        </template>
+                    </p-dataGrid>
                 </ng-container>
                 <!--Taking care of headings -->
                 <div *ngFor="let section of wikiPage.headings; let i = index">
-                    <span>
+                    <span >
                         <input type="text" size="30" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
                         <button pButton type="button" [icon]="icons[i+1]" (click)="onDisable(i+1)"></button>
                         <button  *ngIf="!disabled[i+1]" pButton type="button" icon="fa-times" (click)="onCancel(0)" ></button>
@@ -70,7 +88,12 @@
                 </div>
                 <!--References-->
                 <ng-container *ngIf="wikiPage.references">
-                    <div>References</div>
+                    <p-dataList [value]="wikiPage.references">
+                        <header style="color:var(--light-gray); text-align: left;">References</header>
+                        <template let-ref pTemplate="item">
+                           {{ref.text}}
+                        </template>
+                    </p-dataList>
                 </ng-container>
                 <button pButton type="button" icon="fa-floppy-o" (click)="onSavePage()"></button>
                 <button pButton type="button" icon="fa-trash-o" (click)="onShow()"></button>
@@ -141,7 +164,7 @@
 </div>
 
         <div class="navigation ui-g-3">
-            <p-treeTable [value]="nav" styleClass="treetable-no-header"selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
+            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header"selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
                 <p-column field="data.title">
                     <template let-node="rowData" pTemplate="body">
                         <span *ngIf="node.type == 'page'">

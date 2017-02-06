@@ -70,21 +70,68 @@ export class WikiService {
     //update_type: {"set_title" | "set_text"
 
     public editHeading(page_id: any, heading_title: string, update_type: string, new_text: string) {
+
+        if (update_type == "set_text")
         this.apiService.send({
 
             "action": "edit_heading",
             "page_id": page_id,
             "heading_title": heading_title,
-
-
-
             "update": {
                 "update_type": update_type,
                 "text": new_text
             }
+            });
+        else
+            this.apiService.send({
+
+                "action": "edit_heading",
+                "page_id": page_id,
+                "heading_title": heading_title,
+                "update": {
+                    "update_type": update_type,
+                    "title": new_text
+                }
+            });
+
+    }
+
+    public editAlias(aid:any, nName:any)
+    {
+        this.apiService.send({
+
+            "action": "change_alias_name",
+            "alias_id": aid,
+            "new_name": nName
         });
     }
 
+    public editTempleteHeading(sid:any, title:any, type:any, nTitle:any)
+    {
+        if (type == 'set_title')
+            this.apiService.send({
+
+                "action": "edit_template_heading",
+                "segment_id": sid,
+                "template_heading_title": title,
+                "update": {
+                    "update_type": type,
+                    "title": nTitle
+                }
+            });
+        else
+            this.apiService.send({
+
+                "action": "edit_template_heading",
+                "segment_id": sid,
+                "template_heading_title": title,
+                "update": {
+                    "update_type": type,
+                    "text": nTitle
+                }
+            });
+
+    }
     //ADD
     public addSegment(title: string, pid: any) {
         this.apiService.send({
