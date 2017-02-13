@@ -101,6 +101,7 @@
     <TypeScriptCompile Include="app\models\story\tooltip.model.ts" />
     <TypeScriptCompile Include="app\models\wiki\reference.model.ts" />
     <TypeScriptCompile Include="app\shared\parser.service.ts" />
+    <TypeScriptCompile Include="app\shared\truncate.pipe.ts" />
     <TypeScriptCompile Include="app\story\edit\edit.module.ts" />
     <TypeScriptCompile Include="app\story\edit\edit.service.ts" />
     <TypeScriptCompile Include="app\models\user\collaborator.model.ts" />

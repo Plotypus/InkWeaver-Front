@@ -27,7 +27,8 @@
             <tr>
                 <td></td>
                 <td>
-                    <button pButton type="button" label="Create Story" (click)="createStory()"></button>
+                    <button pButton type="button" label="Create Story" (click)="createStory()"
+                            [disabled]="!(title && summary && (newWiki != 'new_wiki' || (newWikiTitle && newWikiSummary)))"></button>
                 </td>
             </tr>
         </tbody>

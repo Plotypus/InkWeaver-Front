@@ -186,6 +186,10 @@ story .ui-panel-titlebar p {
     position: relative;
 }
 
+.editor > div, .ui-editor-container {
+    height: 100% !important;
+}
+
 .loading-editor {
     filter: blur(2px);
 }
@@ -200,16 +204,28 @@ story .ui-panel-titlebar p {
     color: var(--dark-blue);
 }
 
+.ql-expanded ::before {
+    color: black !important;
+}
+
+.ql-save .ui-button {
+    margin: 4px;
+    width: 8% !important;
+    float: right !important;
+}
+
+.ql-save .ui-button-text {
+    padding: 0 10px 0 10px !important;
+}
+
 .ui-editor-toolbar {
     border-radius: 0px;
     background: var(--light-gray) !important;
 }
 
-
-
 .editor .ui-editor-content {
     background: white;
-    height: 425px !important;
+    height: calc( 100% - 50px ); !important;
 }
 
     .ui-editor-content p {

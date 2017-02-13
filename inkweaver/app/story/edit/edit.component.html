@@ -59,17 +59,19 @@
                             <button class="ql-script" value="super"></button>
                             <button class="ql-clean"></button>
                         </span>
+                        <span class="ql-save">
+                            <button pButton type="button" label="Save" (click)="save()"></button>
+                        </span>
                     </header>
                 </p-editor>
-                <div class="tooltip" [innerHTML]="data.tooltip.text" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}"></div>
 
+                <div class="tooltip" [innerHTML]="data.tooltip.text" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}"></div>
                 <div class="suggest" [ngStyle]="{'display': suggest.display,'top': suggest.top, 'left': suggest.left}">
                     {{suggest.title}}<br />
                 </div>
 
                 <!-- Word Count -->
                 <div class="stats">Word Count: {{wordCount}}</div>
-                <button pButton type="button" label="Save" (click)="save()"></button>
             </div>
         </div>
 
@@ -81,7 +83,7 @@
                          (onNodeSelect)="selectSection($event)">
                 <p-column field="title">
                     <template let-col let-node="rowData" pTemplate="body">
-                        {{node.data.title}}
+                        {{node.data.title | truncate : 20}}
                         <i class="fa fa-minus-square-o" (click)="deleteSection(node.data.section_id)"></i>
                         <i class="fa fa-plus-square-o" (click)="openSectionCreator(node.data.section_id)"></i>
                     </template>

@@ -14,6 +14,7 @@ import {
 
 import { EditService } from './edit.service';
 import { EditComponent } from './edit.component';
+import { TruncatePipe } from '../../shared/truncate.pipe';
 
 @NgModule({
     imports: [
@@ -28,7 +29,10 @@ import { EditComponent } from './edit.component';
         TreeTableModule
     ],
     providers: [EditService],
-    declarations: [EditComponent],
+    declarations: [
+        EditComponent,
+        TruncatePipe
+    ],
     bootstrap: [EditComponent]
 })
 export class EditModule { }

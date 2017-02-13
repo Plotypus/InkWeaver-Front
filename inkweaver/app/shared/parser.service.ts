@@ -15,23 +15,22 @@ export class ParserService {
     // ----------------------------------------------- //
     // -------------------- Story -------------------- //
     // ----------------------------------------------- //
-    public sectionToTree(parserService: ParserService, story: Section): TreeNode {
+    public sectionToTree(parserService: ParserService, story: Section, parent: TreeNode): TreeNode {
         let treeNode: TreeNode = {};
-
         treeNode.data = {
             title: story.title,
             section_id: story.section_id
         };
+        treeNode.parent = parent;
 
         let sectionToTree: (story: Section) => TreeNode = (story: Section) => {
-            return parserService.sectionToTree(parserService, story);
+            return parserService.sectionToTree(parserService, story, treeNode);
         };
-
         treeNode.children = story.preceding_subsections.map(sectionToTree)
             .concat(story.inner_subsections.map(sectionToTree))
             .concat(story.succeeding_subsections.map(sectionToTree));
-        treeNode.leaf = treeNode.children.length == 0;
 
+        treeNode.leaf = treeNode.children.length == 0;
         return treeNode;
     }
 

@@ -1,5 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs/Rx';
+import { MenuItem, TreeNode } from 'primeng/primeng';
 
 import { WebSocketService } from './websocket.service';
 import { ParserService } from './parser.service';
@@ -33,16 +34,18 @@ const url: string = 'ws://localhost:8080/ws/demo';
 export class ApiService {
     public data = {
         inflight: false,
+        menuItems: new Array<MenuItem>(),
+
         user: new User(),
         stories: new Array<StorySummary>(),
         wikis: new Array<WikiSummary>(),
         linkTable: new LinkTable(),
 
-        storyNode: [],
         storyDisplay: '',
         story: new Story(),
         section: new Section(),
         content: new Array<Paragraph>(),
+        storyNode: new Array<TreeNode>(),
 
         wikiNav: [],
         wikiNode: [],
@@ -105,12 +108,8 @@ export class ApiService {
                             break;
 
                         case 'create_story':
-                            this.data.stories.unshift({
-                                story_id: reply.story_id,
-                                title: reply.story_title,
-                                access_level: reply.access_level
-                            });
                             this.data.story = reply;
+                            this.refreshUser();
                             this.refreshStory(reply.story_id);
                         case 'get_story_information':
                             reply.story_id = this.data.story.story_id;
@@ -123,7 +122,7 @@ export class ApiService {
                         case 'get_section_hierarchy':
                             this.data.section = reply.hierarchy;
                             this.data.storyNode = [
-                                this.parser.sectionToTree(this.parser, reply.hierarchy)
+                                this.parser.sectionToTree(this.parser, reply.hierarchy, null)
                             ];
                             break;
                         case 'get_section_content':
@@ -133,6 +132,7 @@ export class ApiService {
                             break;
 
                         case 'add_inner_subsection':
+                            //this.data.selectedSection = reply.section_id;
                             this.refreshStory();
                             break
 
@@ -150,6 +150,7 @@ export class ApiService {
 
                         case 'create_wiki':
                             this.data.wiki = reply;
+                            this.refreshUser();
                             this.refreshWiki(reply.wiki_id);
                         case 'get_wiki_information':
                             reply.wiki_id = this.data.wiki.wiki_id;
@@ -211,6 +212,12 @@ export class ApiService {
         });
     }
 
+    public refreshUser() {
+        this.send({ action: 'get_user_preferences' });
+        this.send({ action: 'get_user_stories' });
+        this.send({ action: 'get_user_wikis' });
+    }
+
     public refreshStory(storyId: ID = this.data.story.story_id, info: boolean = false) {
         if (info) {
             this.send({ action: 'get_story_information', story_id: storyId });
@@ -222,7 +229,8 @@ export class ApiService {
         this.send({ action: 'get_section_content', section_id: sectionId });
     }
 
-    public refreshWiki(wikiId: ID = this.data.story.wiki_id, info: boolean = false) {
+    public refreshWiki(wikiId: ID = this.data.story.wiki_id,
+        info: boolean = false, wikis: boolean = false) {
         if (info) {
             this.send({ action: 'get_wiki_information', wiki_id: wikiId });
         }

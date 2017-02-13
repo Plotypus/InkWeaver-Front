@@ -35,6 +35,11 @@ export class UserComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+        this.data.menuItems = [
+            { label: 'About', routerLink: ['/about'] },
+            { label: 'Sign Out', routerLink: ['/login'] },
+        ];
+
         if (this.data.stories.length == 0 ||
             this.data.stories[this.data.stories.length - 1].story_id) {
             this.data.stories.push({ story_id: null, title: null, access_level: null });

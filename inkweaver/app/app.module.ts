@@ -25,7 +25,9 @@ import { AppComponent } from './app.component';
         UserModule,
         StoryModule,
     ],
-    declarations: [AppComponent],
+    declarations: [
+        AppComponent
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
