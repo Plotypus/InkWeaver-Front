@@ -87,10 +87,10 @@ export class WikiComponent {
          else if (action.includes("delete"))
          {
              this.wikiService.getWikiHierarchy(this.data.story.wiki_id);
-             /*if(action == 'delete_alias')
+             if(action == "alias_deleted")
              {
                 this.wikiService.getWikiPage(this.selectedEntry.data.id);
-             }*/
+             }
          }
        
            
