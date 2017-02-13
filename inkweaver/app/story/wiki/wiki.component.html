@@ -47,7 +47,7 @@
             <!--Editor-->
             <ng-container *ngIf="wikiPage">
                 <!--Title -->
-                <span class="header">
+                <span>
                     <input type="text" size="30" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
                     <button pButton type="button" [icon]="icons[0]" (click)="onDisable(0)"></button>
                     <button *ngIf="!disabled[0]" pButton type="button" icon="fa-times" (click)="onCancel(0)"></button>
@@ -58,8 +58,8 @@
                     <p-dataGrid [value]="wikiPage.aliases" [rows]="3">
                         <header style="color:var(--light-gray); text-align: left;">Aliases</header>
                         <template let-alias pTemplate="item" ;>
-                            <div class="ui-g-12 ui-md-4">
-                                <p-panel class="ui-g-6">
+                            <div class="ui-g-12">
+                                <p-panel class="ui-g-2 alias-box">
                                     <header>
                                         <input type="text" size="30" pInputText [(ngModel)]="alias.name" [disabled]="alias.state" />
                                     </header>

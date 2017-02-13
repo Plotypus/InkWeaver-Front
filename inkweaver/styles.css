@@ -286,17 +286,21 @@ code {
 
 }
 
-.wiki .span .ui-widget input
-{
+
+.wiki input{
     width: 25%;
     color: var(--light-gray);
-    background-color:var(--light-blue);
+    background:transparent !important;
     border: none;
+    font-size: 1em;
+    text-align:center;
+
 }
+
 .wiki .ui-widget input{
     width: 100%;
     color: var(--light-gray);
-    background:var(--light-blue) !important;
+    background: transparent !important;
     border: none;
     font-size:.5em;
     text-align:center;
@@ -305,6 +309,11 @@ code {
     .wiki .fa {
         color:white;
     }
+.wiki alias-box{
+    background: var(--light-blue);
+    border-radius: 1em;
+
+}
 
 
 

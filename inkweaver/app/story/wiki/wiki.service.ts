@@ -28,18 +28,18 @@ export class WikiService {
         });
     }
 
-    public getWikiSegment(sid: any) {
+    public getWikiSegment(sid: any, callback: any = {}) {
         this.apiService.send({
             "action": "get_wiki_segment",
             "segment_id": sid
-        });
+        },callback);
     }
-    public getWikiPage(page_id: any, source: string = 'wiki') {
+    public getWikiPage(page_id: any, callback: any = {},source: string = 'wiki', ) {
         this.apiService.send({
             action: 'get_wiki_page',
             page_id: page_id,
             source: source
-        });
+        },callback);
     }
 
     //EDITS

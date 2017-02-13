@@ -43,6 +43,7 @@ export class WikiComponent {
         this.addContent = this.addOptions[0]['value'];
 
 
+
        this.apiService.messages.subscribe((action: string) => {
          if (action == "get_wiki_segment" || action == 'get_wiki_page')
            {
@@ -99,7 +100,46 @@ export class WikiComponent {
 
 
 
- 
+    public parsePage()
+    {
+        this.wikiPage = this.data.page;
+
+        this.disabled = [true];
+        this.icons = ['fa-pencil'];
+        this.wikiPageContent.push({
+            'title': this.wikiPage.title,
+            'text': ""
+        })
+        this.toDelete = this.wikiPage.title;
+        for (let i = 0; i < this.wikiPage.headings.length; i++) {
+            this.disabled.push(true);
+            this.icons.push('fa-pencil');
+            this.wikiPageContent.push({
+                'title': this.wikiPage.headings[i].title,
+                'text': this.wikiPage.headings[i].text
+            });
+        }
+
+        //getting the alias
+        if (this.wikiPage.aliases) {
+            let temp = [];
+            let count = 0;
+            for (let i in this.wikiPage.aliases) {
+                temp.push({
+                    'index': count,
+                    'state': true,
+                    'name': i,
+                    'icon': 'fa-pencil',
+                    'prev': '',
+                    'id': this.wikiPage.aliases[i]
+                })
+                count++;
+            }
+            this.wikiPage.aliases = temp;
+        }
+             //getting the references
+
+    }
 
     /**
      * Switch between pages for the wiki

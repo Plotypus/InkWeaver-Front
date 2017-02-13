@@ -203,37 +203,6 @@ export class ParserService {
         return page;
     }
 
-    public segmentToTree(parserService: ParserService, wiki: Segment): TreeNode {
-        let treeNode: TreeNode = {};
-
-        treeNode.data = {
-            title: wiki.title,
-            segment_id: wiki.segment_id
-        };
-
-        let segmentToTree: (wiki: Segment) => TreeNode = (wiki: Segment) => {
-            return parserService.segmentToTree(parserService, wiki);
-        };
-
-        treeNode.children = wiki.segments.map(segmentToTree)
-            .concat(wiki.pages.map(parserService.pageToTree));
-        treeNode.leaf = false;
-
-        return treeNode;
-    }
-
-    public pageToTree(page: PageSummary): TreeNode {
-        let treeNode: TreeNode = {};
-
-        treeNode.data = {
-            title: page.title,
-            page_id: page.page_id
-        };
-        treeNode.leaf = true;
-
-        return treeNode;
-    }
-
     /**
      * Set the display for the wiki
      */
@@ -250,6 +219,22 @@ export class ParserService {
     }
 
     public setPageDisplay(reply: any) {
-        return 'Page';
+        //getting the alias
+        if (reply.aliases) {
+            let temp = [];
+            let count = 0;
+            for (let i in reply.aliases) {
+                temp.push({
+                    'index': count,
+                    'state': true,
+                    'name': i,
+                    'icon': 'fa-pencil',
+                    'prev': '',
+                    'id': reply.aliases[i]
+                })
+                count++;
+            }
+           reply.aliases = temp;
+        return reply;
     }
 }

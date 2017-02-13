@@ -167,7 +167,7 @@ export class ApiService {
                             this.data.page = reply;
                             break;
                         case 'get_wiki_page':
-                            this.data.page = reply;
+                            this.data.page = this.parser.setPageDisplay(reply);
                             this.data.tooltip.text = '<b>' + reply.title + '</b>';
                             if (reply.headings && reply.headings[0]) {
                                 this.data.tooltip.text += '<br/><u>' + reply.headings[0].title + '</u><br/>' + reply.headings[0].text;
