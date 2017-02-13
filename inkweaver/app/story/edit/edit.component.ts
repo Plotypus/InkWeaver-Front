@@ -225,9 +225,13 @@ export class EditComponent {
     /* ------------------------------------------------------------ */
 
     public selectSection(event: any) {
-        this.data.storyDisplay = '';
         this.data.section.section_id = event.node.data.section_id;
-        this.editService.getSectionContent(event.node.data.section_id);
+        if (event.node.parent) {
+            this.data.storyDisplay = '';
+            this.editService.getSectionContent(event.node.data.section_id);
+        } else {
+            this.data.storyDisplay = '<h1>Summary</h1>' + this.data.story.summary;
+        }
     }
 
     public save() {
