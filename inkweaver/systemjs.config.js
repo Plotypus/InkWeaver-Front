@@ -26,8 +26,8 @@
 
             // other libraries
             'rxjs': 'npm:rxjs',
-            'primeng': 'npm:primeng',
-            'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js'
+            'quill': 'npm:quill',
+            'primeng': 'npm:primeng'
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
@@ -36,6 +36,9 @@
                 defaultExtension: 'js'
             },
             'rxjs': {
+                defaultExtension: 'js'
+            },
+            'quill': {
                 defaultExtension: 'js'
             },
             'primeng': {

@@ -27,7 +27,7 @@ export class WikiComponent {
     private showDeleteDialog: any;
     private toDelete: any;
     private nav: any;
-   
+
 
     constructor(
         private wikiService: WikiService,
@@ -43,63 +43,60 @@ export class WikiComponent {
         this.addContent = this.addOptions[0]['value'];
 
 
-       this.apiService.messages.subscribe((action: string) => {
-         if (action == "get_wiki_segment" || action == 'get_wiki_page')
-           {
-             this.wikiPage = this.data.page;
-             
-               this.disabled = [true];
-               this.icons = ['fa-pencil'];
-               this.wikiPageContent.push({
-                   'title': this.wikiPage.title,
-                   'text': ""
-               })
-               this.toDelete = this.wikiPage.title;
-               for (let i = 0; i < this.wikiPage.headings.length; i++) {
-                   this.disabled.push(true);
-                   this.icons.push('fa-pencil');
-                   this.wikiPageContent.push({
-                       'title': this.wikiPage.headings[i].title,
-                       'text': this.wikiPage.headings[i].text
-                   });
-               }
+        this.apiService.messages.subscribe((action: string) => {
+            if (action == "get_wiki_segment" || action == 'get_wiki_page') {
+                this.wikiPage = this.data.page;
 
-               //getting the alias
-               if (this.wikiPage.aliases) {
-                   let temp = [];
-                   let count = 0;
-                   for (let i in this.wikiPage.aliases) {
-                       temp.push({
-                           'index': count,
-                           'state': true,
-                           'name': i,
-                           'icon': 'fa-pencil',
-                           'prev': '',
-                           'id': this.wikiPage.aliases[i]
-                       })
-                       count++;
-                   }
-                   this.wikiPage.aliases = temp;
-                   }
-             //getting the references
+                this.disabled = [true];
+                this.icons = ['fa-pencil'];
+                this.wikiPageContent.push({
+                    'title': this.wikiPage.title,
+                    'text': ""
+                })
+                this.toDelete = this.wikiPage.title;
+                for (let i = 0; i < this.wikiPage.headings.length; i++) {
+                    this.disabled.push(true);
+                    this.icons.push('fa-pencil');
+                    this.wikiPageContent.push({
+                        'title': this.wikiPage.headings[i].title,
+                        'text': this.wikiPage.headings[i].text
+                    });
+                }
 
-         }
-         else if (action.includes("delete"))
-         {
-             this.wikiService.getWikiHierarchy(this.data.story.wiki_id);
-             if(action == "alias_deleted")
-             {
-                this.wikiService.getWikiPage(this.selectedEntry.data.id);
-             }
-         }
-       
-           
-       });
+                //getting the alias
+                if (this.wikiPage.aliases) {
+                    let temp = [];
+                    let count = 0;
+                    for (let i in this.wikiPage.aliases) {
+                        temp.push({
+                            'index': count,
+                            'state': true,
+                            'name': i,
+                            'icon': 'fa-pencil',
+                            'prev': '',
+                            'id': this.wikiPage.aliases[i]
+                        })
+                        count++;
+                    }
+                    this.wikiPage.aliases = temp;
+                }
+                //getting the references
+
+            }
+            else if (action.includes("delete")) {
+                this.wikiService.getWikiHierarchy(this.data.story.wiki_id);
+                if (action == "alias_deleted") {
+                    this.wikiService.getWikiPage(this.selectedEntry.data.id);
+                }
+            }
+
+
+        });
     }
 
 
 
- 
+
 
     /**
      * Switch between pages for the wiki
@@ -116,15 +113,15 @@ export class WikiComponent {
             page.node.expanded = !page.node.expanded;
             //get information for the page. 
             this.wikiService.getWikiSegment(page.node.data.id);
-            
-            
+
+
         }
         else {
             this.data.selectedPage = page.node.data.id;
             this.wikiService.getWikiPage(page.node.data.id);
         }
 
-      
+
     }
 
     /**
@@ -159,7 +156,7 @@ export class WikiComponent {
     /*
         Will toogle value of button variable to indicate whether something needs to be added or not
     */
-    public onAddPage(event:any, page: any) {
+    public onAddPage(event: any, page: any) {
         this.addTo = page.label;
         this.showAddDialog = true;
         this.selectedEntry = page;
@@ -169,8 +166,7 @@ export class WikiComponent {
     }
 
 
-    public addHeading()
-    {
+    public addHeading() {
         this.addTo = this.selectedEntry.label;
         this.addContent = "";
         this.showAddHeadDialog = true;
@@ -180,20 +176,18 @@ export class WikiComponent {
 
         if (!addMore)
             this.showAddHeadDialog = false;
-        
+
         let temp = {};
-        if (this.selectedEntry.type == 'category')
-        {
+        if (this.selectedEntry.type == 'category') {
             this.wikiService.addTempleteHeading(this.pageName, this.selectedEntry.data.id);
-            
+
             temp = {
                 'title': this.pageName,
                 'text': this.addContent
             };
             this.wikiPage.headings.push(temp);
         }
-        else
-        {
+        else {
             this.wikiService.addHeading(this.pageName, this.selectedEntry.data.id);
             temp = {
                 'title': this.pageName,
@@ -207,14 +201,12 @@ export class WikiComponent {
         this.addContent = "";
         this.pageName = "";
     }
-    public onDisable(idx: any)
-    {
+    public onDisable(idx: any) {
 
         let title = "";
         let text = "";
         //saving the previous state
-        if (this.disabled[idx])
-        {
+        if (this.disabled[idx]) {
             this.icons[idx] = 'fa-check';
             if (idx == 0) {
                 title = this.wikiPage.title;
@@ -227,25 +219,23 @@ export class WikiComponent {
                 "title": title,
                 "text": text,
             }
-            this.wikiPageContent.splice(idx, 1, prev); 
+            this.wikiPageContent.splice(idx, 1, prev);
         }
         else {
             //need to send the new state to the server
             this.icons[idx] = 'fa-pencil';
-            if (this.selectedEntry.type == 'category')
-            {
+            if (this.selectedEntry.type == 'category') {
                 //editing the category title
                 if (idx == 0 && !(this.wikiPageContent[0].title === this.wikiPage.title)) {
                     this.wikiService.editSegment(this.selectedEntry.data.id, 'set_title', this.wikiPage.title);
                     this.selectedEntry.data.title = this.wikiPage.title;
                 }
-                else if (idx != 0 && !(this.wikiPageContent[idx].title === this.wikiPage.title))
-                {
+                else if (idx != 0 && !(this.wikiPageContent[idx].title === this.wikiPage.title)) {
                     this.wikiService.editTempleteHeading(this.selectedEntry.data.id, this.wikiPageContent[idx].title, "set_title", this.wikiPage.headings[idx - 1].title);
                     //editing templete heading
                 }
 
-               
+
             }
             //saving page information
             else {
@@ -262,10 +252,8 @@ export class WikiComponent {
         this.disabled[idx] = !this.disabled[idx];
     }
 
-    public onCancel(idx: any)
-    {
-        if (idx == 0)
-        {
+    public onCancel(idx: any) {
+        if (idx == 0) {
             this.wikiPage.title = this.wikiPageContent[0].title;
         }
         else {
@@ -273,27 +261,22 @@ export class WikiComponent {
         }
     }
 
-    public onSavePage()
-    {
-        for (let i = 0; i < this.wikiPage.headings.length; i++)
-        {
-            if (!(this.wikiPageContent[i + 1].text === this.wikiPage.headings[i].text))
-            {
+    public onSavePage() {
+        for (let i = 0; i < this.wikiPage.headings.length; i++) {
+            if (!(this.wikiPageContent[i + 1].text === this.wikiPage.headings[i].text)) {
                 if (this.selectedEntry.type == 'category')
                     this.wikiService.editTempleteHeading(this.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
 
-                    else
-                this.wikiService.editHeading(this.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
+                else
+                    this.wikiService.editHeading(this.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
             }
         }
     }
 
 
-    public editAlias(alias:any)
-    {
+    public editAlias(alias: any) {
         //enable the textbox
-        if (alias.state)
-        {
+        if (alias.state) {
             alias.state = !alias.state;
             alias.icon = "fa-check"
             alias.prev = alias.name;
@@ -302,30 +285,26 @@ export class WikiComponent {
         else {
             alias.state = !alias.state;
             alias.icon = "fa-pencil"
-            if(!(alias.prev === alias.name))
+            if (!(alias.prev === alias.name))
                 this.wikiService.editAlias(alias.id, alias.name);
             alias.prev = "";
         }
     }
 
-    public cancelAlias(alias: any)
-    {
+    public cancelAlias(alias: any) {
         alias.name = alias.prev;
     }
 
-    public deleteAlias(alias: any)
-    {
+    public deleteAlias(alias: any) {
         this.wikiService.deleteAlias(alias.id);
     }
 
     //Delete Methods
-    public onShow()
-    {
+    public onShow() {
         this.showDeleteDialog = true;
     }
-   
-    public onDeletePage(page:any)
-    {
+
+    public onDeletePage(page: any) {
         this.showDeleteDialog = false;
         if (!page)
             return;
@@ -337,15 +316,13 @@ export class WikiComponent {
 
 
 
-    public onDeleteHeading()
-    {
+    public onDeleteHeading() {
 
     }
-    
-   
 
-    public sort(o1:any,o2:any)
-    {
+
+
+    public sort(o1: any, o2: any) {
         if (o1.type == 'category' && o2.type == 'category')
             return 0;
         else if (o1.type == 'category' && o2.type == 'title')
@@ -362,7 +339,7 @@ export class WikiComponent {
             return -1;
         else
             return 0;
-        
+
     }
 
 

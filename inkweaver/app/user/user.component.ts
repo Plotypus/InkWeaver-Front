@@ -10,8 +10,9 @@ import { ApiService } from '../shared/api.service';
 import { ID } from '../models/id.model';
 
 @Component({
+    moduleId: module.id,
     selector: 'user',
-    templateUrl: './app/user/user.component.html'
+    templateUrl: './user.component.html'
 })
 export class UserComponent {
     private data: any;

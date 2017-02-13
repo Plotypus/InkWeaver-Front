@@ -1,0 +1,70 @@
+﻿story .ui-panel-titlebar {
+    min-height: 100px;
+    position: relative;
+    padding: 0 !important;
+    font-size: 2em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+story .ui-widget-header {
+    background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue));
+}
+
+story .ui-panel-titlebar p {
+    font-size: 0.5em;
+    margin: 5px 0 0 0;
+}
+
+/* ----- Menu ----- */
+.menu {
+    right: 0;
+    padding: 0;
+    height: 100%;
+    position: absolute;
+}
+
+    .menu .ui-widget-header {
+        background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
+    }
+
+    .menu .ui-tabmenu,
+    .menu .ui-tabmenu-nav {
+        padding: 0;
+        height: 100%;
+        border-radius: 0px;
+    }
+
+    .menu .ui-tabmenuitem {
+        width: 33%;
+        height: 100%;
+        border: none;
+        margin: 0 !important;
+        background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
+    }
+
+        .menu .ui-tabmenuitem.ui-state-active {
+            z-index: 10;
+            background: var(--light-blue) !important;
+            box-shadow: 0 0 10px 2px var(--dark-blue);
+        }
+
+    .menu .ui-menuitem-link {
+        width: 100%;
+        height: 100%;
+        padding: 0 !important;
+    }
+
+    .menu .ui-menuitem-icon {
+        margin-top: 20%;
+        font-size: 1.75em;
+        color: var(--dark-gray);
+    }
+
+    .menu .ui-state-active .ui-menuitem-icon {
+        color: var(--light-gray);
+    }
+
+.placeholder {
+    margin-left: 25px;
+}

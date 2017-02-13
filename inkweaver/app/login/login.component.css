@@ -1,0 +1,27 @@
+﻿.login {
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    position: absolute;
+    text-align: center;
+}
+
+    .login .ui-panel-titlebar {
+        color: var(--dark-blue);
+        background: var(--light-gray);
+    }
+
+    .login .ui-panel-content {
+        background: white;
+        padding: 5% !important;
+        color: var(--light-blue);
+    }
+
+    .login table {
+        margin-left: 25%;
+    }
+
+.login-warn {
+    text-align: left;
+    color: var(--orange);
+}

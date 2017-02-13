@@ -1,0 +1,74 @@
+﻿user .ui-datagrid-header {
+    border-radius: 0;
+    color: var(--dark-blue);
+    background: var(--light-gray);
+}
+
+user .ui-paginator {
+    background: var(--dark-blue) !important;
+}
+
+user .ui-datagrid-content {
+    border: none;
+    padding: 10px;
+    border-top: 3px solid var(--dark-blue);
+}
+
+.story-tile .ui-panel-titlebar,
+.new-story-tile .ui-panel-titlebar {
+    color: white;
+    cursor: pointer;
+    text-align: center;
+}
+
+.story-tile .ui-panel-content-wrapper {
+    cursor: pointer;
+    text-align: center;
+    background: var(--light-blue);
+    border: 2px solid var(--dark-blue);
+}
+
+.new-story-tile .ui-panel-content-wrapper {
+    cursor: pointer;
+    text-align: center;
+    background: white;
+    border: 2px solid var(--dark-blue);
+}
+
+.story-tile .fa-book,
+.new-story-tile .fa-plus-square-o {
+    margin: 5%;
+    font-size: 4em;
+}
+
+/* -------------------- Dialog -------------------- */
+p-dialog .ui-dialog-titlebar,
+p-dialog .ui-dialog-titlebar-close {
+    color: white;
+    background: var(--light-blue);
+}
+
+p-dialog table,
+p-dialog input,
+p-dialog textarea,
+p-dialog .ui-dropdown {
+    width: 100% !important;
+    margin-bottom: 5px !important;
+}
+
+p-dialog .ui-dialog-content {
+    height: 70%;
+}
+
+p-dialog input.ui-dropdown-filter {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+p-dialog .ui-dropdown-filter-container {
+    width: 100% !important;
+}
+
+p-dialog .ui-dropdown.ui-state-focus .ui-dropdown-panel {
+    display: block !important;
+}
