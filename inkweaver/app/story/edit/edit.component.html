@@ -1,4 +1,6 @@
-﻿<!-- Link Creator Dialog -->
+﻿<p-contextMenu #contextMenu [model]="items"></p-contextMenu>
+
+<!-- Link Creator Dialog -->
 <p-dialog modal="true" header="Create New Link" [(visible)]="displayLinkCreator" (onAfterShow)="showDialog()" (onBeforeHide)="hideDialog()"
           width="450" height="450" responsive="true" (keyup.enter)="createLink()">
 
@@ -79,13 +81,13 @@
         <div class="navigation ui-grid-col-3">
             <p-treeTable [value]="data.storyNode"
                          selectionMode="single"
-                         [(selection)]="selectedSection"
+                         [(selection)]="data.section"
                          (onNodeSelect)="selectSection($event)">
                 <p-column field="title">
                     <template let-col let-node="rowData" pTemplate="body">
-                        {{node.data.title | truncate : 20}}
-                        <i class="fa fa-minus-square-o" (click)="deleteSection(node.data.section_id)"></i>
-                        <i class="fa fa-plus-square-o" (click)="openSectionCreator(node.data.section_id)"></i>
+                        <span (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation()">
+                            {{node.data.title | truncate : 25}}
+                        </span>
                     </template>
                 </p-column>
             </p-treeTable>

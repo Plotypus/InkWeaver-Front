@@ -9,7 +9,8 @@ import {
     SharedModule,
     DropdownModule,
     InputTextModule,
-    TreeTableModule
+    TreeTableModule,
+    ContextMenuModule
 } from 'primeng/primeng';
 
 import { EditService } from './edit.service';
@@ -26,7 +27,8 @@ import { TruncatePipe } from '../../shared/truncate.pipe';
         SharedModule,
         DropdownModule,
         InputTextModule,
-        TreeTableModule
+        TreeTableModule,
+        ContextMenuModule
     ],
     providers: [EditService],
     declarations: [

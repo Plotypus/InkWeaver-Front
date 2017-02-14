@@ -120,10 +120,14 @@ export class ApiService {
                             break;
                         case 'get_story_hierarchy':
                         case 'get_section_hierarchy':
-                            this.data.section = reply.hierarchy;
+                            if (!this.data.section.data) {
+                                this.data.section.data = { section_id: reply.hierarchy.section_id };
+                            }
                             this.data.storyNode = [
                                 this.parser.sectionToTree(this.parser, reply.hierarchy, null)
                             ];
+                            this.data.section = this.parser.setSection(this.data.storyNode[0],
+                                JSON.stringify(this.data.section.data.section_id));
                             break;
                         case 'get_section_content':
                             this.data.content = reply.content;
@@ -132,7 +136,6 @@ export class ApiService {
                             break;
 
                         case 'add_inner_subsection':
-                            //this.data.selectedSection = reply.section_id;
                             this.refreshStory();
                             break
 
@@ -225,7 +228,7 @@ export class ApiService {
         this.send({ action: 'get_story_hierarchy', story_id: storyId });
     }
 
-    public refreshContent(sectionId: ID = this.data.section.section_id) {
+    public refreshContent(sectionId: ID = this.data.section.data.section_id) {
         this.send({ action: 'get_section_content', section_id: sectionId });
     }
 

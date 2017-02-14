@@ -1,9 +1,7 @@
 ﻿import { Component, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Editor } from 'primeng/primeng';
-import { Dialog } from 'primeng/primeng';
-import { TreeNode } from 'primeng/primeng';
+import { Editor, Dialog, TreeNode, MenuItem } from 'primeng/primeng';
 import { EditService } from './edit.service';
 import { WikiService } from '../wiki/wiki.service';
 import { ApiService } from '../../shared/api.service';
@@ -22,12 +20,12 @@ export class EditComponent {
     @ViewChild(Editor) editor: Editor;
     @ViewChild(Dialog) dialog: Dialog;
 
+    private items: MenuItem[];
     private data: any;
     private inputRef: any;
     private editorRef: any;
     private setLinks: boolean;
     private wordCount: number;
-    private selectedSection: TreeNode;
 
     // For creating links
     private range: any;
@@ -166,7 +164,7 @@ export class EditComponent {
         }, 500);
     }
 
-    /* ------------------------- Dialog ------------------------- */
+    /* ------------------------- Create Link ------------------------- */
     public showDialog() {
         this.inputRef.focus();
     }
@@ -197,15 +195,6 @@ export class EditComponent {
         }
     }
 
-    public loopPages(editor: EditComponent, segment: Segment, func: (page: PageSummary) => any) {
-        for (let page of segment.pages) {
-            func(page);
-        }
-        for (let seg of segment.segments) {
-            editor.loopPages(editor, seg, func);
-        }
-    }
-
     public hideDialog() {
         this.editor.quill.enable();
     }
@@ -222,10 +211,8 @@ export class EditComponent {
         this.displayLinkCreator = false;
     }
 
-    /* ------------------------------------------------------------ */
-
+    // -------------------- Add and Select Section -------------------- //
     public selectSection(event: any) {
-        this.data.section.section_id = event.node.data.section_id;
         if (event.node.parent) {
             this.data.storyDisplay = '';
             this.editService.getSectionContent(event.node.data.section_id);
@@ -234,24 +221,54 @@ export class EditComponent {
         }
     }
 
-    public save() {
-        let newContentObject: any = this.parserService.parseHtml(this.editorRef.innerHTML);
-        this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.section.section_id);
+    public openSectionCreator(sectionId: ID) {
+        this.newSectionId = sectionId;
+        this.displaySectionCreator = true;
     }
-
-    /* ------------------------------------------------------------ */
 
     public addSection() {
         this.editService.addSection(this.sectionTitle, this.newSectionId);
         this.displaySectionCreator = false;
     }
 
-    public openSectionCreator(sectionId: ID) {
-        this.newSectionId = sectionId;
-        this.displaySectionCreator = true;
+    // -------------------- Rename and Delete Section -------------------- //
+    public setContextMenu(node: TreeNode) {
+        this.data.section = node;
+        this.selectSection({ node: node });
+        this.items = [
+            {
+                label: 'Rename Section',
+                command: () => { console.log('Rename ' + node.data.section_id); }
+            },
+            {
+                label: 'Add Subsection',
+                command: () => { this.openSectionCreator(node.data.section_id); }
+            }
+        ];
+
+        if (node.parent) {
+            this.items.push({
+                label: 'Delete Section', command: () => {
+                    this.data.section = node.parent;
+                    this.selectSection({ node: node.parent });
+                    this.editService.deleteSection(node.data.section_id);
+                }
+            });
+        }
     }
 
-    public deleteSection(sectionId: ID) {
-        //this.editService.deleteSection(sectionId);
+    // -------------------- Other -------------------- //
+    public loopPages(editor: EditComponent, segment: Segment, func: (page: PageSummary) => any) {
+        for (let page of segment.pages) {
+            func(page);
+        }
+        for (let seg of segment.segments) {
+            editor.loopPages(editor, seg, func);
+        }
+    }
+
+    public save() {
+        let newContentObject: any = this.parserService.parseHtml(this.editorRef.innerHTML);
+        this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.section.data.section_id);
     }
 }

@@ -15,7 +15,7 @@ export class ParserService {
     // ----------------------------------------------- //
     // -------------------- Story -------------------- //
     // ----------------------------------------------- //
-    public sectionToTree(parserService: ParserService, story: Section, parent: TreeNode): TreeNode {
+    public sectionToTree(parserService: ParserService, story: any, parent: TreeNode): TreeNode {
         let treeNode: TreeNode = {};
         treeNode.data = {
             title: story.title,
@@ -23,7 +23,7 @@ export class ParserService {
         };
         treeNode.parent = parent;
 
-        let sectionToTree: (story: Section) => TreeNode = (story: Section) => {
+        let sectionToTree: (story: any) => TreeNode = (story: any) => {
             return parserService.sectionToTree(parserService, story, treeNode);
         };
         treeNode.children = story.preceding_subsections.map(sectionToTree)
@@ -32,6 +32,22 @@ export class ParserService {
 
         treeNode.leaf = treeNode.children.length == 0;
         return treeNode;
+    }
+
+    public setSection(story: TreeNode, section_id: string): TreeNode {
+        let newSection: TreeNode = null;
+        if (JSON.stringify(story.data.section_id) == section_id) {
+            newSection = story;
+        } else {
+            for (let child of story.children) {
+                let findSection: TreeNode = this.setSection(child, section_id);
+                newSection = findSection ? findSection : newSection;
+            }
+        }
+        if (newSection) {
+            story.expanded = true;
+        }
+        return newSection;
     }
 
     public setContentDisplay(paragraphs: Paragraph[]): string {

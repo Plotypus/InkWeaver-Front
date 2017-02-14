@@ -1,9 +1,16 @@
-﻿import { ID } from '../id.model';
+﻿import { TreeNode } from 'primeng/primeng';
 
-export class Section {
-    title: string;
-    section_id: ID;
-    preceding_subsections: Section[];
-    inner_subsections: Section[];
-    succeeding_subsections: Section[];
+export class Section implements TreeNode {
+    label?: string;
+    data?: any;
+    icon?: string;
+    expandedIcon?: string;
+    collapsedIcon?: string;
+    children?: TreeNode[];
+    leaf?: boolean;
+    style?: string;
+    styleClass?: string;
+    expanded?: boolean;
+    type?: string;
+    parent?: TreeNode;
 }
