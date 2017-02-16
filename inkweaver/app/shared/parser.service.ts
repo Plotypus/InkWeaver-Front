@@ -129,7 +129,7 @@ export class ParserService {
     // ---------------------------------------------- //
     // -------------------- Wiki -------------------- //
     // ---------------------------------------------- //
-    public parseWiki(json: any) {
+    public parseWiki(json: any,selected:any) {
         let nav = new Array<TreeNode>();
         let temp: TreeNode = {};
         temp.data = new PageSummary();
@@ -138,8 +138,9 @@ export class ParserService {
         temp.label = json['title'];
         temp.type = "title"
         nav.push(temp);
+        let path = this.createPath(selected);
         for (let index in json['segments']) {
-            nav.push(this.jsonToWiki(json['segments'][index], null));
+            nav.push(this.jsonToWiki(json['segments'][index],path));
         }
         for (let index in json['pages'])
             nav.push(this.jsonToPage(json['pages'][index]));
@@ -147,36 +148,42 @@ export class ParserService {
         return nav;
     }
 
-    public jsonToWiki(wikiJson: any, par: any): TreeNode {
+    public jsonToWiki(wikiJson: any,selected:Array<String>): TreeNode {
         let wiki: TreeNode = {};
+        
         let parent: TreeNode = {};
         wiki.data = new PageSummary();
         wiki.children = new Array<TreeNode>();
         wiki.data.id = wikiJson["segment_id"];
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
+        if (selected.length != 0 && (wiki.label == selected[0]))
+        {
+            wiki.expanded = true;
+            selected.pop();
+        }
         for (let field in wikiJson) {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
                 for (let segment in segmentJsons) {
-                    parent.label = wiki.label;
-                    if (par != null)
-                        parent.parent = par;
+                    //parent.label = wiki.label;
+                    ///if (par != null)
+                        //parent.parent = par;
 
-                    var subsegment = this.jsonToWiki(segmentJsons[segment], parent);
+                    var subsegment = this.jsonToWiki(segmentJsons[segment],selected);
                     subsegment.type = "category";
-                    subsegment.parent = parent;
+                    subsegment.parent = wiki;
                     wiki.children.push(subsegment);
                 }
             }
             else if (field == "pages") {
                 var pagesJsons = wikiJson[field];
                 for (let page in pagesJsons) {
-                    parent.label = wiki.label;
-                    parent.parent = par;
+                   // parent.label = wiki.label;
+                    //parent.parent = par;
 
                     var leafpage = this.jsonToPage(pagesJsons[page]);
-                    leafpage.parent = parent;
+                    leafpage.parent = wiki;
                     wiki.children.push(leafpage);
                 }
 
@@ -184,7 +191,9 @@ export class ParserService {
         }
         if (typeof wiki.children !== 'undefined' && (wiki.children.length == 0 || wiki.children.length != 0)) {
             wiki.type = "category";
+            wiki.children = wiki.children.sort(this.sort);
         }
+        
         return wiki
     }
 
@@ -234,7 +243,45 @@ export class ParserService {
                 })
                 count++;
             }
-           reply.aliases = temp;
-        return reply;
+            reply.aliases = temp;
+            return reply;
+        }
+    }
+
+    public createPath(page: any)
+    {
+        if (!page.hasOwnProperty("title"))
+            return new Array<String>();
+        page.expanded = true;
+        let path = new Array<String>();
+        path.push(page.label);
+        let parent = page.parent;
+        while (typeof parent !== 'undefined')
+        {
+            path.push(parent.label);
+            parent = parent.parent;
+        }
+
+        return path;
+
+    }
+    public sort(o1: any, o2: any) {
+        if (o1.type == 'category' && o2.type == 'category')
+            return 0;
+        else if (o1.type == 'category' && o2.type == 'title')
+            return 1;
+        else if (o1.type == 'title' && o2.type == 'category')
+            return -1;
+        else if (o1.type == 'category' && o2.type == 'page')
+            return -1;
+        else if (o1.type == 'page' && o2.type == 'category')
+            return 1;
+        else if (o1.type == 'page' && o2.type == 'title')
+            return 1;
+        else if (o1.type == 'title' && o2.type == 'page')
+            return -1;
+        else
+            return 0;
+
     }
 }

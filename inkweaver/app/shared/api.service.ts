@@ -51,7 +51,7 @@ export class ApiService {
         segment: new Segment(),
         page: new Page(),
         pageid: [],
-
+        selectedEntry: {},
         tooltip: new Tooltip(),
         contentObject: new ContentObject()
     }
@@ -159,8 +159,10 @@ export class ApiService {
                         case 'get_wiki_hierarchy':
                         case 'get_wiki_segment_hierarchy':
                             this.data.segment = reply.hierarchy;
-                            this.data.wikiNav = this.parser.parseWiki(reply.hierarchy);
+                            this.data.wikiNav = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
                             this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
+                            if (this.data.selectedEntry.hasOwnProperty("label"))
+                                this.parser.expandTree(this.data.selectedEntry);
                             break;
                         case 'get_wiki_segment':
                             reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));
@@ -174,11 +176,8 @@ export class ApiService {
                             }
                             break;
                         case 'add_page':
-                            this.data.pageid.push(reply.page_id);
-                            this.refreshWiki();
-                            break;
                         case 'add_segment':
-                            this.data.pageid.push(reply.segment_id);
+                           
                             this.refreshWiki();
                             break;
                         case 'add_template_heading':

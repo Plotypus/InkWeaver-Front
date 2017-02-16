@@ -163,7 +163,7 @@
         </div>
 
         <div class="navigation ui-g-3">
-            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
+            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
                 <p-column field="data.title">
                     <template let-node="rowData" pTemplate="body">
                         <span *ngIf="node.type == 'page'">
