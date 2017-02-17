@@ -13,5 +13,9 @@ export class AppComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+
+        let Parchment = Quill.import('parchment');
+        let ID = new Parchment.Attributor.Attribute('id', 'id');
+        Parchment.register(ID);
     }
 }

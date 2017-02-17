@@ -13,7 +13,7 @@
     </footer>
 </p-dialog>
 
-<!-- Section Creator Dialog -->
+<!-- Add Section Dialog -->
 <p-dialog modal="true" header="Add New Section" [(visible)]="displaySectionCreator"
           width="450" height="450" responsive="true" (keyup.enter)="addSection()">
 
@@ -21,6 +21,18 @@
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <button pButton type="button" label="Add Section" icon="fa-link" iconPos="right" (click)="addSection()"></button>
+        </div>
+    </footer>
+</p-dialog>
+
+<!-- Edit Section Title Dialog -->
+<p-dialog modal="true" header="Edit Section Title" [(visible)]="displaySectionEditor"
+          width="450" height="450" responsive="true" (keyup.enter)="editSectionTitle()">
+
+    <input #link type="text" pInputText [(ngModel)]="sectionTitle" />
+    <footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button pButton type="button" label="Rename Section" icon="fa-link" iconPos="right" (click)="editSectionTitle()"></button>
         </div>
     </footer>
 </p-dialog>

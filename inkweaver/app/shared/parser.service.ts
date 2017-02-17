@@ -54,8 +54,7 @@ export class ParserService {
         let content: string = '';
         for (let paragraph of paragraphs) {
             if (paragraph.paragraph_id) {
-                content += '<p><code>' + JSON.stringify(paragraph.paragraph_id) + '</code>'
-                    + paragraph.text + '</p>';
+                content += '<p id="' + paragraph.paragraph_id.$oid + '">' + paragraph.text + '</p>';
             }
         }
         return content;
@@ -87,46 +86,46 @@ export class ParserService {
         return contentObject;
     }
 
-    public parseHtml(text: string): ContentObject {
+    public parseHtml(paragraphs: any[]): ContentObject {
         let add: Paragraph[] = [];
-        let r1: RegExp = /<p>(.*?)<\/p>/g;
-        let matches: RegExpMatchArray = r1.exec(text);
-
         let obj: ContentObject = new ContentObject();
-        while (matches) {
-            let match: string = matches[1];
+
+        for (let paragraph of paragraphs) {
             let p: Paragraph = {
-                paragraph_id: new ID(), succeeding_id: new ID(), text: match, links: new LinkTable()
+                paragraph_id: new ID(),
+                succeeding_id: new ID(),
+                text: paragraph.innerHTML,
+                links: new LinkTable()
             };
 
-            let r2: RegExp = /<a href="(.+?)" target="_blank">(.+?)<\/a>/g;
-            let link: RegExpMatchArray = r2.exec(match);
-            while (link) {
-                let ids: string[] = link[1].split('-');
-                if (ids[0].startsWith('new')) {
-                    p.links[ids[0]] = { page_id: { $oid: ids[1] }, name: link[2] };
-                } else {
-                    p.links['{"$oid":"' + ids[0] + '"}'] = { page_id: { $oid: ids[1] }, name: link[2] };
-                }
-                link = r2.exec(match);
-            }
-
-            let r3: RegExp = /<code>(.+?)<\/code>/;
-            let id: RegExpMatchArray = match.match(r3);
-            if (id) {
-                p.text = p.text.replace(r3, '');
+            let id: string = paragraph.id;
+            let oid: ID = { $oid: id };
+            if (id && !obj[JSON.stringify(oid)]) {
                 for (let addP of add) {
-                    addP.succeeding_id = JSON.parse(id[1]);
+                    addP.succeeding_id = oid;
                     obj['new' + Math.random()] = addP;
                 }
                 add = [];
-                p.paragraph_id = JSON.parse(id[1]);
-                obj[id[1]] = p;
+                p.paragraph_id = oid;
+                obj[JSON.stringify(oid)] = p;
             } else {
                 add.push(p);
             }
-            matches = r1.exec(text);
+
+            let links: any[] = paragraph.querySelectorAll('a');
+            for (let link of links) {
+                let ids: string[] = link.attributes[0].value.split('-');
+                let linkID: ID = { $oid: ids[0] };
+                let pageID: ID = { $oid: ids[1] };
+
+                if (ids[0].startsWith('new')) {
+                    p.links[ids[0]] = { page_id: pageID, name: link.innerHTML };
+                } else {
+                    p.links[JSON.stringify(linkID)] = { page_id: pageID, name: link.innerHTML };
+                }
+            }
         }
+
         add.forEach((p: Paragraph) => {
             obj['new' + Math.random()] = p;
         });

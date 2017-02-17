@@ -18,11 +18,19 @@ export class EditService {
         });
     }
 
-    public addSection(title: string, parent_id: ID) {
+    public addSection(title: string, parentId: ID) {
         this.apiService.send({
             action: 'add_inner_subsection',
             title: title,
-            parent_id: parent_id
+            parent_id: parentId
+        });
+    }
+
+    public editSectionTitle(newTitle: string, sectionId: ID) {
+        this.apiService.send({
+            action: 'edit_section_title',
+            section_id: sectionId,
+            new_title: newTitle
         });
     }
 
@@ -42,7 +50,7 @@ export class EditService {
         if (succeeding_paragraph_id) {
             p.succeeding_paragraph_id = succeeding_paragraph_id
         }
-        this.apiService.send(p, callback);
+        this.apiService.send(p, callback, { noflight: true });
     }
 
     public editParagraph(section_id: ID, text: string, paragraph_id: ID) {
@@ -58,7 +66,7 @@ export class EditService {
                 text: text
             },
             paragraph_id: paragraph_id
-        });
+        }, (reply: any) => { }, { noflight: true });
     }
 
     public deleteParagraph(paragraph_id: ID, section_id: ID) {
@@ -66,7 +74,7 @@ export class EditService {
             action: 'delete_paragraph',
             paragraph_id: paragraph_id,
             section_id: section_id
-        });
+        }, (reply: any) => { }, { noflight: true });
     }
 
     public getStoryInformation(story_id: ID) {
@@ -90,11 +98,8 @@ export class EditService {
         });
     }
 
-    public getSectionContent(section_id: ID) {
-        this.apiService.send({
-            action: 'get_section_content',
-            section_id: section_id
-        });
+    public getSectionContent(sectionId: ID) {
+        this.apiService.refreshContent(sectionId);
     }
 
     /* -------------------- Helper methods -------------------- */
