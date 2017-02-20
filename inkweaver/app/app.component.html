@@ -1,7 +1,7 @@
 ﻿<p-panel>
     <header>
         Inkweaver by Plotypus
-        <p-menu #menu popup="popup" [model]="items"></p-menu>
+        <p-menu #menu popup="popup" [model]="data.menuItems"></p-menu>
         <i class="master-menu fa fa-list" (click)="menu.toggle($event)"></i>
     </header>
     <router-outlet></router-outlet>

@@ -1,0 +1,113 @@
+﻿.editor {
+    padding: 0;
+    z-index: 15;
+    position: relative;
+}
+
+    .editor > div, .ui-editor-container {
+        height: 100% !important;
+    }
+
+.loading-editor {
+    filter: blur(2px);
+}
+
+.loader {
+    top: 40%;
+    width: 100%;
+    z-index: 10;
+    font-size: 2em;
+    text-align: center;
+    position: absolute;
+    color: var(--dark-blue);
+}
+
+.ui-editor-toolbar {
+    border-radius: 0px;
+    background: var(--light-gray) !important;
+}
+
+.ql-expanded ::before {
+    color: black !important;
+}
+
+.ql-save .ui-button {
+    margin: 4px;
+    padding: 0 !important;
+    width: 8% !important;
+    float: right !important;
+}
+
+.ql-save .ui-button-text {
+    padding: 0 10px 0 10px !important;
+}
+
+.editor .ui-editor-content {
+    background: white;
+    height: calc( 100% - 50px );
+}
+
+.ui-editor-content p {
+    padding: 10px;
+}
+
+.ui-editor-content h1 {
+    width: 95%;
+    color: var(--dark-gray);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.ui-editor-content h2 {
+    padding: 0 0 0 20px;
+    color: var(--light-blue);
+}
+
+.ql-link {
+    height: 2em !important;
+}
+
+    .ql-link path, .ql-link line {
+        stroke: var(--link-blue) !important;
+    }
+
+.ql-editor a {
+    cursor: pointer;
+    color: var(--link-blue) !important;
+}
+
+.ql-tooltip {
+    visibility: hidden;
+}
+
+.tooltip {
+    position: absolute;
+    padding: 0 5px 0 5px;
+    background: floralwhite;
+    font-size: 0.9em;
+    border-radius: 2px;
+    color: var(--light-blue);
+    border: 1px solid var(--light-blue);
+    max-width: 50%;
+}
+
+.suggest {
+    position: absolute;
+    padding: 0 5px 0 5px;
+    color: white;
+    font-size: 0.9em;
+    border-radius: 2px;
+    border: 1px solid white;
+    background: var(--link-blue);
+}
+
+.stats {
+    text-align: right;
+    font-style: italic;
+    background: #e6e6e6;
+    color: var(--light-blue);
+    padding: 5px 15px 5px 0px;
+}
+
+code {
+    display: none;
+}

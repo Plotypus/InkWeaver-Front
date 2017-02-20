@@ -69,13 +69,19 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\app.component.html" />
+    <Content Include="app\app.component.css" />
     <Content Include="app\login\login.component.html" />
+    <Content Include="app\login\login.component.css" />
     <Content Include="app\story\edit\edit.component.html" />
+    <Content Include="app\story\edit\edit.component.css" />
     <Content Include="app\story\settings\settings.component.html" />
     <Content Include="app\story\story.component.html" />
+    <Content Include="app\story\story.component.css" />
     <Content Include="app\story\wiki\wiki.component.html" />
     <Content Include=".gitignore" />
+    <Content Include="app\story\wiki\wiki.component.css" />
     <Content Include="app\user\user.component.html" />
+    <Content Include="app\user\user.component.css" />
     <Content Include="systemjs.config.js" />
     <Content Include="package.json" />
     <Content Include="tsconfig.json" />
@@ -83,7 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
-    <Content Include="styles.css" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -101,6 +106,7 @@
     <TypeScriptCompile Include="app\models\story\tooltip.model.ts" />
     <TypeScriptCompile Include="app\models\wiki\reference.model.ts" />
     <TypeScriptCompile Include="app\shared\parser.service.ts" />
+    <TypeScriptCompile Include="app\shared\truncate.pipe.ts" />
     <TypeScriptCompile Include="app\story\edit\edit.module.ts" />
     <TypeScriptCompile Include="app\story\edit\edit.service.ts" />
     <TypeScriptCompile Include="app\models\user\collaborator.model.ts" />

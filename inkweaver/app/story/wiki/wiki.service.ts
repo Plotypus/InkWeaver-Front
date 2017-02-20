@@ -34,12 +34,11 @@ export class WikiService {
             "segment_id": sid
         },callback);
     }
-    public getWikiPage(page_id: any, callback: any = {},source: string = 'wiki', ) {
+    public getWikiPage(page_id: any, metadata: any = {}) {
         this.apiService.send({
             action: 'get_wiki_page',
-            page_id: page_id,
-            source: source
-        },callback);
+            page_id: page_id
+        }, (reply: any) => { }, metadata);
     }
 
     //EDITS
@@ -72,15 +71,15 @@ export class WikiService {
     public editHeading(page_id: any, heading_title: string, update_type: string, new_text: string) {
 
         if (update_type == "set_text")
-        this.apiService.send({
+            this.apiService.send({
 
-            "action": "edit_heading",
-            "page_id": page_id,
-            "heading_title": heading_title,
-            "update": {
-                "update_type": update_type,
-                "text": new_text
-            }
+                "action": "edit_heading",
+                "page_id": page_id,
+                "heading_title": heading_title,
+                "update": {
+                    "update_type": update_type,
+                    "text": new_text
+                }
             });
         else
             this.apiService.send({
@@ -96,8 +95,7 @@ export class WikiService {
 
     }
 
-    public editAlias(aid:any, nName:any)
-    {
+    public editAlias(aid: any, nName: any) {
         this.apiService.send({
 
             "action": "change_alias_name",
@@ -106,8 +104,7 @@ export class WikiService {
         });
     }
 
-    public editTempleteHeading(sid:any, title:any, type:any, nTitle:any)
-    {
+    public editTempleteHeading(sid: any, title: any, type: any, nTitle: any) {
         if (type == 'set_title')
             this.apiService.send({
 

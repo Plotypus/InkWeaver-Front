@@ -9,11 +9,13 @@ import {
     SharedModule,
     DropdownModule,
     InputTextModule,
-    TreeTableModule
+    TreeTableModule,
+    ContextMenuModule
 } from 'primeng/primeng';
 
 import { EditService } from './edit.service';
 import { EditComponent } from './edit.component';
+import { TruncatePipe } from '../../shared/truncate.pipe';
 
 @NgModule({
     imports: [
@@ -25,10 +27,14 @@ import { EditComponent } from './edit.component';
         SharedModule,
         DropdownModule,
         InputTextModule,
-        TreeTableModule
+        TreeTableModule,
+        ContextMenuModule
     ],
     providers: [EditService],
-    declarations: [EditComponent],
+    declarations: [
+        EditComponent,
+        TruncatePipe
+    ],
     bootstrap: [EditComponent]
 })
 export class EditModule { }

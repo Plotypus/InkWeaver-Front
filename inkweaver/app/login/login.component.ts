@@ -23,6 +23,10 @@ export class LoginComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+        this.data.menuItems = [
+            { label: 'About', routerLink: ['/about'] }
+        ];
+
         this.login = {
             username: '',
             password: ''

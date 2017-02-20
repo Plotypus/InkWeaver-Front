@@ -1,5 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs/Rx';
+import { MenuItem, TreeNode } from 'primeng/primeng';
 
 import { WebSocketService } from './websocket.service';
 import { ParserService } from './parser.service';
@@ -33,16 +34,19 @@ const url: string = 'ws://localhost:8080/ws/demo';
 export class ApiService {
     public data = {
         inflight: false,
+        menuItems: new Array<MenuItem>(),
+
         user: new User(),
         stories: new Array<StorySummary>(),
         wikis: new Array<WikiSummary>(),
         linkTable: new LinkTable(),
 
-        storyNode: [],
         storyDisplay: '',
         story: new Story(),
+        prevSection: new Section(),
         section: new Section(),
         content: new Array<Paragraph>(),
+        storyNode: new Array<TreeNode>(),
 
         wikiNav: [],
         wikiNode: [],
@@ -71,6 +75,21 @@ export class ApiService {
 
                 let response: string = res.data;
                 let reply = JSON.parse(response);
+                if (reply.event == 'acknowledged') {
+                    this.outgoing = {};
+                    return reply.event;
+                }
+
+                if (!reply.reply_to_id) {
+                    reply = JSON.parse(reply);
+                }
+                let message_id: number = reply.reply_to_id;
+                let out: any = this.outgoing[message_id];
+                let action: string = out.action;
+                let callback: Function = out.callback;
+                let metadata: any = out.metadata;
+                delete this.outgoing[message_id];
+
                 if (reply.event) {
                     if (reply.event == 'alias_deleted') {
                         this.refreshContent();
@@ -79,15 +98,6 @@ export class ApiService {
                     }
                     return reply.event;
                 } else {
-                    if (!reply.reply_to_id) {
-                        reply = JSON.parse(reply);
-                    }
-
-                    let message_id: number = reply.reply_to_id;
-                    let out: any = this.outgoing[message_id];
-                    let action: string = out.action;
-                    let callback: Function = out.callback;
-
                     switch (action) {
                         case 'get_user_preferences':
                             this.data.user = reply;
@@ -105,51 +115,64 @@ export class ApiService {
                             break;
 
                         case 'create_story':
-                            this.data.stories.unshift({
-                                story_id: reply.story_id,
-                                title: reply.story_title,
-                                access_level: reply.access_level
-                            });
                             this.data.story = reply;
+                            this.refreshUser();
                             this.refreshStory(reply.story_id);
                         case 'get_story_information':
                             reply.story_id = this.data.story.story_id;
                             this.data.story = reply;
                             this.data.wiki.wiki_id = reply.wiki_id;
-                            this.data.storyDisplay = '<h1>Summary</h1>' + reply.summary;
                             this.refreshWiki(reply.wiki_id, true);
                             break;
                         case 'get_story_hierarchy':
                         case 'get_section_hierarchy':
-                            this.data.section = reply.hierarchy;
-                            this.data.storyNode = [
-                                this.parser.sectionToTree(this.parser, reply.hierarchy)
-                            ];
+                            if (!this.data.section.data) {
+                                this.data.section.data = { section_id: reply.hierarchy.section_id };
+                            }
+                            this.data.storyNode = [this.parser.sectionToTree(this.parser, reply.hierarchy, null)];
+                            this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(this.data.section.data.section_id));
+                            this.data.prevSection = this.data.section;
+                            this.refreshContent();
                             break;
                         case 'get_section_content':
                             this.data.content = reply.content;
                             this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
-                            this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
+                            if (!metadata.nocontent) {
+                                this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
+                                callback(reply);
+                            }
                             break;
 
                         case 'add_inner_subsection':
                             this.refreshStory();
                             break
+                        case 'edit_section_title':
+                            this.refreshUser();
+                            this.refreshStory(this.data.story.story_id, true);
+                            break
 
                         case 'add_paragraph':
-                            callback(reply);
                         case 'edit_paragraph':
                         case 'delete_paragraph':
-                            this.refreshContent();
+                            callback(reply);
+                            if (Object.keys(this.outgoing).length == 0) {
+                                this.refreshContent(this.data.section.data.section_id,
+                                    { nocontent: true, noflight: true });
+                            }
                             break;
 
                         case 'create_link':
-                            callback(reply);
                         case 'delete_link':
+                            callback(reply);
+                            if (Object.keys(this.outgoing).length == 0) {
+                                this.refreshContent(this.data.section.data.section_id,
+                                    { nocontent: true, noflight: true });
+                            }
                             break;
 
                         case 'create_wiki':
                             this.data.wiki = reply;
+                            this.refreshUser();
                             this.refreshWiki(reply.wiki_id);
                         case 'get_wiki_information':
                             reply.wiki_id = this.data.wiki.wiki_id;
@@ -201,13 +224,18 @@ export class ApiService {
                             console.log('Unknown action: ' + action)
                             break;
                     }
-                    delete this.outgoing[message_id];
                     return action;
                 }
             });
         this.messages.subscribe((action: string) => {
             console.log(action);
         });
+    }
+
+    public refreshUser() {
+        this.send({ action: 'get_user_preferences' });
+        this.send({ action: 'get_user_stories' });
+        this.send({ action: 'get_user_wikis' });
     }
 
     public refreshStory(storyId: ID = this.data.story.story_id, info: boolean = false) {
@@ -217,11 +245,16 @@ export class ApiService {
         this.send({ action: 'get_story_hierarchy', story_id: storyId });
     }
 
-    public refreshContent(sectionId: ID = this.data.section.section_id) {
-        this.send({ action: 'get_section_content', section_id: sectionId });
+    public refreshContent(sectionId: ID = this.data.section.data.section_id, metadata: any = {}) {
+        this.send({ action: 'get_section_content', section_id: sectionId }, (reply: any) => {
+            if (JSON.stringify(sectionId) == JSON.stringify(this.data.story.section_id)) {
+                this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay;
+            }
+        }, metadata);
     }
 
-    public refreshWiki(wikiId: ID = this.data.story.wiki_id, info: boolean = false) {
+    public refreshWiki(wikiId: ID = this.data.story.wiki_id,
+        info: boolean = false, wikis: boolean = false) {
         if (info) {
             this.send({ action: 'get_wiki_information', wiki_id: wikiId });
         }
@@ -232,19 +265,19 @@ export class ApiService {
      * Send a message on the WebSocket
      * @param {JSON} message - A JSON-formatted message
      */
-    public send(message: any, callback: (reply: any) => {} = (reply: any) => { return reply }) {
+    public send(message: any, callback: (reply: any) => void = (reply: any) => { }, metadata: any = {}) {
         message.message_id = ++this.message_id;
         this.outgoing[message.message_id] = {
             action: message.action,
-            callback: callback
+            callback: callback,
+            metadata: metadata
         };
-        console.log(message);
 
-        if (!(message.action == 'get_wiki_page' && message.source == 'edit')) {
+        if (!metadata.noflight) {
             this.data.inflight = true;
         }
 
-        delete message.source
+        console.log(message);
         this.messages.next(message);
     }
 }

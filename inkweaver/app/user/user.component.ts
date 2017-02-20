@@ -10,8 +10,9 @@ import { ApiService } from '../shared/api.service';
 import { ID } from '../models/id.model';
 
 @Component({
+    moduleId: module.id,
     selector: 'user',
-    templateUrl: './app/user/user.component.html'
+    templateUrl: './user.component.html'
 })
 export class UserComponent {
     private data: any;
@@ -35,11 +36,14 @@ export class UserComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+        this.data.menuItems = [
+            { label: 'About', routerLink: ['/about'] },
+            { label: 'Sign Out', routerLink: ['/login'] },
+        ];
         if (this.data.stories.length == 0 ||
             this.data.stories[this.data.stories.length - 1].story_id) {
             this.data.stories.push({ story_id: null, title: null, access_level: null });
         }
-
         this.colors = [
             "#cb735c", // red-orange
             "#fdd17c", // yellow
@@ -51,13 +55,17 @@ export class UserComponent {
             "#903737"  // maroon
         ];
 
-        this.apiService.messages.subscribe((action: string) => {
-            if (action == 'create_wiki') {
-                this.displayStoryCreator = false;
-                this.editService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
-                this.router.navigate(['/story/edit']);
-            }
-        });
+        if (this.apiService.messages) {
+            this.apiService.messages.subscribe((action: string) => {
+                if (action == 'create_wiki') {
+                    this.displayStoryCreator = false;
+                    this.editService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
+                    this.router.navigate(['/story/edit']);
+                }
+            });
+        } else {
+            this.router.navigate(['/login']);
+        }
     }
 
     public selectStory(story_id: ID) {

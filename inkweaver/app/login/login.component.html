@@ -36,7 +36,7 @@
                     <tr>
                         <td colspan="2">
                             <button pButton type="submit" label="Sign In"
-                                    [disabled]="!loginForm.form.valid"></button>
+                                    [disabled]="!(loginForm.form.valid || login.username || login.password)"></button>
                         </td>
                     </tr>
                 </tbody>

@@ -27,7 +27,7 @@ export class WikiComponent {
     private showDeleteDialog: any;
     private toDelete: any;
     private nav: any;
-   
+
 
     constructor(
         private wikiService: WikiService,
@@ -123,15 +123,15 @@ export class WikiComponent {
             page.node.expanded = !page.node.expanded;
             //get information for the page. 
             this.wikiService.getWikiSegment(page.node.data.id);
-            
-            
+
+
         }
         else {
             this.data.selectedPage = page.node.data.id;
             this.wikiService.getWikiPage(page.node.data.id);
         }
 
-      
+
     }
 
     /**
@@ -159,7 +159,7 @@ export class WikiComponent {
     /*
         Will toogle value of button variable to indicate whether something needs to be added or not
     */
-    public onAddPage(event:any, page: any) {
+    public onAddPage(event: any, page: any) {
         this.addTo = page.label;
         this.showAddDialog = true;
         this.data.selectedEntry = page;
@@ -180,7 +180,7 @@ export class WikiComponent {
 
         if (!addMore)
             this.showAddHeadDialog = false;
-        
+
         let temp = {};
         if (this.data.selectedEntry.type == 'category')
         {
@@ -207,14 +207,12 @@ export class WikiComponent {
         this.addContent = "";
         this.pageName = "";
     }
-    public onDisable(idx: any)
-    {
+    public onDisable(idx: any) {
 
         let title = "";
         let text = "";
         //saving the previous state
-        if (this.disabled[idx])
-        {
+        if (this.disabled[idx]) {
             this.icons[idx] = 'fa-check';
             if (idx == 0) {
                 title = this.wikiPage.title;
@@ -227,7 +225,7 @@ export class WikiComponent {
                 "title": title,
                 "text": text,
             }
-            this.wikiPageContent.splice(idx, 1, prev); 
+            this.wikiPageContent.splice(idx, 1, prev);
         }
         else {
             //need to send the new state to the server
@@ -245,7 +243,7 @@ export class WikiComponent {
                     //editing templete heading
                 }
 
-               
+
             }
             //saving page information
             else {
@@ -263,10 +261,8 @@ export class WikiComponent {
         this.disabled[idx] = !this.disabled[idx];
     }
 
-    public onCancel(idx: any)
-    {
-        if (idx == 0)
-        {
+    public onCancel(idx: any) {
+        if (idx == 0) {
             this.wikiPage.title = this.wikiPageContent[0].title;
         }
         else {
@@ -290,11 +286,9 @@ export class WikiComponent {
     }
 
 
-    public editAlias(alias:any)
-    {
+    public editAlias(alias: any) {
         //enable the textbox
-        if (alias.state)
-        {
+        if (alias.state) {
             alias.state = !alias.state;
             alias.icon = "fa-check"
             alias.prev = alias.name;
@@ -303,30 +297,26 @@ export class WikiComponent {
         else {
             alias.state = !alias.state;
             alias.icon = "fa-pencil"
-            if(!(alias.prev === alias.name))
+            if (!(alias.prev === alias.name))
                 this.wikiService.editAlias(alias.id, alias.name);
             alias.prev = "";
         }
     }
 
-    public cancelAlias(alias: any)
-    {
+    public cancelAlias(alias: any) {
         alias.name = alias.prev;
     }
 
-    public deleteAlias(alias: any)
-    {
+    public deleteAlias(alias: any) {
         this.wikiService.deleteAlias(alias.id);
     }
 
     //Delete Methods
-    public onShow()
-    {
+    public onShow() {
         this.showDeleteDialog = true;
     }
-   
-    public onDeletePage(page:any)
-    {
+
+    public onDeletePage(page: any) {
         this.showDeleteDialog = false;
         if (!page)
             return;
@@ -338,15 +328,13 @@ export class WikiComponent {
 
 
 
-    public onDeleteHeading()
-    {
+    public onDeleteHeading() {
 
     }
-    
-   
 
-    public sort(o1:any,o2:any)
-    {
+
+
+    public sort(o1: any, o2: any) {
         if (o1.type == 'category' && o2.type == 'category')
             return 0;
         else if (o1.type == 'category' && o2.type == 'title')
@@ -363,7 +351,7 @@ export class WikiComponent {
             return -1;
         else
             return 0;
-        
+
     }
 
 

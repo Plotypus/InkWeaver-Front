@@ -1,9 +1,10 @@
-﻿import { Component, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+﻿import {
+    Component, ViewChild, AfterViewInit, ChangeDetectorRef, OnDestroy
+} from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Rx';
 
-import { Editor } from 'primeng/primeng';
-import { Dialog } from 'primeng/primeng';
-import { TreeNode } from 'primeng/primeng';
+import { Editor, Dialog, TreeNode, MenuItem } from 'primeng/primeng';
 import { EditService } from './edit.service';
 import { WikiService } from '../wiki/wiki.service';
 import { ApiService } from '../../shared/api.service';
@@ -23,22 +24,24 @@ export class EditComponent {
     @ViewChild(Dialog) dialog: Dialog;
 
     private data: any;
-    private inputRef: any;
-    private editorRef: any;
     private setLinks: boolean;
     private wordCount: number;
-    private selectedSection: TreeNode;
+    private inputRef: any;
+    private editorRef: any;
 
-    // For creating links
+    // Creating links
     private range: any;
     private word: string;
-    private newLinkId: any;
+    private newLinkId: ID;
     private newLinkPages: any;
     private displayLinkCreator: boolean;
 
-    private displaySectionCreator: boolean;
-    private sectionTitle: string;
+    // Adding/editing sections
     private newSectionId: ID;
+    private items: MenuItem[];
+    private sectionTitle: string;
+    private displaySectionEditor: boolean;
+    private displaySectionCreator: boolean;
 
     private suggest: any;
 
@@ -51,37 +54,35 @@ export class EditComponent {
         private changeDetectorRef: ChangeDetectorRef) { }
 
     ngOnInit() {
-        this.data = this.apiService.data;
         this.suggest = {};
+        this.data = this.apiService.data;
         this.data.tooltip.display = 'none';
-        //let values: string[] = Object.values(this.data.outgoing);
-        //values.includes('get_story_hierarchy')
+        //let timer = Observable.timer(5000, 5000);
+        //timer.subscribe((tick: number) => this.save());
 
-        if (!(this.data.inflight || this.data.story.story_title)) {
+        if (this.apiService.messages) {
+            // Subscribe to observables
+            this.apiService.messages.subscribe((action: string) => {
+                if (action == 'get_section_content') {
+                    this.setLinks = true;
+                }
+            });
+        } else {
             this.router.navigate(['/login']);
         }
-
-        // Subscribe to observables
-        this.apiService.messages.subscribe((action: string) => {
-            if (action == 'get_section_content') {
-                this.setLinks = true;
-            }
-        });
     }
 
     ngAfterViewInit() {
         // Initialize variables
         this.setLinks = true;
-        this.inputRef = this.dialog.domHandler.findSingle(
-            this.dialog.el.nativeElement, 'input')
-        this.editorRef = this.editor.domHandler.findSingle(
-            this.editor.el.nativeElement, 'div.ql-editor');
+        this.inputRef = this.dialog.el.nativeElement.querySelector('input');
+        this.editorRef = this.editor.el.nativeElement.querySelector('div.ql-editor');
 
         // Add click event handlers to links when necessary
         this.editor.onTextChange.subscribe((event: any) => {
             this.suggest.display = 'none';
 
-            let index = event.delta.ops[0].retain;
+            let index: number = event.delta.ops[0].retain;
             if (index) {
                 let text: string = this.editor.quill.getText(0, index + 1);
                 let predict: string = text.slice(text.lastIndexOf(' ') + 1);
@@ -103,7 +104,7 @@ export class EditComponent {
             if (this.setLinks) {
                 this.setLinks = false;
 
-                let threads = this.editor.domHandler.find(this.editorRef, 'a[href]');
+                let threads: any[] = this.editorRef.querySelectorAll('a[href]');
                 for (let thread of threads) {
                     thread.addEventListener('click', (event: any) => {
                         event.preventDefault();
@@ -122,7 +123,7 @@ export class EditComponent {
                         let linkId: string = thread.getAttribute('href');
                         let ids: string[] = linkId.split('-');
                         let pageId: any = { $oid: ids[1] };
-                        this.wikiService.getWikiPage(pageId, 'edit');
+                        this.wikiService.getWikiPage(pageId, { noflight: true });
                     });
                     thread.addEventListener('mouseleave', (event: any) => {
                         this.data.tooltip.display = 'none';
@@ -133,6 +134,12 @@ export class EditComponent {
         });
 
         this.setHotkey(this);
+    }
+
+    ngOnDestroy() {
+        if (this.data.prevSection.data) {
+            this.save();
+        }
     }
 
     public setHotkey(editComp: EditComponent) {
@@ -166,7 +173,7 @@ export class EditComponent {
         }, 500);
     }
 
-    /* ------------------------- Dialog ------------------------- */
+    /* ------------------------- Create Link ------------------------- */
     public showDialog() {
         this.inputRef.focus();
     }
@@ -197,15 +204,6 @@ export class EditComponent {
         }
     }
 
-    public loopPages(editor: EditComponent, segment: Segment, func: (page: PageSummary) => any) {
-        for (let page of segment.pages) {
-            func(page);
-        }
-        for (let seg of segment.segments) {
-            editor.loopPages(editor, seg, func);
-        }
-    }
-
     public hideDialog() {
         this.editor.quill.enable();
     }
@@ -222,32 +220,76 @@ export class EditComponent {
         this.displayLinkCreator = false;
     }
 
-    /* ------------------------------------------------------------ */
-
+    // -------------------- Select, Add, and Edit Sections -------------------- //
     public selectSection(event: any) {
+        this.save();
+        this.data.prevSection = event.node;
         this.data.storyDisplay = '';
-        this.data.section.section_id = event.node.data.section_id;
         this.editService.getSectionContent(event.node.data.section_id);
     }
 
-    public save() {
-        let newContentObject: any = this.parserService.parseHtml(this.editorRef.innerHTML);
-        this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.section.section_id);
-    }
-
-    /* ------------------------------------------------------------ */
-
     public addSection() {
         this.editService.addSection(this.sectionTitle, this.newSectionId);
+        this.sectionTitle = '';
+        this.newSectionId = new ID();
         this.displaySectionCreator = false;
     }
 
-    public openSectionCreator(sectionId: ID) {
-        this.newSectionId = sectionId;
-        this.displaySectionCreator = true;
+    public editSectionTitle() {
+        this.editService.editSectionTitle(this.sectionTitle, this.newSectionId);
+        this.sectionTitle = '';
+        this.newSectionId = new ID();
+        this.displaySectionEditor = false;
     }
 
-    public deleteSection(sectionId: ID) {
-        //this.editService.deleteSection(sectionId);
+    // Context Menu
+    public setContextMenu(node: TreeNode) {
+        this.data.section = node;
+        this.data.prevSection = node;
+        this.selectSection({ node: node });
+        this.items = [
+            {
+                label: 'Rename',
+                command: () => {
+                    this.newSectionId = node.data.section_id;
+                    this.displaySectionEditor = true;
+                }
+            },
+            {
+                label: 'Add Subsection',
+                command: () => {
+                    this.newSectionId = node.data.section_id;
+                    this.displaySectionCreator = true;
+                }
+            }
+        ];
+
+        if (node.parent) {
+            this.items.push({
+                label: 'Delete Section', command: () => {
+                    this.data.section = node.parent;
+                    this.data.prevSection = node.parent;
+                    this.selectSection({ node: node.parent });
+                    this.editService.deleteSection(node.data.section_id);
+                }
+            });
+        }
+    }
+
+    // -------------------- Other -------------------- //
+    public loopPages(editor: EditComponent, segment: Segment, func: (page: PageSummary) => any) {
+        for (let page of segment.pages) {
+            func(page);
+        }
+        for (let seg of segment.segments) {
+            editor.loopPages(editor, seg, func);
+        }
+    }
+
+    public save() {
+        let paragraphs: any[] = this.editorRef.querySelectorAll('p');
+
+        let newContentObject: any = this.parserService.parseHtml(paragraphs);
+        this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
     }
 }
