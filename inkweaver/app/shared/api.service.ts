@@ -184,8 +184,6 @@ export class ApiService {
                             this.data.segment = reply.hierarchy;
                             this.data.wikiNav = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
                             this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
-                            if (this.data.selectedEntry.hasOwnProperty("label"))
-                                this.parser.expandTree(this.data.selectedEntry);
                             break;
                         case 'get_wiki_segment':
                             reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));

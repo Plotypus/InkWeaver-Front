@@ -79,32 +79,4 @@ body {
         padding-right: 2%;
     }
 
-/* -------------------- Wiki -------------------- */
 
-.wiki .ui-editor-content {
-    background: white;
-}
-
-.wiki .ui-panel-titlebar {
-    min-height: 1em !important;
-}
-
-.wiki .span .ui-widget input {
-    width: 25%;
-    color: var(--light-gray);
-    background-color: var(--light-blue);
-    border: none;
-}
-
-.wiki .ui-widget input {
-    width: 100%;
-    color: var(--light-gray);
-    background: var(--light-blue) !important;
-    border: none;
-    font-size: .5em;
-    text-align: center;
-}
-
-.wiki .fa {
-    color: white;
-}

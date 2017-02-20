@@ -49,7 +49,8 @@ export class WikiComponent {
 
        this.apiService.messages.subscribe((action: string) => {
          if (action == "get_wiki_segment" || action == 'get_wiki_page')
-           {
+         {
+             this.wikiPageContent = [];
              this.wikiPage = this.data.page;
              
                this.disabled = [true];
@@ -86,6 +87,7 @@ export class WikiComponent {
 
     public parsePage()
     {
+        this.wikiPageContent = [];
         this.wikiPage = this.data.page;
 
         this.disabled = [true];

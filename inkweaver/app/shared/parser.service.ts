@@ -174,7 +174,7 @@ export class ParserService {
         if (selected.length != 0 && (wiki.label == selected[0]))
         {
             wiki.expanded = true;
-            selected.pop();
+            selected.shift();
         }
         for (let field in wikiJson) {
             if (field === "segments") {
@@ -264,7 +264,7 @@ export class ParserService {
 
     public createPath(page: any)
     {
-        if (!page.hasOwnProperty("title"))
+        if (page.hasOwnProperty("type") && page.type == 'title')
             return new Array<String>();
         page.expanded = true;
         let path = new Array<String>();
@@ -276,7 +276,7 @@ export class ParserService {
             parent = parent.parent;
         }
 
-        return path;
+        return path.reverse();
 
     }
     public sort(o1: any, o2: any) {
