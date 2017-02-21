@@ -7,21 +7,60 @@ import { ID } from '../models/id.model';
 export class StoryService {
     constructor(private apiService: ApiService) { }
 
-    public createLink(story_id: ID, section_id: ID, paragraph_id: ID, name: string, page_id: ID, callback: any) {
+    // Story
+    public createStory(title: string, wikiID: ID, summary: string) {
+        this.apiService.send({
+            action: 'create_story',
+            title: title,
+            wiki_id: wikiID,
+            summary: summary,
+        });
+    }
+
+    public deleteStory(storyID: ID) {
+        this.apiService.send({
+            action: 'delete_story',
+            story_id: storyID
+        });
+    }
+
+    public getStoryInformation(storyID: ID) {
+        this.apiService.send({
+            action: 'get_story_information',
+            story_id: storyID
+        });
+    }
+
+    public getStoryHierarchy(storyID: ID) {
+        this.apiService.send({
+            action: 'get_story_hierarchy',
+            story_id: storyID
+        });
+    }
+
+    public getSectionHierarchy(sectionID: ID) {
+        this.apiService.send({
+            action: 'get_section_hierarchy',
+            section_id: sectionID
+        });
+    }
+
+    // Links
+    public createLink(storyID: ID, sectionID: ID, paragraphID: ID, name: string, pageID: ID, callback: any) {
         this.apiService.send({
             action: 'create_link',
-            story_id: story_id,
-            section_id: section_id,
-            paragraph_id: paragraph_id,
+            story_id: storyID,
+            section_id: sectionID,
+            paragraph_id: paragraphID,
             name: name,
-            page_id: page_id
+            page_id: pageID
         }, callback);
     }
 
-    public deleteLink(link_id: ID) {
+    public deleteLink(linkID: ID) {
         this.apiService.send({
             action: 'delete_link',
-            link_id: link_id,
+            link_id: linkID,
         });
     }
 }

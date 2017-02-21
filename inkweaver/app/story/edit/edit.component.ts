@@ -32,12 +32,12 @@ export class EditComponent {
     // Creating links
     private range: any;
     private word: string;
-    private newLinkId: ID;
+    private newLinkID: ID;
     private newLinkPages: any;
     private displayLinkCreator: boolean;
 
     // Adding/editing sections
-    private newSectionId: ID;
+    private newSectionID: ID;
     private items: MenuItem[];
     private sectionTitle: string;
     private displaySectionEditor: boolean;
@@ -106,28 +106,35 @@ export class EditComponent {
 
                 let threads: any[] = this.editorRef.querySelectorAll('a[href]');
                 for (let thread of threads) {
-                    thread.addEventListener('click', (event: any) => {
-                        event.preventDefault();
-                        let linkId: string = thread.getAttribute('href');
-                        let ids: string[] = linkId.split('-');
-                        let pageId: any = { $oid: ids[1] };
-                        this.wikiService.getWikiPage(pageId);
-                        this.router.navigate(['/story/wiki']);
-                    });
-                    thread.addEventListener('mouseenter', (event: any) => {
-                        let top: number = event.target.offsetTop + 70;
-                        this.data.tooltip = {
-                            text: '',
-                            display: 'block', top: top + 'px', left: event.target.offsetLeft + 'px'
-                        };
-                        let linkId: string = thread.getAttribute('href');
-                        let ids: string[] = linkId.split('-');
-                        let pageId: any = { $oid: ids[1] };
-                        this.wikiService.getWikiPage(pageId, { noflight: true });
-                    });
-                    thread.addEventListener('mouseleave', (event: any) => {
-                        this.data.tooltip.display = 'none';
-                    });
+                    let linkID: string = thread.getAttribute('href');
+                    if (linkID.startsWith('sid')) {
+                        let id: string = linkID.substring(3);
+                        let node: TreeNode = this.parserService.setSection(this.data.storyNode[0], JSON.stringify({ $oid: id }))
+                        thread.addEventListener('click', (event: any) => {
+                            event.preventDefault();
+                            this.selectSection({ node: node });
+                        });
+                    } else {
+                        let ids: string[] = linkID.split('-');
+                        let pageID: ID = { $oid: ids[1] };
+
+                        thread.addEventListener('click', (event: any) => {
+                            event.preventDefault();
+                            this.wikiService.getWikiPage(pageID);
+                            this.router.navigate(['/story/wiki']);
+                        });
+                        thread.addEventListener('mouseenter', (event: any) => {
+                            let top: number = event.target.offsetTop + 70;
+                            this.data.tooltip = {
+                                text: '',
+                                display: 'block', top: top + 'px', left: event.target.offsetLeft + 'px'
+                            };
+                            this.wikiService.getWikiPage(pageID, { noflight: true });
+                        });
+                        thread.addEventListener('mouseleave', (event: any) => {
+                            this.data.tooltip.display = 'none';
+                        });
+                    }
                 }
             }
             this.wordCount = event.textValue.split(/\s+/).length;
@@ -159,7 +166,7 @@ export class EditComponent {
                         let index: number = range.index - word.length;
 
                         editComp.suggest.display = 'none';
-                        editComp.newLinkId = editComp.suggest.page_id;
+                        editComp.newLinkID = editComp.suggest.page_id;
                         editComp.word = editComp.suggest.title;
                         editComp.range = { index: index, length: word.length };
                         editComp.createLink();
@@ -196,7 +203,7 @@ export class EditComponent {
             editor.loopPages(editor, editor.data.segment, (page: PageSummary) => {
                 editor.newLinkPages.push({ label: page.title, value: page.page_id });
             });
-            editor.newLinkId = editor.newLinkPages[0].value;
+            editor.newLinkID = editor.newLinkPages[0].value;
 
             editor.editor.quill.disable();
             editor.displayLinkCreator = true;
@@ -215,13 +222,14 @@ export class EditComponent {
 
         this.setLinks = true;
         this.editor.quill.insertText(
-            this.range.index, this.word, 'link', 'new' + Math.random() + '-' + this.newLinkId.$oid);
+            this.range.index, this.word, 'link', 'new' + Math.random() + '-' + this.newLinkID.$oid);
         this.editor.quill.setSelection(this.range.index + this.word.length, 0);
         this.displayLinkCreator = false;
     }
 
     // -------------------- Select, Add, and Edit Sections -------------------- //
     public selectSection(event: any) {
+        this.data.section = event.node;
         this.save();
         this.data.prevSection = event.node;
         this.data.storyDisplay = '';
@@ -229,36 +237,34 @@ export class EditComponent {
     }
 
     public addSection() {
-        this.editService.addSection(this.sectionTitle, this.newSectionId);
+        this.editService.addSection(this.sectionTitle, this.newSectionID);
         this.sectionTitle = '';
-        this.newSectionId = new ID();
+        this.newSectionID = new ID();
         this.displaySectionCreator = false;
     }
 
     public editSectionTitle() {
-        this.editService.editSectionTitle(this.sectionTitle, this.newSectionId);
+        this.editService.editSectionTitle(this.sectionTitle, this.newSectionID);
         this.sectionTitle = '';
-        this.newSectionId = new ID();
+        this.newSectionID = new ID();
         this.displaySectionEditor = false;
     }
 
     // Context Menu
     public setContextMenu(node: TreeNode) {
-        this.data.section = node;
-        this.data.prevSection = node;
         this.selectSection({ node: node });
         this.items = [
             {
                 label: 'Rename',
                 command: () => {
-                    this.newSectionId = node.data.section_id;
+                    this.newSectionID = node.data.section_id;
                     this.displaySectionEditor = true;
                 }
             },
             {
                 label: 'Add Subsection',
                 command: () => {
-                    this.newSectionId = node.data.section_id;
+                    this.newSectionID = node.data.section_id;
                     this.displaySectionCreator = true;
                 }
             }
@@ -267,8 +273,6 @@ export class EditComponent {
         if (node.parent) {
             this.items.push({
                 label: 'Delete Section', command: () => {
-                    this.data.section = node.parent;
-                    this.data.prevSection = node.parent;
                     this.selectSection({ node: node.parent });
                     this.editService.deleteSection(node.data.section_id);
                 }

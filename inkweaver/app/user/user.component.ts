@@ -1,36 +1,37 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Header } from 'primeng/primeng';
+import { Header, SelectItem } from 'primeng/primeng';
 
 import { UserService } from './user.service';
-import { EditService } from '../story/edit/edit.service';
+import { StoryService } from '../story/story.service';
 import { WikiService } from '../story/wiki/wiki.service';
 import { ApiService } from '../shared/api.service';
 
 import { ID } from '../models/id.model';
 
 @Component({
-    moduleId: module.id,
     selector: 'user',
-    templateUrl: './user.component.html'
+    templateUrl: './app/user/user.component.html'
 })
 export class UserComponent {
     private data: any;
 
-    private wikis: any;
+    private wikis: SelectItem[];
     private newWiki: any;
     private newWikiTitle: string;
     private newWikiSummary: string;
 
+    private deleteID: ID;
     private title: string;
     private summary: string;
     private colors: string[];
     private displayStoryCreator: boolean;
+    private displayStoryDeleter: boolean;
 
     constructor(
         private router: Router,
         private userService: UserService,
-        private editService: EditService,
+        private storyService: StoryService,
         private wikiService: WikiService,
         private apiService: ApiService) { }
 
@@ -59,7 +60,7 @@ export class UserComponent {
             this.apiService.messages.subscribe((action: string) => {
                 if (action == 'create_wiki') {
                     this.displayStoryCreator = false;
-                    this.editService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
+                    this.storyService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
                     this.router.navigate(['/story/edit']);
                 }
             });
@@ -68,21 +69,17 @@ export class UserComponent {
         }
     }
 
+    // Stories
     public selectStory(story_id: ID) {
         this.data.story.story_id = story_id;
-        this.editService.getStoryInformation(story_id);
-        this.editService.getStoryHierarchy(story_id);
+        this.storyService.getStoryInformation(story_id);
+        this.storyService.getStoryHierarchy(story_id);
         this.router.navigate(['/story/edit']);
     }
 
-    public randomColor(title: string) {
-        return this.colors[title.length % this.colors.length];
-    }
-
-    /* -------------------- Create a new story -------------------- */
     public openStoryCreator() {
         this.displayStoryCreator = true;
-        this.wikis = [{ label: '[Create New Wiki]', value: 'new_wiki' }];
+        this.wikis = [{ label: '<em>Create New Wiki</em>', value: 'new_wiki' }];
         for (let wiki of this.data.wikis) {
             this.wikis.push({ label: wiki.title, value: wiki.wiki_id });
         }
@@ -94,8 +91,23 @@ export class UserComponent {
             this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary);
         } else {
             this.displayStoryCreator = false;
-            this.editService.createStory(this.title, this.newWiki, this.summary);
+            this.storyService.createStory(this.title, this.newWiki, this.summary);
             this.router.navigate(['/story/edit']);
         }
+    }
+
+    public openStoryDeleter(storyID: ID) {
+        this.deleteID = storyID;
+        this.displayStoryDeleter = true;
+    }
+
+    public deleteStory() {
+        this.displayStoryDeleter = false;
+        this.storyService.deleteStory(this.deleteID);
+    }
+
+    // Other
+    public randomColor(title: string) {
+        return this.colors[title.length % this.colors.length];
     }
 }

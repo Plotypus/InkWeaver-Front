@@ -1,11 +1,11 @@
-﻿<!-- Link Creator Dialog -->
+﻿<!-- Story Creator Dialog -->
 <p-dialog modal="true" header="Create New Story" [(visible)]="displayStoryCreator"
-          width="450" height="450" (keyup.enter)="createStory()">
+          width="450" height="450" responsive="true" (keyup.enter)="createStory()">
     <table>
         <tbody>
             <tr>
                 <td><label>Title</label></td>
-                <td><input pInputText type="text" [(ngModel)]="title" autofocus /></td>
+                <td><input pInputText type="text" [(ngModel)]="title" /></td>
             </tr>
             <tr>
                 <td><label>Summary</label></td>
@@ -35,17 +35,28 @@
     </table>
 </p-dialog>
 
+<!-- Story Deleter Dialog -->
+<p-dialog modal="true" header="Delete Story" [(visible)]="displayStoryDeleter"
+          width="450" height="450" responsive="true">
+    <button pButton type="button" label="Cancel" (click)="displayStoryDeleter = false"></button>
+    <button pButton type="button" label="Delete" (click)="deleteStory()"></button>
+</p-dialog>
+
+<!-- User Stories -->
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
         <div class="ui-grid-col-9">
             <p-dataGrid [value]="data.stories" [paginator]="true" [rows]="6">
-                <header>List of Stories</header>
+                <header>{{data.user.name}}'s Stories</header>
                 <template let-story>
                     <div class="ui-g-12 ui-md-4">
                         <div *ngIf="story.story_id">
-                            <p-panel styleClass="story-tile" (click)="selectStory(story.story_id)">
-                                <header>{{story.title}}</header>
-                                <div>
+                            <p-panel styleClass="story-tile">
+                                <header>
+                                    {{story.title}}
+                                    <i class="fa fa-trash" (click)="openStoryDeleter(story.story_id)"></i>
+                                </header>
+                                <div (click)="selectStory(story.story_id)">
                                     <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>
                                 </div>
                             </p-panel>
