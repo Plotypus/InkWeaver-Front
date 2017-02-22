@@ -10,7 +10,7 @@ const url: string = 'https://inkweaver.plotypus.net:8080/api/login';
 export class LoginService {
     private options = new RequestOptions({
         withCredentials: true,
-        headers: new Headers({ 'Content-Type': 'text/plain' })
+        //headers: new Headers({ 'Content-Type': 'text/plain' })
     });
 
     constructor(private parser: ApiService, private http: Http) { }

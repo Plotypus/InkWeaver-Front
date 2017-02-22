@@ -63,6 +63,8 @@ export class ApiService {
     public outgoing = {};
     public message_id: number = 0;
     public messages: Subject<string>;
+    public acknowledged: boolean = false;
+    public queued: string[] = [];
 
     constructor(
         private socket: WebSocketService,
@@ -76,7 +78,10 @@ export class ApiService {
                 let response: string = res.data;
                 let reply = JSON.parse(response);
                 if (reply.event == 'acknowledged') {
-                    this.outgoing = {};
+                    this.acknowledged = true;
+                    for (let queue of this.queued) {
+                        this.messages.next(queue);
+                    }
                     return reply.event;
                 }
 
@@ -306,6 +311,11 @@ export class ApiService {
         }
 
         console.log(message);
-        this.messages.next(message);
+
+        if (this.acknowledged) {
+            this.messages.next(message);
+        } else {
+            this.queued.push(message);
+        }
     }
 }
