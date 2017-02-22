@@ -36,9 +36,7 @@ export class LoginComponent {
     public signIn() {
         this.loginService.login(this.login.username, this.login.password)
             .subscribe(response => {
-                let cookie: string = response.headers.get('Set-Cookie');
-                console.log(cookie);
-                document.cookie = cookie;
+                console.log(document.cookie);
 
                 this.apiService.connect();
                 this.userService.getUserPreferences();
