@@ -28,7 +28,7 @@ import { Page } from '../models/wiki/page.model';
 import { Heading } from '../models/wiki/heading.model';
 import { Reference } from '../models/wiki/reference.model';
 
-const url: string = 'wss://localhost:8080/ws';
+const url: string = 'wss://inkweaver.plotypus.net:8080/ws';
 
 @Injectable()
 export class ApiService {
