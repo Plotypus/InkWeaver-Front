@@ -211,6 +211,7 @@ export class ParserService {
         return wiki
     }
 
+
     /**
      * Parses the Json for Pages
      * @param pageJson
@@ -241,7 +242,7 @@ export class ParserService {
         return html;
     }
 
-    public setPageDisplay(reply: any) {
+    public setPageDisplay(reply: any,linktable:LinkTable) {
         //getting the alias
         if (reply.aliases) {
             let temp = [];
@@ -258,8 +259,34 @@ export class ParserService {
                 count++;
             }
             reply.aliases = temp;
-            return reply;
+           
         }
+        return this.parseReferences(reply, linktable);
+        
+        
+    }
+
+    public parseReferences(reply: any, linktable: LinkTable) {
+        if (reply.references)
+            for (let ref of reply.references) {
+
+                let text: string = ref.text;
+                let r1: RegExp = /\s+/g;
+                let r2: RegExp = /{"\$oid":\s*"[a-z0-9]{24}"}/g;
+                let linkMatch: RegExpMatchArray = r2.exec(text);
+                while (linkMatch) {
+                    let linkID: string = linkMatch[0].replace(r1, '');
+                    let link: Link = linktable[linkID];
+
+
+                    let linkIDStr: string = JSON.parse(linkID).$oid;
+                    let pageIDStr: string = link.page_id.$oid;
+                    reply.text = reply.text.replace(linkMatch[0],
+                        link.name);
+                    linkMatch = r2.exec(text);
+                }
+            }
+        return reply;
     }
 
     public createPath(page: any)
