@@ -8,5 +8,4 @@ export class Story {
     section_id: ID;
     wiki_id: ID;
     users: Collaborator[];
-    summary: string;
 }

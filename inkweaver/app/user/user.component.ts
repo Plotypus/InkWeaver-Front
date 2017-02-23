@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Header, SelectItem } from 'primeng/primeng';
+import { Header, SelectItem, TreeNode } from 'primeng/primeng';
 
 import { UserService } from './user.service';
 import { StoryService } from '../story/story.service';
@@ -8,6 +8,9 @@ import { WikiService } from '../story/wiki/wiki.service';
 import { ApiService } from '../shared/api.service';
 
 import { ID } from '../models/id.model';
+import { User } from '../models/user/user.model';
+import { Story } from '../models/story/story.model';
+import { Section } from '../models/story/section.model';
 
 @Component({
     selector: 'user',
@@ -15,6 +18,8 @@ import { ID } from '../models/id.model';
 })
 export class UserComponent {
     private data: any;
+    private editing: boolean;
+    private backup: User;
 
     private wikis: SelectItem[];
     private newWiki: any;
@@ -37,6 +42,7 @@ export class UserComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+        this.editing = false;
         this.data.menuItems = [
             { label: 'About', routerLink: ['/about'] },
             { label: 'Sign Out', routerLink: ['/login'] },
@@ -59,7 +65,12 @@ export class UserComponent {
         if (this.apiService.messages) {
             this.apiService.messages.subscribe((action: string) => {
                 if (action == 'create_wiki') {
+                    this.data.storyDisplay = '';
+                    this.data.section = new Section();
+                    this.data.storyNode = new Array<TreeNode>();
+
                     this.displayStoryCreator = false;
+                    this.data.story.story_title = this.title;
                     this.storyService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
                     this.router.navigate(['/story/edit']);
                 }
@@ -69,17 +80,41 @@ export class UserComponent {
         }
     }
 
+    // User
+    public edit() {
+        this.backup = JSON.parse(JSON.stringify(this.data.user));
+        this.editing = true;
+    }
+
+    public cancel() {
+        this.data.user = this.backup;
+        this.editing = false;
+    }
+
+    public save() {
+        this.userService.setUserName(this.data.user.name);
+        this.userService.setUserEmail(this.data.user.email);
+        this.userService.setUserBio(this.data.user.bio);
+        this.editing = false;
+    }
+
     // Stories
-    public selectStory(story_id: ID) {
-        this.data.story.story_id = story_id;
-        this.storyService.getStoryInformation(story_id);
-        this.storyService.getStoryHierarchy(story_id);
+    public selectStory(story: Story) {
+        this.data.storyDisplay = '';
+        this.data.section = new Section();
+        this.data.storyNode = new Array<TreeNode>();
+
+        this.data.story.story_id = story.story_id;
+        this.data.story.story_title = story.story_title;
+
+        this.storyService.getStoryInformation(story.story_id);
+        this.storyService.getStoryHierarchy(story.story_id);
         this.router.navigate(['/story/edit']);
     }
 
     public openStoryCreator() {
         this.displayStoryCreator = true;
-        this.wikis = [{ label: '<em>Create New Wiki</em>', value: 'new_wiki' }];
+        this.wikis = [{ label: 'Create New Wiki', value: 'new_wiki' }];
         for (let wiki of this.data.wikis) {
             this.wikis.push({ label: wiki.title, value: wiki.wiki_id });
         }
@@ -90,15 +125,22 @@ export class UserComponent {
         if (this.newWiki == 'new_wiki') {
             this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary);
         } else {
+            this.data.storyDisplay = '';
+            this.data.section = new Section();
+            this.data.storyNode = new Array<TreeNode>();
+
             this.displayStoryCreator = false;
+            this.data.story.story_title = this.title;
             this.storyService.createStory(this.title, this.newWiki, this.summary);
+
             this.router.navigate(['/story/edit']);
         }
     }
 
-    public openStoryDeleter(storyID: ID) {
+    public openStoryDeleter(event: any, storyID: ID) {
         this.deleteID = storyID;
         this.displayStoryDeleter = true;
+        event.stopPropagation();
     }
 
     public deleteStory() {

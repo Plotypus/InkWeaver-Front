@@ -34,6 +34,8 @@ export class EditComponent {
     private word: string;
     private newLinkID: ID;
     private newLinkPages: any;
+    private newSegmentID: ID;
+    private newSegments: any;
     private displayLinkCreator: boolean;
 
     // Adding/editing sections
@@ -97,7 +99,7 @@ export class EditComponent {
                                 display: 'block', top: top + 'px', left: bounds.left + 'px'
                             };
                         }
-                    });
+                    }, (seg: Segment) => { });
                 }
             }
 
@@ -199,11 +201,17 @@ export class EditComponent {
             editor.range.length = editor.word.length;
 
             // Set the wiki pages in the dropdown
-            editor.newLinkPages = [];
+            editor.newLinkPages = [{ label: 'Create New Page', value: null }];
+            editor.newSegments = [{
+                label: editor.data.segment.title, value: editor.data.segment.segment_id
+            }];
             editor.loopPages(editor, editor.data.segment, (page: PageSummary) => {
                 editor.newLinkPages.push({ label: page.title, value: page.page_id });
+            }, (seg: Segment) => {
+                editor.newSegments.push({ label: seg.title, value: seg.segment_id });
             });
             editor.newLinkID = editor.newLinkPages[0].value;
+            editor.newSegmentID = editor.newSegments[0].value;
 
             editor.editor.quill.disable();
             editor.displayLinkCreator = true;
@@ -216,15 +224,22 @@ export class EditComponent {
     }
 
     public createLink() {
-        this.editor.quill.enable();
         this.word = this.word.trim();
-        this.editor.quill.deleteText(this.range.index, this.range.length);
+        if (this.newLinkID) {
+            this.editor.quill.enable();
+            this.editor.quill.deleteText(this.range.index, this.range.length);
 
-        this.setLinks = true;
-        this.editor.quill.insertText(
-            this.range.index, this.word, 'link', 'new' + Math.random() + '-' + this.newLinkID.$oid);
-        this.editor.quill.setSelection(this.range.index + this.word.length, 0);
-        this.displayLinkCreator = false;
+            this.setLinks = true;
+            this.editor.quill.insertText(
+                this.range.index, this.word, 'link', 'new' + Math.random() + '-' + this.newLinkID.$oid);
+            this.editor.quill.setSelection(this.range.index + this.word.length, 0);
+            this.displayLinkCreator = false;
+        } else {
+            this.wikiService.addPage(this.word, this.newSegmentID, (reply: any) => {
+                this.newLinkID = reply.page_id;
+                this.createLink();
+            });
+        }
     }
 
     // -------------------- Select, Add, and Edit Sections -------------------- //
@@ -281,12 +296,14 @@ export class EditComponent {
     }
 
     // -------------------- Other -------------------- //
-    public loopPages(editor: EditComponent, segment: Segment, func: (page: PageSummary) => any) {
+    public loopPages(editor: EditComponent, segment: Segment,
+        func: (page: PageSummary) => any, sFunc: (s: Segment) => any) {
         for (let page of segment.pages) {
             func(page);
         }
         for (let seg of segment.segments) {
-            editor.loopPages(editor, seg, func);
+            sFunc(seg);
+            editor.loopPages(editor, seg, func, sFunc);
         }
     }
 

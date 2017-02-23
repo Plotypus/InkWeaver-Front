@@ -148,13 +148,12 @@ export class WikiService {
     }
 
     //parent_id == segment_id
-    public addPage(title: string, sid: any) {
+    public addPage(title: string, sid: any, callback: (reply: any) => any) {
         this.apiService.send({
-
             "action": "add_page",
             "title": title,
             "parent_id": sid
-        });
+        }, callback);
     }
 
     public addHeading(title: string, page_id: any) {

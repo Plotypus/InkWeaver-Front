@@ -8,7 +8,6 @@ import { ParserService } from './parser.service';
 // Models
 import { User } from '../models/user/user.model';
 import { Collaborator } from '../models/user/collaborator.model';
-
 import { LinkTable } from '../models/link/link-table.model';
 import { Link } from '../models/link/link.model';
 import { ID } from '../models/id.model';
@@ -28,7 +27,8 @@ import { Page } from '../models/wiki/page.model';
 import { Heading } from '../models/wiki/heading.model';
 import { Reference } from '../models/wiki/reference.model';
 
-const url: string = 'wss://inkweaver.plotypus.net:8080/ws';
+const url: string = 'ws://localhost:8080/ws/demo';
+const urlAuth: string = 'wss://inkweaver.plotypus.net:8080/ws';
 
 @Injectable()
 export class ApiService {
@@ -60,18 +60,22 @@ export class ApiService {
         contentObject: new ContentObject()
     }
 
-    public outgoing = {};
+    public acknowledged: boolean = false;
+    public authentication: boolean = false;
+
+    public queued: string[] = [];
+    public outgoing: Object = {};
     public message_id: number = 0;
     public messages: Subject<string>;
-    public acknowledged: boolean = false;
-    public queued: string[] = [];
 
     constructor(
         private socket: WebSocketService,
         private parser: ParserService) { }
 
     public connect() {
-        this.messages = <Subject<string>>this.socket.connect(url)
+        let path: string = this.authentication ? urlAuth : url;
+
+        this.messages = <Subject<string>>this.socket.connect(path)
             .map((res: MessageEvent) => {
                 this.data.inflight = false;
 
@@ -122,7 +126,8 @@ export class ApiService {
                             this.data.stories.push({
                                 story_id: null,
                                 title: null,
-                                access_level: null
+                                access_level: null,
+                                position_context: null
                             });
                             break;
                         case 'get_user_wikis':
@@ -210,6 +215,7 @@ export class ApiService {
                         case 'add_page':
                             this.data.pageid.push(reply.page_id);
                             this.refreshWiki();
+                            callback(reply);
                             break;
                         case 'add_segment':
                             this.data.pageid.push(reply.segment_id);
@@ -305,13 +311,12 @@ export class ApiService {
             callback: callback,
             metadata: metadata
         };
-
         if (!metadata.noflight) {
             this.data.inflight = true;
         }
 
+        // Send or queue the message
         console.log(message);
-
         if (this.acknowledged) {
             this.messages.next(message);
         } else {
