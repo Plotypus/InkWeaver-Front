@@ -34,22 +34,16 @@ export class LoginComponent {
     }
 
     public signIn() {
-        //this.loginService.login(this.login.username, this.login.password)
-        //    .subscribe(response => {
-        //        document.cookie = response.headers.get('Set-Cookie');
-        //        console.log(document.cookie);
-        //    });
+        this.loginService.login(this.login.username, this.login.password)
+            .subscribe(response => {
+                console.log(document.cookie);
 
-        this.apiService.connect();
-        this.apiService.messages.subscribe((action: string) => {
-            this.userService.getUserPreferences();
-            this.userService.getUserStories();
-            this.userService.getUserWikis();
-            this.router.navigate(['/user']);
-        });
-        this.userService.getUserPreferences();
-        this.userService.getUserStories();
-        this.userService.getUserWikis();
+                this.apiService.connect();
+                this.userService.getUserPreferences();
+                this.userService.getUserStories();
+                this.userService.getUserWikis();
+                this.router.navigate(['/user']);
+            });
         return false;
     }
 }

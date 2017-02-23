@@ -9,27 +9,19 @@ import { ContentObject } from '../../models/story/content-object.model';
 export class EditService {
     constructor(private storyService: StoryService, private apiService: ApiService) { }
 
-    public createStory(title: string, wiki_id: string, summary: string) {
-        this.apiService.send({
-            action: 'create_story',
-            title: title,
-            wiki_id: wiki_id,
-            summary: summary,
-        });
-    }
-
-    public addSection(title: string, parentId: ID) {
+    // Sections
+    public addSection(title: string, parentID: ID) {
         this.apiService.send({
             action: 'add_inner_subsection',
             title: title,
-            parent_id: parentId
+            parent_id: parentID
         });
     }
 
-    public editSectionTitle(newTitle: string, sectionId: ID) {
+    public editSectionTitle(newTitle: string, sectionID: ID) {
         this.apiService.send({
             action: 'edit_section_title',
-            section_id: sectionId,
+            section_id: sectionID,
             new_title: newTitle
         });
     }
@@ -41,74 +33,60 @@ export class EditService {
         });
     }
 
-    public addParagraph(section_id: ID, text: string, succeeding_paragraph_id: ID, callback: any) {
+    // Paragraphs
+    public addParagraph(sectionID: ID, text: string, succeedingParagraphID: ID, callback: any) {
         let p: any = {
             action: 'add_paragraph',
-            section_id: section_id,
+            section_id: sectionID,
             text: text
         };
-        if (succeeding_paragraph_id) {
-            p.succeeding_paragraph_id = succeeding_paragraph_id
+        if (succeedingParagraphID) {
+            p.succeeding_paragraph_id = succeedingParagraphID
         }
         this.apiService.send(p, callback, { noflight: true });
     }
 
-    public editParagraph(section_id: ID, text: string, paragraph_id: ID) {
+    public editParagraph(sectionID: ID, text: string, paragraphID: ID) {
         text = text.replace(
             /<a href="([a-z0-9]{24})-([a-z0-9]{24})" target="_blank">(.*?)<\/a>/g,
             '{"$$oid":"$1"}');
 
         this.apiService.send({
             action: 'edit_paragraph',
-            section_id: section_id,
+            section_id: sectionID,
             update: {
                 update_type: 'set_text',
                 text: text
             },
-            paragraph_id: paragraph_id
+            paragraph_id: paragraphID
         }, (reply: any) => { }, { noflight: true });
     }
 
-    public deleteParagraph(paragraph_id: ID, section_id: ID) {
+    public deleteParagraph(paragraphID: ID, sectionID: ID) {
         this.apiService.send({
             action: 'delete_paragraph',
-            paragraph_id: paragraph_id,
-            section_id: section_id
+            paragraph_id: paragraphID,
+            section_id: sectionID
         }, (reply: any) => { }, { noflight: true });
     }
 
-    public getStoryInformation(story_id: ID) {
-        this.apiService.send({
-            action: 'get_story_information',
-            story_id: story_id
-        });
+    public getSectionContent(sectionID: ID) {
+        this.apiService.refreshContent(sectionID);
     }
 
-    public getStoryHierarchy(story_id: ID) {
-        this.apiService.send({
-            action: 'get_story_hierarchy',
-            story_id: story_id
-        });
-    }
-
-    public getSectionHierarchy(section_id: ID) {
-        this.apiService.send({
-            action: 'get_section_hierarchy',
-            section_id: section_id
-        });
-    }
-
-    public getSectionContent(sectionId: ID) {
-        this.apiService.refreshContent(sectionId);
-    }
-
-    /* -------------------- Helper methods -------------------- */
-
-    public compare(obj1: ContentObject, obj2: ContentObject, story_id: ID, section_id: ID) {
+    /**
+     * Makes the appropriate calls to save changes between the
+     * previous state of the story (obj1) and the new state (obj2)
+     * @param obj1
+     * @param obj2
+     * @param storyID
+     * @param sectionID
+     */
+    public compare(obj1: ContentObject, obj2: ContentObject, storyID: ID, sectionID: ID) {
         // Delete paragraphs that no longer exist
         for (let id in obj1) {
             if (!obj2[id]) {
-                this.deleteParagraph(JSON.parse(id), section_id);
+                this.deleteParagraph(JSON.parse(id), sectionID);
                 for (let link in obj1[id].links) {
                     this.storyService.deleteLink(JSON.parse(link));
                 }
@@ -119,9 +97,9 @@ export class EditService {
         for (let id in obj2) {
             if (id.startsWith('new')) {
                 this.addParagraph(
-                    section_id, obj2[id].text, obj2[id].succeeding_id, (reply1: any) => {
+                    sectionID, obj2[id].text, obj2[id].succeeding_id, (reply1: any) => {
                         for (let link in obj2[id].links) {
-                            this.storyService.createLink(story_id, section_id,
+                            this.storyService.createLink(storyID, sectionID,
                                 reply1.paragraph_id, obj2[id].links[link].name,
                                 obj2[id].links[link].page_id, (reply2) => {
                                     this.apiService.data.linkTable[JSON.stringify(reply2.link_id)] = {
@@ -131,13 +109,13 @@ export class EditService {
 
                                     let newText: string = obj2[id].text.replace(
                                         link, reply2.link_id.$oid);
-                                    this.editParagraph(section_id, newText, reply1.paragraph_id);
+                                    this.editParagraph(sectionID, newText, reply1.paragraph_id);
                                 });
                         }
                     });
             } else {
                 if (obj1[id].text != obj2[id].text) {
-                    this.editParagraph(section_id, obj2[id].text, JSON.parse(id));
+                    this.editParagraph(sectionID, obj2[id].text, JSON.parse(id));
 
                     // Links
                     for (let link in obj1[id].links) {
@@ -147,7 +125,7 @@ export class EditService {
                     }
                     for (let link in obj2[id].links) {
                         if (link.startsWith('new')) {
-                            this.storyService.createLink(story_id, section_id, JSON.parse(id),
+                            this.storyService.createLink(storyID, sectionID, JSON.parse(id),
                                 obj2[id].links[link].name, obj2[id].links[link].page_id, (reply) => {
                                     this.apiService.data.linkTable[JSON.stringify(reply.link_id)] = {
                                         page_id: obj2[id].links[link].page_id,
@@ -156,7 +134,7 @@ export class EditService {
 
                                     let newText: string = obj2[id].text.replace(
                                         link, reply.link_id.$oid);
-                                    this.editParagraph(section_id, newText, JSON.parse(id));
+                                    this.editParagraph(sectionID, newText, JSON.parse(id));
                                 });
                         }
                     }

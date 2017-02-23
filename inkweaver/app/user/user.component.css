@@ -41,6 +41,10 @@ user .ui-datagrid-content {
     font-size: 4em;
 }
 
+.story-tile .fa-trash {
+    float: right;
+}
+
 /* -------------------- Dialog -------------------- */
 p-dialog .ui-dialog-titlebar,
 p-dialog .ui-dialog-titlebar-close {

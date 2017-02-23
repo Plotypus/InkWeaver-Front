@@ -71,14 +71,14 @@ export class ParserService {
             let r2: RegExp = /{"\$oid":\s*"[a-z0-9]{24}"}/g;
             let linkMatch: RegExpMatchArray = r2.exec(text);
             while (linkMatch) {
-                let linkId: string = linkMatch[0].replace(r1, '');
-                let link: Link = linkTable[linkId];
-                paragraph.links[linkId] = link;
+                let linkID: string = linkMatch[0].replace(r1, '');
+                let link: Link = linkTable[linkID];
+                paragraph.links[linkID] = link;
 
-                let linkIdStr: string = JSON.parse(linkId).$oid;
-                let pageIdStr: string = link.page_id.$oid;
+                let linkIDStr: string = JSON.parse(linkID).$oid;
+                let pageIDStr: string = link.page_id.$oid;
                 paragraph.text = paragraph.text.replace(linkMatch[0],
-                    '<a href="' + linkIdStr + '-' + pageIdStr + '" target="_blank">' + link.name + '</a>');
+                    '<a href="' + linkIDStr + '-' + pageIDStr + '" target="_blank">' + link.name + '</a>');
                 linkMatch = r2.exec(text);
             }
             contentObject[JSON.stringify(paragraph.paragraph_id)] = paragraph;

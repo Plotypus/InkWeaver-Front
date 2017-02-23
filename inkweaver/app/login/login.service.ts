@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { ApiService } from '../shared/api.service';
 
-const url: string = 'http://localhost:8080/api/login';
+const url: string = 'https://inkweaver.plotypus.net:8080/api/login';
 
 @Injectable()
 export class LoginService {
     private options = new RequestOptions({
-        withCredentials: true
+        withCredentials: true,
+        //headers: new Headers({ 'Content-Type': 'text/plain' })
     });
 
     constructor(private parser: ApiService, private http: Http) { }

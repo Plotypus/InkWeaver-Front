@@ -5,7 +5,7 @@
           width="450" height="450" responsive="true" (keyup.enter)="createLink()">
 
     <input #link type="text" pInputText [(ngModel)]="word" />
-    <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkId" filter="link"></p-dropdown>
+    <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkID" filter="link"></p-dropdown>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <button pButton type="button" label="Create Link" icon="fa-link" iconPos="right" (click)="createLink()"></button>
@@ -54,6 +54,7 @@
                         <span class="ql-formats">
                             <select class="ql-size"></select>
                             <select class="ql-font"></select>
+                            <select class="ql-color"></select>
                         </span>
                         <span class="ql-formats">
                             <button class="ql-bold"></button>

@@ -28,7 +28,7 @@ import { Page } from '../models/wiki/page.model';
 import { Heading } from '../models/wiki/heading.model';
 import { Reference } from '../models/wiki/reference.model';
 
-const url: string = 'ws://localhost:8080/ws/demo';
+const url: string = 'wss://inkweaver.plotypus.net:8080/ws';
 
 @Injectable()
 export class ApiService {
@@ -63,6 +63,8 @@ export class ApiService {
     public outgoing = {};
     public message_id: number = 0;
     public messages: Subject<string>;
+    public acknowledged: boolean = false;
+    public queued: string[] = [];
 
     constructor(
         private socket: WebSocketService,
@@ -76,7 +78,10 @@ export class ApiService {
                 let response: string = res.data;
                 let reply = JSON.parse(response);
                 if (reply.event == 'acknowledged') {
-                    this.outgoing = {};
+                    this.acknowledged = true;
+                    for (let queue of this.queued) {
+                        this.messages.next(queue);
+                    }
                     return reply.event;
                 }
 
@@ -91,10 +96,20 @@ export class ApiService {
                 delete this.outgoing[message_id];
 
                 if (reply.event) {
-                    if (reply.event == 'alias_deleted') {
+                    if (reply.event == 'story_deleted') {
+                        this.refreshUser();
+                    } else if (reply.event == 'alias_deleted') {
                         this.refreshContent();
                     } else if (reply.event == 'section_deleted') {
                         this.refreshStory();
+                    } else if (reply.event == 'paragraph_deleted') {
+                        if (Object.keys(this.outgoing).length == 0) {
+                            this.refreshContent();
+                        }
+                    } else if (reply.event == 'link_deleted') {
+                        if (Object.keys(this.outgoing).length == 0) {
+                            this.refreshContent();
+                        }
                     }
                     return reply.event;
                 } else {
@@ -153,20 +168,16 @@ export class ApiService {
 
                         case 'add_paragraph':
                         case 'edit_paragraph':
-                        case 'delete_paragraph':
                             callback(reply);
                             if (Object.keys(this.outgoing).length == 0) {
-                                this.refreshContent(this.data.section.data.section_id,
-                                    { nocontent: true, noflight: true });
+                                this.refreshContent();
                             }
                             break;
 
                         case 'create_link':
-                        case 'delete_link':
                             callback(reply);
                             if (Object.keys(this.outgoing).length == 0) {
-                                this.refreshContent(this.data.section.data.section_id,
-                                    { nocontent: true, noflight: true });
+                                this.refreshContent();
                             }
                             break;
 
@@ -236,27 +247,48 @@ export class ApiService {
         this.send({ action: 'get_user_wikis' });
     }
 
-    public refreshStory(storyId: ID = this.data.story.story_id, info: boolean = false) {
+    public refreshStory(storyID: ID = this.data.story.story_id, info: boolean = false) {
         if (info) {
-            this.send({ action: 'get_story_information', story_id: storyId });
+            this.send({ action: 'get_story_information', story_id: storyID });
         }
-        this.send({ action: 'get_story_hierarchy', story_id: storyId });
+        this.send({ action: 'get_story_hierarchy', story_id: storyID });
     }
 
-    public refreshContent(sectionId: ID = this.data.section.data.section_id, metadata: any = {}) {
-        this.send({ action: 'get_section_content', section_id: sectionId }, (reply: any) => {
-            if (JSON.stringify(sectionId) == JSON.stringify(this.data.story.section_id)) {
-                this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay;
+    public refreshContent(sectionID: ID = this.data.section.data.section_id, metadata: any = {}) {
+        this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => {
+            if (JSON.stringify(sectionID) == JSON.stringify(this.data.story.section_id)) {
+                if (!this.data.storyDisplay) {
+                    this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
+                }
+                this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay +
+                    '<h1>Table of Contents</h1>' + this.setTableOfContents(this.data.storyNode[0], 0);
             }
         }, metadata);
     }
 
-    public refreshWiki(wikiId: ID = this.data.story.wiki_id,
+    public refreshWiki(wikiID: ID = this.data.story.wiki_id,
         info: boolean = false, wikis: boolean = false) {
         if (info) {
-            this.send({ action: 'get_wiki_information', wiki_id: wikiId });
+            this.send({ action: 'get_wiki_information', wiki_id: wikiID });
         }
-        this.send({ action: 'get_wiki_hierarchy', wiki_id: wikiId });
+        this.send({ action: 'get_wiki_hierarchy', wiki_id: wikiID });
+    }
+
+    public setTableOfContents(storyNode: TreeNode, indent: number): string {
+        let result: string = '<a href="sid' + storyNode.data.section_id.$oid + '">'
+            + storyNode.data.title + '</a>';
+        if (indent == 0) {
+            result = '<h3>' + result + '</h3>';
+        }
+        if (storyNode.children) {
+            result += '<ul>';
+            for (let node of storyNode.children) {
+                result += '<li class=ql-indent-' + indent + '>'
+                    + this.setTableOfContents(node, indent + 1) + '</li>';
+            }
+            result += '</ul>';
+        }
+        return result;
     }
 
     /**
@@ -276,6 +308,11 @@ export class ApiService {
         }
 
         console.log(message);
-        this.messages.next(message);
+
+        if (this.acknowledged) {
+            this.messages.next(message);
+        } else {
+            this.queued.push(message);
+        }
     }
 }
