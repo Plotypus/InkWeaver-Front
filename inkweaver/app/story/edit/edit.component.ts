@@ -307,6 +307,19 @@ export class EditComponent {
         }
     }
 
+    public scrollToParagraph(paragraphID: string) {
+        let paragraphs: any[] = this.editorRef.querySelectorAll('p');
+
+        for (let paragraph of paragraphs) {
+            if (paragraph.id == paragraphID) {
+                let pBlot = Quill.find(paragraph);
+                let idx: number = this.editor.quill.getIndex(pBlot);
+                this.editor.quill.setSelection(idx, 0);
+                break;
+            }
+        }
+    }
+
     public save() {
         let paragraphs: any[] = this.editorRef.querySelectorAll('p');
 
