@@ -9,7 +9,7 @@ import { ApiService } from '../shared/api.service';
 
 import { ID } from '../models/id.model';
 import { User } from '../models/user/user.model';
-import { Story } from '../models/story/story.model';
+import { StorySummary } from '../models/story/story-summary.model';
 import { Section } from '../models/story/section.model';
 
 @Component({
@@ -41,16 +41,18 @@ export class UserComponent {
         private apiService: ApiService) { }
 
     ngOnInit() {
+        this.apiService.refreshUser();
+
         this.data = this.apiService.data;
         this.editing = false;
         this.data.menuItems = [
             { label: 'About', routerLink: ['/about'] },
             { label: 'Sign Out', routerLink: ['/login'] },
         ];
-        if (this.data.stories.length == 0 ||
-            this.data.stories[this.data.stories.length - 1].story_id) {
-            this.data.stories.push({ story_id: null, title: null, access_level: null });
-        }
+        //if (this.data.stories.length == 0 ||
+        //    this.data.stories[this.data.stories.length - 1].story_id) {
+        //    this.data.stories.push({ story_id: null, title: null, access_level: null });
+        //}
         this.colors = [
             "#cb735c", // red-orange
             "#fdd17c", // yellow
@@ -99,13 +101,14 @@ export class UserComponent {
     }
 
     // Stories
-    public selectStory(story: Story) {
+    public selectStory(story: StorySummary) {
         this.data.storyDisplay = '';
         this.data.section = new Section();
         this.data.storyNode = new Array<TreeNode>();
 
         this.data.story.story_id = story.story_id;
-        this.data.story.story_title = story.story_title;
+        this.data.story.story_title = story.title;
+        this.data.story.position_context = story.position_context;
 
         this.storyService.getStoryInformation(story.story_id);
         this.storyService.getStoryHierarchy(story.story_id);
@@ -121,7 +124,7 @@ export class UserComponent {
         this.newWiki = this.wikis[0].value;
     }
 
-    public createStory() {
+    public createStory(event: any) {
         if (this.newWiki == 'new_wiki') {
             this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary);
         } else {

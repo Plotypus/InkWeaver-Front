@@ -2,11 +2,12 @@
     Component, ViewChild, AfterViewInit, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subscription } from 'rxjs/Rx';
 
 import { Editor, Dialog, TreeNode, MenuItem } from 'primeng/primeng';
 import { EditService } from './edit.service';
 import { WikiService } from '../wiki/wiki.service';
+import { UserService } from '../../user/user.service';
 import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
@@ -28,6 +29,8 @@ export class EditComponent {
     private wordCount: number;
     private inputRef: any;
     private editorRef: any;
+    private timerSub: Subscription;
+    private paragraphPosition: ID;
 
     // Creating links
     private range: any;
@@ -51,6 +54,7 @@ export class EditComponent {
         private router: Router,
         private editService: EditService,
         private wikiService: WikiService,
+        private userService: UserService,
         private apiService: ApiService,
         private parserService: ParserService,
         private changeDetectorRef: ChangeDetectorRef) { }
@@ -59,8 +63,24 @@ export class EditComponent {
         this.suggest = {};
         this.data = this.apiService.data;
         this.data.tooltip.display = 'none';
-        //let timer = Observable.timer(5000, 5000);
-        //timer.subscribe((tick: number) => this.save());
+        let timer: Observable<number> = Observable.timer(5000, 5000);
+        this.timerSub = timer.subscribe((tick: number) => {
+            if (this.router.url == '/story/edit') {
+                let idx = this.editor.quill.getSelection(true);
+                if (idx) {
+                    let blot = this.editor.quill.getLine(idx.index);
+                    if (blot) {
+                        let block = blot[0];
+                        while (block && block.domNode && !block.domNode.id && block.parent) {
+                            block = block.parent;
+                        }
+                        if (block && block.domNode && block.domNode.id) {
+                            this.paragraphPosition = { $oid: block.domNode.id };
+                        }
+                    }
+                }
+            }
+        });
 
         if (this.apiService.messages) {
             // Subscribe to observables
@@ -82,6 +102,11 @@ export class EditComponent {
 
         // Add click event handlers to links when necessary
         this.editor.onTextChange.subscribe((event: any) => {
+            if (this.data.story.position_context && this.data.story.position_context.paragraph_id) {
+                this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid);
+                this.data.story.position_context = null;
+            }
+
             this.suggest.display = 'none';
 
             let index: number = event.delta.ops[0].retain;
@@ -146,6 +171,9 @@ export class EditComponent {
     }
 
     ngOnDestroy() {
+        this.timerSub.unsubscribe();
+        this.data.story.position_context = { section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition };
+        this.userService.setUserStoryPositionContext(this.data.story.story_id, this.data.section.data.section_id, this.paragraphPosition);
         if (this.data.prevSection.data) {
             this.save();
         }
@@ -248,7 +276,7 @@ export class EditComponent {
         this.save();
         this.data.prevSection = event.node;
         this.data.storyDisplay = '';
-        this.editService.getSectionContent(event.node.data.section_id);
+        this.editService.getSectionContent(event.node.data.section_id, event.node.data.title);
     }
 
     public addSection() {
@@ -312,7 +340,7 @@ export class EditComponent {
 
         for (let paragraph of paragraphs) {
             if (paragraph.id == paragraphID) {
-                let pBlot = Quill.find(paragraph);
+                let pBlot = Quill['find'](paragraph);
                 let idx: number = this.editor.quill.getIndex(pBlot);
                 this.editor.quill.setSelection(idx, 0);
                 break;
@@ -321,9 +349,13 @@ export class EditComponent {
     }
 
     public save() {
-        let paragraphs: any[] = this.editorRef.querySelectorAll('p');
+        if (!this.data.inflight) {
+            let paragraphs: any[] = this.editorRef.querySelectorAll('p');
 
-        let newContentObject: any = this.parserService.parseHtml(paragraphs);
-        this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
+            if (paragraphs.length > 0) {
+                let newContentObject: any = this.parserService.parseHtml(paragraphs);
+                this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
+            }
+        }
     }
 }

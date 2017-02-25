@@ -20,10 +20,6 @@ body {
     background: var(--dark-blue);
 }
 
-* {
-    font-family: 'Lato', Helvetica, sans-serif;
-}
-
 .ui-panel,
 .ui-widget,
 .ui-widget-header {

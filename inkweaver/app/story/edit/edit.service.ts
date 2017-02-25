@@ -70,8 +70,8 @@ export class EditService {
         }, (reply: any) => { }, { noflight: true });
     }
 
-    public getSectionContent(sectionID: ID) {
-        this.apiService.refreshContent(sectionID);
+    public getSectionContent(sectionID: ID, sectionTitle: string) {
+        this.apiService.refreshContent(sectionID, sectionTitle);
     }
 
     /**
