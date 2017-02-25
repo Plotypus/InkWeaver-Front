@@ -45,19 +45,24 @@
 .wiki .ui-g{
     display: initial !important;
 }
-/*
-.wiki  .ui-datagrid-header {
-    border-radius: 0;
-    color: var(--dark-blue);
+
+.wiki .ui-datalist-content{
     background: var(--light-gray);
+    text-align: left;
+    padding: 0 1em 0 1em;
+    border-radius: 25px;
 }
 
-.wiki  .ui-datagrid-content {
-    border: none;
-    padding: 10px;
-    border-top: 3px solid var(--dark-blue);
+.wiki h1{
+    font-size: 1em;
+    color:var(--orange);
+    display: inline-block;
+    font-weight: bold;
 }
 
-.wiki .ui-panel .ui-panel-content{
-    height: 0 !important;
-}*/
+.wiki h2{
+    font-size: 1em;
+    color: var(--light-blue);
+    display: inline-block;
+    font-weight: normal;
+}

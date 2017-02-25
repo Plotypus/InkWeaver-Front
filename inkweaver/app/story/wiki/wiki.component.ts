@@ -1,6 +1,8 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
+import { Router } from '@angular/router';
 
+import { EditService } from '../edit/edit.service';
 import { WikiService } from './wiki.service';
 import { ApiService } from '../../shared/api.service';
 import { PageSummary } from '../../models/wiki/page-summary.model';
@@ -31,7 +33,9 @@ export class WikiComponent {
 
     constructor(
         private wikiService: WikiService,
-        private apiService: ApiService) { }
+        private apiService: ApiService,
+        private editService: EditService,
+        private router: Router) { }
 
     ngOnInit() {
 
@@ -334,26 +338,9 @@ export class WikiComponent {
 
     }
 
-
-
-    public sort(o1: any, o2: any) {
-        if (o1.type == 'category' && o2.type == 'category')
-            return 0;
-        else if (o1.type == 'category' && o2.type == 'title')
-            return 1;
-        else if (o1.type == 'title' && o2.type == 'category')
-            return -1;
-        else if (o1.type == 'category' && o2.type == 'page')
-            return -1;
-        else if (o1.type == 'page' && o2.type == 'category')
-            return 1;
-        else if (o1.type == 'page' && o2.type == 'title')
-            return 1;
-        else if (o1.type == 'title' && o2.type == 'page')
-            return -1;
-        else
-            return 0;
-
+    public onReference(ref: any) {
+        this.editService.getSectionContent(ref.section_id, {paragraph_id:ref.paragraph_id});
+        this.router.navigate(['/story/edit']);
     }
 
 

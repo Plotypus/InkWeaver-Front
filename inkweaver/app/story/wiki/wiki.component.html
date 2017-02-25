@@ -80,7 +80,7 @@
                     <span>
                         <input type="text" size="30" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
                        
-                        <i class="fa {{icons[0]}}" (click)="onDisable(i+1)"></i>
+                        <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
                         <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
                        
                     </span>
@@ -93,7 +93,7 @@
                     <p-dataList [value]="wikiPage.references">
                         <header style="color:var(--light-gray); text-align: left;">References</header>
                         <template let-ref pTemplate="item">
-                            {{ref.text}}
+                            <span [innerHTML]="ref.text" (click)="onReference(ref)"></span>
                         </template>
                     </p-dataList>
                 </ng-container>

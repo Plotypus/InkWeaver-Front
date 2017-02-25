@@ -269,7 +269,7 @@ export class ParserService {
     public parseReferences(reply: any, linktable: LinkTable) {
         if (reply.references)
             for (let ref of reply.references) {
-
+                let id: string = JSON.stringify(ref.link_id);
                 let text: string = ref.text;
                 let r1: RegExp = /\s+/g;
                 let r2: RegExp = /{"\$oid":\s*"[a-z0-9]{24}"}/g;
@@ -278,11 +278,13 @@ export class ParserService {
                     let linkID: string = linkMatch[0].replace(r1, '');
                     let link: Link = linktable[linkID];
 
-
-                    let linkIDStr: string = JSON.parse(linkID).$oid;
-                    let pageIDStr: string = link.page_id.$oid;
-                    reply.text = reply.text.replace(linkMatch[0],
-                        link.name);
+                    if (id === linkID) {
+                        ref.text = ref.text.replace(linkMatch[0],
+                            '<h1>'+link.name+' </h1>');
+                    }
+                    else
+                        ref.text = ref.text.replace(linkMatch[0],
+                            '<h2>' + link.name + ' </h2>');
                     linkMatch = r2.exec(text);
                 }
             }
