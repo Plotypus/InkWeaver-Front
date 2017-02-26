@@ -51,13 +51,13 @@
                 <template let-story>
                     <div class="ui-g-12 ui-md-4">
                         <div *ngIf="story.story_id">
-                            <p-panel styleClass="story-tile" (click)="selectStory(story)">
+                            <p-panel styleClass="story-tile">
                                 <header>
                                     {{story.title}}
+                                    <i class="fa fa-trash" (click)="openStoryDeleter(story.story_id)"></i>
                                 </header>
-                                <div>
+                                <div (click)="selectStory(story.story_id)">
                                     <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>
-                                    <i class="fa fa-trash" (click)="openStoryDeleter($event, story.story_id)"></i>
                                 </div>
                             </p-panel>
                         </div>
@@ -73,35 +73,7 @@
             </p-dataGrid>
         </div>
 
-        <div class="navigation ui-grid-col-3">
-            <div class="user-info" [ngSwitch]="editing">
-                <div class="user-info-fields">
-                    <div class="user-info-label">Username: </div>
-                    <div class="user-info-field">{{data.user.username}}</div><br />
-                    <div class="user-info-label">Name: </div>
-                    <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.name}}</span>
-                        <input pInputText *ngSwitchCase="true" [(ngModel)]="data.user.name" />
-                    </div><br />
-                    <div class="user-info-label">Email: </div>
-                    <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.email}}</span>
-                        <input pInputText *ngSwitchCase="true" [(ngModel)]="data.user.email" />
-                    </div><br />
-                    <div class="user-info-label">Bio: </div>
-                    <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.bio}}</span>
-                        <textarea pInputTextArea *ngSwitchCase="true" [(ngModel)]="data.user.bio"></textarea>
-                    </div>
-                </div>
-
-                <div class="user-buttons">
-                    <button pButton label="Edit" *ngSwitchCase="false" (click)="edit()"></button>
-                    <button pButton label="Cancel" *ngSwitchCase="true" (click)="cancel()"></button>
-                    <button pButton label="Save" *ngSwitchCase="true" (click)="save()"></button>
-                </div>
-            </div>
-        </div>
+        <div class="navigation ui-grid-col-3"></div>
     </div>
 </div>
 

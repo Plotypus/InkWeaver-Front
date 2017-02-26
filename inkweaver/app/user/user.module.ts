@@ -7,7 +7,6 @@ import {
     ButtonModule,
     DropdownModule,
     DataGridModule,
-    InputTextModule,
     InputTextareaModule
 } from 'primeng/primeng';
 
@@ -23,7 +22,6 @@ import { UserComponent } from './user.component';
         ButtonModule,
         DropdownModule,
         DataGridModule,
-        InputTextModule,
         InputTextareaModule
     ],
     providers: [UserService],
