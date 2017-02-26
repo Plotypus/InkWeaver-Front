@@ -338,6 +338,10 @@ export class WikiComponent {
 
     }
 
+    /**
+     * Goes to edit page 
+     * @param ref contain section id and paragraph id
+     */
     public onReference(ref: any) {
         this.editService.getSectionContent(ref.section_id, {paragraph_id:ref.paragraph_id});
         this.router.navigate(['/story/edit']);
