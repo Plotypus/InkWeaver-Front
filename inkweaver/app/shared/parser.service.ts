@@ -139,11 +139,10 @@ export class ParserService {
         }
         return linkTable;
     }
-
     // ---------------------------------------------- //
     // -------------------- Wiki -------------------- //
     // ---------------------------------------------- //
-    public parseWiki(json: any) {
+    public parseWiki(json: any, selected: any) {
         let nav = new Array<TreeNode>();
         let temp: TreeNode = {};
         temp.data = new PageSummary();
@@ -152,8 +151,9 @@ export class ParserService {
         temp.label = json['title'];
         temp.type = "title"
         nav.push(temp);
+        let path = this.createPath(selected);
         for (let index in json['segments']) {
-            nav.push(this.jsonToWiki(json['segments'][index], null));
+            nav.push(this.jsonToWiki(json['segments'][index], path));
         }
         for (let index in json['pages'])
             nav.push(this.jsonToPage(json['pages'][index]));
@@ -161,36 +161,41 @@ export class ParserService {
         return nav;
     }
 
-    public jsonToWiki(wikiJson: any, par: any): TreeNode {
+    public jsonToWiki(wikiJson: any, selected: Array<String>): TreeNode {
         let wiki: TreeNode = {};
+
         let parent: TreeNode = {};
         wiki.data = new PageSummary();
         wiki.children = new Array<TreeNode>();
         wiki.data.id = wikiJson["segment_id"];
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
+        if (selected.length != 0 && (wiki.label == selected[0])) {
+            wiki.expanded = true;
+            selected.shift();
+        }
         for (let field in wikiJson) {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
                 for (let segment in segmentJsons) {
-                    parent.label = wiki.label;
-                    if (par != null)
-                        parent.parent = par;
+                    //parent.label = wiki.label;
+                    ///if (par != null)
+                    //parent.parent = par;
 
-                    var subsegment = this.jsonToWiki(segmentJsons[segment], parent);
+                    var subsegment = this.jsonToWiki(segmentJsons[segment], selected);
                     subsegment.type = "category";
-                    subsegment.parent = parent;
+                    subsegment.parent = wiki;
                     wiki.children.push(subsegment);
                 }
             }
             else if (field == "pages") {
                 var pagesJsons = wikiJson[field];
                 for (let page in pagesJsons) {
-                    parent.label = wiki.label;
-                    parent.parent = par;
+                    // parent.label = wiki.label;
+                    //parent.parent = par;
 
                     var leafpage = this.jsonToPage(pagesJsons[page]);
-                    leafpage.parent = parent;
+                    leafpage.parent = wiki;
                     wiki.children.push(leafpage);
                 }
 
@@ -198,9 +203,12 @@ export class ParserService {
         }
         if (typeof wiki.children !== 'undefined' && (wiki.children.length == 0 || wiki.children.length != 0)) {
             wiki.type = "category";
+            wiki.children = wiki.children.sort(this.sort);
         }
+
         return wiki
     }
+
 
     /**
      * Parses the Json for Pages
@@ -215,37 +223,6 @@ export class ParserService {
         page.type = "page";
 
         return page;
-    }
-
-    public segmentToTree(parserService: ParserService, wiki: Segment): TreeNode {
-        let treeNode: TreeNode = {};
-
-        treeNode.data = {
-            title: wiki.title,
-            segment_id: wiki.segment_id
-        };
-
-        let segmentToTree: (wiki: Segment) => TreeNode = (wiki: Segment) => {
-            return parserService.segmentToTree(parserService, wiki);
-        };
-
-        treeNode.children = wiki.segments.map(segmentToTree)
-            .concat(wiki.pages.map(parserService.pageToTree));
-        treeNode.leaf = false;
-
-        return treeNode;
-    }
-
-    public pageToTree(page: PageSummary): TreeNode {
-        let treeNode: TreeNode = {};
-
-        treeNode.data = {
-            title: page.title,
-            page_id: page.page_id
-        };
-        treeNode.leaf = true;
-
-        return treeNode;
     }
 
     /**
@@ -263,7 +240,87 @@ export class ParserService {
         return html;
     }
 
-    public setPageDisplay(reply: any) {
-        return 'Page';
+    public setPageDisplay(reply: any, linktable: LinkTable) {
+        //getting the alias
+        if (reply.aliases) {
+            let temp = [];
+            let count = 0;
+            for (let i in reply.aliases) {
+                temp.push({
+                    'index': count,
+                    'state': true,
+                    'name': i,
+                    'icon': 'fa-pencil',
+                    'prev': '',
+                    'id': reply.aliases[i]
+                })
+                count++;
+            }
+            reply.aliases = temp;
+
+        }
+        return this.parseReferences(reply, linktable);
+
+
+    }
+
+    public parseReferences(reply: any, linktable: LinkTable) {
+        if (reply.references)
+            for (let ref of reply.references) {
+                let id: string = JSON.stringify(ref.link_id);
+                let text: string = ref.text;
+                let r1: RegExp = /\s+/g;
+                let r2: RegExp = /{"\$oid":\s*"[a-z0-9]{24}"}/g;
+                let linkMatch: RegExpMatchArray = r2.exec(text);
+                while (linkMatch) {
+                    let linkID: string = linkMatch[0].replace(r1, '');
+                    let link: Link = linktable[linkID];
+
+                    if (id === linkID) {
+                        ref.text = ref.text.replace(linkMatch[0],
+                            '<h1>' + link.name + ' </h1>');
+                    }
+                    else
+                        ref.text = ref.text.replace(linkMatch[0],
+                            '<h2>' + link.name + ' </h2>');
+                    linkMatch = r2.exec(text);
+                }
+            }
+        return reply;
+    }
+
+    public createPath(page: any) {
+        if (page.hasOwnProperty("type") && page.type == 'title')
+            return new Array<String>();
+        page.expanded = true;
+        let path = new Array<String>();
+        path.push(page.label);
+        let parent = page.parent;
+        while (typeof parent !== 'undefined') {
+            path.push(parent.label);
+            parent = parent.parent;
+        }
+
+        return path.reverse();
+
+    }
+    public sort(o1: any, o2: any) {
+        if (o1.type == 'category' && o2.type == 'category')
+            return 0;
+        else if (o1.type == 'category' && o2.type == 'title')
+            return 1;
+        else if (o1.type == 'title' && o2.type == 'category')
+            return -1;
+        else if (o1.type == 'category' && o2.type == 'page')
+            return -1;
+        else if (o1.type == 'page' && o2.type == 'category')
+            return 1;
+        else if (o1.type == 'page' && o2.type == 'title')
+            return 1;
+        else if (o1.type == 'title' && o2.type == 'page')
+            return -1;
+        else
+            return 0;
+
     }
 }

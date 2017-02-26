@@ -47,30 +47,31 @@
             <!--Editor-->
             <ng-container *ngIf="wikiPage">
                 <!--Title -->
-                <span class="header">
+                <div class="header">
                     <input type="text" size="30" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
-                    <button pButton type="button" [icon]="icons[0]" (click)="onDisable(0)"></button>
-                    <button *ngIf="!disabled[0]" pButton type="button" icon="fa-times" (click)="onCancel(0)"></button>
-                    <button pButton type="button" icon="fa-plus" (click)="addHeading()"></button>
-                </span>
+
+                    <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
+                    <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
+                    <i class="fa fa-plus" (click)="addHeading()"></i>
+                </div>
                 <!--Alias-->
                 <ng-container *ngIf="wikiPage.aliases">
                     <p-dataGrid [value]="wikiPage.aliases" [rows]="3">
                         <header style="color:var(--light-gray); text-align: left;">Aliases</header>
                         <template let-alias pTemplate="item" ;>
-                            <div class="ui-g-12 ui-md-4">
-                                <p-panel class="ui-g-6">
-                                    <header>
-                                        <input type="text" size="30" pInputText [(ngModel)]="alias.name" [disabled]="alias.state" />
-                                    </header>
-                                    <div>
-                                         <i class="fa {{alias.icon}}" (click)="editAlias(alias)"></i>
-                                         <i *ngIf="!alias.state" class="fa fa-times" (click)="cancelAlias(alias)"></i>
-                                         <i class="fa fa-trash-o" (click)="deleteAlias(alias)"></i>
-                                    </div>
 
-                                </p-panel>
-                            </div>
+                            <p-panel class="ui-g-2 alias-box">
+                                <header>
+                                    <input type="text" size="30" pInputText [(ngModel)]="alias.name" [disabled]="alias.state" />
+                                </header>
+                                <div>
+                                    <i class="fa {{alias.icon}}" (click)="editAlias(alias)"></i>
+                                    <i *ngIf="!alias.state" class="fa fa-times" (click)="cancelAlias(alias)"></i>
+                                    <i class="fa fa-trash-o" (click)="deleteAlias(alias)"></i>
+                                </div>
+
+                            </p-panel>
+
                         </template>
                     </p-dataGrid>
                 </ng-container>
@@ -78,8 +79,10 @@
                 <div *ngFor="let section of wikiPage.headings; let i = index;">
                     <span>
                         <input type="text" size="30" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
-                        <button pButton type="button" [icon]="icons[i+1]" (click)="onDisable(i+1)"></button>
-                        <button *ngIf="!disabled[i+1]" pButton type="button" icon="fa-times" (click)="onCancel(0)"></button>
+
+                        <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
+                        <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
+
                     </span>
                     <p-editor [(ngModel)]="section.text">
                     </p-editor>
@@ -90,12 +93,13 @@
                     <p-dataList [value]="wikiPage.references">
                         <header style="color:var(--light-gray); text-align: left;">References</header>
                         <template let-ref pTemplate="item">
-                            {{ref.text}}
+                            <span [innerHTML]="ref.text" (click)="onReference(ref)"></span>
                         </template>
                     </p-dataList>
                 </ng-container>
-                <button pButton type="button" icon="fa-floppy-o" (click)="onSavePage()"></button>
-                <button pButton type="button" icon="fa-trash-o" (click)="onShow()"></button>
+
+                <i class="fa fa-floppy-o" (click)="onSavePage()"></i>
+                <i class="fa fa-trash-o" (click)="onShow()"></i>
             </ng-container>
             <div *ngIf="!wikiPage">
                 <p-editor [(ngModel)]="data.wikiDisplay">
@@ -163,21 +167,19 @@
         </div>
 
         <div class="navigation ui-g-3">
-            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="selectedEntry" (onNodeSelect)="onSelected($event)">
+            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
                 <p-column field="data.title">
                     <template let-node="rowData" pTemplate="body">
                         <span *ngIf="node.type == 'page'">
                             {{node.data.title}}
 
                         </span>
-                        <span *ngIf="node.type == 'category'">
+                        <span *ngIf="node.type == 'category' || node.type == 'title'">
                             {{node.data.title}}
-                            <button pButton type="button" icon="fa-plus" (click)="onAddPage($event,node)"></button>
+
+                            <i class="fa fa-plus-square-o" (click)="onAddPage($event,node)"></i>
                         </span>
-                        <span *ngIf="node.type == 'title'">
-                            {{node.data.title}}
-                            <button pButton type="button" icon="fa-plus" (click)="onAddPage($event,node)"></button>
-                        </span>
+
                     </template>
 
                 </p-column>
