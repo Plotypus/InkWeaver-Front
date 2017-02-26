@@ -6,8 +6,8 @@
                     <tr>
                         <td><label for="username">Username</label></td>
                         <td>
-                            <input type="text" [(ngModel)]="login.username" required
-                                   id="username" name="username" #username="ngModel" autofocus>
+                            <input type="text" [(ngModel)]="login.username" required autofocus
+                                   id="username" name="username" #username="ngModel">
                         </td>
                     </tr>
                     <tr>
@@ -36,7 +36,7 @@
                     <tr>
                         <td colspan="2">
                             <button pButton type="submit" label="Sign In"
-                                    [disabled]="!(loginForm.form.valid || login.username || login.password)"></button>
+                                    [disabled]="data.inflight || !(loginForm.form.valid || login.username || login.password)"></button>
                         </td>
                     </tr>
                 </tbody>
