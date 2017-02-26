@@ -7,6 +7,6 @@ export class Story {
     story_id: ID;
     section_id: ID;
     wiki_id: ID;
+    position_context: any;
     users: Collaborator[];
-    summary: string;
 }

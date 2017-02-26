@@ -28,11 +28,11 @@ export class WikiService {
         });
     }
 
-    public getWikiSegment(sid: any, callback: any = {}) {
+    public getWikiSegment(sid: any) {
         this.apiService.send({
             "action": "get_wiki_segment",
             "segment_id": sid
-        },callback);
+        });
     }
     public getWikiPage(page_id: any, metadata: any = {}) {
         this.apiService.send({
@@ -148,13 +148,12 @@ export class WikiService {
     }
 
     //parent_id == segment_id
-    public addPage(title: string, sid: any) {
+    public addPage(title: string, sid: any, callback: (reply: any) => any = (reply: any) => { }) {
         this.apiService.send({
-
             "action": "add_page",
             "title": title,
             "parent_id": sid
-        });
+        }, callback);
     }
 
     public addHeading(title: string, page_id: any) {

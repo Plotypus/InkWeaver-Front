@@ -23,27 +23,35 @@ export class LoginComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
-        this.data.menuItems = [
-            { label: 'About', routerLink: ['/about'] }
-        ];
-
-        this.login = {
-            username: '',
-            password: ''
-        };
+        this.data.menuItems = [{ label: 'About', routerLink: ['/about'] }];
+        this.login = { username: '', password: '' };
     }
 
     public signIn() {
-        this.loginService.login(this.login.username, this.login.password)
-            .subscribe(response => {
-                console.log(document.cookie);
-
-                this.apiService.connect();
-                this.userService.getUserPreferences();
-                this.userService.getUserStories();
-                this.userService.getUserWikis();
-                this.router.navigate(['/user']);
+        if (this.apiService.authentication) {
+            this.loginService.login(this.login.username, this.login.password)
+                .subscribe(response => {
+                    this.apiService.connect();
+                    this.apiService.messages.subscribe((action: string) => {
+                        if (Object.keys(this.apiService.outgoing).length == 0) {
+                            this.router.navigate(['/user']);
+                        }
+                    });
+                    this.userService.getUserPreferences();
+                    this.userService.getUserStories();
+                    this.userService.getUserWikis();
+                });
+        } else {
+            this.apiService.connect();
+            this.apiService.messages.subscribe((action: string) => {
+                if (Object.keys(this.apiService.outgoing).length == 0) {
+                    this.router.navigate(['/user']);
+                }
             });
+            this.userService.getUserPreferences();
+            this.userService.getUserStories();
+            this.userService.getUserWikis();
+        }
         return false;
     }
 }

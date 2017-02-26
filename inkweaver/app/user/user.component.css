@@ -26,6 +26,7 @@ user .ui-datagrid-content {
     text-align: center;
     background: var(--light-blue);
     border: 2px solid var(--dark-blue);
+    position: relative;
 }
 
 .new-story-tile .ui-panel-content-wrapper {
@@ -42,7 +43,49 @@ user .ui-datagrid-content {
 }
 
 .story-tile .fa-trash {
-    float: right;
+    color: var(--dark-gray);
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+}
+
+/* Navigation */
+.user-info{
+    margin: 5%;
+    padding: 5%;
+    height: 75%;
+    border-radius: 10px;
+    background: var(--dark-blue);
+    position: relative;
+}
+
+.user-info-fields input {
+    width: 100%;
+}
+.user-info-fields textarea {
+    width: 100%;
+    min-height: 100px;
+    border-radius: 4px;
+}
+.user-info-label {
+    color: var(--dark-gray);
+}
+.user-info-field {
+    color: white;
+}
+
+.user-buttons {
+    right: 15px;
+    bottom: 15px;
+    position: absolute;
+}
+.user-buttons button {
+    color: var(--dark-blue) !important;
+    background: var(--light-gray) !important;
+    border: 1px solid var(--dark-gray) !important;
+}
+.user-buttons button :hover {
+    background: var(--dark-gray);
 }
 
 /* -------------------- Dialog -------------------- */
