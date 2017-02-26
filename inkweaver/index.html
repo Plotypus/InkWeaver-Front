@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="node_modules/primeng/resources/primeng.min.css" />
     <link rel="stylesheet" href="node_modules/primeng/resources/themes/omega/theme.css" />
     <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato">
 
     <link rel="stylesheet" href="app/app.component.css" />
     <link rel="stylesheet" href="app/login/login.component.css" />
@@ -32,6 +31,10 @@
 
     <script src="systemjs.config.js"></script>
     <script>
+        window.onerror = function (message, url, lineNumber) {
+            console.log(message);
+            return true;
+        };
         System.import('app').catch(function (err) { console.error(err); });
     </script>
 </head>
