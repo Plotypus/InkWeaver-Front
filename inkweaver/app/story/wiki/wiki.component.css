@@ -62,7 +62,7 @@
 
 .wiki h2{
     font-size: 1em;
-    color: var(--light-blue);
+    color: var(--dark-blue);
     display: inline-block;
-    font-weight: normal;
+    font-weight: bold;
 }
