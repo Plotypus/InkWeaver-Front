@@ -124,7 +124,7 @@ export class UserComponent {
         this.newWiki = this.wikis[0].value;
     }
 
-    public createStory(event: any) {
+    public createStory() {
         if (this.newWiki == 'new_wiki') {
             this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary);
         } else {
