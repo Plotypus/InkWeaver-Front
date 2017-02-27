@@ -55,7 +55,7 @@ export class ApiService {
         segment: new Segment(),
         page: new Page(),
         pageid: [],
-
+        selectedEntry: {},
         tooltip: new Tooltip(),
         contentObject: new ContentObject()
     }
@@ -216,7 +216,7 @@ export class ApiService {
                             case 'get_wiki_hierarchy':
                             case 'get_wiki_segment_hierarchy':
                                 this.data.segment = reply.hierarchy;
-                                this.data.wikiNav = this.parser.parseWiki(reply.hierarchy);
+                                this.data.wikiNav = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
                                 this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
                                 break;
                             case 'get_wiki_segment':
@@ -224,7 +224,7 @@ export class ApiService {
                                 this.data.page = reply;
                                 break;
                             case 'get_wiki_page':
-                                this.data.page = reply;
+                                this.data.page = this.parser.setPageDisplay(reply, this.data.linkTable);
                                 this.data.tooltip.text = '<b>' + reply.title + '</b>';
                                 if (reply.headings && reply.headings[0]) {
                                     this.data.tooltip.text += '<br/><u>' + reply.headings[0].title + '</u><br/>' + reply.headings[0].text;
@@ -283,8 +283,8 @@ export class ApiService {
     public refreshStoryHierarchy(storyID: ID = this.data.story.story_id) {
         this.send({ action: 'get_story_hierarchy', story_id: storyID });
     }
-    public refreshContent(sectionID: ID = this.data.section.data.section_id, sectionTitle: string = this.data.section.data.title) {
-        this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => { }, { sectionID: sectionID, title: sectionTitle });
+    public refreshContent(sectionID: ID = this.data.section.data.section_id, sectionTitle: string = this.data.section.data.title,paraID:any = "") {
+        this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => { }, { sectionID: sectionID, title: sectionTitle,paragraphID:paraID});
     }
     public setTableOfContents(storyNode: TreeNode, indent: number): string {
         let result: string = '<a href="sid' + storyNode.data.section_id.$oid + '">' + storyNode.data.title + '</a>';
