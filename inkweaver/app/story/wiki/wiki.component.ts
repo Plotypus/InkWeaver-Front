@@ -1,5 +1,5 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { TreeNode } from 'primeng/primeng';
+﻿import { Component, OnInit,ViewChildren } from '@angular/core';
+import { TreeNode,Editor } from 'primeng/primeng';
 import { Router } from '@angular/router';
 
 import { EditService } from '../edit/edit.service';
@@ -12,8 +12,11 @@ import { PageSummary } from '../../models/wiki/page-summary.model';
     templateUrl: './app/story/wiki/wiki.component.html'
 })
 export class WikiComponent {
+
+    @ViewChildren(Editor) editor: Editor;
+
     private data: any;
-    private selectedEntry: TreeNode;
+    private selectedEntry: TreeNode;  
     private showAddDialog: any;
     private addOptions: any;
     private addContent: any;
@@ -328,5 +331,10 @@ export class WikiComponent {
     public onReference(ref: any) {
         this.editService.getSectionContent(ref.section_id, this.data.section.data.title, ref.paragraph_id);
         this.router.navigate(['/story/edit']);
+    }
+
+    public onEdit() {
+        console.log("clicked");
+        alert("clicked");
     }
 }
