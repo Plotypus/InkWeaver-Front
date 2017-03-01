@@ -41,18 +41,18 @@ export class UserComponent {
         private apiService: ApiService) { }
 
     ngOnInit() {
-        this.apiService.refreshUser();
+        if (!this.apiService.messages) {
+            this.router.navigate(['/login']);
+        }
 
+        this.apiService.refreshUser();
         this.data = this.apiService.data;
-        this.editing = false;
         this.data.menuItems = [
             { label: 'About', routerLink: ['/about'] },
             { label: 'Sign Out', routerLink: ['/login'] },
         ];
-        //if (this.data.stories.length == 0 ||
-        //    this.data.stories[this.data.stories.length - 1].story_id) {
-        //    this.data.stories.push({ story_id: null, title: null, access_level: null });
-        //}
+
+        this.editing = false;
         this.colors = [
             "#cb735c", // red-orange
             "#fdd17c", // yellow
@@ -63,23 +63,6 @@ export class UserComponent {
             "#8779c3", // purple
             "#903737"  // maroon
         ];
-
-        if (this.apiService.messages) {
-            this.apiService.messages.subscribe((action: string) => {
-                if (action == 'create_wiki') {
-                    this.data.storyDisplay = '';
-                    this.data.section = new Section();
-                    this.data.storyNode = new Array<TreeNode>();
-
-                    this.displayStoryCreator = false;
-                    this.data.story.story_title = this.title;
-                    this.storyService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
-                    this.router.navigate(['/story/edit']);
-                }
-            });
-        } else {
-            this.router.navigate(['/login']);
-        }
     }
 
     // User
@@ -87,12 +70,10 @@ export class UserComponent {
         this.backup = JSON.parse(JSON.stringify(this.data.user));
         this.editing = true;
     }
-
     public cancel() {
         this.data.user = this.backup;
         this.editing = false;
     }
-
     public save() {
         this.userService.setUserName(this.data.user.name);
         this.userService.setUserEmail(this.data.user.email);
@@ -111,7 +92,6 @@ export class UserComponent {
         this.data.story.position_context = story.position_context;
 
         this.storyService.getStoryInformation(story.story_id);
-        this.storyService.getStoryHierarchy(story.story_id);
         this.router.navigate(['/story/edit']);
     }
 
@@ -123,10 +103,18 @@ export class UserComponent {
         }
         this.newWiki = this.wikis[0].value;
     }
-
-    public createStory(event: any) {
+    public createStory() {
         if (this.newWiki == 'new_wiki') {
-            this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary);
+            this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary, (reply: any) => {
+                this.data.storyDisplay = '';
+                this.data.section = new Section();
+                this.data.storyNode = new Array<TreeNode>();
+
+                this.displayStoryCreator = false;
+                this.data.story.story_title = this.title;
+                this.storyService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
+                this.router.navigate(['/story/edit']);
+            });
         } else {
             this.data.storyDisplay = '';
             this.data.section = new Section();
@@ -145,7 +133,6 @@ export class UserComponent {
         this.displayStoryDeleter = true;
         event.stopPropagation();
     }
-
     public deleteStory() {
         this.displayStoryDeleter = false;
         this.storyService.deleteStory(this.deleteID);

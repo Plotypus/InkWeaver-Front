@@ -17,6 +17,17 @@ export class StoryService {
         });
     }
 
+    public editStory(storyID: ID, title: string) {
+        this.apiService.send({
+            action: 'edit_story',
+            story_id: storyID,
+            update: {
+                update_type: 'set_title',
+                title: title
+            }
+        });
+    }
+
     public deleteStory(storyID: ID) {
         this.apiService.send({
             action: 'delete_story',
@@ -46,7 +57,7 @@ export class StoryService {
     }
 
     // Links
-    public createLink(storyID: ID, sectionID: ID, paragraphID: ID, name: string, pageID: ID, callback: any) {
+    public createLink(storyID: ID, sectionID: ID, paragraphID: ID, name: string, pageID: ID) {
         this.apiService.send({
             action: 'create_link',
             story_id: storyID,
@@ -54,7 +65,7 @@ export class StoryService {
             paragraph_id: paragraphID,
             name: name,
             page_id: pageID
-        }, callback);
+        });
     }
 
     public deleteLink(linkID: ID) {

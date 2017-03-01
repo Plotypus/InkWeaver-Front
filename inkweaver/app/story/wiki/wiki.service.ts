@@ -209,14 +209,12 @@ export class WikiService {
         });
     }
     //CREATES
-    public createWiki(title: string, summary: string) {
-        this.apiService.send(
-            {
-
-                "action": "create_wiki",
-                "title": title,
-                "summary": summary
-            });
+    public createWiki(title: string, summary: string, callback: (reply: any) => void = (reply: any) => { }) {
+        this.apiService.send({
+            "action": "create_wiki",
+            "title": title,
+            "summary": summary
+        }, callback);
     }
 
 

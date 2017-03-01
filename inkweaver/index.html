@@ -31,10 +31,6 @@
 
     <script src="systemjs.config.js"></script>
     <script>
-        window.onerror = function (message, url, lineNumber) {
-            console.log(message);
-            return true;
-        };
         System.import('app').catch(function (err) { console.error(err); });
     </script>
 </head>

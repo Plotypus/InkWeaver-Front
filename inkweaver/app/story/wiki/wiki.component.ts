@@ -329,7 +329,7 @@ export class WikiComponent {
     }
 
     public onReference(ref: any) {
-        this.editService.getSectionContent(ref.section_id, this.data.section.data.title, ref.paragraph_id);
+        this.editService.getSectionContent(ref.section_id, null, ref.paragraph_id);
         this.router.navigate(['/story/edit']);
     }
 
