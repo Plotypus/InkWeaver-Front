@@ -35,7 +35,11 @@ export class EditService {
     }
 
     // Paragraphs
-    public addParagraph(sectionID: ID, text: string, succeedingParagraphID: ID, callback: any) {
+    public addParagraph(storyID: ID, sectionID: ID, text: string, succeedingParagraphID: ID) {
+        text = text.replace(
+            /<a href="new.+?-([a-f0-9]{24})" target="_blank">(.*?)<\/a>/g,
+            '{#|' + JSON.stringify(storyID) + '|{"$$oid":"$1"}|$2|#}');
+
         let p: any = {
             action: 'add_paragraph',
             section_id: sectionID,
@@ -44,12 +48,16 @@ export class EditService {
         if (succeedingParagraphID) {
             p.succeeding_paragraph_id = succeedingParagraphID
         }
-        this.apiService.send(p, callback, { noflight: true });
+        this.apiService.send(p, (reply: any) => { }, { noflight: true });
     }
 
-    public editParagraph(sectionID: ID, text: string, paragraphID: ID) {
+    public editParagraph(storyID: ID, sectionID: ID, text: string, paragraphID: ID) {
         text = text.replace(
-            /<a href="([a-z0-9]{24})-([a-z0-9]{24})" target="_blank">(.*?)<\/a>/g,
+            /<a href="new.+?-([a-f0-9]{24})" target="_blank">(.*?)<\/a>/g,
+            '{#|' + JSON.stringify(storyID) + '|{"$$oid":"$1"}|$2|#}');
+
+        text = text.replace(
+            /<a href="([a-f0-9]{24})-[a-f0-9]{24}" target="_blank">.*?<\/a>/g,
             '{"$$oid":"$1"}');
 
         this.apiService.send({
@@ -73,7 +81,7 @@ export class EditService {
 
     public getSectionContent(sectionID: ID, sectionTitle: string = null, paragraphID: ID = null) {
         if (!sectionTitle) {
-            let sectionNode: TreeNode = this.findSection(this.apiService.data.storyNode[0], sectionID);
+            let sectionNode: TreeNode = this.findSection(this.apiService.data.storyNode[0], JSON.stringify(sectionID));
             if (sectionNode) {
                 sectionTitle = sectionNode.data.title;
             }
@@ -81,8 +89,8 @@ export class EditService {
         this.apiService.refreshContent(sectionID, sectionTitle, paragraphID);
     }
 
-    public findSection(start: TreeNode, sectionID: ID): TreeNode {
-        if (start.data.section_id.$oid == sectionID.$oid) {
+    public findSection(start: TreeNode, sectionID: string): TreeNode {
+        if (JSON.stringify(start.data.section_id) == sectionID) {
             return start;
         }
         for (let section of start.children) {
@@ -116,48 +124,15 @@ export class EditService {
         // Edit existing paragraphs
         for (let id in obj2) {
             if (id.startsWith('new')) {
-                this.addParagraph(
-                    sectionID, obj2[id].text, obj2[id].succeeding_id, (reply1: any) => {
-                        for (let link in obj2[id].links) {
-                            this.storyService.createLink(storyID, sectionID,
-                                reply1.paragraph_id, obj2[id].links[link].name,
-                                obj2[id].links[link].page_id, (reply2) => {
-                                    this.apiService.data.linkTable[JSON.stringify(reply2.link_id)] = {
-                                        page_id: obj2[id].links[link].page_id,
-                                        name: obj2[id].links[link].name
-                                    };
-
-                                    let newText: string = obj2[id].text.replace(
-                                        link, reply2.link_id.$oid);
-                                    this.editParagraph(sectionID, newText, reply1.paragraph_id);
-                                });
-                        }
-                    });
+                this.addParagraph(storyID, sectionID, obj2[id].text, obj2[id].succeeding_id);
             } else {
+                for (let link in obj1[id].links) {
+                    if (!obj2[id].links[link]) {
+                        this.storyService.deleteLink(JSON.parse(link));
+                    }
+                }
                 if (obj1[id].text != obj2[id].text) {
-                    this.editParagraph(sectionID, obj2[id].text, JSON.parse(id));
-
-                    // Links
-                    for (let link in obj1[id].links) {
-                        if (!obj2[id].links[link]) {
-                            this.storyService.deleteLink(JSON.parse(link));
-                        }
-                    }
-                    for (let link in obj2[id].links) {
-                        if (link.startsWith('new')) {
-                            this.storyService.createLink(storyID, sectionID, JSON.parse(id),
-                                obj2[id].links[link].name, obj2[id].links[link].page_id, (reply) => {
-                                    this.apiService.data.linkTable[JSON.stringify(reply.link_id)] = {
-                                        page_id: obj2[id].links[link].page_id,
-                                        name: obj2[id].links[link].name
-                                    };
-
-                                    let newText: string = obj2[id].text.replace(
-                                        link, reply.link_id.$oid);
-                                    this.editParagraph(sectionID, newText, JSON.parse(id));
-                                });
-                        }
-                    }
+                    this.editParagraph(storyID, sectionID, obj2[id].text, JSON.parse(id));
                 }
             }
         }

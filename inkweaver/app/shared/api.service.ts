@@ -109,9 +109,7 @@ export class ApiService {
                             case 'paragraph_added':
                             case 'paragraph_updated':
                             case 'paragraph_deleted':
-                                if (Object.keys(this.outgoing).length == 0) {
-                                    this.refreshContent();
-                                }
+                                this.refreshContent();
                                 break;
                             case 'bookmark_added':
                                 break;
@@ -127,9 +125,8 @@ export class ApiService {
                             // ----- Links ----- //
                             case 'link_created':
                             case 'link_deleted':
-                                if (Object.keys(this.outgoing).length == 0) {
-                                    this.refreshContent();
-                                }
+                                this.refreshWikiHierarchy();
+                                this.refreshContent();
                                 break;
 
                             // ----- Wiki ----- //

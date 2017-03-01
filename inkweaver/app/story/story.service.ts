@@ -57,7 +57,7 @@ export class StoryService {
     }
 
     // Links
-    public createLink(storyID: ID, sectionID: ID, paragraphID: ID, name: string, pageID: ID, callback: any) {
+    public createLink(storyID: ID, sectionID: ID, paragraphID: ID, name: string, pageID: ID) {
         this.apiService.send({
             action: 'create_link',
             story_id: storyID,
@@ -65,7 +65,7 @@ export class StoryService {
             paragraph_id: paragraphID,
             name: name,
             page_id: pageID
-        }, callback);
+        });
     }
 
     public deleteLink(linkID: ID) {
