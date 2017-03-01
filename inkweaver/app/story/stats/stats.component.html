@@ -1,9 +1,12 @@
 ﻿<div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
 
-        <!-- Editor -->
+        <!-- Stats -->
         <div class="stats ui-grid-col-9">
-           
+            <p-dataTable [value]="wordFreq" scrollable="true" scrollHeight="50%" [rows]="10">
+                <p-column field="word" header="Word" [sortable]="true"></p-column>
+                <p-column field="count" header="Word Frequency" [sortable]="true"></p-column>
+            </p-dataTable>
         </div>
 
         <!-- Navigation -->
