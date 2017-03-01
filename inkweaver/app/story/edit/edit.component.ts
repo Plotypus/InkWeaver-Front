@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs/Rx';
 
 import { Editor, Dialog, TreeNode, MenuItem } from 'primeng/primeng';
+import { StoryService } from '../story.service';
 import { EditService } from './edit.service';
 import { WikiService } from '../wiki/wiki.service';
 import { UserService } from '../../user/user.service';
@@ -12,7 +13,6 @@ import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
 import { ID } from '../../models/id.model';
-import { Link } from '../../models/link/link.model';
 import { Segment } from '../../models/wiki/segment.model';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 
@@ -52,6 +52,7 @@ export class EditComponent {
 
     constructor(
         private router: Router,
+        private storyService: StoryService,
         private editService: EditService,
         private wikiService: WikiService,
         private userService: UserService,
@@ -64,11 +65,28 @@ export class EditComponent {
         this.data = this.apiService.data;
         this.data.tooltip.display = 'none';
 
+        if (this.apiService.messages) {
+            this.apiService.messages.subscribe((action: string) => {
+                if (action === 'get_section_content') {
+                    this.setLinks = true;
+                }
+            });
+        } else {
+            this.router.navigate(['/login']);
+        }
+    }
+
+    ngAfterViewInit() {
+        // Initialize variables
+        this.setLinks = true;
+        this.inputRef = this.dialog.el.nativeElement.querySelector('input');
+        this.editorRef = this.editor.el.nativeElement.querySelector('div.ql-editor');
+
         // Save position context every 3 seconds
         let timer: Observable<number> = Observable.timer(3000, 3000);
         this.timerSub = timer.subscribe((tick: number) => {
-            if (this.router.url == '/story/edit') {
-                let idx = this.editor.quill.getSelection(true);
+            if (this.router.url === '/story/edit') {
+                let idx = this.editor.quill.getSelection();
                 if (idx) {
                     let blot = this.editor.quill.getLine(idx.index);
                     if (blot) {
@@ -83,23 +101,6 @@ export class EditComponent {
                 }
             }
         });
-
-        if (this.apiService.messages) {
-            this.apiService.messages.subscribe((action: string) => {
-                if (action == 'get_section_content') {
-                    this.setLinks = true;
-                }
-            });
-        } else {
-            this.router.navigate(['/login']);
-        }
-    }
-
-    ngAfterViewInit() {
-        // Initialize variables
-        this.setLinks = true;
-        this.inputRef = this.dialog.el.nativeElement.querySelector('input');
-        this.editorRef = this.editor.el.nativeElement.querySelector('div.ql-editor');
 
         // Add click event handlers to links when necessary
         this.editor.onTextChange.subscribe((event: any) => {
@@ -137,7 +138,7 @@ export class EditComponent {
                     let linkID: string = thread.getAttribute('href');
                     if (linkID.startsWith('sid')) {
                         let id: string = linkID.substring(3);
-                        let node: TreeNode = this.parserService.setSection(this.data.storyNode[0], JSON.stringify({ $oid: id }))
+                        let node: TreeNode = this.parserService.setSection(this.data.storyNode[0], JSON.stringify({ $oid: id }));
                         thread.addEventListener('click', (event: any) => {
                             event.preventDefault();
                             this.selectSection({ node: node });
@@ -173,8 +174,11 @@ export class EditComponent {
 
     ngOnDestroy() {
         this.timerSub.unsubscribe();
-        this.data.story.position_context = { section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition };
-        this.userService.setUserStoryPositionContext(this.data.story.story_id, this.data.section.data.section_id, this.paragraphPosition);
+        if (this.data.section.data) {
+            this.data.story.position_context = { section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition };
+            this.userService.setUserStoryPositionContext(this.data.story.story_id,
+                this.data.section.data.section_id, this.paragraphPosition);
+        }
         if (this.data.prevSection.data) {
             this.save();
         }
@@ -186,13 +190,13 @@ export class EditComponent {
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'L',
                     altKey: true
-                }, function () { editComp.openLink(editComp) });
+                }, function () { editComp.openLink(editComp); });
 
                 delete editComp.editor.quill.keyboard.bindings['9'];
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'tab'
                 }, function (range, context) {
-                    if (editComp.suggest.display == 'block') {
+                    if (editComp.suggest.display === 'block') {
                         let word: string = context.prefix.slice(context.prefix.lastIndexOf(' ') + 1);
                         let index: number = range.index - word.length;
 
@@ -287,7 +291,11 @@ export class EditComponent {
     }
 
     public editSectionTitle() {
-        this.editService.editSectionTitle(this.sectionTitle, this.newSectionID);
+        if (this.newSectionID) {
+            this.editService.editSectionTitle(this.sectionTitle, this.newSectionID);
+        } else {
+            this.storyService.editStory(this.data.story.story_id, this.sectionTitle);
+        }
         this.sectionTitle = '';
         this.newSectionID = new ID();
         this.displaySectionEditor = false;
@@ -296,31 +304,33 @@ export class EditComponent {
     // Context Menu
     public setContextMenu(node: TreeNode) {
         this.selectSection({ node: node });
-        this.items = [
-            {
-                label: 'Rename',
+        this.newSectionID = node.data.section_id;
+        if (node.parent) {
+            this.items = [
+                {
+                    label: 'Rename Section',
+                    command: () => { this.displaySectionEditor = true; }
+                },
+                {
+                    label: 'Delete Section', command: () => {
+                        this.selectSection({ node: node.parent });
+                        this.editService.deleteSection(node.data.section_id);
+                    }
+                }
+            ];
+        } else {
+            this.items = [{
+                label: 'Rename Story',
                 command: () => {
-                    this.newSectionID = node.data.section_id;
+                    this.newSectionID = null;
                     this.displaySectionEditor = true;
                 }
-            },
-            {
-                label: 'Add Subsection',
-                command: () => {
-                    this.newSectionID = node.data.section_id;
-                    this.displaySectionCreator = true;
-                }
-            }
-        ];
-
-        if (node.parent) {
-            this.items.push({
-                label: 'Delete Section', command: () => {
-                    this.selectSection({ node: node.parent });
-                    this.editService.deleteSection(node.data.section_id);
-                }
-            });
+            }];
         }
+        this.items.unshift({
+            label: 'Add Subsection',
+            command: () => { this.displaySectionCreator = true; }
+        });
     }
 
     // -------------------- Other -------------------- //
@@ -339,7 +349,7 @@ export class EditComponent {
         let paragraphs: any[] = this.editorRef.querySelectorAll('p');
 
         for (let paragraph of paragraphs) {
-            if (paragraph.id == paragraphID) {
+            if (paragraph.id === paragraphID) {
                 let pBlot = Quill['find'](paragraph);
                 let idx: number = this.editor.quill.getIndex(pBlot);
                 this.editor.quill.setSelection(idx, 0);
@@ -354,7 +364,8 @@ export class EditComponent {
 
             if (paragraphs.length > 0) {
                 let newContentObject: any = this.parserService.parseHtml(paragraphs);
-                this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
+                this.editService.compare(this.data.contentObject, newContentObject,
+                    this.data.story.story_id, this.data.prevSection.data.section_id);
             }
         }
     }

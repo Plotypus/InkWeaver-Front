@@ -6,7 +6,6 @@ import {
     ButtonModule,
     DialogModule,
     EditorModule,
-    SharedModule,
     DropdownModule,
     InputTextModule,
     TreeTableModule,
@@ -15,26 +14,23 @@ import {
 
 import { EditService } from './edit.service';
 import { EditComponent } from './edit.component';
-import { TruncatePipe } from '../../shared/truncate.pipe';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
     imports: [
         FormsModule,
         CommonModule,
+        SharedModule,
         ButtonModule,
         DialogModule,
         EditorModule,
-        SharedModule,
         DropdownModule,
         InputTextModule,
         TreeTableModule,
         ContextMenuModule
     ],
     providers: [EditService],
-    declarations: [
-        EditComponent,
-        TruncatePipe
-    ],
+    declarations: [EditComponent],
     bootstrap: [EditComponent]
 })
 export class EditModule { }

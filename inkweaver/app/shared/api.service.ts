@@ -58,7 +58,7 @@ export class ApiService {
         selectedEntry: {},
         tooltip: new Tooltip(),
         contentObject: new ContentObject()
-    }
+    };
 
     public acknowledged: boolean = false;
     public authentication: boolean = false;
@@ -180,10 +180,16 @@ export class ApiService {
                             this.data.wikis = reply.wikis;
                             this.data.wikis.push({ wiki_id: null, title: null, access_level: null });
                             break;
+                        case 'set_user_name':
+                        case 'set_user_email':
+                        case 'set_user_bio':
+                            this.refreshUser();
+                            break;
 
                         // ---------- Story ---------- //
                         case 'create_story':
                             this.refreshUser();
+                            this.data.story = reply;
                         case 'get_story_information':
                             reply.story_id = this.data.story.story_id;
                             reply.position_context = this.data.story.position_context;
@@ -204,7 +210,8 @@ export class ApiService {
                                 this.data.section = this.data.storyNode[0];
                             }
 
-                            this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(this.data.section.data.section_id));
+                            this.data.section = this.parser.setSection(this.data.storyNode[0],
+                                JSON.stringify(this.data.section.data.section_id));
                             this.data.prevSection = this.data.section;
                             this.refreshContent();
                             break;
@@ -215,11 +222,12 @@ export class ApiService {
                             this.data.story.position_context = { paragraph_id: metadata.paragraphID };
                             this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(metadata.sectionID));
 
-                            if (JSON.stringify(metadata.sectionID) == JSON.stringify(this.data.story.section_id)) {
+                            if (JSON.stringify(metadata.sectionID) === JSON.stringify(this.data.story.section_id)) {
                                 if (!this.data.storyDisplay) {
                                     this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
                                 }
-                                this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay + '<h1>Table of Contents</h1>' + this.setTableOfContents(this.data.storyNode[0], 0);
+                                this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay
+                                    + '<h1>Table of Contents</h1>' + this.setTableOfContents(this.data.storyNode[0], 0);
                             } else {
                                 this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
                             }
@@ -228,6 +236,7 @@ export class ApiService {
                         // ---------- Wiki ---------- //
                         case 'create_wiki':
                             this.refreshUser();
+                            this.data.wiki = reply;
                         case 'get_wiki_information':
                             reply.wiki_id = this.data.wiki.wiki_id;
                             this.data.wiki = reply;
@@ -254,7 +263,7 @@ export class ApiService {
                             break;
 
                         default:
-                            console.log('Unknown action: ' + action)
+                            console.log('Unknown action: ' + action);
                             break;
                     }
                     return action;
@@ -280,14 +289,15 @@ export class ApiService {
     public refreshStoryHierarchy(storyID: ID = this.data.story.story_id) {
         this.send({ action: 'get_story_hierarchy', story_id: storyID });
     }
-    public refreshContent(sectionID: ID = this.data.section.data.section_id, sectionTitle: string = this.data.section.data.title, paragraphID: ID = null) {
+    public refreshContent(sectionID: ID = this.data.section.data.section_id,
+        sectionTitle: string = this.data.section.data.title, paragraphID: ID = null) {
         this.data.storyDisplay = '';
         this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => { },
             { sectionID: sectionID, title: sectionTitle, paragraphID: paragraphID });
     }
     public setTableOfContents(storyNode: TreeNode, indent: number): string {
         let result: string = '<a href="sid' + storyNode.data.section_id.$oid + '">' + storyNode.data.title + '</a>';
-        if (indent == 0) {
+        if (indent === 0) {
             result = '<h3>' + result + '</h3>';
         }
         if (storyNode.children) {

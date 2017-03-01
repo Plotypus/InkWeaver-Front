@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { Http, RequestOptions, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 
 import { ApiService } from '../shared/api.service';
@@ -18,7 +18,7 @@ export class LoginService {
     public login(username: string, password: string): Observable<Response> {
         let path: string = this.apiService.authentication ? urlAuth : url;
 
-        return this.http.post(url, {
+        return this.http.post(path, {
             username: username,
             password: password
         }, this.options);
