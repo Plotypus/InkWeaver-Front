@@ -1,7 +1,6 @@
 ﻿import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
 import {
     ButtonModule,
     DialogModule,
@@ -32,8 +31,8 @@ import { TruncatePipe } from '../../shared/truncate.pipe';
     ],
     providers: [EditService],
     declarations: [
-        EditComponent,
-        TruncatePipe
+        EditComponent, TruncatePipe
+        
     ],
     bootstrap: [EditComponent]
 })

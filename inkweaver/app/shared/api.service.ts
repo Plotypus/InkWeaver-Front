@@ -47,6 +47,7 @@ export class ApiService {
         section: new Section(),
         content: new Array<Paragraph>(),
         storyNode: new Array<TreeNode>(),
+        statSection: new Section(),
 
         wikiNav: [],
         wikiNode: [],

@@ -9,9 +9,10 @@ import { PanelModule, TabMenuModule } from 'primeng/primeng';
 // Modules, services, and components
 import { EditModule } from './edit/edit.module';
 import { WikiModule } from './wiki/wiki.module';
-import { SettingsModule } from './settings/settings.module';
+import { StatsModule } from './stats/stats.module';
 import { StoryComponent } from './story.component';
 import { StoryService } from './story.service';
+
 
 @NgModule({
     imports: [
@@ -22,7 +23,7 @@ import { StoryService } from './story.service';
         TabMenuModule,
         EditModule,
         WikiModule,
-        SettingsModule
+        StatsModule
     ],
     providers: [StoryService],
     declarations: [StoryComponent],

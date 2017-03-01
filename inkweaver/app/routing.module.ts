@@ -6,7 +6,7 @@ import { UserComponent } from './user/user.component';
 import { StoryComponent } from './story/story.component';
 import { EditComponent } from './story/edit/edit.component';
 import { WikiComponent } from './story/wiki/wiki.component';
-import { SettingsComponent } from './story/settings/settings.component';
+import { StatsComponent } from './story/stats/stats.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -18,7 +18,7 @@ const routes: Routes = [
             { path: '', redirectTo: '/edit', pathMatch: 'full' },
             { path: 'edit', component: EditComponent },
             { path: 'wiki', component: WikiComponent },
-            { path: 'settings', component: SettingsComponent },
+            { path: 'stats', component: StatsComponent },
             { path: '**', component: EditComponent }
         ]
     },
