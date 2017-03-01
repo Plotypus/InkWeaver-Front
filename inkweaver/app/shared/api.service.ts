@@ -82,11 +82,73 @@ export class ApiService {
                 let reply = JSON.parse(response);
 
                 if (reply) {
-                    // ---------- Acknowledged ---------- //
-                    if (reply.event == 'acknowledged') {
-                        this.acknowledged = true;
-                        for (let queue of this.queued) {
-                            this.messages.next(queue);
+                    if (reply.event) {
+                        // ---------- Event ---------- //
+                        switch (reply.event) {
+                            case 'acknowledged':
+                                this.acknowledged = true;
+                                for (let queue of this.queued) {
+                                    this.messages.next(queue);
+                                }
+                                break;
+
+                            // ----- Story ----- //
+                            case 'story_updated':
+                                this.refreshStoryInfo();
+                                this.refreshStoryHierarchy();
+                                this.refreshContent();
+                            case 'story_deleted':
+                                this.refreshUser();
+                                break;
+                            case 'inner_subsection_added':
+                            case 'section_title_updated':
+                            case 'section_deleted':
+                                this.refreshStoryHierarchy();
+                                this.refreshContent();
+                                break;
+                            case 'paragraph_added':
+                            case 'paragraph_updated':
+                            case 'paragraph_deleted':
+                                if (Object.keys(this.outgoing).length == 0) {
+                                    this.refreshContent();
+                                }
+                                break;
+                            case 'bookmark_added':
+                                break;
+                            case 'bookmark_updated':
+                                break;
+                            case 'bookmark_deleted':
+                                break;
+                            case 'note_updated':
+                                break;
+                            case 'note_deleted':
+                                break;
+
+                            // ----- Links ----- //
+                            case 'link_created':
+                            case 'link_deleted':
+                                if (Object.keys(this.outgoing).length == 0) {
+                                    this.refreshContent();
+                                }
+                                break;
+
+                            // ----- Wiki ----- //
+                            case 'segment_added':
+                                this.data.pageid.push(reply.segment_id);
+                                this.refreshWikiHierarchy();
+                                break;
+                            case 'page_added':
+                                this.data.pageid.push(reply.page_id);
+                                this.refreshWikiHierarchy();
+                                break;
+                            case 'alias_name_changed':
+                                this.refreshWikiHierarchy();
+                            case 'alias_deleted':
+                                this.refreshContent();
+                                break;
+
+                            default:
+                                break;
                         }
                         return reply.event;
                     }
@@ -107,160 +169,98 @@ export class ApiService {
                     callback(reply);
                     delete this.outgoing[message_id];
 
-                    if (reply.event) {
-                        // ---------- Event ---------- //
-                        if (reply.event == 'story_deleted') {
+                    // ---------- Action ---------- //
+                    switch (action) {
+                        // ---------- User ---------- //
+                        case 'get_user_preferences':
+                            this.data.user = reply;
+                            break;
+                        case 'get_user_stories':
+                            this.data.stories = reply.stories;
+                            this.data.stories.push({ story_id: null, title: null, access_level: null, position_context: null });
+                            break;
+                        case 'get_user_wikis':
+                            this.data.wikis = reply.wikis;
+                            this.data.wikis.push({ wiki_id: null, title: null, access_level: null });
+                            break;
+
+                        // ---------- Story ---------- //
+                        case 'create_story':
                             this.refreshUser();
-                        } else if (reply.event == 'alias_deleted') {
+                        case 'get_story_information':
+                            reply.story_id = this.data.story.story_id;
+                            reply.position_context = this.data.story.position_context;
+                            this.data.story = reply;
+                            this.data.wiki.wiki_id = reply.wiki_id;
+
+                            this.refreshStoryHierarchy(reply.story_id);
+                            this.refreshWikiInfo(reply.wiki_id);
+                            this.refreshWikiHierarchy(reply.wiki_id);
+                            break;
+                        case 'get_story_hierarchy':
+                        case 'get_section_hierarchy':
+                            this.data.storyNode = [this.parser.sectionToTree(this.parser, reply.hierarchy, null)];
+
+                            if (this.data.story.position_context && this.data.story.position_context.section_id) {
+                                this.data.section.data = { section_id: this.data.story.position_context.section_id };
+                            } else if (!this.data.section.data) {
+                                this.data.section = this.data.storyNode[0];
+                            }
+
+                            this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(this.data.section.data.section_id));
+                            this.data.prevSection = this.data.section;
                             this.refreshContent();
-                        } else if (reply.event == 'section_deleted') {
-                            this.refreshStoryHierarchy();
-                        } else if (reply.event == 'paragraph_deleted') {
-                            if (Object.keys(this.outgoing).length == 0) {
-                                this.refreshContent();
+                            break;
+                        case 'get_section_content':
+                            this.data.content = reply.content;
+                            this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
+                            this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
+                            this.data.story.position_context = { paragraph_id: metadata.paragraphID };
+                            this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(metadata.sectionID));
+
+                            if (JSON.stringify(metadata.sectionID) == JSON.stringify(this.data.story.section_id)) {
+                                if (!this.data.storyDisplay) {
+                                    this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
+                                }
+                                this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay + '<h1>Table of Contents</h1>' + this.setTableOfContents(this.data.storyNode[0], 0);
+                            } else {
+                                this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
                             }
-                        } else if (reply.event == 'link_deleted') {
-                            if (Object.keys(this.outgoing).length == 0) {
-                                this.refreshContent();
+                            break;
+
+                        // ---------- Wiki ---------- //
+                        case 'create_wiki':
+                            this.refreshUser();
+                        case 'get_wiki_information':
+                            reply.wiki_id = this.data.wiki.wiki_id;
+                            this.data.wiki = reply;
+                            this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
+
+                            this.refreshWikiHierarchy(reply.wiki_id);
+                            break;
+                        case 'get_wiki_hierarchy':
+                        case 'get_wiki_segment_hierarchy':
+                            this.data.segment = reply.hierarchy;
+                            this.data.wikiNav = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
+                            this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
+                            break;
+                        case 'get_wiki_segment':
+                            reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));
+                            this.data.page = reply;
+                            break;
+                        case 'get_wiki_page':
+                            this.data.page = this.parser.setPageDisplay(reply, this.data.linkTable);
+                            this.data.tooltip.text = '<b>' + reply.title + '</b>';
+                            if (reply.headings && reply.headings[0]) {
+                                this.data.tooltip.text += '<br/><u>' + reply.headings[0].title + '</u><br/>' + reply.headings[0].text;
                             }
-                        }
-                        return reply.event;
-                    } else {
-                        // ---------- Action ---------- //
-                        switch (action) {
-                            // ---------- User ---------- //
-                            case 'get_user_preferences':
-                                this.data.user = reply;
-                                break;
-                            case 'get_user_stories':
-                                this.data.stories = reply.stories;
-                                this.data.stories.push({ story_id: null, title: null, access_level: null, position_context: null });
-                                break;
-                            case 'get_user_wikis':
-                                this.data.wikis = reply.wikis;
-                                break;
+                            break;
 
-                            // ---------- Story ---------- //
-                            case 'create_story':
-                                this.data.story = reply;
-                                this.refreshUser();
-                                this.refreshStoryHierarchy(reply.story_id);
-                            case 'get_story_information':
-                                reply.story_id = this.data.story.story_id;
-                                reply.position_context = this.data.story.position_context;
-                                this.data.story = reply;
-                                this.data.wiki.wiki_id = reply.wiki_id;
-                                this.refreshWikiInfo(reply.wiki_id);
-                                this.refreshWikiHierarchy(reply.wiki_id);
-                                break;
-                            case 'get_story_hierarchy':
-                            case 'get_section_hierarchy':
-                                this.data.storyNode = [this.parser.sectionToTree(this.parser, reply.hierarchy, null)];
-
-                                if (this.data.story.position_context && this.data.story.position_context.section_id) {
-                                    this.data.section.data = { section_id: this.data.story.position_context.section_id };
-                                } else if (!this.data.section.data) {
-                                    this.data.section = this.data.storyNode[0];
-                                }
-
-                                this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(this.data.section.data.section_id));
-                                this.data.prevSection = this.data.section;
-                                this.refreshContent();
-                                break;
-                            case 'get_section_content':
-                                this.data.content = reply.content;
-                                this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
-                                this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
-                                if (JSON.stringify(metadata.sectionID) == JSON.stringify(this.data.story.section_id)) {
-                                    if (!this.data.storyDisplay) {
-                                        this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
-                                    }
-                                    this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay + '<h1>Table of Contents</h1>' + this.setTableOfContents(this.data.storyNode[0], 0);
-                                } else {
-                                    this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
-                                }
-                                break;
-
-                            case 'add_inner_subsection':
-                                this.refreshStoryHierarchy();
-                                break
-                            case 'edit_section_title':
-                                this.refreshUser();
-                                this.refreshStoryHierarchy();
-                                break
-
-                            case 'add_paragraph':
-                            case 'edit_paragraph':
-                                if (Object.keys(this.outgoing).length == 0) {
-                                    this.refreshContent();
-                                }
-                                break;
-
-                            // ---------- Link ---------- //
-                            case 'create_link':
-                                if (Object.keys(this.outgoing).length == 0) {
-                                    this.refreshContent();
-                                }
-                                break;
-
-                            // ---------- Wiki ---------- //
-                            case 'create_wiki':
-                                this.data.wiki = reply;
-                                this.refreshUser();
-                                this.refreshWikiHierarchy(reply.wiki_id);
-                            case 'get_wiki_information':
-                                reply.wiki_id = this.data.wiki.wiki_id;
-                                this.data.wiki = reply;
-                                this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
-                                break;
-                            case 'get_wiki_hierarchy':
-                            case 'get_wiki_segment_hierarchy':
-                                this.data.segment = reply.hierarchy;
-                                this.data.wikiNav = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
-                                this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
-                                break;
-                            case 'get_wiki_segment':
-                                reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));
-                                this.data.page = reply;
-                                break;
-                            case 'get_wiki_page':
-                                this.data.page = this.parser.setPageDisplay(reply, this.data.linkTable);
-                                this.data.tooltip.text = '<b>' + reply.title + '</b>';
-                                if (reply.headings && reply.headings[0]) {
-                                    this.data.tooltip.text += '<br/><u>' + reply.headings[0].title + '</u><br/>' + reply.headings[0].text;
-                                }
-                                break;
-                            case 'add_page':
-                                this.data.pageid.push(reply.page_id);
-                                this.refreshWikiHierarchy();
-                                break;
-                            case 'add_segment':
-                                this.data.pageid.push(reply.segment_id);
-                                this.refreshWikiHierarchy();
-                                break;
-                            case 'add_template_heading':
-                                break;
-                            case 'add_heading':
-                                break;
-                            case 'create_wiki':
-                                break;
-                            case 'edit_segment':
-                                break;
-                            case 'edit_page':
-                                break;
-                            case 'edit_heading':
-                                break;
-                            case 'change_alias_name':
-                                this.refreshWikiHierarchy();
-                                this.refreshContent();
-                                break;
-
-                            default:
-                                console.log('Unknown action: ' + action)
-                                break;
-                        }
-                        return action;
+                        default:
+                            console.log('Unknown action: ' + action)
+                            break;
                     }
+                    return action;
                 }
                 return 'unknown';
             });
@@ -269,22 +269,24 @@ export class ApiService {
         });
     }
 
-    // USER
+    // ----- USER ----- //
     public refreshUser() {
         this.send({ action: 'get_user_preferences' });
         this.send({ action: 'get_user_stories' });
         this.send({ action: 'get_user_wikis' });
     }
 
-    // STORY
+    // ----- STORY ----- //
     public refreshStoryInfo(storyID: ID = this.data.story.story_id) {
         this.send({ action: 'get_story_information', story_id: storyID });
     }
     public refreshStoryHierarchy(storyID: ID = this.data.story.story_id) {
         this.send({ action: 'get_story_hierarchy', story_id: storyID });
     }
-    public refreshContent(sectionID: ID = this.data.section.data.section_id, sectionTitle: string = this.data.section.data.title,paraID:any = "") {
-        this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => { }, { sectionID: sectionID, title: sectionTitle,paragraphID:paraID});
+    public refreshContent(sectionID: ID = this.data.section.data.section_id, sectionTitle: string = this.data.section.data.title, paragraphID: ID = null) {
+        this.data.storyDisplay = '';
+        this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => { },
+            { sectionID: sectionID, title: sectionTitle, paragraphID: paragraphID });
     }
     public setTableOfContents(storyNode: TreeNode, indent: number): string {
         let result: string = '<a href="sid' + storyNode.data.section_id.$oid + '">' + storyNode.data.title + '</a>';
@@ -301,7 +303,7 @@ export class ApiService {
         return result;
     }
 
-    // WIKI
+    // ----- WIKI ----- //
     public refreshWikiInfo(wikiID: ID = this.data.story.wiki_id) {
         this.send({ action: 'get_wiki_information', wiki_id: wikiID });
     }
@@ -310,8 +312,10 @@ export class ApiService {
     }
 
     /**
-     * Send a message on the WebSocket
-     * @param {JSON} message - A JSON-formatted message
+     * Send a message on the websocket
+     * @param message
+     * @param callback
+     * @param metadata
      */
     public send(message: any, callback: (reply: any) => void = (reply: any) => { }, metadata: any = {}) {
         message.message_id = ++this.message_id;

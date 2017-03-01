@@ -1,4 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
+import { TreeNode } from 'primeng/primeng';
 
 import { ID } from '../../models/id.model';
 import { StoryService } from '../story.service';
@@ -70,8 +71,27 @@ export class EditService {
         }, (reply: any) => { }, { noflight: true });
     }
 
-    public getSectionContent(sectionID: ID, sectionTitle: string, paraID: any = "") {
-        this.apiService.refreshContent(sectionID, sectionTitle,paraID);
+    public getSectionContent(sectionID: ID, sectionTitle: string = null, paragraphID: ID = null) {
+        if (!sectionTitle) {
+            let sectionNode: TreeNode = this.findSection(this.apiService.data.storyNode[0], sectionID);
+            if (sectionNode) {
+                sectionTitle = sectionNode.data.title;
+            }
+        }
+        this.apiService.refreshContent(sectionID, sectionTitle, paragraphID);
+    }
+
+    public findSection(start: TreeNode, sectionID: ID): TreeNode {
+        if (start.data.section_id.$oid == sectionID.$oid) {
+            return start;
+        }
+        for (let section of start.children) {
+            let found = this.findSection(section, sectionID);
+            if (found) {
+                return found;
+            }
+        }
+        return null;
     }
 
     /**

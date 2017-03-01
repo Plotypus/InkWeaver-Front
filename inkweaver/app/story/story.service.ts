@@ -17,6 +17,17 @@ export class StoryService {
         });
     }
 
+    public editStory(storyID: ID, title: string) {
+        this.apiService.send({
+            action: 'edit_story',
+            story_id: storyID,
+            update: {
+                update_type: 'set_title',
+                title: title
+            }
+        });
+    }
+
     public deleteStory(storyID: ID) {
         this.apiService.send({
             action: 'delete_story',

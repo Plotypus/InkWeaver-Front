@@ -63,7 +63,9 @@ export class EditComponent {
         this.suggest = {};
         this.data = this.apiService.data;
         this.data.tooltip.display = 'none';
-        let timer: Observable<number> = Observable.timer(5000, 5000);
+
+        // Save position context every 3 seconds
+        let timer: Observable<number> = Observable.timer(3000, 3000);
         this.timerSub = timer.subscribe((tick: number) => {
             if (this.router.url == '/story/edit') {
                 let idx = this.editor.quill.getSelection(true);
@@ -83,7 +85,6 @@ export class EditComponent {
         });
 
         if (this.apiService.messages) {
-            // Subscribe to observables
             this.apiService.messages.subscribe((action: string) => {
                 if (action == 'get_section_content') {
                     this.setLinks = true;
@@ -275,7 +276,6 @@ export class EditComponent {
         this.data.section = event.node;
         this.save();
         this.data.prevSection = event.node;
-        this.data.storyDisplay = '';
         this.editService.getSectionContent(event.node.data.section_id, event.node.data.title);
     }
 
