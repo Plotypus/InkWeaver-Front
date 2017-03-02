@@ -9,6 +9,7 @@ import { Paragraph } from '../models/story/paragraph.model';
 import { ContentObject } from '../models/story/content-object.model';
 import { Segment } from '../models/wiki/segment.model';
 import { PageSummary } from '../models/wiki/page-summary.model';
+import {Word} from '../models/stats/word.model'
 
 @Injectable()
 export class ParserService {
@@ -324,4 +325,22 @@ export class ParserService {
             return 0;
 
     }
+
+    /*Stats*/
+
+    public parseWordFrequency(reply:any)
+    {
+        let wordFreq = Array<Word>();
+        for (let words in reply) {
+              wordFreq.push({
+                word: words,
+                count: reply[words]
+                    });
+        }
+
+
+        return wordFreq;
+
+    }
+    
 }

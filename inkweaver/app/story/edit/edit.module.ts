@@ -5,16 +5,15 @@ import {
     ButtonModule,
     DialogModule,
     EditorModule,
-    SharedModule,
     DropdownModule,
     InputTextModule,
     TreeTableModule,
     ContextMenuModule
 } from 'primeng/primeng';
+import {SharedModule} from '../../shared/shared.module';
 
 import { EditService } from './edit.service';
 import { EditComponent } from './edit.component';
-import { TruncatePipe } from '../../shared/truncate.pipe';
 
 @NgModule({
     imports: [
@@ -31,7 +30,7 @@ import { TruncatePipe } from '../../shared/truncate.pipe';
     ],
     providers: [EditService],
     declarations: [
-        EditComponent, TruncatePipe
+        EditComponent
         
     ],
     bootstrap: [EditComponent]

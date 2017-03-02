@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { PanelModule, TabMenuModule } from 'primeng/primeng';
 
 // Modules, services, and components
+
 import { EditModule } from './edit/edit.module';
 import { WikiModule } from './wiki/wiki.module';
 import { StatsModule } from './stats/stats.module';

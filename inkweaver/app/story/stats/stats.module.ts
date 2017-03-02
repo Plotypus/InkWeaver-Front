@@ -5,8 +5,9 @@ import { StatsService } from './stats.service';
 import { StatsComponent } from './stats.component';
 import {TreeTableModule,
 		DataTableModule,
-		SharedModule
-		} from 'primeng/primeng';
+} from 'primeng/primeng';
+import {SharedModule} from '../../shared/shared.module';
+
 
 @NgModule({
     imports: [

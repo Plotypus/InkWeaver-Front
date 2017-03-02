@@ -16,7 +16,7 @@ export class StatsService {
     public get_section_statistics(sid: any) {
         this.parser.send({
             action: 'get_section_statistics',
-            story_id: sid
+            section_id: sid
         });
     }
 
