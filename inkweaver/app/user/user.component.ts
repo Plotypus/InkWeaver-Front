@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Header, SelectItem, TreeNode } from 'primeng/primeng';
+import { SelectItem, TreeNode } from 'primeng/primeng';
 
 import { UserService } from './user.service';
 import { StoryService } from '../story/story.service';
@@ -54,14 +54,14 @@ export class UserComponent {
 
         this.editing = false;
         this.colors = [
-            "#cb735c", // red-orange
-            "#fdd17c", // yellow
-            "#acd8b4", // pastel green
-            "#4d6b61", // green
-            "#b0c9dd", // light blue
-            "#74b0b8", // muted blue
-            "#8779c3", // purple
-            "#903737"  // maroon
+            '#cb735c', // red-orange
+            '#fdd17c', // yellow
+            '#acd8b4', // pastel green
+            '#4d6b61', // green
+            '#b0c9dd', // light blue
+            '#74b0b8', // muted blue
+            '#8779c3', // purple
+            '#903737'  // maroon
         ];
     }
 
@@ -104,7 +104,7 @@ export class UserComponent {
         this.newWiki = this.wikis[0].value;
     }
     public createStory() {
-        if (this.newWiki == 'new_wiki') {
+        if (this.newWiki === 'new_wiki') {
             this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary, (reply: any) => {
                 this.data.storyDisplay = '';
                 this.data.section = new Section();
@@ -112,7 +112,7 @@ export class UserComponent {
 
                 this.displayStoryCreator = false;
                 this.data.story.story_title = this.title;
-                this.storyService.createStory(this.title, this.data.wiki.wiki_id, this.summary);
+                this.storyService.createStory(this.title, reply.wiki_id, this.summary);
                 this.router.navigate(['/story/edit']);
             });
         } else {

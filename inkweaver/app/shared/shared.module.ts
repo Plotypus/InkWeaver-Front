@@ -4,7 +4,8 @@
 import { ApiService } from './api.service';
 import { WebSocketService } from './websocket.service';
 import { ParserService } from './parser.service';
-import {TruncatePipe} from './truncate.pipe';
+import { TruncatePipe } from './truncate.pipe';
+
 @NgModule({
     providers: [
         ApiService,
@@ -13,6 +14,5 @@ import {TruncatePipe} from './truncate.pipe';
     ],
     declarations: [TruncatePipe],
     exports: [TruncatePipe]
-
 })
 export class SharedModule { }

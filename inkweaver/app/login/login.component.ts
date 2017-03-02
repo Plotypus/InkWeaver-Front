@@ -33,7 +33,7 @@ export class LoginComponent {
                 .subscribe(response => {
                     this.apiService.connect();
                     this.apiService.messages.subscribe((action: string) => {
-                        if (Object.keys(this.apiService.outgoing).length == 0) {
+                        if (Object.keys(this.apiService.outgoing).length === 0) {
                             this.router.navigate(['/user']);
                         }
                     });
@@ -44,7 +44,7 @@ export class LoginComponent {
         } else {
             this.apiService.connect();
             this.apiService.messages.subscribe((action: string) => {
-                if (Object.keys(this.apiService.outgoing).length == 0) {
+                if (Object.keys(this.apiService.outgoing).length === 0) {
                     this.router.navigate(['/user']);
                 }
             });

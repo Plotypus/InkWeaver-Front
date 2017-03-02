@@ -9,7 +9,7 @@ import { Paragraph } from '../models/story/paragraph.model';
 import { ContentObject } from '../models/story/content-object.model';
 import { Segment } from '../models/wiki/segment.model';
 import { PageSummary } from '../models/wiki/page-summary.model';
-import {Word} from '../models/stats/word.model'
+import { Word } from '../models/stats/word.model';
 
 @Injectable()
 export class ParserService {
@@ -31,13 +31,13 @@ export class ParserService {
             .concat(story.inner_subsections.map(sectionToTree))
             .concat(story.succeeding_subsections.map(sectionToTree));
 
-        treeNode.leaf = treeNode.children.length == 0;
+        treeNode.leaf = treeNode.children.length === 0;
         return treeNode;
     }
 
     public setSection(story: TreeNode, section_id: string): TreeNode {
         let newSection: TreeNode = null;
-        if (JSON.stringify(story.data.section_id) == section_id) {
+        if (JSON.stringify(story.data.section_id) === section_id) {
             newSection = story;
         } else {
             for (let child of story.children) {
@@ -74,12 +74,13 @@ export class ParserService {
             while (linkMatch) {
                 let linkID: string = linkMatch[0].replace(r1, '');
                 let link: Link = linkTable[linkID];
-                paragraph.links[linkID] = link;
-
-                let linkIDStr: string = JSON.parse(linkID).$oid;
-                let pageIDStr: string = link.page_id.$oid;
-                paragraph.text = paragraph.text.replace(linkMatch[0],
-                    '<a href="' + linkIDStr + '-' + pageIDStr + '" target="_blank">' + link.name + '</a>');
+                if (link) {
+                    paragraph.links[linkID] = link;
+                    let linkIDStr: string = JSON.parse(linkID).$oid;
+                    let pageIDStr: string = link.page_id.$oid;
+                    paragraph.text = paragraph.text.replace(linkMatch[0],
+                        '<a href="' + linkIDStr + '-' + pageIDStr + '" target="_blank">' + link.name + '</a>');
+                }
                 linkMatch = r2.exec(text);
             }
             contentObject[JSON.stringify(paragraph.paragraph_id)] = paragraph;
@@ -136,7 +137,7 @@ export class ParserService {
     public parseLinkTable(linkArray: any): LinkTable {
         let linkTable: LinkTable = new LinkTable();
         for (let link of linkArray) {
-            linkTable[JSON.stringify(link.link_id)] = { page_id: link.page_id, name: link.name }
+            linkTable[JSON.stringify(link.link_id)] = { page_id: link.page_id, name: link.name };
         }
         return linkTable;
     }
@@ -151,14 +152,15 @@ export class ParserService {
         temp.data.id = json['segment_id'];
         temp.data.title = json['title'];
         temp.label = json['title'];
-        temp.type = "title"
+        temp.type = "title";
         nav.push(temp);
         let path = this.createPath(selected);
         for (let index in json['segments']) {
             nav.push(this.jsonToWiki(json['segments'][index], path));
         }
-        for (let index in json['pages'])
+        for (let index in json['pages']) {
             nav.push(this.jsonToPage(json['pages'][index]));
+        }
 
         return nav;
     }
@@ -172,7 +174,7 @@ export class ParserService {
         wiki.data.id = wikiJson["segment_id"];
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
-        if (selected.length != 0 && (wiki.label == selected[0])) {
+        if (selected.length !== 0 && (wiki.label === selected[0])) {
             wiki.expanded = true;
             selected.shift();
         }
@@ -180,35 +182,35 @@ export class ParserService {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
                 for (let segment in segmentJsons) {
-                    //parent.label = wiki.label;
-                    ///if (par != null)
-                    //parent.parent = par;
+                    // parent.label = wiki.label;
+                    // if (par != null)
+                    // parent.parent = par;
 
-                    var subsegment = this.jsonToWiki(segmentJsons[segment], selected);
+                    let subsegment = this.jsonToWiki(segmentJsons[segment], selected);
                     subsegment.type = "category";
                     subsegment.parent = wiki;
                     wiki.children.push(subsegment);
                 }
             }
-            else if (field == "pages") {
-                var pagesJsons = wikiJson[field];
+            else if (field === "pages") {
+                let pagesJsons = wikiJson[field];
                 for (let page in pagesJsons) {
                     // parent.label = wiki.label;
-                    //parent.parent = par;
+                    // parent.parent = par;
 
-                    var leafpage = this.jsonToPage(pagesJsons[page]);
+                    let leafpage = this.jsonToPage(pagesJsons[page]);
                     leafpage.parent = wiki;
                     wiki.children.push(leafpage);
                 }
 
             }
         }
-        if (typeof wiki.children !== 'undefined' && (wiki.children.length == 0 || wiki.children.length != 0)) {
+        if (typeof wiki.children !== 'undefined' && (wiki.children.length === 0 || wiki.children.length !== 0)) {
             wiki.type = "category";
             wiki.children = wiki.children.sort(this.sort);
         }
 
-        return wiki
+        return wiki;
     }
 
 
@@ -243,7 +245,7 @@ export class ParserService {
     }
 
     public setPageDisplay(reply: any, linktable: LinkTable) {
-        //getting the alias
+        // getting the alias
         if (reply.aliases) {
             let temp = [];
             let count = 0;
@@ -255,7 +257,7 @@ export class ParserService {
                     'icon': 'fa-pencil',
                     'prev': '',
                     'id': reply.aliases[i]
-                })
+                });
                 count++;
             }
             reply.aliases = temp;
@@ -282,9 +284,10 @@ export class ParserService {
                         ref.text = ref.text.replace(linkMatch[0],
                             '<h1>' + link.name + ' </h1>');
                     }
-                    else
+                    else {
                         ref.text = ref.text.replace(linkMatch[0],
                             '<h2>' + link.name + ' </h2>');
+                    }
                     linkMatch = r2.exec(text);
                 }
             }
@@ -292,7 +295,7 @@ export class ParserService {
     }
 
     public createPath(page: any) {
-        if (page.hasOwnProperty("type") && page.type == 'title')
+        if (page.hasOwnProperty("type") && page.type === 'title')
             return new Array<String>();
         page.expanded = true;
         let path = new Array<String>();
@@ -307,19 +310,19 @@ export class ParserService {
 
     }
     public sort(o1: any, o2: any) {
-        if (o1.type == 'category' && o2.type == 'category')
+        if (o1.type === 'category' && o2.type === 'category')
             return 0;
-        else if (o1.type == 'category' && o2.type == 'title')
+        else if (o1.type === 'category' && o2.type === 'title')
             return 1;
-        else if (o1.type == 'title' && o2.type == 'category')
+        else if (o1.type === 'title' && o2.type === 'category')
             return -1;
-        else if (o1.type == 'category' && o2.type == 'page')
+        else if (o1.type === 'category' && o2.type === 'page')
             return -1;
-        else if (o1.type == 'page' && o2.type == 'category')
+        else if (o1.type === 'page' && o2.type === 'category')
             return 1;
-        else if (o1.type == 'page' && o2.type == 'title')
+        else if (o1.type === 'page' && o2.type === 'title')
             return 1;
-        else if (o1.type == 'title' && o2.type == 'page')
+        else if (o1.type === 'title' && o2.type === 'page')
             return -1;
         else
             return 0;
@@ -327,20 +330,15 @@ export class ParserService {
     }
 
     /*Stats*/
-
-    public parseWordFrequency(reply:any)
-    {
+    public parseWordFrequency(reply: any) {
         let wordFreq = Array<Word>();
         for (let words in reply) {
-              wordFreq.push({
+            wordFreq.push({
                 word: words,
                 count: reply[words]
-                    });
+            });
         }
 
-
         return wordFreq;
-
     }
-    
 }

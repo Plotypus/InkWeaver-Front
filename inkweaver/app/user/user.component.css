@@ -109,7 +109,7 @@ p-dialog .ui-dialog-content {
 
 p-dialog input.ui-dropdown-filter {
     width: 100%;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 p-dialog .ui-dropdown-filter-container {
