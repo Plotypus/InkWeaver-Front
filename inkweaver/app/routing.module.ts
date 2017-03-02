@@ -18,7 +18,7 @@ const routes: Routes = [
             { path: '', redirectTo: '/edit', pathMatch: 'full' },
             { path: 'edit', component: EditComponent },
             { path: 'wiki', component: WikiComponent },
-            { path: 'settings', component: StatsComponent },
+            { path: 'stats', component: StatsComponent },
             { path: '**', component: EditComponent }
         ]
     },
