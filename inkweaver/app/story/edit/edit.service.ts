@@ -86,7 +86,7 @@ export class EditService {
                 sectionTitle = sectionNode.data.title;
             }
         }
-        this.apiService.refreshContent(sectionID, sectionTitle, paragraphID);
+        this.apiService.refreshContent(sectionID, sectionTitle, { paragraph_id: paragraphID });
     }
 
     public findSection(start: TreeNode, sectionID: string): TreeNode {

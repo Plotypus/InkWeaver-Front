@@ -296,10 +296,10 @@ export class ApiService {
         this.send({ action: 'get_story_hierarchy', story_id: storyID });
     }
     public refreshContent(sectionID: ID = this.data.section.data.section_id,
-        sectionTitle: string = this.data.section.data.title, paragraphID: ID = null) {
+        sectionTitle: string = this.data.section.data.title, position: any = this.data.story.position_context) {
         this.data.storyDisplay = '';
         this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => { },
-            { sectionID: sectionID, title: sectionTitle, paragraphID: paragraphID });
+            { sectionID: sectionID, title: sectionTitle, paragraphID: position ? position.paragraph_id : null });
     }
     public setTableOfContents(storyNode: TreeNode, indent: number): string {
         let result: string = '<a href="sid' + storyNode.data.section_id.$oid + '">' + storyNode.data.title + '</a>';
