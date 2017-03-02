@@ -27,6 +27,8 @@ import { Page } from '../models/wiki/page.model';
 import { Heading } from '../models/wiki/heading.model';
 import { Reference } from '../models/wiki/reference.model';
 
+
+import {Stats} from '../models/stats/stats.model';
 const url: string = 'ws://localhost:8080/ws/demo';
 const urlAuth: string = 'wss://inkweaver.plotypus.net:8080/ws';
 
@@ -47,6 +49,9 @@ export class ApiService {
         section: new Section(),
         content: new Array<Paragraph>(),
         storyNode: new Array<TreeNode>(),
+
+        statSection: new Section(),
+        stats: new Stats(),
 
         wikiNav: [],
         wikiNode: [],
@@ -252,7 +257,13 @@ export class ApiService {
                                 this.data.tooltip.text += '<br/><u>' + reply.headings[0].title + '</u><br/>' + reply.headings[0].text;
                             }
                             break;
-
+                        /*Statistics*/
+                        case 'get_story_statistics':
+                        case 'get_section_statistics':
+                        case 'get_paragraph_statistics':
+                            this.data.stats.word_count = reply.statistics.word_count;
+                            this.data.stats.word_frequency = this.parser.parseWordFrequency(reply.statistics.word_frequency);
+                            break;
                         default:
                             console.log('Unknown action: ' + action)
                             break;

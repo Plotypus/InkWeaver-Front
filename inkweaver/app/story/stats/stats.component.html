@@ -1,0 +1,32 @@
+﻿<div class="ui-grid ui-grid-responsive">
+    <div class="ui-grid-row">
+
+        <!-- Stats -->
+        <div class="stats ui-grid-col-9">
+        	<div class="search">
+        	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+        	    <input #gb type="text" pInputText size="50" placeholder="Global Filter">
+        	</div>
+            <p-dataTable [value]="data.stats.word_frequency" [rows]="10" [paginator]="true" [globalFilter]="gb" #dt>
+                <p-column field="word" header="Word" [sortable]="true"></p-column>
+                <p-column field="count" header="Word Frequency" [sortable]="true"></p-column>
+            </p-dataTable>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation ui-grid-col-3">
+            <p-treeTable [value]="data.storyNode"
+                         selectionMode="single"
+                         [(selection)]="data.statSection"
+                         (onNodeSelect)="selectSection($event)">
+                <p-column field="title">
+                    <template let-col let-node="rowData" pTemplate="body">
+                        <span>
+                            {{node.data.title | truncate : 25}}
+                        </span>
+                    </template>
+                </p-column>
+            </p-treeTable>
+        </div>
+    </div>
+</div>
