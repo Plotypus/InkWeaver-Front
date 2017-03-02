@@ -153,10 +153,14 @@ export class EditComponent {
                             this.router.navigate(['/story/wiki']);
                         });
                         thread.addEventListener('mouseenter', (event: any) => {
-                            let top: number = event.target.offsetTop + 70;
+                            let aBlot = Quill['find'](event.target);
+                            let index: number = this.editor.quill.getIndex(aBlot);
+                            let bounds: any = this.editor.quill.getBounds(index);
+
+                            let top: number = bounds.top + 70;
                             this.data.tooltip = {
                                 text: '',
-                                display: 'block', top: top + 'px', left: event.target.offsetLeft + 'px'
+                                display: 'block', top: top + 'px', left: bounds.left + 'px'
                             };
                             this.wikiService.getWikiPage(pageID, { noflight: true });
                         });

@@ -135,6 +135,12 @@ export class ApiService {
                                 this.refreshWikiHierarchy();
                                 break;
                             case 'page_added':
+                                let out: any = this.outgoing['page' + reply.title]
+                                if (out) {
+                                    let callback: Function = out.callback;
+                                    callback(reply);
+                                    delete this.outgoing['page' + reply.title];
+                                }
                                 this.data.pageid.push(reply.page_id);
                                 this.refreshWikiHierarchy();
                                 break;
@@ -326,7 +332,15 @@ export class ApiService {
      */
     public send(message: any, callback: (reply: any) => void = (reply: any) => { }, metadata: any = {}) {
         message.message_id = ++this.message_id;
-        this.outgoing[message.message_id] = {
+
+        // Keep track of outgoing messages
+        let key: string = '';
+        if (message.action === 'add_page') {
+            key = 'page' + message.title;
+        } else {
+            key = message.message_id;
+        }
+        this.outgoing[key] = {
             action: message.action,
             callback: callback,
             metadata: metadata
