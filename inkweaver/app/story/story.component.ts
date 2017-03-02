@@ -26,7 +26,7 @@ export class StoryComponent {
         this.items = [
             { label: '', icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
             { label: '', icon: 'fa-book', routerLink: ['/story/wiki'] },
-            { label: '', icon: 'fa-ellipsis-v', routerLink: ['/story/settings'] }
+            { label: '', icon: 'fa-ellipsis-v', routerLink: ['/story/stats'] }
         ];
         this.activeItem = this.items[0];
 
@@ -40,7 +40,7 @@ export class StoryComponent {
                 else if (event.url === '/story/wiki') {
                     this.activeItem = this.items[1];
                 }
-                else if (event.url === '/story/settings') {
+                else if (event.url === '/story/stats') {
                     this.activeItem = this.items[2];
                 }
             });

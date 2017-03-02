@@ -130,13 +130,13 @@ export class WikiService {
 
     }
     //ADD
-    public addSegment(title: string, pid: any) {
+    public addSegment(title: string, pid: any, callback: (reply: any) => void = (reply: any) => { }) {
         this.apiService.send({
 
             "action": "add_segment",
             "title": title,
             "parent_id": pid
-        });
+        },);
     }
 
     public addTempleteHeading(title: string, sid: any) {
@@ -167,7 +167,7 @@ export class WikiService {
     }
 
     //Delete
-    public deleteSegment(sid: any) {
+    public deleteSegment(sid: any, callback: (reply: any) => void = (reply: any) => { }) {
         this.apiService.send({
 
             "action": "delete_segment",
@@ -175,7 +175,7 @@ export class WikiService {
         });
     }
 
-    public deletePage(pid: any) {
+    public deletePage(pid: any, callback: (reply: any) => void = (reply: any) => { }) {
         this.apiService.send({
 
             "action": "delete_page",
@@ -198,6 +198,14 @@ export class WikiService {
 
             "action": "delete_alias",
             "alias_id": aid
+        });
+    }
+
+    public deleteTempleteHeading(sid:any,title:any) {
+        this.apiService.send({
+            "action": "delete_template_heading",
+            "segment_id": sid,
+            "template_heading_title": title
         });
     }
     //CREATES

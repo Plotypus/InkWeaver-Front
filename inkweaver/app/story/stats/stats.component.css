@@ -1,0 +1,16 @@
+﻿.stats {
+    text-align: right;
+    font-style: italic;
+    background: #e6e6e6;
+    color: var(--light-blue);
+    padding: .5em 1em .5em 1em
+}
+
+.stats .search{
+	float: left;
+    padding-bottom: .5em
+}
+
+.stats ui-datatable{
+	 
+}	

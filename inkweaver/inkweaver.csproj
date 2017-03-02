@@ -74,7 +74,8 @@
     <Content Include="app\login\login.component.css" />
     <Content Include="app\story\edit\edit.component.html" />
     <Content Include="app\story\edit\edit.component.css" />
-    <Content Include="app\story\settings\settings.component.html" />
+    <Content Include="app\story\stats\stats.component.css" />
+    <Content Include="app\story\stats\stats.component.html" />
     <Content Include="app\story\story.component.html" />
     <Content Include="app\story\story.component.css" />
     <Content Include="app\story\wiki\wiki.component.html" />
@@ -103,6 +104,8 @@
     <TypeScriptCompile Include="app\models\id.model.ts" />
     <TypeScriptCompile Include="app\models\link\link-table.model.ts" />
     <TypeScriptCompile Include="app\models\link\link.model.ts" />
+    <TypeScriptCompile Include="app\models\stats\stats.model.ts" />
+    <TypeScriptCompile Include="app\models\stats\word.model.ts" />
     <TypeScriptCompile Include="app\models\story\content-object.model.ts" />
     <TypeScriptCompile Include="app\models\story\tooltip.model.ts" />
     <TypeScriptCompile Include="app\models\wiki\reference.model.ts" />
@@ -124,12 +127,12 @@
     <TypeScriptCompile Include="app\models\wiki\wiki.model.ts" />
     <TypeScriptCompile Include="app\routing.module.ts" />
     <TypeScriptCompile Include="app\story\edit\edit.component.ts" />
-    <TypeScriptCompile Include="app\story\settings\settings.component.ts" />
-    <TypeScriptCompile Include="app\story\settings\settings.module.ts" />
-    <TypeScriptCompile Include="app\story\settings\settings.service.ts" />
     <TypeScriptCompile Include="app\shared\api.service.ts" />
     <TypeScriptCompile Include="app\shared\shared.module.ts" />
     <TypeScriptCompile Include="app\shared\websocket.service.ts" />
+    <TypeScriptCompile Include="app\story\stats\stats.component.ts" />
+    <TypeScriptCompile Include="app\story\stats\stats.module.ts" />
+    <TypeScriptCompile Include="app\story\stats\stats.service.ts" />
     <TypeScriptCompile Include="app\story\story.component.ts" />
     <TypeScriptCompile Include="app\story\story.module.ts" />
     <TypeScriptCompile Include="app\story\story.service.ts" />
