@@ -54,8 +54,8 @@ export class ApiService {
         statSegment: new Segment(),
         stats: new Stats(),
         statsPages: {},
-
-
+        statsSections: {},
+        statsPageFrequency: {},
 
         wikiNav: [],
         wikiNode: [],
@@ -218,7 +218,7 @@ export class ApiService {
                         case 'get_story_hierarchy':
                         case 'get_section_hierarchy':
                             this.data.storyNode = [this.parser.sectionToTree(this.parser, reply.hierarchy, null)];
-
+                            this.data.statsSections = this.parser.flattenTree(this.data.storyNode[0]);
                             if (this.data.story.position_context && this.data.story.position_context.section_id) {
                                 this.data.section.data = { section_id: this.data.story.position_context.section_id };
                             } else if (!this.data.section.data) {
@@ -285,6 +285,7 @@ export class ApiService {
                             this.data.stats.word_frequency = this.parser.parseWordFrequency(reply.statistics.word_frequency);
                             break;
                         case 'get_page_frequencies':
+                            this.data.statsPageFrequency=this.parser.parsePageFrequency(reply.pages,this.data.statsPages,this.data.statsSections)
                             break;
                         default:
                             console.log('Unknown action: ' + action);

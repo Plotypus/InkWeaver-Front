@@ -345,8 +345,60 @@ export class ParserService {
         return wordFreq;
     }
 
-    public flattenTree(tree:any)
+    public flattenTree(tree:TreeNode)
     {
         
+        let arr = this.getTreeArray(tree);
+        let dict = {};
+        let key = {};
+        for(let idx in arr)
+        {
+            
+            dict[JSON.stringify(arr[idx].section_id)] = arr[idx];
+            
+        }
+
+        return dict;
+    }
+
+    public getTreeArray(tree:TreeNode, mode:boolean = false)
+    {
+        let arr = [];
+        if(!mode)
+            arr.push(tree.data);
+        else
+        {
+            if(tree.type == 'page')
+                arr.push(tree);
+        }
+        for(let i in tree.children)
+            arr = arr.concat(this.getTreeArray(tree.children[i],mode));
+        return arr;
+    }
+
+    public parsePageFrequency(stats:any,wikiPages:any,sections:any)
+    {
+        let result = {};
+        let count = [];
+        let secList :any;
+        let temp: any;
+        let val:Number;
+         
+        for(let idx in stats)
+        {
+            count = [];
+            secList = stats[idx].section_frequencies;
+         
+            for(let section in sections)
+            {
+                val = secList[section.substr(0, 8) + " " + section.substr(8)];
+                if(val == undefined)
+                    val = 0;
+                count.push(val);
+            }
+            result[JSON.stringify(stats[idx].page_id)] = count;
+        }
+
+        return result;
     }
 }

@@ -3,8 +3,10 @@
 
         <!-- Stats -->
 
-        <div class="stats ui-grid-col-9">
+        <div class="stats ui-grid-col-9" [ngSwitch]='mode'>
 
+        <!-- Story Stats -->
+        <ng-container *ngSwitchCase='true'>
            <h1>Statistics for {{data.statSection.data.title}}</h1>
            	<h2> Word Count: {{data.stats.word_count}} </h2>
         	<div class="search">
@@ -15,6 +17,12 @@
                 <p-column field="word" header="Word" [sortable]="true"></p-column>
                 <p-column field="count" header="Word Frequency" [sortable]="true"></p-column>
             </p-dataTable>
+        </ng-container>
+        <!-- Wiki Stats -->
+        <ng-container *ngSwitchCase='false'>
+        <h1>Statistics for {{data.statSegment.data.title}}</h1>
+        <p-chart type="line" [data]="pageFreq"></p-chart>
+        </ng-container>
         </div>
 
         <!-- Navigation -->
@@ -35,7 +43,7 @@
             </p-treeTable>
         </p-tabPanel>
         <p-tabPanel header="Wiki">
-            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegment" (onNodeSelect)="selectSegment($event)">
+            <p-treeTable [value]="wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegment" (onNodeSelect)="selectSegment($event)">
                     <p-column field="data.title">
                         <template let-node="rowData" pTemplate="body">
                                 {{node.data.title}}
