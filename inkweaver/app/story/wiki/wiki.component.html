@@ -84,8 +84,9 @@
                         <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
 
                     </span>
-                    <div [ngSwitch]='wikiPageContent[i+1].active'>
-                        <p-editor *ngSwitchCase='true' [(ngModel)]="section.text" (click)="onEdit()">
+                    <!-- [ngSwitch]='wikiPageContent[i+1].active' *ngSwitchCase='true'  *ngSwitchCase='false' -->
+                    <div >
+                        <p-editor [(ngModel)]="section.text" (click)="onEdit()">
                            
                             <header>
                                 <span class="ql-formats">
@@ -116,7 +117,8 @@
                             </header>
                                 
                         </p-editor>
-                        <textarea *ngSwitchCase='false' pInputTextarea disabled="true" autoResize="false" (click)="onEdit()" [(ngModel)]="section.text"> </textarea>
+                        <!--
+                        <textarea pInputTextarea disabled="true" autoResize="false" (click)="onEdit()" [(ngModel)]="section.text"> </textarea>-->
 
                     </div>
                 </div>

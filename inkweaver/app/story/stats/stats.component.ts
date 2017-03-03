@@ -60,6 +60,8 @@ export class StatsComponent {
         let label = [];
         for(let l in this.data.statsSections)
             label.push(this.data.statsSections[l].title);
+        this.pageFreq = {};
+       
         this.pageFreq = {
             labels: label,
             datasets:[{
@@ -68,12 +70,13 @@ export class StatsComponent {
                     fill: true,
                     borderColor: '#4bc0c0'
             }]
-        }
-        if(this.chart != undefined)
+        };
+        setTimeout( () => {
             this.chart.refresh();
-
-       
+        }, 50);
         
+
+     
     }
 
 
