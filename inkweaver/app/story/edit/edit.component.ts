@@ -1,10 +1,10 @@
 ﻿import {
-    Component, ViewChild, AfterViewInit, ChangeDetectorRef, OnDestroy
+    Component, ViewChild, AfterViewInit, OnDestroy
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs/Rx';
 
-import { Editor, Dialog, TreeNode, MenuItem } from 'primeng/primeng';
+import { Editor, TreeNode, MenuItem } from 'primeng/primeng';
 import { StoryService } from '../story.service';
 import { EditService } from './edit.service';
 import { WikiService } from '../wiki/wiki.service';
@@ -22,12 +22,10 @@ import { PageSummary } from '../../models/wiki/page-summary.model';
 })
 export class EditComponent {
     @ViewChild(Editor) editor: Editor;
-    @ViewChild(Dialog) dialog: Dialog;
 
     private data: any;
     private setLinks: boolean;
     private wordCount: number;
-    private inputRef: any;
     private editorRef: any;
     private timerSub: Subscription;
     private paragraphPosition: ID;
@@ -57,8 +55,7 @@ export class EditComponent {
         private wikiService: WikiService,
         private userService: UserService,
         private apiService: ApiService,
-        private parserService: ParserService,
-        private changeDetectorRef: ChangeDetectorRef) { }
+        private parserService: ParserService) { }
 
     ngOnInit() {
         this.suggest = {};
@@ -79,7 +76,6 @@ export class EditComponent {
     ngAfterViewInit() {
         // Initialize variables
         this.setLinks = true;
-        this.inputRef = this.dialog.el.nativeElement.querySelector('input');
         this.editorRef = this.editor.el.nativeElement.querySelector('div.ql-editor');
 
         // Save position context every 3 seconds
@@ -220,10 +216,6 @@ export class EditComponent {
     }
 
     /* ------------------------- Create Link ------------------------- */
-    public showDialog() {
-        this.inputRef.focus();
-    }
-
     public openLink(editor: EditComponent) {
         if (!editor) {
             editor = this;
@@ -252,18 +244,12 @@ export class EditComponent {
 
             editor.editor.quill.disable();
             editor.displayLinkCreator = true;
-            editor.changeDetectorRef.detectChanges();
         }
-    }
-
-    public hideDialog() {
-        this.editor.quill.enable();
     }
 
     public createLink() {
         this.word = this.word.trim();
         if (this.newLinkID) {
-            this.editor.quill.enable();
             this.editor.quill.deleteText(this.range.index, this.range.length);
 
             this.setLinks = true;
