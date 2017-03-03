@@ -79,29 +79,6 @@ export class EditService {
         }, (reply: any) => { }, { noflight: true });
     }
 
-    public getSectionContent(sectionID: ID, sectionTitle: string = null, paragraphID: ID = null) {
-        if (!sectionTitle) {
-            let sectionNode: TreeNode = this.findSection(this.apiService.data.storyNode[0], JSON.stringify(sectionID));
-            if (sectionNode) {
-                sectionTitle = sectionNode.data.title;
-            }
-        }
-        this.apiService.refreshContent(sectionID, sectionTitle, { paragraph_id: paragraphID });
-    }
-
-    public findSection(start: TreeNode, sectionID: string): TreeNode {
-        if (JSON.stringify(start.data.section_id) == sectionID) {
-            return start;
-        }
-        for (let section of start.children) {
-            let found = this.findSection(section, sectionID);
-            if (found) {
-                return found;
-            }
-        }
-        return null;
-    }
-
     /**
      * Makes the appropriate calls to save changes between the
      * previous state of the story (obj1) and the new state (obj2)

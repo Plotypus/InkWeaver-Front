@@ -8,8 +8,7 @@ export class StatsService {
 
     public get_story_statistics(sid: any) {
         this.parser.send({
-            action: 'get_story_statistics',
-            story_id: sid
+            action: 'get_story_statistics'
         });
     }
 

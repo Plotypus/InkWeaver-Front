@@ -55,10 +55,9 @@ export class UserService {
         });
     }
 
-    public setUserStoryPositionContext(storyID: ID, sectionID: ID, paragraphID: ID) {
+    public setUserStoryPositionContext(sectionID: ID, paragraphID: ID) {
         this.apiService.send({
             action: 'set_user_story_position_context',
-            story_id: storyID,
             position_context: { section_id: sectionID, paragraph_id: paragraphID }
         });
     }

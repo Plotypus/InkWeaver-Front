@@ -37,6 +37,7 @@ export class LoginComponent {
                             this.router.navigate(['/user']);
                         }
                     });
+                    this.apiService.outgoing = {};
                     this.userService.getUserPreferences();
                     this.userService.getUserStories();
                     this.userService.getUserWikis();
@@ -48,6 +49,7 @@ export class LoginComponent {
                     this.router.navigate(['/user']);
                 }
             });
+            this.apiService.outgoing = {};
             this.userService.getUserPreferences();
             this.userService.getUserStories();
             this.userService.getUserWikis();

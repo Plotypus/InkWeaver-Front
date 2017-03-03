@@ -1,1 +1,6 @@
-﻿Change call to createWiki to have a callback
+﻿Select segment when navigating to wiki via a link
+Have list of aliases for IntelliSense
+Add bookmarks
+Add notes
+Spacebar issue on remote server
+

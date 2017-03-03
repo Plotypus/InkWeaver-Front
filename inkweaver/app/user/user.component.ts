@@ -65,7 +65,7 @@ export class UserComponent {
         ];
     }
 
-    // User
+    // User editing
     public edit() {
         this.backup = JSON.parse(JSON.stringify(this.data.user));
         this.editing = true;
@@ -81,7 +81,7 @@ export class UserComponent {
         this.editing = false;
     }
 
-    // Stories
+    // Select a story
     public selectStory(story: StorySummary) {
         this.data.storyDisplay = '';
         this.data.section = new Section();
@@ -91,10 +91,12 @@ export class UserComponent {
         this.data.story.story_title = story.title;
         this.data.story.position_context = story.position_context;
 
-        this.storyService.getStoryInformation(story.story_id);
-        this.router.navigate(['/story/edit']);
+        this.storyService.subscribeToStory(story.story_id, (reply: any) => {
+            this.router.navigate(['/story/edit']);
+        });
     }
 
+    // Create a story
     public openStoryCreator() {
         this.displayStoryCreator = true;
         this.wikis = [{ label: 'Create New Wiki', value: 'new_wiki' }];
@@ -104,34 +106,21 @@ export class UserComponent {
         this.newWiki = this.wikis[0].value;
     }
     public createStory() {
+        this.displayStoryCreator = false;
         if (this.newWiki === 'new_wiki') {
             this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary, (reply: any) => {
-                this.data.storyDisplay = '';
-                this.data.section = new Section();
-                this.data.storyNode = new Array<TreeNode>();
-
-                this.displayStoryCreator = false;
-                this.data.story.story_title = this.title;
                 this.storyService.createStory(this.title, reply.wiki_id, this.summary);
-                this.router.navigate(['/story/edit']);
             });
         } else {
-            this.data.storyDisplay = '';
-            this.data.section = new Section();
-            this.data.storyNode = new Array<TreeNode>();
-
-            this.displayStoryCreator = false;
-            this.data.story.story_title = this.title;
             this.storyService.createStory(this.title, this.newWiki, this.summary);
-
-            this.router.navigate(['/story/edit']);
         }
     }
 
+    // Delete a story
     public openStoryDeleter(event: any, storyID: ID) {
+        event.stopPropagation();
         this.deleteID = storyID;
         this.displayStoryDeleter = true;
-        event.stopPropagation();
     }
     public deleteStory() {
         this.displayStoryDeleter = false;

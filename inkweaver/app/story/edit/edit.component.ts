@@ -78,27 +78,23 @@ export class EditComponent {
         this.setLinks = true;
         this.editorRef = this.editor.el.nativeElement.querySelector('div.ql-editor');
 
-        // Save position context every 3 seconds
-        let timer: Observable<number> = Observable.timer(3000, 3000);
-        this.timerSub = timer.subscribe((tick: number) => {
-            if (this.router.url === '/story/edit') {
-                let idx = this.editor.quill.getSelection();
-                if (idx) {
-                    let blot = this.editor.quill.getLine(idx.index);
-                    if (blot) {
-                        let block = blot[0];
-                        while (block && block.domNode && !block.domNode.id && block.parent) {
-                            block = block.parent;
-                        }
-                        if (block && block.domNode && block.domNode.id) {
-                            this.paragraphPosition = { $oid: block.domNode.id };
-                        }
+        // Add click event handlers to links when necessary
+        this.editor.onSelectionChange.subscribe((event: any) => {
+            let idx = this.editor.quill.getSelection();
+            if (idx) {
+                let blot = this.editor.quill.getLine(idx.index);
+                if (blot) {
+                    let block = blot[0];
+                    while (block && block.domNode && !block.domNode.id && block.parent) {
+                        block = block.parent;
+                    }
+                    if (block && block.domNode && block.domNode.id) {
+                        this.paragraphPosition = { $oid: block.domNode.id };
                     }
                 }
             }
         });
 
-        // Add click event handlers to links when necessary
         this.editor.onTextChange.subscribe((event: any) => {
             if (this.data.story.position_context && this.data.story.position_context.paragraph_id) {
                 this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid);
@@ -106,7 +102,6 @@ export class EditComponent {
             }
 
             this.suggest.display = 'none';
-
             let index: number = event.delta.ops[0].retain;
             if (index) {
                 let text: string = this.editor.quill.getText(0, index + 1);
@@ -173,11 +168,10 @@ export class EditComponent {
     }
 
     ngOnDestroy() {
-        this.timerSub.unsubscribe();
         if (this.data.section.data) {
             this.data.story.position_context = { section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition };
-            this.userService.setUserStoryPositionContext(this.data.story.story_id,
-                this.data.section.data.section_id, this.paragraphPosition);
+            this.userService.setUserStoryPositionContext(this.data.section.data.section_id,
+                this.paragraphPosition);
         }
         if (this.data.prevSection.data) {
             this.save();
@@ -270,7 +264,7 @@ export class EditComponent {
         this.data.section = event.node;
         this.save();
         this.data.prevSection = event.node;
-        this.editService.getSectionContent(event.node.data.section_id, event.node.data.title);
+        this.apiService.refreshContent(event.node.data.section_id, event.node.data.title);
     }
 
     public addSection() {

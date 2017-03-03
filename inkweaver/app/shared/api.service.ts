@@ -28,7 +28,7 @@ import { Heading } from '../models/wiki/heading.model';
 import { Reference } from '../models/wiki/reference.model';
 
 
-import {Stats} from '../models/stats/stats.model';
+import { Stats } from '../models/stats/stats.model';
 const url: string = 'ws://localhost:8080/ws/demo';
 const urlAuth: string = 'wss://inkweaver.plotypus.net:8080/ws';
 
@@ -36,6 +36,7 @@ const urlAuth: string = 'wss://inkweaver.plotypus.net:8080/ws';
 export class ApiService {
     public data = {
         inflight: false,
+        tooltip: new Tooltip(),
         menuItems: new Array<MenuItem>(),
 
         user: new User(),
@@ -47,8 +48,8 @@ export class ApiService {
         story: new Story(),
         prevSection: new Section(),
         section: new Section(),
-        content: new Array<Paragraph>(),
         storyNode: new Array<TreeNode>(),
+        contentObject: new ContentObject(),
 
         statSection: new Section(),
         stats: new Stats(),
@@ -60,15 +61,13 @@ export class ApiService {
         segment: new Segment(),
         page: new Page(),
         pageid: [],
-        selectedEntry: {},
-        tooltip: new Tooltip(),
-        contentObject: new ContentObject()
+        selectedEntry: {}
     };
 
-    public acknowledged: boolean = false;
+    public uuid: string;
     public authentication: boolean = false;
 
-    public queued: string[] = [];
+    public queued: any[] = [];
     public outgoing: Object = {};
     public message_id: number = 0;
     public messages: Subject<string>;
@@ -87,44 +86,123 @@ export class ApiService {
                 let reply = JSON.parse(response);
 
                 if (reply) {
+                    // Extract the fields from the original message
+                    let metadata: any = {};
+                    let callback: Function = () => { };
+                    let message_id: number = reply.reply_to_id;
+                    if (message_id) {
+                        callback = this.outgoing[message_id].callback;
+                        metadata = this.outgoing[message_id].metadata;
+
+                        // Perform callback if necessary
+                        // And delete the entry for the original message
+                        callback(reply);
+                        delete this.outgoing[message_id];
+                    }
+
                     if (reply.event) {
-                        // ---------- Event ---------- //
                         switch (reply.event) {
                             case 'acknowledged':
-                                this.acknowledged = true;
+                                this.uuid = reply.uuid;
                                 for (let queue of this.queued) {
+                                    queue.identifier.uuid = reply.uuid;
+                                    console.log(queue);
                                     this.messages.next(queue);
                                 }
                                 break;
 
+                            // ---------- User ---------- //
+                            case 'got_user_preferences':
+                                this.data.user = reply;
+                                break;
+                            case 'got_user_stories':
+                                this.data.stories = reply.stories;
+                                this.data.stories.push({
+                                    story_id: null, title: null,
+                                    access_level: null, position_context: null
+                                });
+                                break;
+                            case 'got_user_wikis':
+                                this.data.wikis = reply.wikis;
+                                this.data.wikis.push({
+                                    wiki_id: null, title: null,
+                                    access_level: null
+                                });
+                                break;
+                            case 'set_user_name':
+                            case 'set_user_email':
+                            case 'set_user_bio':
+                                this.refreshUser();
+                                break;
+
                             // ----- Story ----- //
-                            case 'story_updated':
-                                this.refreshStoryInfo();
-                                this.refreshStoryHierarchy();
-                                this.refreshContent();
+                            case 'story_created':
                             case 'story_deleted':
                                 this.refreshUser();
+                                break;
+                            case 'story_updated':
+                                this.refreshUser();
+                            case 'subscribed_to_story':
+                                this.refreshStoryInfo();
+                                break;
+                            case 'got_story_information':
+                                reply.story_id = this.data.story.story_id;
+                                reply.position_context = this.data.story.position_context;
+                                this.data.story = reply;
+                                this.data.wiki.wiki_id = reply.wiki_id;
+                                this.refreshStoryHierarchy();
+                                break;
+                            case 'got_story_hierarchy':
+                            case 'got_section_hierarchy':
+                                this.data.storyNode = [this.parser.sectionToTree(
+                                    this.parser, reply.hierarchy, null)];
+
+                                if (this.data.story.position_context &&
+                                    this.data.story.position_context.section_id) {
+                                    this.data.section.data = {
+                                        section_id: this.data.story.position_context.section_id
+                                    };
+                                } else if (!this.data.section.data) {
+                                    this.data.section = this.data.storyNode[0];
+                                }
+
+                                this.data.section = this.parser.setSection(this.data.storyNode[0],
+                                    JSON.stringify(this.data.section.data.section_id));
+                                this.data.prevSection = this.data.section;
+                                this.refreshContent();
                                 break;
                             case 'inner_subsection_added':
                             case 'section_title_updated':
                             case 'section_deleted':
                                 this.refreshStoryHierarchy();
-                                this.refreshContent();
                                 break;
                             case 'paragraph_added':
                             case 'paragraph_updated':
                             case 'paragraph_deleted':
                                 this.refreshContent();
                                 break;
-                            case 'bookmark_added':
-                                break;
-                            case 'bookmark_updated':
-                                break;
-                            case 'bookmark_deleted':
-                                break;
-                            case 'note_updated':
-                                break;
-                            case 'note_deleted':
+                            case 'got_section_content':
+                                this.data.contentObject = this.parser.parseContent(
+                                    reply.content, this.data.linkTable);
+                                this.data.storyDisplay = this.parser.setContentDisplay(
+                                    reply.content);
+                                this.data.story.position_context = metadata.positionContext;
+                                this.data.section = this.parser.setSection(
+                                    this.data.storyNode[0], JSON.stringify(metadata.sectionID));
+
+                                if (JSON.stringify(metadata.sectionID) === JSON.stringify(
+                                    this.data.story.section_id)) {
+                                    if (!this.data.storyDisplay) {
+                                        this.data.storyDisplay =
+                                            '<p><em>Write a summary here!</em></p>';
+                                    }
+                                    this.data.storyDisplay = '<h1>Summary</h1>'
+                                        + this.data.storyDisplay + '<h1>Table of Contents</h1>'
+                                        + this.setTableOfContents(this.data.storyNode[0], 0);
+                                } else {
+                                    this.data.storyDisplay = '<h1>' + metadata.title + '</h1>'
+                                        + this.data.storyDisplay;
+                                }
                                 break;
 
                             // ----- Links ----- //
@@ -135,24 +213,62 @@ export class ApiService {
                                 break;
 
                             // ----- Wiki ----- //
-                            case 'segment_added':
-                                this.data.pageid.push(reply.segment_id);
-                                this.refreshWikiHierarchy();
+                            // ---------- Wiki ---------- //
+                            case 'wiki_created':
+                            case 'wiki_deleted':
+                                this.refreshUser();
                                 break;
+                            case 'segment_added':
+                                this.refreshWikiHierarchy();
+
                             case 'page_added':
-                                let out: any = this.outgoing['page' + reply.title]
-                                if (out) {
-                                    let callback: Function = out.callback;
+                                if (this.outgoing['page' + reply.title]) {
+                                    let callback: Function =
+                                        this.outgoing['page' + reply.title].callback;
                                     callback(reply);
                                     delete this.outgoing['page' + reply.title];
                                 }
-                                this.data.pageid.push(reply.page_id);
+                            case 'alias_deleted':
+                            case 'alias_name_changed':
+                                this.refreshContent();
                                 this.refreshWikiHierarchy();
                                 break;
-                            case 'alias_name_changed':
-                                this.refreshWikiHierarchy();
-                            case 'alias_deleted':
-                                this.refreshContent();
+
+                            case 'got_wiki_information':
+                                reply.wiki_id = this.data.wiki.wiki_id;
+                                this.data.wiki = reply;
+                                this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
+                                this.refreshWikiHierarchy(reply.wiki_id);
+                                break;
+                            case 'got_wiki_hierarchy':
+                            case 'got_wiki_segment_hierarchy':
+                                this.data.segment = reply.hierarchy;
+                                this.data.wikiNav = this.parser.parseWiki(
+                                    reply.hierarchy, this.data.selectedEntry);
+                                this.data.linkTable = this.parser.parseLinkTable(
+                                    reply.link_table);
+                                break;
+                            case 'got_wiki_segment':
+                                this.data.page = JSON.parse(JSON.stringify(reply).replace(
+                                    "template_headings", "headings"));
+                                break;
+                            case 'got_wiki_page':
+                                this.data.page = this.parser.setPageDisplay(
+                                    reply, this.data.linkTable);
+                                this.data.tooltip.text = '<b>' + reply.title + '</b>';
+                                if (reply.headings && reply.headings[0]) {
+                                    this.data.tooltip.text += '<br/><u>' + reply.headings[0].title
+                                        + '</u><br/>' + reply.headings[0].text;
+                                }
+                                break;
+
+                            /*Statistics*/
+                            case 'got_story_statistics':
+                            case 'got_section_statistics':
+                            case 'got_paragraph_statistics':
+                                this.data.stats.word_count = reply.statistics.word_count;
+                                this.data.stats.word_frequency = this.parser.parseWordFrequency(
+                                    reply.statistics.word_frequency);
                                 break;
 
                             default:
@@ -160,130 +276,6 @@ export class ApiService {
                         }
                         return reply.event;
                     }
-
-                    // Extract the fields from the original message
-                    if (!reply.reply_to_id) {
-                        reply = JSON.parse(reply);
-                    }
-                    let message_id: number = reply.reply_to_id;
-                    let out: any = this.outgoing[message_id];
-
-                    let action: string = out.action;
-                    let callback: Function = out.callback;
-                    let metadata: any = out.metadata;
-
-                    // Perform callback if necessary
-                    // And delete the entry for the original message
-                    callback(reply);
-                    delete this.outgoing[message_id];
-
-                    // ---------- Action ---------- //
-                    switch (action) {
-                        // ---------- User ---------- //
-                        case 'get_user_preferences':
-                            this.data.user = reply;
-                            break;
-                        case 'get_user_stories':
-                            this.data.stories = reply.stories;
-                            this.data.stories.push({ story_id: null, title: null, access_level: null, position_context: null });
-                            break;
-                        case 'get_user_wikis':
-                            this.data.wikis = reply.wikis;
-                            this.data.wikis.push({ wiki_id: null, title: null, access_level: null });
-                            break;
-                        case 'set_user_name':
-                        case 'set_user_email':
-                        case 'set_user_bio':
-                            this.refreshUser();
-                            break;
-
-                        // ---------- Story ---------- //
-                        case 'create_story':
-                            this.refreshUser();
-                            this.data.story = reply;
-                        case 'get_story_information':
-                            reply.story_id = this.data.story.story_id;
-                            reply.position_context = this.data.story.position_context;
-                            this.data.story = reply;
-                            this.data.wiki.wiki_id = reply.wiki_id;
-
-                            this.refreshStoryHierarchy(reply.story_id);
-                            this.refreshWikiInfo(reply.wiki_id);
-                            this.refreshWikiHierarchy(reply.wiki_id);
-                            break;
-                        case 'get_story_hierarchy':
-                        case 'get_section_hierarchy':
-                            this.data.storyNode = [this.parser.sectionToTree(this.parser, reply.hierarchy, null)];
-
-                            if (this.data.story.position_context && this.data.story.position_context.section_id) {
-                                this.data.section.data = { section_id: this.data.story.position_context.section_id };
-                            } else if (!this.data.section.data) {
-                                this.data.section = this.data.storyNode[0];
-                            }
-
-                            this.data.section = this.parser.setSection(this.data.storyNode[0],
-                                JSON.stringify(this.data.section.data.section_id));
-                            this.data.prevSection = this.data.section;
-                            this.refreshContent();
-                            break;
-                        case 'get_section_content':
-                            this.data.content = reply.content;
-                            this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
-                            this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
-                            this.data.story.position_context = { paragraph_id: metadata.paragraphID };
-                            this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(metadata.sectionID));
-
-                            if (JSON.stringify(metadata.sectionID) === JSON.stringify(this.data.story.section_id)) {
-                                if (!this.data.storyDisplay) {
-                                    this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
-                                }
-                                this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay
-                                    + '<h1>Table of Contents</h1>' + this.setTableOfContents(this.data.storyNode[0], 0);
-                            } else {
-                                this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
-                            }
-                            break;
-
-                        // ---------- Wiki ---------- //
-                        case 'create_wiki':
-                            this.refreshUser();
-                            this.data.wiki = reply;
-                        case 'get_wiki_information':
-                            reply.wiki_id = this.data.wiki.wiki_id;
-                            this.data.wiki = reply;
-                            this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
-
-                            this.refreshWikiHierarchy(reply.wiki_id);
-                            break;
-                        case 'get_wiki_hierarchy':
-                        case 'get_wiki_segment_hierarchy':
-                            this.data.segment = reply.hierarchy;
-                            this.data.wikiNav = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
-                            this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
-                            break;
-                        case 'get_wiki_segment':
-                            reply = JSON.parse(JSON.stringify(reply).replace("template_headings", "headings"));
-                            this.data.page = reply;
-                            break;
-                        case 'get_wiki_page':
-                            this.data.page = this.parser.setPageDisplay(reply, this.data.linkTable);
-                            this.data.tooltip.text = '<b>' + reply.title + '</b>';
-                            if (reply.headings && reply.headings[0]) {
-                                this.data.tooltip.text += '<br/><u>' + reply.headings[0].title + '</u><br/>' + reply.headings[0].text;
-                            }
-                            break;
-                        /*Statistics*/
-                        case 'get_story_statistics':
-                        case 'get_section_statistics':
-                        case 'get_paragraph_statistics':
-                            this.data.stats.word_count = reply.statistics.word_count;
-                            this.data.stats.word_frequency = this.parser.parseWordFrequency(reply.statistics.word_frequency);
-                            break;
-                        default:
-                            console.log('Unknown action: ' + action);
-                            break;
-                    }
-                    return action;
                 }
                 return 'unknown';
             });
@@ -300,31 +292,54 @@ export class ApiService {
     }
 
     // ----- STORY ----- //
-    public refreshStoryInfo(storyID: ID = this.data.story.story_id) {
-        this.send({ action: 'get_story_information', story_id: storyID });
+    public refreshStoryInfo() {
+        this.send({ action: 'get_story_information' });
     }
-    public refreshStoryHierarchy(storyID: ID = this.data.story.story_id) {
-        this.send({ action: 'get_story_hierarchy', story_id: storyID });
+    public refreshStoryHierarchy() {
+        this.send({ action: 'get_story_hierarchy' });
     }
-    public refreshContent(sectionID: ID = this.data.section.data.section_id,
-        sectionTitle: string = this.data.section.data.title, position: any = this.data.story.position_context) {
+    public refreshContent(
+        sectionID: ID = this.data.section.data.section_id,
+        title: string = this.data.section.data.title,
+        positionContext: any = this.data.story.position_context) {
+        if (!title) {
+            let sectionNode: TreeNode = this.findSection(
+                this.data.storyNode[0], JSON.stringify(sectionID));
+            if (sectionNode) {
+                title = sectionNode.data.title;
+            }
+        }
         this.data.storyDisplay = '';
         this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => { },
-            { sectionID: sectionID, title: sectionTitle, paragraphID: position ? position.paragraph_id : null });
+            { sectionID: sectionID, title: title, positionContext: positionContext });
     }
     public setTableOfContents(storyNode: TreeNode, indent: number): string {
-        let result: string = '<a href="sid' + storyNode.data.section_id.$oid + '">' + storyNode.data.title + '</a>';
+        let result: string = '<a href="sid' + storyNode.data.section_id.$oid + '">'
+            + storyNode.data.title + '</a>';
         if (indent === 0) {
             result = '<h3>' + result + '</h3>';
         }
         if (storyNode.children) {
             result += '<ul>';
             for (let node of storyNode.children) {
-                result += '<li class=ql-indent-' + indent + '>' + this.setTableOfContents(node, indent + 1) + '</li>';
+                result += '<li class=ql-indent-' + indent + '>' + this.setTableOfContents(
+                    node, indent + 1) + '</li>';
             }
             result += '</ul>';
         }
         return result;
+    }
+    public findSection(start: TreeNode, sectionID: string): TreeNode {
+        if (JSON.stringify(start.data.section_id) == sectionID) {
+            return start;
+        }
+        for (let section of start.children) {
+            let found = this.findSection(section, sectionID);
+            if (found) {
+                return found;
+            }
+        }
+        return null;
     }
 
     // ----- WIKI ----- //
@@ -341,8 +356,8 @@ export class ApiService {
      * @param callback
      * @param metadata
      */
-    public send(message: any, callback: (reply: any) => void = (reply: any) => { }, metadata: any = {}) {
-        message.message_id = ++this.message_id;
+    public send(message: any, callback: Function = () => { }, metadata: any = {}) {
+        message.identifier = { message_id: ++this.message_id };
 
         // Keep track of outgoing messages
         let key: string = '';
@@ -352,7 +367,6 @@ export class ApiService {
             key = message.message_id;
         }
         this.outgoing[key] = {
-            action: message.action,
             callback: callback,
             metadata: metadata
         };
@@ -361,8 +375,9 @@ export class ApiService {
         }
 
         // Send or queue the message
-        console.log(message);
-        if (this.acknowledged) {
+        if (this.uuid) {
+            message.identifier.uuid = this.uuid;
+            console.log(message);
             this.messages.next(message);
         } else {
             this.queued.push(message);
