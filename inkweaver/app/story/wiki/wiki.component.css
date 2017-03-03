@@ -54,11 +54,14 @@
     
 }
 
-.wiki .ui-datalist .ui-datalist-data
+.wiki .ui-datalist .ui-datalist-data li{
+    padding:.25em 0em 0.25em 0em
+}
+.wiki .ui-datalist .ui-datalist-data div
 {
     background: var(--light-gray);
     text-align: left;
-    padding: 0 1em 0 1em;
+    padding: .25em 1em .25em 1em;
     border-radius: 25px;
     cursor:pointer;
 }

@@ -125,7 +125,9 @@
                     <p-dataList [value]="wikiPage.references">
                         <header style="color:var(--light-gray); text-align: left;">References</header>
                         <template let-ref pTemplate="item">
+                           
                             <div [innerHTML]="ref.text" (click)="onReference(ref)"></div>
+                           
                         </template>
                     </p-dataList>
                 </ng-container>

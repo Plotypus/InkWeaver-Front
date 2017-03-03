@@ -256,7 +256,6 @@ export class ApiService {
                             reply.wiki_id = this.data.wiki.wiki_id;
                             this.data.wiki = reply;
                             this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
-
                             this.refreshWikiHierarchy(reply.wiki_id);
                             break;
                         case 'get_wiki_hierarchy':
