@@ -5,6 +5,8 @@
 
         <div class="stats ui-grid-col-9">
 
+           <h1>Statistics for {{data.statSection.data.title}}</h1>
+           	<h2> Word Count: {{data.stats.word_count}} </h2>
         	<div class="search">
         	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
         	    <input #gb type="text" pInputText size="50" placeholder="Global Filter">
@@ -17,6 +19,8 @@
 
         <!-- Navigation -->
         <div class="navigation ui-grid-col-3">
+        <p-tabView>
+        <p-tabPanel header="Story">
             <p-treeTable [value]="data.storyNode"
                          selectionMode="single"
                          [(selection)]="data.statSection"
@@ -29,6 +33,18 @@
                     </template>
                 </p-column>
             </p-treeTable>
+        </p-tabPanel>
+        <p-tabPanel header="Wiki">
+            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegment" (onNodeSelect)="selectSegment($event)">
+                    <p-column field="data.title">
+                        <template let-node="rowData" pTemplate="body">
+                                {{node.data.title}}
+                        </template>
+
+                    </p-column>
+            </p-treeTable>
+        </p-tabPanel>
+        </p-tabView>
         </div>
     </div>
 </div>

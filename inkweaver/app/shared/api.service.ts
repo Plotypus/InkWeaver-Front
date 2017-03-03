@@ -51,7 +51,11 @@ export class ApiService {
         storyNode: new Array<TreeNode>(),
 
         statSection: new Section(),
+        statSegment: new Segment(),
         stats: new Stats(),
+        statsPages: {},
+
+
 
         wikiNav: [],
         wikiNode: [],
@@ -258,7 +262,9 @@ export class ApiService {
                         case 'get_wiki_hierarchy':
                         case 'get_wiki_segment_hierarchy':
                             this.data.segment = reply.hierarchy;
-                            this.data.wikiNav = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
+                            let result = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
+                            this.data.wikiNav = result[0];
+                            this.data.statsPages = result[1];
                             this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
                             break;
                         case 'get_wiki_segment':
@@ -278,6 +284,8 @@ export class ApiService {
                         case 'get_paragraph_statistics':
                             this.data.stats.word_count = reply.statistics.word_count;
                             this.data.stats.word_frequency = this.parser.parseWordFrequency(reply.statistics.word_frequency);
+                            break;
+                        case 'get_page_frequencies':
                             break;
                         default:
                             console.log('Unknown action: ' + action);

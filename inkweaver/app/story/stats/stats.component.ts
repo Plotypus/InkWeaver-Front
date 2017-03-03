@@ -26,6 +26,13 @@ export class StatsComponent {
 
     ngOnInit(){
         this.data = this.apiService.data;
+        if(!this.data.statSection.hasOwnProperty('data'))
+        {
+            this.data.statSection = this.data.storyNode[0];
+            this.statsService.get_section_statistics(this.data.storyNode[0].data.section_id);   
+        }
+        else
+            this.statsService.get_section_statistics(this.data.statSection.data.section_id);
     }
 
 
@@ -33,6 +40,12 @@ export class StatsComponent {
         this.data.statSection = event.node;
         this.statsService.get_section_statistics(event.node.data.section_id);
     //we would want to call ask for the stats
+    }
+
+    public selectSegment(event:any)
+    {
+        this.data.statSegment = event.node;
+        this.statsService.get_page_frequency(this.data.story.story_id,this.data.wiki.wiki_id);
     }
 
 

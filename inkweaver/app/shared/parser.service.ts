@@ -154,18 +154,23 @@ export class ParserService {
         temp.label = json['title'];
         temp.type = "title";
         nav.push(temp);
+        let pageDic = {};
         let path = this.createPath(selected);
         for (let index in json['segments']) {
-            nav.push(this.jsonToWiki(json['segments'][index], path));
+            let result = this.jsonToWiki(json['segments'][index], path,pageDic);
+            nav.push(result[0]);
+            pageDic = result[1];
         }
         for (let index in json['pages']) {
-            nav.push(this.jsonToPage(json['pages'][index]));
+            let result = this.jsonToPage(json['pages'][index]);
+            nav.push(result);
+            pageDic[JSON.stringify(result.data.id)] = result.data;
         }
 
-        return nav;
+        return [nav,pageDic];
     }
 
-    public jsonToWiki(wikiJson: any, selected: Array<String>): TreeNode {
+    public jsonToWiki(wikiJson: any, selected: Array<String>, pages: {}): TreeNode {
         let wiki: TreeNode = {};
 
         let parent: TreeNode = {};
@@ -182,11 +187,10 @@ export class ParserService {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
                 for (let segment in segmentJsons) {
-                    // parent.label = wiki.label;
-                    // if (par != null)
-                    // parent.parent = par;
-
-                    let subsegment = this.jsonToWiki(segmentJsons[segment], selected);
+                   
+                    let result = this.jsonToWiki(segmentJsons[segment], selected,pages);
+                    let subsegment = result[0];
+                    pages = result[1];
                     subsegment.type = "category";
                     subsegment.parent = wiki;
                     wiki.children.push(subsegment);
@@ -195,10 +199,9 @@ export class ParserService {
             else if (field === "pages") {
                 let pagesJsons = wikiJson[field];
                 for (let page in pagesJsons) {
-                    // parent.label = wiki.label;
-                    // parent.parent = par;
-
+                    
                     let leafpage = this.jsonToPage(pagesJsons[page]);
+                    pages[JSON.stringify(leafpage.data.id)] = leafpage.data;
                     leafpage.parent = wiki;
                     wiki.children.push(leafpage);
                 }
@@ -210,7 +213,7 @@ export class ParserService {
             wiki.children = wiki.children.sort(this.sort);
         }
 
-        return wiki;
+        return [wiki,pages];
     }
 
 
@@ -340,5 +343,10 @@ export class ParserService {
         }
 
         return wordFreq;
+    }
+
+    public flattenTree(tree:any)
+    {
+        
     }
 }

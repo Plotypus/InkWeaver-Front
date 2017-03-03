@@ -12,9 +12,7 @@ import { PageSummary } from '../../models/wiki/page-summary.model';
     templateUrl: './app/story/wiki/wiki.component.html'
 })
 export class WikiComponent {
-
-    @ViewChildren(Editor) editor: Editor;
-
+    
     private data: any;
     private selectedEntry: TreeNode;  
     private showAddDialog: any;
@@ -70,7 +68,8 @@ export class WikiComponent {
                     this.icons.push('fa-pencil');
                     this.wikiPageContent.push({
                         'title': this.wikiPage.headings[i].title,
-                        'text': this.wikiPage.headings[i].text
+                        'text': this.wikiPage.headings[i].text,
+                        'active':false
                     });
                 }
 
@@ -104,7 +103,8 @@ export class WikiComponent {
             this.icons.push('fa-pencil');
             this.wikiPageContent.push({
                 'title': this.wikiPage.headings[i].title,
-                'text': this.wikiPage.headings[i].text
+                'text': this.wikiPage.headings[i].text,
+                'active':false
             });
         }
 
