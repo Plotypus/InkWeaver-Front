@@ -48,7 +48,7 @@ export class EditService {
         if (succeedingParagraphID) {
             p.succeeding_paragraph_id = succeedingParagraphID
         }
-        this.apiService.send(p, (reply: any) => { }, { noflight: true });
+        this.apiService.send(p, () => { }, { noflight: true });
     }
 
     public editParagraph(storyID: ID, sectionID: ID, text: string, paragraphID: ID) {
@@ -68,7 +68,7 @@ export class EditService {
                 text: text
             },
             paragraph_id: paragraphID
-        }, (reply: any) => { }, { noflight: true });
+        }, () => { }, { noflight: true });
     }
 
     public deleteParagraph(paragraphID: ID, sectionID: ID) {
@@ -76,7 +76,7 @@ export class EditService {
             action: 'delete_paragraph',
             paragraph_id: paragraphID,
             section_id: sectionID
-        }, (reply: any) => { }, { noflight: true });
+        }, () => { }, { noflight: true });
     }
 
     /**

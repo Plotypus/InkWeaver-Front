@@ -5,6 +5,7 @@ import { LoginService } from './login.service';
 import { UserService } from '../user/user.service';
 import { ApiService } from '../shared/api.service';
 import { ParserService } from '../shared/parser.service';
+import { StoryService } from '../story/story.service';
 
 @Component({
     selector: 'login',
@@ -19,9 +20,13 @@ export class LoginComponent {
         private loginService: LoginService,
         private userService: UserService,
         private apiService: ApiService,
+        private storyService: StoryService,
         private parserService: ParserService) { }
 
     ngOnInit() {
+        this.storyService.unsubscribeFromStory();
+        this.storyService.unsubscribeFromWiki();
+
         this.data = this.apiService.data;
         this.data.menuItems = [{ label: 'About', routerLink: ['/about'] }];
         this.login = { username: '', password: '' };

@@ -76,7 +76,7 @@ export class WikiComponent {
 
             }
             else if (action.includes("delete")) {
-                this.wikiService.getWikiHierarchy(this.data.story.wiki_id);
+                this.apiService.refreshWikiHierarchy();
                 if (action == "alias_deleted") {
                     this.wikiService.getWikiPage(this.data.selectedEntry.data.id);
                 }
@@ -121,7 +121,7 @@ export class WikiComponent {
         //Take care of when the title page is clicked
         if (this.data.wiki.wiki_title == page.node.data.title) {
             this.wikiPage = null;
-            this.wikiService.getWikiInformation(this.data.story.wiki_id);
+            this.apiService.refreshWikiInfo();
         }
         else if (page.node.type == "category") {
             page.node.expanded = !page.node.expanded;

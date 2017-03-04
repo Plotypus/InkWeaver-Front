@@ -353,4 +353,22 @@ export class EditComponent {
             }
         }
     }
+
+    public onDragStart(event: any, node: TreeNode) {
+        console.log('drag started');
+        console.log(event);
+        console.log(node);
+    }
+
+    public onDragEnd(event: any, node: TreeNode) {
+        console.log('drag ended');
+        console.log(event);
+        console.log(node);
+    }
+
+    public onDrop(event: any, node: TreeNode) {
+        console.log('dropped');
+        console.log(event);
+        console.log(node);
+    }
 }

@@ -4,7 +4,7 @@
 <p-dialog modal="true" header="Create New Link" [(visible)]="displayLinkCreator"
           width="450" height="450" responsive="true" (keyup.enter)="createLink()">
 
-    <input #link type="text" pInputText [(ngModel)]="word" />
+    <input pInputText type="text" #link [(ngModel)]="word" />
     <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkID" filter="link"></p-dropdown><br />
 
     <div class="modal-label" *ngIf="!newLinkID">Category Of Your New Wiki Page</div>
@@ -20,7 +20,7 @@
 <p-dialog modal="true" header="Add New Section" [(visible)]="displaySectionCreator"
           width="450" height="450" responsive="true" (keyup.enter)="addSection()">
 
-    <input #link type="text" pInputText [(ngModel)]="sectionTitle" />
+    <input pInputText type="text" [(ngModel)]="sectionTitle" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <button pButton type="button" label="Add Section" icon="fa-link" iconPos="right" (click)="addSection()"></button>
@@ -32,7 +32,7 @@
 <p-dialog modal="true" header="Edit Section Title" [(visible)]="displaySectionEditor"
           width="450" height="450" responsive="true" (keyup.enter)="editSectionTitle()">
 
-    <input #link type="text" pInputText [(ngModel)]="sectionTitle" />
+    <input pInputText type="text" [(ngModel)]="sectionTitle" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <button pButton type="button" label="Rename Section" icon="fa-link" iconPos="right" (click)="editSectionTitle()"></button>
@@ -101,7 +101,12 @@
                          (onNodeSelect)="selectSection($event)">
                 <p-column field="title">
                     <template let-col let-node="rowData" pTemplate="body">
-                        <span (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation()">
+                        <span pDraggable="treedragdrop"
+                              pDroppable="treedragdrop"
+                              (onDragStart)="onDragStart($event, node)"
+                              (onDragEnd)="onDragEnd($event, node)"
+                              (onDrop)="onDrop($event, node)"
+                              (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation()">
                             {{node.data.title | truncate : 25}}
                         </span>
                     </template>

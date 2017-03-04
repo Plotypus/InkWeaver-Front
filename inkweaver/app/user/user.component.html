@@ -9,7 +9,7 @@
             </tr>
             <tr>
                 <td><label>Summary</label></td>
-                <td><input pInputText type="text" [(ngModel)]="summary" /></td>
+                <td><textarea pInputTextArea [(ngModel)]="summary"></textarea></td>
             </tr>
             <tr>
                 <td><label>Wiki</label></td>
@@ -28,7 +28,7 @@
                 <td></td>
                 <td>
                     <button pButton type="button" label="Create Story" (click)="createStory()"
-                            [disabled]="!(title && summary && (newWiki != 'new_wiki' || (newWikiTitle && newWikiSummary)))"></button>
+                            [disabled]="!(title && (newWiki != 'new_wiki' || newWikiTitle))"></button>
                 </td>
             </tr>
         </tbody>
@@ -74,31 +74,48 @@
         </div>
 
         <div class="navigation ui-grid-col-3">
-            <div class="user-info" [ngSwitch]="editing">
+            <div class="user-info">
                 <div class="user-info-fields">
                     <div class="user-info-label">Username: </div>
-                    <div class="user-info-field">{{data.user.username}}</div><br />
+                    <div class="user-info-field">
+                        <p-inplace closeable="true" [active]="active.username">
+                            <span pInplaceDisplay>{{data.user.username}}</span>
+                            <span pInplaceContent>
+                                <input pInputText type="text" value="data.user.username" />
+                                <button pButton icon="fa-check" (click)="save('username')"></button>
+                            </span>
+                        </p-inplace>
+                    </div><br />
                     <div class="user-info-label">Name: </div>
                     <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.name}}</span>
-                        <input pInputText *ngSwitchCase="true" [(ngModel)]="data.user.name" />
+                        <p-inplace closeable="true" [active]="active.name">
+                            <span pInplaceDisplay>{{data.user.name}}</span>
+                            <span pInplaceContent>
+                                <input pInputText type="text" value="data.user.name" />
+                                <button pButton icon="fa-check" (click)="save('name')"></button>
+                            </span>
+                        </p-inplace>
                     </div><br />
                     <div class="user-info-label">Email: </div>
                     <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.email}}</span>
-                        <input pInputText *ngSwitchCase="true" [(ngModel)]="data.user.email" />
+                        <p-inplace closeable="true" [active]="active.email">
+                            <span pInplaceDisplay>{{data.user.email}}</span>
+                            <span pInplaceContent>
+                                <input pInputText type="text" value="data.user.email" />
+                                <button pButton icon="fa-check" (click)="save('email')"></button>
+                            </span>
+                        </p-inplace>
                     </div><br />
                     <div class="user-info-label">Bio: </div>
                     <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.bio}}</span>
-                        <textarea pInputTextArea *ngSwitchCase="true" [(ngModel)]="data.user.bio"></textarea>
+                        <p-inplace closeable="true" [active]="active.bio">
+                            <span pInplaceDisplay>{{data.user.bio}}</span>
+                            <span pInplaceContent>
+                                <textarea pInputTextarea [(ngModel)]="data.user.bio"></textarea>
+                                <button pButton icon="fa-check" (click)="save('bio')"></button>
+                            </span>
+                        </p-inplace>
                     </div>
-                </div>
-
-                <div class="user-buttons">
-                    <button pButton label="Edit" *ngSwitchCase="false" (click)="edit()"></button>
-                    <button pButton label="Cancel" *ngSwitchCase="true" (click)="cancel()"></button>
-                    <button pButton label="Save" *ngSwitchCase="true" (click)="save()"></button>
                 </div>
             </div>
         </div>

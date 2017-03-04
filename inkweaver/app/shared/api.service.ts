@@ -238,7 +238,7 @@ export class ApiService {
                                 reply.wiki_id = this.data.wiki.wiki_id;
                                 this.data.wiki = reply;
                                 this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
-                                this.refreshWikiHierarchy(reply.wiki_id);
+                                this.refreshWikiHierarchy();
                                 break;
                             case 'got_wiki_hierarchy':
                             case 'got_wiki_segment_hierarchy':
@@ -310,7 +310,7 @@ export class ApiService {
             }
         }
         this.data.storyDisplay = '';
-        this.send({ action: 'get_section_content', section_id: sectionID }, (reply: any) => { },
+        this.send({ action: 'get_section_content', section_id: sectionID }, () => { },
             { sectionID: sectionID, title: title, positionContext: positionContext });
     }
     public setTableOfContents(storyNode: TreeNode, indent: number): string {
@@ -343,11 +343,11 @@ export class ApiService {
     }
 
     // ----- WIKI ----- //
-    public refreshWikiInfo(wikiID: ID = this.data.story.wiki_id) {
-        this.send({ action: 'get_wiki_information', wiki_id: wikiID });
+    public refreshWikiInfo() {
+        this.send({ action: 'get_wiki_information' });
     }
-    public refreshWikiHierarchy(wikiID: ID = this.data.story.wiki_id) {
-        this.send({ action: 'get_wiki_hierarchy', wiki_id: wikiID });
+    public refreshWikiHierarchy() {
+        this.send({ action: 'get_wiki_hierarchy' });
     }
 
     /**

@@ -18,7 +18,7 @@ import { Section } from '../models/story/section.model';
 })
 export class UserComponent {
     private data: any;
-    private editing: boolean;
+    private active: any;
     private backup: User;
 
     private wikis: SelectItem[];
@@ -41,6 +41,8 @@ export class UserComponent {
         private apiService: ApiService) { }
 
     ngOnInit() {
+        this.storyService.unsubscribeFromStory();
+        this.storyService.unsubscribeFromWiki();
         if (!this.apiService.messages) {
             this.router.navigate(['/login']);
         }
@@ -52,7 +54,7 @@ export class UserComponent {
             { label: 'Sign Out', routerLink: ['/login'] },
         ];
 
-        this.editing = false;
+        this.active = { username: false, name: false, email: false, bio: false };
         this.colors = [
             '#cb735c', // red-orange
             '#fdd17c', // yellow
@@ -66,19 +68,19 @@ export class UserComponent {
     }
 
     // User editing
-    public edit() {
-        this.backup = JSON.parse(JSON.stringify(this.data.user));
-        this.editing = true;
-    }
-    public cancel() {
-        this.data.user = this.backup;
-        this.editing = false;
-    }
-    public save() {
-        this.userService.setUserName(this.data.user.name);
-        this.userService.setUserEmail(this.data.user.email);
-        this.userService.setUserBio(this.data.user.bio);
-        this.editing = false;
+    public save(field: string) {
+        this.active[field] = false;
+        switch (field) {
+            case 'name':
+                this.userService.setUserName(this.data.user.name);
+                break;
+            case 'email':
+                this.userService.setUserEmail(this.data.user.email);
+                break;
+            case 'bio':
+                this.userService.setUserBio(this.data.user.bio);
+                break;
+        }
     }
 
     // Select a story
