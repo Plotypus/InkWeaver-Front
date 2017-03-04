@@ -43,7 +43,7 @@
             </p-treeTable>
         </p-tabPanel>
         <p-tabPanel header="Wiki">
-            <p-treeTable [value]="wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegment" (onNodeSelect)="selectSegment($event)">
+            <p-treeTable [value]="data.statsPages" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegment" (onNodeSelect)="selectSegment($event)">
                     <p-column field="data.title">
                         <template let-node="rowData" pTemplate="body">
                                 {{node.data.title}}

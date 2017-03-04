@@ -41,8 +41,6 @@ export class StatsComponent {
             this.statsService.get_section_statistics(this.data.statSection.data.section_id);
         this.statsService.get_page_frequency(this.data.story.story_id,this.data.wiki.wiki_id);
         this.mode = true;
-        for(let i = 0; i < this.data.wikiNav.length; i++)
-            this.wikiNav = this.wikiNav.concat(this.parserService.getTreeArray(this.data.wikiNav[i],true));
     }
 
 

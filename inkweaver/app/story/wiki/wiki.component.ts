@@ -332,9 +332,4 @@ export class WikiComponent {
         this.editService.getSectionContent(ref.section_id, null, ref.paragraph_id);
         this.router.navigate(['/story/edit']);
     }
-
-    public onEdit() {
-        console.log("clicked");
-        alert("clicked");
-    }
 }

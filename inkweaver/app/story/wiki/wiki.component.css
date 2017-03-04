@@ -1,5 +1,8 @@
 ﻿/* -------------------- Wiki -------------------- */
 
+.wiki{
+    overflow: auto;
+}
 .wiki .ui-editor-content {
     background: white;
 }

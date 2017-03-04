@@ -153,24 +153,27 @@ export class ParserService {
         temp.data.title = json['title'];
         temp.label = json['title'];
         temp.type = "title";
+        temp.children = [];
+        temp.expanded = true;
         nav.push(temp);
-        let pageDic = {};
+        let pageDic = [];
         let path = this.createPath(selected);
         for (let index in json['segments']) {
             let result = this.jsonToWiki(json['segments'][index], path,pageDic);
-            nav.push(result[0]);
+            result[0].parent = temp;
+            temp.children.push(result[0]);
             pageDic = result[1];
         }
         for (let index in json['pages']) {
             let result = this.jsonToPage(json['pages'][index]);
-            nav.push(result);
+            temp.children.push(result);
             pageDic[JSON.stringify(result.data.id)] = result.data;
         }
 
         return [nav,pageDic];
     }
 
-    public jsonToWiki(wikiJson: any, selected: Array<String>, pages: {}): TreeNode {
+    public jsonToWiki(wikiJson: any, selected: Array<String>, pages: Array<TreeNode>){
         let wiki: TreeNode = {};
 
         let parent: TreeNode = {};
@@ -190,7 +193,7 @@ export class ParserService {
                    
                     let result = this.jsonToWiki(segmentJsons[segment], selected,pages);
                     let subsegment = result[0];
-                    pages = result[1];
+                    pages.concat(result[1]);
                     subsegment.type = "category";
                     subsegment.parent = wiki;
                     wiki.children.push(subsegment);
@@ -201,7 +204,7 @@ export class ParserService {
                 for (let page in pagesJsons) {
                     
                     let leafpage = this.jsonToPage(pagesJsons[page]);
-                    pages[JSON.stringify(leafpage.data.id)] = leafpage.data;
+                    pages.push(leafpage);
                     leafpage.parent = wiki;
                     wiki.children.push(leafpage);
                 }
@@ -308,7 +311,7 @@ export class ParserService {
             path.push(parent.label);
             parent = parent.parent;
         }
-
+        path.pop();
         return path.reverse();
 
     }
