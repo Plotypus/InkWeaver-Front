@@ -5,6 +5,8 @@ import { StatsService } from './stats.service';
 import { StatsComponent } from './stats.component';
 import {TreeTableModule,
 		DataTableModule,
+		TabViewModule,
+        ChartModule
 } from 'primeng/primeng';
 import {SharedModule} from '../../shared/shared.module';
 
@@ -15,6 +17,8 @@ import {SharedModule} from '../../shared/shared.module';
         CommonModule,
         TreeTableModule,
         DataTableModule,
+        TabViewModule,
+        ChartModule,
         SharedModule
             ],
     providers: [StatsService],

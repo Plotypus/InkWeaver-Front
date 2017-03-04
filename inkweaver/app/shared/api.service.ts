@@ -51,7 +51,11 @@ export class ApiService {
         storyNode: new Array<TreeNode>(),
 
         statSection: new Section(),
+        statSegment: new Segment(),
         stats: new Stats(),
+        statsPages: {},
+        statsSections: {},
+        statsPageFrequency: {},
 
         wikiNav: [],
         wikiNode: [],
@@ -88,6 +92,7 @@ export class ApiService {
 
                 if (reply) {
                     if (reply.event) {
+                        let out:any;
                         // ---------- Event ---------- //
                         switch (reply.event) {
                             case 'acknowledged':
@@ -137,11 +142,17 @@ export class ApiService {
 
                             // ----- Wiki ----- //
                             case 'segment_added':
-                                this.data.pageid.push(reply.segment_id);
+                                out = this.outgoing['segment' + reply.title];
+                                if (out) {
+                                    let callback: Function = out.callback;
+                                    callback(reply);
+                                    delete this.outgoing['segment' + reply.title];
+                                }
+                                
                                 this.refreshWikiHierarchy();
                                 break;
                             case 'page_added':
-                                let out: any = this.outgoing['page' + reply.title]
+                                out = this.outgoing['page' + reply.title];
                                 if (out) {
                                     let callback: Function = out.callback;
                                     callback(reply);
@@ -215,7 +226,7 @@ export class ApiService {
                         case 'get_story_hierarchy':
                         case 'get_section_hierarchy':
                             this.data.storyNode = [this.parser.sectionToTree(this.parser, reply.hierarchy, null)];
-
+                            this.data.statsSections = this.parser.flattenTree(this.data.storyNode[0]);
                             if (this.data.story.position_context && this.data.story.position_context.section_id) {
                                 this.data.section.data = { section_id: this.data.story.position_context.section_id };
                             } else if (!this.data.section.data) {
@@ -253,13 +264,14 @@ export class ApiService {
                             reply.wiki_id = this.data.wiki.wiki_id;
                             this.data.wiki = reply;
                             this.data.wikiDisplay = this.parser.setWikiDisplay(reply);
-
                             this.refreshWikiHierarchy(reply.wiki_id);
                             break;
                         case 'get_wiki_hierarchy':
                         case 'get_wiki_segment_hierarchy':
                             this.data.segment = reply.hierarchy;
-                            this.data.wikiNav = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
+                            let result = this.parser.parseWiki(reply.hierarchy, this.data.selectedEntry);
+                            this.data.wikiNav = result[0];
+                            this.data.statsPages = result[1];
                             this.data.linkTable = this.parser.parseLinkTable(reply.link_table);
                             break;
                         case 'get_wiki_segment':
@@ -279,6 +291,9 @@ export class ApiService {
                         case 'get_paragraph_statistics':
                             this.data.stats.word_count = reply.statistics.word_count;
                             this.data.stats.word_frequency = this.parser.parseWordFrequency(reply.statistics.word_frequency);
+                            break;
+                        case 'get_page_frequencies':
+                            this.data.statsPageFrequency=this.parser.parsePageFrequency(reply.pages,this.data.statsPages,this.data.statsSections)
                             break;
                         default:
                             console.log('Unknown action: ' + action);
@@ -349,7 +364,11 @@ export class ApiService {
         let key: string = '';
         if (message.action === 'add_page') {
             key = 'page' + message.title;
-        } else {
+        }
+        else if(message.action === 'add_segment'){
+            key = 'segment' + message.title;
+        }
+        else {
             key = message.message_id;
         }
         this.outgoing[key] = {

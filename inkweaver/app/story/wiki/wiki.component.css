@@ -1,5 +1,8 @@
 ﻿/* -------------------- Wiki -------------------- */
 
+.wiki{
+    overflow: auto;
+}
 .wiki .ui-editor-content {
     background: white;
 }
@@ -47,11 +50,23 @@
 }
 
 .wiki .ui-datalist-content{
+    background: var(--dark-blue);
+    text-align: left;
+    padding: 0 .5em 0 .5em;
+    border:none;
+    
+}
+
+.wiki .ui-datalist .ui-datalist-data li{
+    padding:.25em 0em 0.25em 0em
+}
+.wiki .ui-datalist .ui-datalist-data div
+{
     background: var(--light-gray);
     text-align: left;
-    padding: 0 1em 0 1em;
+    padding: .25em 1em .25em 1em;
     border-radius: 25px;
-    cursor:pointer
+    cursor:pointer;
 }
 
 .wiki h1{
@@ -66,4 +81,8 @@
     color: var(--dark-blue);
     display: inline-block;
     font-weight: bold;
+}
+
+.wiki textarea{
+    width:100%;
 }

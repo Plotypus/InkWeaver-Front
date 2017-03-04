@@ -12,9 +12,7 @@ import { PageSummary } from '../../models/wiki/page-summary.model';
     templateUrl: './app/story/wiki/wiki.component.html'
 })
 export class WikiComponent {
-
-    @ViewChildren(Editor) editor: Editor;
-
+    
     private data: any;
     private selectedEntry: TreeNode;  
     private showAddDialog: any;
@@ -70,9 +68,19 @@ export class WikiComponent {
                     this.icons.push('fa-pencil');
                     this.wikiPageContent.push({
                         'title': this.wikiPage.headings[i].title,
-                        'text': this.wikiPage.headings[i].text
+                        'text': this.wikiPage.headings[i].text,
+                        'active':false
                     });
                 }
+
+            }
+            else if(action == 'add_segment' )
+            {
+                console.log(action);
+                //this.wikiService.getWikiSegment()
+            }
+            else if(action == 'add_page')
+            {
 
             }
             else if (action.includes("delete")) {
@@ -104,7 +112,8 @@ export class WikiComponent {
             this.icons.push('fa-pencil');
             this.wikiPageContent.push({
                 'title': this.wikiPage.headings[i].title,
-                'text': this.wikiPage.headings[i].text
+                'text': this.wikiPage.headings[i].text,
+                'active':false
             });
         }
 
@@ -331,10 +340,5 @@ export class WikiComponent {
     public onReference(ref: any) {
         this.editService.getSectionContent(ref.section_id, null, ref.paragraph_id);
         this.router.navigate(['/story/edit']);
-    }
-
-    public onEdit() {
-        console.log("clicked");
-        alert("clicked");
     }
 }

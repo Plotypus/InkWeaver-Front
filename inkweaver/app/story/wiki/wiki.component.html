@@ -17,26 +17,26 @@
     Summary: <input type="text" pInputText [(ngModel)]="addContent" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button pButton type="button" label="Create Heading" icon="fa-link" iconPos="right" (click)="createHeading(false)"></button>
-            <button pButton type="button" label="Create Heading & Continue" icon="fa-link" iconPos="right" (click)="createHeading(true)"></button>
+            <button pButton type="button" label="Create Heading" (click)="createHeading(false)"></button>
+            <button pButton type="button" label="Create Another Heading"  (click)="createHeading(true)"></button>
         </div>
     </footer>
 </p-dialog>
 
 <p-dialog modal="true" header="Do you want to delete {{toDelete}}" [(visible)]="showDeleteDialog"
           width="450" height="450" responsive="true">
-    All the content in {{toDelete}} will be gone and impossible to recover.
+    All the content in {{toDelete}} will be gone.
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button pButton type="button" label="Yes" icon="fa-link" iconPos="right" (click)="onDeletePage(true)"></button>
-            <button pButton type="button" label="Cancel" icon="fa-link" iconPos="right" (click)="onDeletePage(false)"></button>
+            <button pButton type="button" label="Yes"  (click)="onDeletePage(true)"></button>
+            <button pButton type="button" label="Cancel"  (click)="onDeletePage(false)"></button>
         </div>
     </footer>
 </p-dialog>
 
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
-
+        
         <div class="wiki ui-grid-col-9">
 
             <div class="loader" *ngIf="data.inflight">
@@ -84,45 +84,52 @@
                         <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
 
                     </span>
-                    <p-editor [(ngModel)]="section.text" (click)="onEdit()">
-                       
-                        <header>
-                            <span class="ql-formats">
-                                <button class="ql-link" (click)="openLink()"></button>
-                            </span>
-                            <span class="ql-formats">
-                                <select class="ql-size"></select>
-                                <select class="ql-font"></select>
-                            </span>
-                            <span class="ql-formats">
-                                <button class="ql-bold"></button>
-                                <button class="ql-italic"></button>
-                                <button class="ql-underline"></button>
-                                <button class="ql-strike"></button>
-                            </span>
-                            <span class="ql-formats">
-                                <button class="ql-list" value="ordered"></button>
-                                <button class="ql-list" value="bullet"></button>
-                                <button class="ql-indent" value="+1"></button>
-                                <button class="ql-indent" value="-1"></button>
-                                <select class="ql-align"></select>
-                            </span>
-                            <span class="ql-formats">
-                                <button class="ql-script" value="sub"></button>
-                                <button class="ql-script" value="super"></button>
-                                <button class="ql-clean"></button>
-                            </span>
-                        </header>
-                            
-                    </p-editor>
+                    <!-- [ngSwitch]='wikiPageContent[i+1].active' *ngSwitchCase='true'  *ngSwitchCase='false' -->
+                    <div >
+                        <p-editor [(ngModel)]="section.text">
+                           
+                            <header>
+                                <span class="ql-formats">
+                                    <button class="ql-link" (click)="openLink()"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <select class="ql-size"></select>
+                                    <select class="ql-font"></select>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-bold"></button>
+                                    <button class="ql-italic"></button>
+                                    <button class="ql-underline"></button>
+                                    <button class="ql-strike"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-list" value="ordered"></button>
+                                    <button class="ql-list" value="bullet"></button>
+                                    <button class="ql-indent" value="+1"></button>
+                                    <button class="ql-indent" value="-1"></button>
+                                    <select class="ql-align"></select>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-script" value="sub"></button>
+                                    <button class="ql-script" value="super"></button>
+                                    <button class="ql-clean"></button>
+                                </span>
+                            </header>
+                                
+                        </p-editor>
+                        <!--
+                        <textarea pInputTextarea disabled="true" autoResize="false" (click)="onEdit()" [(ngModel)]="section.text"> </textarea>-->
 
+                    </div>
                 </div>
                 <!--References-->
                 <ng-container *ngIf="wikiPage.references">
                     <p-dataList [value]="wikiPage.references">
                         <header style="color:var(--light-gray); text-align: left;">References</header>
                         <template let-ref pTemplate="item">
-                            <span [innerHTML]="ref.text" (click)="onReference(ref)"></span>
+                           
+                            <div [innerHTML]="ref.text" (click)="onReference(ref)"></div>
+                           
                         </template>
                     </p-dataList>
                 </ng-container>
@@ -161,39 +168,8 @@
                     </header>
                 </p-editor>
             </div>
-            <!--
-            <div [ngClass]="{'loading-editor': data.inflight}">
-                <p-editor [(ngModel)]="data.wikiDisplay">
-                    <header>
-                        <span class="ql-formats">
-                            <button class="ql-link" (click)="openLink()"></button>
-                        </span>
-                        <span class="ql-formats">
-                            <select class="ql-size"></select>
-                            <select class="ql-font"></select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-bold"></button>
-                            <button class="ql-italic"></button>
-                            <button class="ql-underline"></button>
-                            <button class="ql-strike"></button>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-list" value="ordered"></button>
-                            <button class="ql-list" value="bullet"></button>
-                            <button class="ql-indent" value="+1"></button>
-                            <button class="ql-indent" value="-1"></button>
-                            <select class="ql-align"></select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-script" value="sub"></button>
-                            <button class="ql-script" value="super"></button>
-                            <button class="ql-clean"></button>
-                        </span>
-                    </header>
-                </p-editor>
-            </div>-->
         </div>
+        
 
         <div class="navigation ui-g-3">
             <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
