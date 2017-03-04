@@ -74,6 +74,15 @@ export class WikiComponent {
                 }
 
             }
+            else if(action == 'add_segment' )
+            {
+                console.log(action);
+                //this.wikiService.getWikiSegment()
+            }
+            else if(action == 'add_page')
+            {
+
+            }
             else if (action.includes("delete")) {
                 this.wikiService.getWikiHierarchy(this.data.story.wiki_id);
                 if (action == "alias_deleted") {

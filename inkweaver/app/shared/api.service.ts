@@ -92,6 +92,7 @@ export class ApiService {
 
                 if (reply) {
                     if (reply.event) {
+                        let out:any;
                         // ---------- Event ---------- //
                         switch (reply.event) {
                             case 'acknowledged':
@@ -141,11 +142,17 @@ export class ApiService {
 
                             // ----- Wiki ----- //
                             case 'segment_added':
-                                this.data.pageid.push(reply.segment_id);
+                                out = this.outgoing['segment' + reply.title];
+                                if (out) {
+                                    let callback: Function = out.callback;
+                                    callback(reply);
+                                    delete this.outgoing['segment' + reply.title];
+                                }
+                                
                                 this.refreshWikiHierarchy();
                                 break;
                             case 'page_added':
-                                let out: any = this.outgoing['page' + reply.title]
+                                out = this.outgoing['page' + reply.title];
                                 if (out) {
                                     let callback: Function = out.callback;
                                     callback(reply);
@@ -357,7 +364,11 @@ export class ApiService {
         let key: string = '';
         if (message.action === 'add_page') {
             key = 'page' + message.title;
-        } else {
+        }
+        else if(message.action === 'add_segment'){
+            key = 'segment' + message.title;
+        }
+        else {
             key = message.message_id;
         }
         this.outgoing[key] = {
