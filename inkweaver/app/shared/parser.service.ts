@@ -202,7 +202,6 @@ export class ParserService {
                     leafpage.parent = wiki;
                     wiki.children.push(leafpage);
                 }
-
             }
         }
         if (typeof wiki.children !== 'undefined' && (wiki.children.length === 0 || wiki.children.length !== 0)) {

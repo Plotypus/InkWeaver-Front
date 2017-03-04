@@ -29,8 +29,8 @@ import { Reference } from '../models/wiki/reference.model';
 
 
 import { Stats } from '../models/stats/stats.model';
-const url: string = 'wss://localhost:8080/ws';
-const urlAuth: string = 'wss://inkweaver.plotypus.net:8080/ws';
+const url: string = 'ws://localhost:8080/ws';
+const urlAuth: string = 'ws://inkweaver.plotypus.net:8080/ws';
 
 @Injectable()
 export class ApiService {
