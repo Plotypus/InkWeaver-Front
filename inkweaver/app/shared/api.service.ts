@@ -250,7 +250,7 @@ export class ApiService {
                                 break;
                             case 'got_wiki_segment':
                                 this.data.page = JSON.parse(JSON.stringify(reply).replace(
-                                    "template_headings", "headings"));
+                                    'template_headings', 'headings'));
                                 break;
                             case 'got_wiki_page':
                                 this.data.page = this.parser.setPageDisplay(
@@ -330,7 +330,7 @@ export class ApiService {
         return result;
     }
     public findSection(start: TreeNode, sectionID: string): TreeNode {
-        if (JSON.stringify(start.data.section_id) == sectionID) {
+        if (JSON.stringify(start.data.section_id) === sectionID) {
             return start;
         }
         for (let section of start.children) {

@@ -19,7 +19,6 @@ import { Section } from '../models/story/section.model';
 export class UserComponent {
     private data: any;
     private active: any;
-    private backup: User;
 
     private wikis: SelectItem[];
     private newWiki: any;
