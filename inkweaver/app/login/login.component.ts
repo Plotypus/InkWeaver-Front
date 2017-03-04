@@ -33,32 +33,20 @@ export class LoginComponent {
     }
 
     public signIn() {
-        if (this.apiService.authentication) {
-            this.loginService.login(this.login.username, this.login.password)
-                .subscribe(response => {
-                    this.apiService.connect();
-                    this.apiService.messages.subscribe((action: string) => {
-                        if (Object.keys(this.apiService.outgoing).length === 0) {
-                            this.router.navigate(['/user']);
-                        }
-                    });
-                    this.apiService.outgoing = {};
-                    this.userService.getUserPreferences();
-                    this.userService.getUserStories();
-                    this.userService.getUserWikis();
+        this.loginService.login(this.login.username, this.login.password)
+            .subscribe(response => {
+                this.apiService.connect();
+                this.apiService.messages.subscribe((action: string) => {
+                    if (Object.keys(this.apiService.outgoing).length === 0) {
+                        this.router.navigate(['/user']);
+                    }
                 });
-        } else {
-            this.apiService.connect();
-            this.apiService.messages.subscribe((action: string) => {
-                if (Object.keys(this.apiService.outgoing).length === 0) {
-                    this.router.navigate(['/user']);
-                }
+                this.apiService.outgoing = {};
+                this.userService.getUserPreferences();
+                this.userService.getUserStories();
+                this.userService.getUserWikis();
             });
-            this.apiService.outgoing = {};
-            this.userService.getUserPreferences();
-            this.userService.getUserStories();
-            this.userService.getUserWikis();
-        }
+
         return false;
     }
 }
