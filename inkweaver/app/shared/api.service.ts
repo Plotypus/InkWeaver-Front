@@ -89,15 +89,18 @@ export class ApiService {
                     // Extract the fields from the original message
                     let metadata: any = {};
                     let callback: Function = () => { };
-                    let message_id: number = reply.reply_to_id;
-                    if (message_id) {
-                        callback = this.outgoing[message_id].callback;
-                        metadata = this.outgoing[message_id].metadata;
+                    let identifier: any = reply.identifier;
+                    if (identifier) {
+                        let message_id: number = identifier.message_id;
+                        if (message_id) {
+                            callback = this.outgoing[message_id].callback;
+                            metadata = this.outgoing[message_id].metadata;
 
-                        // Perform callback if necessary
-                        // And delete the entry for the original message
-                        callback(reply);
-                        delete this.outgoing[message_id];
+                            // Perform callback if necessary
+                            // And delete the entry for the original message
+                            callback(reply);
+                            delete this.outgoing[message_id];
+                        }
                     }
 
                     if (reply.event) {
@@ -187,8 +190,8 @@ export class ApiService {
                                 this.data.section = this.parser.setSection(
                                     this.data.storyNode[0], JSON.stringify(metadata.sectionID));
 
-                                if (JSON.stringify(metadata.sectionID) === JSON.stringify(
-                                    this.data.story.section_id)) {
+                                if (JSON.stringify(metadata.sectionID) ===
+                                    JSON.stringify(this.data.story.section_id)) {
                                     if (!this.data.storyDisplay) {
                                         this.data.storyDisplay =
                                             '<p><em>Write a summary here!</em></p>';
