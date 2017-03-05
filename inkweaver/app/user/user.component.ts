@@ -90,6 +90,7 @@ export class UserComponent {
         this.data.storyNode = new Array<TreeNode>();
 
         this.data.story.story_id = story.story_id;
+        this.data.wiki.wiki_id = story.wiki_summary.wiki_id;
         this.data.story.story_title = story.title;
         this.data.story.position_context = story.position_context;
 

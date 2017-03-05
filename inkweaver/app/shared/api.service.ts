@@ -147,7 +147,6 @@ export class ApiService {
                                 reply.story_id = this.data.story.story_id;
                                 reply.position_context = this.data.story.position_context;
                                 this.data.story = reply;
-                                this.data.wiki.wiki_id = reply.wiki_id;
                                 this.refreshStoryHierarchy();
                                 break;
                             case 'got_story_hierarchy':
@@ -232,6 +231,9 @@ export class ApiService {
                                 this.refreshWikiHierarchy();
                                 break;
 
+                            case 'subscribed_to_wiki':
+                                this.refreshWikiInfo();
+                                break;
                             case 'got_wiki_information':
                                 reply.wiki_id = this.data.wiki.wiki_id;
                                 this.data.wiki = reply;
