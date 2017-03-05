@@ -115,14 +115,12 @@ export class ApiService {
                             case 'got_user_preferences':
                                 this.data.user = reply;
                                 break;
-                            case 'got_user_stories':
+                            case 'got_user_stories_and_wikis':
                                 this.data.stories = reply.stories;
                                 this.data.stories.push({
                                     story_id: null, title: null,
-                                    access_level: null, position_context: null
+                                    access_level: null, position_context: null, wiki_summary: null
                                 });
-                                break;
-                            case 'got_user_wikis':
                                 this.data.wikis = reply.wikis;
                                 this.data.wikis.push({
                                     wiki_id: null, title: null,
@@ -132,16 +130,16 @@ export class ApiService {
                             case 'set_user_name':
                             case 'set_user_email':
                             case 'set_user_bio':
-                                this.refreshUser();
+                                this.refreshUserPreferences();
                                 break;
 
                             // ----- Story ----- //
                             case 'story_created':
                             case 'story_deleted':
-                                this.refreshUser();
+                                this.refreshUserStoriesAndWikis();
                                 break;
                             case 'story_updated':
-                                this.refreshUser();
+                                this.refreshUserStoriesAndWikis();
                             case 'subscribed_to_story':
                                 this.refreshStoryInfo();
                                 break;
@@ -216,7 +214,7 @@ export class ApiService {
                             // ---------- Wiki ---------- //
                             case 'wiki_created':
                             case 'wiki_deleted':
-                                this.refreshUser();
+                                this.refreshUserStoriesAndWikis();
                                 break;
                             case 'segment_added':
                                 this.refreshWikiHierarchy();
@@ -285,10 +283,12 @@ export class ApiService {
     }
 
     // ----- USER ----- //
-    public refreshUser() {
+    public refreshUserPreferences() {
         this.send({ action: 'get_user_preferences' });
-        this.send({ action: 'get_user_stories' });
-        this.send({ action: 'get_user_wikis' });
+    }
+
+    public refreshUserStoriesAndWikis() {
+        this.send({ action: 'get_user_stories_and_wikis' });
     }
 
     // ----- STORY ----- //

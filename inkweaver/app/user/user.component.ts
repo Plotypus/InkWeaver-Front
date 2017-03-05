@@ -46,7 +46,8 @@ export class UserComponent {
             this.router.navigate(['/login']);
         }
 
-        this.apiService.refreshUser();
+        this.apiService.refreshUserPreferences();
+        this.apiService.refreshUserStoriesAndWikis();
         this.data = this.apiService.data;
         this.data.menuItems = [
             { label: 'About', routerLink: ['/about'] },
