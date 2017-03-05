@@ -369,7 +369,7 @@ export class ApiService {
         if (message.action === 'add_page') {
             key = 'page' + message.title;
         } else {
-            key = message.message_id;
+            key = message.identifier.message_id;
         }
         this.outgoing[key] = {
             callback: callback,
