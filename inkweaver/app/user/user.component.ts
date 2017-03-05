@@ -2,15 +2,15 @@
 import { Router } from '@angular/router';
 import { SelectItem, TreeNode } from 'primeng/primeng';
 
+import { ApiService } from '../shared/api.service';
 import { UserService } from './user.service';
 import { StoryService } from '../story/story.service';
 import { WikiService } from '../story/wiki/wiki.service';
-import { ApiService } from '../shared/api.service';
 
 import { ID } from '../models/id.model';
 import { User } from '../models/user/user.model';
-import { StorySummary } from '../models/story/story-summary.model';
 import { Section } from '../models/story/section.model';
+import { StorySummary } from '../models/story/story-summary.model';
 
 @Component({
     selector: 'user',
@@ -92,15 +92,15 @@ export class UserComponent {
         this.data.story.story_title = story.title;
         this.data.story.position_context = story.position_context;
 
-        this.storyService.subscribeToStory(story.story_id, (reply: any) => {
-            this.router.navigate(['/story/edit']);
-        });
+        this.storyService.subscribeToStory(story.story_id);
+        this.storyService.subscribeToWiki(story.wiki_summary.wiki_id);
+        this.router.navigate(['/story/edit']);
     }
 
     // Create a story
     public openStoryCreator() {
         this.displayStoryCreator = true;
-        this.wikis = [{ label: 'Create New Wiki', value: 'new_wiki' }];
+        this.wikis = [{ label: 'Create New Wiki', value: 'newWiki' }];
         for (let wiki of this.data.wikis) {
             this.wikis.push({ label: wiki.title, value: wiki.wiki_id });
         }
@@ -108,7 +108,7 @@ export class UserComponent {
     }
     public createStory() {
         this.displayStoryCreator = false;
-        if (this.newWiki === 'new_wiki') {
+        if (this.newWiki === 'newWiki') {
             this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary, (reply: any) => {
                 this.storyService.createStory(this.title, reply.wiki_id, this.summary);
             });

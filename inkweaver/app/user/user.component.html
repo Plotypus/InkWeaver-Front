@@ -15,11 +15,11 @@
                 <td><label>Wiki</label></td>
                 <td><p-dropdown [options]="wikis" [(ngModel)]="newWiki"></p-dropdown></td>
             </tr>
-            <tr *ngIf="newWiki == 'new_wiki'">
+            <tr *ngIf="newWiki == 'newWiki'">
                 <td><label>New Wiki Title</label></td>
                 <td><input pInputText type="text" [(ngModel)]="newWikiTitle" /></td>
             </tr>
-            <tr *ngIf="newWiki == 'new_wiki'">
+            <tr *ngIf="newWiki == 'newWiki'">
                 <td><label>New Wiki Summary</label></td>
                 <td><textarea pInputTextarea [(ngModel)]="newWikiSummary"></textarea></td>
             </tr>
@@ -28,7 +28,7 @@
                 <td></td>
                 <td>
                     <button pButton type="button" label="Create Story" (click)="createStory()"
-                            [disabled]="!(title && (newWiki != 'new_wiki' || newWikiTitle))"></button>
+                            [disabled]="!(title && (newWiki != 'newWiki' || newWikiTitle))"></button>
                 </td>
             </tr>
         </tbody>
@@ -53,7 +53,8 @@
                         <div *ngIf="story.story_id">
                             <p-panel styleClass="story-tile" (click)="selectStory(story)">
                                 <header>
-                                    {{story.title}}
+                                    {{story.title}}<br />
+                                    <span class="subheader">{{story.wiki_summary.title}}</span>
                                 </header>
                                 <div>
                                     <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>

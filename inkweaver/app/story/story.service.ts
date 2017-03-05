@@ -8,11 +8,11 @@ export class StoryService {
     constructor(private apiService: ApiService) { }
 
     // Story
-    public subscribeToStory(storyID: ID, callback: Function) {
+    public subscribeToStory(storyID: ID) {
         this.apiService.send({
             action: 'subscribe_to_story',
             story_id: storyID
-        }, callback);
+        });
     }
     public unsubscribeFromStory() {
         this.apiService.send({
@@ -48,11 +48,11 @@ export class StoryService {
     }
 
     // Wiki
-    public subscribeToWiki(wikiID: ID, callback: Function) {
+    public subscribeToWiki(wikiID: ID) {
         this.apiService.send({
             action: 'subscribe_to_wiki',
             wiki_id: wikiID
-        }, callback);
+        });
     }
     public unsubscribeFromWiki() {
         this.apiService.send({
