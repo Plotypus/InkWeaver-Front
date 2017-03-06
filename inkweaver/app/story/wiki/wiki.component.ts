@@ -212,20 +212,24 @@ export class WikiComponent {
 
         let title = "";
         let text = "";
+        let prev = {};
         //saving the previous state
         if (this.disabled[idx]) {
             this.icons[idx] = 'fa-check';
             if (idx == 0) {
                 title = this.wikiPage.title;
+                prev["title"] = title;
             }
             else {
                 title = this.wikiPage.headings[idx - 1].title;
                 text = this.wikiPage.headings[idx - 1].text;
-            }
-            let prev = {
+                prev = {
                 "title": title,
                 "text": text,
+                "active": this.wikiPageContent[idx].active
+                }
             }
+
             this.wikiPageContent.splice(idx, 1, prev);
         }
         else {
@@ -302,6 +306,7 @@ export class WikiComponent {
 
     public cancelAlias(alias: any) {
         alias.name = alias.prev;
+        alias.state = true;
     }
 
     public deleteAlias(alias: any) {
@@ -321,6 +326,9 @@ export class WikiComponent {
             this.wikiService.deleteSegment(this.data.selectedEntry.data.id);
         else
             this.wikiService.deletePage(this.data.selectedEntry.data.id);
+        this.wikiPage = null;
+        this.data.page=null;
+        this.wikiService.getWikiInformation(this.data.story.wiki_id);
     }
 
 

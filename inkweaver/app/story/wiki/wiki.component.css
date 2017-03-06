@@ -34,7 +34,7 @@
     margin:0;
     font-weight: normal;
     cursor: pointer;
-    font-size: x-large;
+    font-size: 2.5em;
 }
 .wiki .header input{
     width: 30%;
@@ -95,11 +95,11 @@
 
 .wiki .heading header{
      border-bottom: .025em solid var(--light-gray);
-    color: var(--light-gray);
-    text-align: left;
-    font-family: Arial,Helvetica,sans-serif;
-    font-size: larger;
-    padding: .25em .5em;
+     color: var(--light-gray);
+     text-align: left;
+     font-family: Arial,Helvetica,sans-serif;
+     font-size: 2em;
+     padding: 0em .5em;
 }
 
 .wiki .ui-g{
@@ -121,7 +121,7 @@ padding: 0 !important;
 
 .wiki .ui-datagrid .ui-datagrid-header header{
   
-padding: .25em .5em;
+padding: 0em .5em;
   
 background: transparent;
   
@@ -129,7 +129,7 @@ color: var(--dark-gray);
   
 border: none;
   
-font-size: x-large;
+font-size: 2.5em;
   
 text-align: left;
   
@@ -162,11 +162,11 @@ cursor: default;
 
 .wiki .ui-datalist .ui-datalist-header header
 {
-    padding: .25em .5em;
+    padding: 0em .5em;
     /* background: transparent; */
     color: var(--dark-gray);
     border: none;
-    font-size: x-large;
+    font-size: 2.5em;
     text-align: left;
     border-bottom: .025em solid var(--light-gray);
     cursor: default;
@@ -196,3 +196,12 @@ cursor: default;
     padding: 1% 5% 1% 5%;
     margin: 0;
 }
+
+.wiki .icons{
+    float: right;
+    padding: 1.25em 1.25em;
+}
+
+.wiki .icons .fa{
+    font-size: 1.5em;
+} 

@@ -241,12 +241,12 @@ export class ParserService {
     public setWikiDisplay(reply: any) {
         let html: string = "";
 
-        html = "<h2>" + reply["wiki_title"] + "</h2>";
+        html += "<h1>"+reply["wiki_title"]+"</h1>";
         for (let idx in reply['users']) {
-            html += "<h2>By</h2>" + reply['users'][idx].name;
+            html += "<br>By " + reply['users'][idx].name;
         }
 
-        html += "<h2>Summary</h2>" + reply["summary"];
+        html += "<br><h2>Summary</h2><br>" + reply["summary"];
         return html;
     }
 

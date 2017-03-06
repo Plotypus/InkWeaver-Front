@@ -50,8 +50,12 @@
                 <div class = "header" [ngSwitch]='disabled[0]'>
                     <span  *ngSwitchCase='true'>
                         <h1 (click)="onDisable(0)">{{wikiPage.title}}</h1>
+                        <span class="icons">
                         <i class="fa fa-plus" float="right" (click)="addHeading()"></i>
                         <i class="fa fa-floppy-o" (click)="onSavePage()"></i>  
+                        <i class="fa fa-trash-o" (click)="onShow()"></i>
+                        </span>
+
                     </span>
                     <span  *ngSwitchCase='false'>
                         <input type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
@@ -86,12 +90,19 @@
                 </ng-container>
                 <!--Taking care of headings -->
                 <div *ngFor="let section of wikiPage.headings; let i = index;">
-                    <div class="heading">
-                        <header>
-                        <input type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
-                        <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
-                        <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
-                        </header>
+
+                    <div class="heading" [ngSwitch]='disabled[i+1]'>
+                        
+                            <header *ngSwitchCase='true'>
+                                <input style="cursor:pointer" type="text" pInputText [(ngModel)]="section.title" (click)="onDisable(i+1)" readonly/>
+                            </header>
+                       
+                            <header *ngSwitchCase='false'>
+                                <input type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
+                                <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
+                                <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
+                            </header>
+                        
                     </div>
                     <!--    -->
                     <div [ngSwitch]='wikiPageContent[i+1].active'>
@@ -142,13 +153,11 @@
                         </template>
                     </p-dataList>
                 </ng-container>
-                <i class="fa fa-trash-o" (click)="onShow()"></i>
                 
                 
             </ng-container>
             <div *ngIf="!wikiPage">
-                {{data.wikiDisplay}}
-                 <textarea pInputTextarea disabled="true" autoResize="false" (click)="onEdit()" [(ngModel)]="data.wikiDisplay"> </textarea>
+               
                 <p-editor [(ngModel)]="data.wikiDisplay">
                     <header>
                         <span class="ql-formats">
