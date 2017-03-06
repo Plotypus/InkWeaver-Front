@@ -145,7 +145,7 @@ export class ParserService {
     // ---------------------------------------------- //
     // -------------------- Wiki -------------------- //
     // ---------------------------------------------- //
-    public parseWiki(json: any, selected: any) {
+    public parseWiki(json: any, selected: any) : any {
         let nav = new Array<TreeNode>();
         let temp: TreeNode = {};
         temp.data = new PageSummary();
@@ -156,18 +156,20 @@ export class ParserService {
         temp.children = [];
         temp.expanded = true;
         nav.push(temp);
-        let pageDic = [];
+        let pageDic = Array<TreeNode>();
         let path = this.createPath(selected);
         for (let index in json['segments']) {
             let result = this.jsonToWiki(json['segments'][index], path,pageDic);
-            result[0].parent = temp;
+            let tree : TreeNode;
+            tree = result[0];
+            tree.parent = temp;
             temp.children.push(result[0]);
-            pageDic = result[1];
+            pageDic.concat(result[1]);
         }
         for (let index in json['pages']) {
             let result = this.jsonToPage(json['pages'][index]);
             temp.children.push(result);
-            pageDic[JSON.stringify(result.data.id)] = result.data;
+            pageDic.push(result.data);
         }
 
         return [nav,pageDic];
@@ -192,7 +194,8 @@ export class ParserService {
                 for (let segment in segmentJsons) {
                    
                     let result = this.jsonToWiki(segmentJsons[segment], selected,pages);
-                    let subsegment = result[0];
+                    let subsegment :TreeNode;
+                    subsegment = result[0];
                     pages.concat(result[1]);
                     subsegment.type = "category";
                     subsegment.parent = wiki;
