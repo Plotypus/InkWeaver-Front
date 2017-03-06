@@ -5,9 +5,9 @@
     background: white;
 }
 .wiki .ui-editor-content {
-    background: var(--dark-blue);
+    color: var(--dark-blue);
     border: none;
-    color: var(--light-gray);
+    /* color: var(--light-gray); */
 }
 
 .wiki .ui-panel-titlebar {
