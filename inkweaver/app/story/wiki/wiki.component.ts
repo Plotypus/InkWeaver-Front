@@ -74,15 +74,6 @@ export class WikiComponent {
                 }
 
             }
-            else if(action == 'add_segment' )
-            {
-                console.log(action);
-                //this.wikiService.getWikiSegment()
-            }
-            else if(action == 'add_page')
-            {
-
-            }
             else if (action.includes("delete")) {
                 this.wikiService.getWikiHierarchy(this.data.story.wiki_id);
                 if (action == "alias_deleted") {
@@ -195,22 +186,22 @@ export class WikiComponent {
 
         let temp = {};
         if (this.data.selectedEntry.type == 'category') {
-            this.wikiService.addTempleteHeading(this.pageName, this.data.selectedEntry.data.id);
-
-            temp = {
-                'title': this.pageName,
-                'text': this.addContent
-            };
-            this.wikiPage.headings.push(temp);
+            this.wikiService.addTempleteHeading(this.pageName, this.data.selectedEntry.data.id); 
         }
         else {
             this.wikiService.addHeading(this.pageName, this.data.selectedEntry.data.id);
-            temp = {
-                'title': this.pageName,
-                'text': this.addContent
-            };
-            this.wikiPage.headings.push(temp);
+            
         }
+         temp = {
+                'title': this.pageName,
+                'text': this.addContent,
+            };
+
+            this.wikiPage.headings.push(temp);
+            temp['active'] = false;
+            this.wikiPageContent.push(temp);
+
+        this.onEdit(this.wikiPageContent.length-1);
         this.disabled.push(true);
         this.icons.push('fa-pencil');
         this.wikiPageContent.push({});
@@ -276,6 +267,7 @@ export class WikiComponent {
         else {
             this.wikiPage.headings[idx - 1].title = this.wikiPageContent[idx].title;
         }
+        this.disabled[idx] = !this.disabled[idx];
     }
 
     public onSavePage() {
@@ -332,6 +324,12 @@ export class WikiComponent {
     }
 
 
+    public onEdit(idx:any)
+    {
+        for(let i = 1; i < this.wikiPageContent.length; i++)
+            this.wikiPageContent[i].active = false;
+        this.wikiPageContent[idx].active = true;
+    }
 
     public onDeleteHeading() {
 

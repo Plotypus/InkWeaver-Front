@@ -241,12 +241,12 @@ export class ParserService {
     public setWikiDisplay(reply: any) {
         let html: string = "";
 
-        html += "<h1>" + reply["wiki_title"] + "</h1>";
+        html = "<h2>" + reply["wiki_title"] + "</h2>";
         for (let idx in reply['users']) {
-            html += "<br> By " + reply['users'][idx].name;
+            html += "<h2>By</h2>" + reply['users'][idx].name;
         }
 
-        html += "<br> <h2> Summary </h2> <br> " + reply["summary"];
+        html += "<h2>Summary</h2>" + reply["summary"];
         return html;
     }
 
@@ -288,11 +288,11 @@ export class ParserService {
 
                     if (id === linkID) {
                         ref.text = ref.text.replace(linkMatch[0],
-                            '<h1>' + link.name + ' </h1>');
+                            '<h1>' + link.name + '</h1>');
                     }
                     else {
                         ref.text = ref.text.replace(linkMatch[0],
-                            '<h2>' + link.name + ' </h2>');
+                            '<h2>' + link.name + '</h2>');
                     }
                     linkMatch = r2.exec(text);
                 }

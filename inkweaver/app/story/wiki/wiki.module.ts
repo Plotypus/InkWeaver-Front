@@ -15,6 +15,7 @@ import {
     PanelModule,
     DataListModule,
     InputTextareaModule,
+    InplaceModule,
     DataGridModule
     
 } from 'primeng/primeng';
@@ -37,8 +38,8 @@ import { WikiComponent } from './wiki.component';
         PanelModule,
         DataListModule,
         InputTextareaModule,
-        ConfirmDialogModule
-        
+        ConfirmDialogModule,
+        InplaceModule
     ],
     providers: [WikiService],
     declarations: [WikiComponent],

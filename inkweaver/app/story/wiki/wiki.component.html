@@ -44,49 +44,58 @@
             </div>
 
 
-            <!--Editor-->
+            <!--Page-->
             <ng-container *ngIf="wikiPage">
                 <!--Title -->
-                <div class="header">
-                    <input type="text" size="30" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
-
-                    <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
-                    <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
-                    <i class="fa fa-plus" (click)="addHeading()"></i>
+                <div class = "header" [ngSwitch]='disabled[0]'>
+                    <span  *ngSwitchCase='true'>
+                        <h1 (click)="onDisable(0)">{{wikiPage.title}}</h1>
+                        <i class="fa fa-plus" float="right" (click)="addHeading()"></i>
+                        <i class="fa fa-floppy-o" (click)="onSavePage()"></i>  
+                    </span>
+                    <span  *ngSwitchCase='false'>
+                        <input type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
+                        <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
+                        <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
+                        
+                    </span>
                 </div>
+
+
                 <!--Alias-->
                 <ng-container *ngIf="wikiPage.aliases">
                     <p-dataGrid [value]="wikiPage.aliases" [rows]="3">
-                        <header style="color:var(--light-gray); text-align: left;">Aliases</header>
+                        <header>Aliases</header>
                         <template let-alias pTemplate="item" ;>
-
-                            <p-panel class="ui-g-2 alias-box">
-                                <header>
-                                    <input type="text" size="30" pInputText [(ngModel)]="alias.name" [disabled]="alias.state" />
-                                </header>
-                                <div>
-                                    <i class="fa {{alias.icon}}" (click)="editAlias(alias)"></i>
-                                    <i *ngIf="!alias.state" class="fa fa-times" (click)="cancelAlias(alias)"></i>
+                       
+                            <div style="display: inline-block;" [ngSwitch]='alias.state'>
+                                    <span *ngSwitchCase='true'>
+                                    <input style="cursor:pointer" type="text" pInputText [(ngModel)]="alias.name" (click)="editAlias(alias)"readonly/>
                                     <i class="fa fa-trash-o" (click)="deleteAlias(alias)"></i>
-                                </div>
-
-                            </p-panel>
-
+                                    </span>
+                                    <span *ngSwitchCase='false'>
+                                        <input type="text" pInputText [(ngModel)]="alias.name"/>
+                                        <i class="fa {{alias.icon}}" (click)="editAlias(alias)"></i>
+                                        <i *ngIf="!alias.state" class="fa fa-times" (click)="cancelAlias(alias)"></i>
+                                    </span>
+                                   
+                            </div>
+                        
                         </template>
                     </p-dataGrid>
                 </ng-container>
                 <!--Taking care of headings -->
                 <div *ngFor="let section of wikiPage.headings; let i = index;">
-                    <span>
-                        <input type="text" size="30" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
-
+                    <div class="heading">
+                        <header>
+                        <input type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
                         <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
                         <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
-
-                    </span>
-                    <!-- [ngSwitch]='wikiPageContent[i+1].active' *ngSwitchCase='true'  *ngSwitchCase='false' -->
-                    <div >
-                        <p-editor [(ngModel)]="section.text">
+                        </header>
+                    </div>
+                    <!--    -->
+                    <div [ngSwitch]='wikiPageContent[i+1].active'>
+                        <p-editor [(ngModel)]="section.text" *ngSwitchCase='true'>
                            
                             <header>
                                 <span class="ql-formats">
@@ -117,15 +126,15 @@
                             </header>
                                 
                         </p-editor>
-                        <!--
-                        <textarea pInputTextarea disabled="true" autoResize="false" (click)="onEdit()" [(ngModel)]="section.text"> </textarea>-->
+                        
+                        <div class="text" *ngSwitchCase='false' [innerHTML]='section.text' (click)="onEdit(i+1)"> </div>
 
                     </div>
                 </div>
                 <!--References-->
                 <ng-container *ngIf="wikiPage.references">
                     <p-dataList [value]="wikiPage.references">
-                        <header style="color:var(--light-gray); text-align: left;">References</header>
+                        <header>References</header>
                         <template let-ref pTemplate="item">
                            
                             <div [innerHTML]="ref.text" (click)="onReference(ref)"></div>
@@ -133,11 +142,13 @@
                         </template>
                     </p-dataList>
                 </ng-container>
-
-                <i class="fa fa-floppy-o" (click)="onSavePage()"></i>
                 <i class="fa fa-trash-o" (click)="onShow()"></i>
+                
+                
             </ng-container>
             <div *ngIf="!wikiPage">
+                {{data.wikiDisplay}}
+                 <textarea pInputTextarea disabled="true" autoResize="false" (click)="onEdit()" [(ngModel)]="data.wikiDisplay"> </textarea>
                 <p-editor [(ngModel)]="data.wikiDisplay">
                     <header>
                         <span class="ql-formats">
