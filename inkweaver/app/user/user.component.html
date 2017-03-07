@@ -53,8 +53,8 @@
                         <div *ngIf="story.story_id">
                             <p-panel styleClass="story-tile" (click)="selectStory(story)">
                                 <header>
-                                    {{story.title}}<br />
-                                    <span class="subheader">{{story.wiki_summary.title}}</span>
+                                    {{story.title}}
+                                    <div class="subheader">{{story.wiki_summary.title}}</div>
                                 </header>
                                 <div>
                                     <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>
@@ -65,7 +65,10 @@
 
                         <div *ngIf="!story.story_id">
                             <p-panel styleClass="new-story-tile" (click)="openStoryCreator()">
-                                <header>Create Story</header>
+                                <header>
+                                    Create Story
+                                    <div class="subheader">Using a New or Existing Wiki</div>
+                                </header>
                                 <div><i class="fa fa-plus-square-o"></i></div>
                             </p-panel>
                         </div>
@@ -78,48 +81,57 @@
             <div class="user-info">
                 <div class="user-info-fields">
                     <div class="user-info-label">Username: </div>
-                    <div class="user-info-field">
-                        <p-inplace closeable="true" [active]="active.username">
-                            <span pInplaceDisplay>{{data.user.username}}</span>
-                            <span pInplaceContent>
-                                <input pInputText type="text" value="data.user.username" />
-                                <button pButton icon="fa-check" (click)="save('username')"></button>
-                            </span>
-                        </p-inplace>
-                    </div><br />
+                    <div class="user-info-field">{{data.user.username}}</div><br />
                     <div class="user-info-label">Name: </div>
                     <div class="user-info-field">
-                        <p-inplace closeable="true" [active]="active.name">
-                            <span pInplaceDisplay>{{data.user.name}}</span>
-                            <span pInplaceContent>
-                                <input pInputText type="text" value="data.user.name" />
-                                <button pButton icon="fa-check" (click)="save('name')"></button>
+                        <span [ngSwitch]="!!nameActive">
+                            <span *ngSwitchCase="false" (click)="edit('name')">
+                                {{data.user.name}}
+                                <span *ngIf="!data.user.name" class="default-field">
+                                    User name goes here
+                                </span>
                             </span>
-                        </p-inplace>
+                            <span *ngSwitchCase="true">
+                                <input pInputText type="text" [(ngModel)]="data.user.name" />
+                                <button pButton icon="fa-check" (click)="save('name')"></button>
+                                <button pButton icon="fa-times" (click)="cancel('name')"></button>
+                            </span>
+                        </span>
                     </div><br />
                     <div class="user-info-label">Email: </div>
                     <div class="user-info-field">
-                        <p-inplace closeable="true" [active]="active.email">
-                            <span pInplaceDisplay>{{data.user.email}}</span>
-                            <span pInplaceContent>
-                                <input pInputText type="text" value="data.user.email" />
-                                <button pButton icon="fa-check" (click)="save('email')"></button>
+                        <span [ngSwitch]="!!emailActive">
+                            <span *ngSwitchCase="false" (click)="edit('email')">
+                                {{data.user.email}}
+                                <span *ngIf="!data.user.email" class="default-field">
+                                    User email goes here
+                                </span>
                             </span>
-                        </p-inplace>
+                            <span *ngSwitchCase="true">
+                                <input pInputText type="text" [(ngModel)]="data.user.email" />
+                                <button pButton icon="fa-check" (click)="save('email')"></button>
+                                <button pButton icon="fa-times" (click)="cancel('email')"></button>
+                            </span>
+                        </span>
                     </div><br />
                     <div class="user-info-label">Bio: </div>
                     <div class="user-info-field">
-                        <p-inplace closeable="true" [active]="active.bio">
-                            <span pInplaceDisplay>{{data.user.bio}}</span>
-                            <span pInplaceContent>
-                                <textarea pInputTextarea [(ngModel)]="data.user.bio"></textarea>
-                                <button pButton icon="fa-check" (click)="save('bio')"></button>
+                        <span [ngSwitch]="!!bioActive">
+                            <span *ngSwitchCase="false" (click)="edit('bio')">
+                                {{data.user.bio}}
+                                <span *ngIf="!data.user.bio" class="default-field">
+                                    User biography goes here
+                                </span>
                             </span>
-                        </p-inplace>
+                            <span *ngSwitchCase="true">
+                                <textarea pInputTextArea [(ngModel)]="data.user.bio"></textarea>
+                                <button pButton icon="fa-check" (click)="save('bio')"></button>
+                                <button pButton icon="fa-times" (click)="cancel('bio')"></button>
+                            </span>
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-

@@ -24,7 +24,6 @@ export class EditComponent {
     @ViewChild(Editor) editor: Editor;
 
     private data: any;
-    private setLinks: boolean;
     private wordCount: number;
     private editorRef: any;
     private timerSub: Subscription;
@@ -62,20 +61,13 @@ export class EditComponent {
         this.data = this.apiService.data;
         this.data.tooltip.display = 'none';
 
-        if (this.apiService.messages) {
-            this.apiService.messages.subscribe((action: string) => {
-                if (action === 'get_section_content') {
-                    this.setLinks = true;
-                }
-            });
-        } else {
+        if (!this.apiService.messages) {
             this.router.navigate(['/login']);
         }
     }
 
     ngAfterViewInit() {
         // Initialize variables
-        this.setLinks = true;
         this.editorRef = this.editor.el.nativeElement.querySelector('div.ql-editor');
 
         // Add click event handlers to links when necessary
@@ -121,29 +113,27 @@ export class EditComponent {
                 }
             }
 
-            if (this.setLinks) {
-                this.setLinks = false;
-
-                let threads: any[] = this.editorRef.querySelectorAll('a[href]');
-                for (let thread of threads) {
+            let threads: any[] = this.editorRef.querySelectorAll('a[href]');
+            for (let thread of threads) {
+                if (!thread.onclick) {
                     let linkID: string = thread.getAttribute('href');
                     if (linkID.startsWith('sid')) {
                         let id: string = linkID.substring(3);
                         let node: TreeNode = this.parserService.setSection(this.data.storyNode[0], JSON.stringify({ $oid: id }));
-                        thread.addEventListener('click', (event: any) => {
+                        thread.onclick = (event: any) => {
                             event.preventDefault();
                             this.selectSection({ node: node });
-                        });
+                        };
                     } else {
                         let ids: string[] = linkID.split('-');
                         let pageID: ID = { $oid: ids[1] };
 
-                        thread.addEventListener('click', (event: any) => {
+                        thread.onclick = (event: any) => {
                             event.preventDefault();
                             this.wikiService.getWikiPage(pageID);
                             this.router.navigate(['/story/wiki']);
-                        });
-                        thread.addEventListener('mouseenter', (event: any) => {
+                        };
+                        thread.onmouseenter = (event: any) => {
                             let aBlot = Quill['find'](event.target);
                             let index: number = this.editor.quill.getIndex(aBlot);
                             let bounds: any = this.editor.quill.getBounds(index);
@@ -154,10 +144,10 @@ export class EditComponent {
                                 display: 'block', top: top + 'px', left: bounds.left + 'px'
                             };
                             this.wikiService.getWikiPage(pageID, { noflight: true });
-                        });
-                        thread.addEventListener('mouseleave', (event: any) => {
+                        };
+                        thread.onmouseleave = (event: any) => {
                             this.data.tooltip.display = 'none';
-                        });
+                        };
                     }
                 }
             }
@@ -246,7 +236,6 @@ export class EditComponent {
         if (this.newLinkID) {
             this.editor.quill.deleteText(this.range.index, this.range.length);
 
-            this.setLinks = true;
             this.editor.quill.insertText(
                 this.range.index, this.word, 'link', 'new' + Math.random() + '-' + this.newLinkID.$oid);
             this.editor.quill.setSelection(this.range.index + this.word.length, 0);

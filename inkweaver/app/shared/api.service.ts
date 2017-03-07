@@ -55,17 +55,17 @@ export class ApiService {
         stats: new Stats(),
 
         wikiNav: [],
-        wikiNode: [],
         wikiDisplay: '',
         wiki: new Wiki(),
         segment: new Segment(),
         page: new Page(),
-        pageid: [],
         selectedEntry: {}
     };
 
     public uuid: string;
     public authentication: boolean = false;
+    public subscribedToWiki: boolean = false;
+    public subscribedToStory: boolean = false;
 
     public queued: any[] = [];
     public outgoing: Object = {};
@@ -92,7 +92,7 @@ export class ApiService {
                     let identifier: any = reply.identifier;
                     if (identifier) {
                         let message_id: number = identifier.message_id;
-                        if (message_id) {
+                        if (message_id && this.outgoing[message_id]) {
                             callback = this.outgoing[message_id].callback;
                             metadata = this.outgoing[message_id].metadata;
 
@@ -144,7 +144,11 @@ export class ApiService {
                             case 'story_updated':
                                 this.refreshUserStoriesAndWikis();
                             case 'subscribed_to_story':
+                                this.subscribedToStory = true;
                                 this.refreshStoryInfo();
+                                break;
+                            case 'unsubscribed_from_story':
+                                this.subscribedToStory = false;
                                 break;
                             case 'got_story_information':
                                 reply.story_id = this.data.story.story_id;
@@ -207,10 +211,14 @@ export class ApiService {
 
                             // ----- Links ----- //
                             case 'link_created':
-                            case 'link_deleted':
-                                this.refreshWikiHierarchy();
-                                this.refreshContent();
+                                this.data.linkTable[JSON.stringify(reply.link_id)] = {
+                                    page_id: reply.page_id, name: reply.name
+                                }
                                 break;
+                            case 'link_deleted':
+                                delete this.data.linkTable[JSON.stringify(reply.link_id)];
+                                break;
+
 
                             // ----- Wiki ----- //
                             // ---------- Wiki ---------- //
@@ -235,7 +243,11 @@ export class ApiService {
                                 break;
 
                             case 'subscribed_to_wiki':
+                                this.subscribedToWiki = true;
                                 this.refreshWikiInfo();
+                                break;
+                            case 'unsubscribed_from_wiki':
+                                this.subscribedToWiki = false;
                                 break;
                             case 'got_wiki_information':
                                 reply.wiki_id = this.data.wiki.wiki_id;

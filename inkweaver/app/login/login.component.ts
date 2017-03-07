@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Response } from '@angular/http';
 
 import { LoginService } from './login.service';
 import { UserService } from '../user/user.service';
@@ -14,6 +15,7 @@ import { StoryService } from '../story/story.service';
 export class LoginComponent {
     private data: any;
     private login: any;
+    private error: string;
 
     constructor(
         private router: Router,
@@ -24,8 +26,12 @@ export class LoginComponent {
         private parserService: ParserService) { }
 
     ngOnInit() {
-        this.storyService.unsubscribeFromStory();
-        this.storyService.unsubscribeFromWiki();
+        if (this.apiService.subscribedToStory) {
+            this.storyService.unsubscribeFromStory();
+        }
+        if (this.apiService.subscribedToWiki) {
+            this.storyService.unsubscribeFromWiki();
+        }
 
         this.data = this.apiService.data;
         this.data.menuItems = [{ label: 'About', routerLink: ['/about'] }];
@@ -34,12 +40,13 @@ export class LoginComponent {
 
     public signIn() {
         this.loginService.login(this.login.username, this.login.password)
-            .subscribe(response => {
+            .subscribe((response: Response) => {
                 this.apiService.connect();
-                this.userService.getUserPreferences();
-                this.userService.getUserStories();
-                this.userService.getUserWikis();
                 this.router.navigate(['/user']);
+            }, (error: any) => {
+                if (error.status == 401) {
+                    this.error = 'Incorrect username or password';
+                }
             });
 
         return false;

@@ -2,17 +2,21 @@
     <p-panel header="Sign In" (keyup.enter)="signIn()">
         <table>
             <tbody>
-                <tr>
+                <tr class="login-row">
                     <td><label>Username</label></td>
                     <td>
                         <input pInputText type="text" [(ngModel)]="login.username" required autofocus />
                     </td>
                 </tr>
-                <tr>
+                <tr class="login-row">
                     <td><label>Password</label></td>
                     <td>
                         <input pInputText type="password" [(ngModel)]="login.password" required />
                     </td>
+                </tr>
+                <tr class="login-row">
+                    <td></td>
+                    <td *ngIf="this.error" class="login-warn">{{this.error}}</td>
                 </tr>
                 <tr>
                     <td colspan="2">

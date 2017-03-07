@@ -18,7 +18,12 @@ import { StorySummary } from '../models/story/story-summary.model';
 })
 export class UserComponent {
     private data: any;
-    private active: any;
+    private nameActive: boolean;
+    private emailActive: boolean;
+    private bioActive: boolean;
+    private prevName: string;
+    private prevEmail: string;
+    private prevBio: string;
 
     private wikis: SelectItem[];
     private newWiki: any;
@@ -40,8 +45,13 @@ export class UserComponent {
         private apiService: ApiService) { }
 
     ngOnInit() {
-        this.storyService.unsubscribeFromStory();
-        this.storyService.unsubscribeFromWiki();
+        if (this.apiService.subscribedToStory) {
+            this.storyService.unsubscribeFromStory();
+        }
+        if (this.apiService.subscribedToWiki) {
+            this.storyService.unsubscribeFromWiki();
+        }
+
         if (!this.apiService.messages) {
             this.router.navigate(['/login']);
         }
@@ -54,7 +64,6 @@ export class UserComponent {
             { label: 'Sign Out', routerLink: ['/login'] },
         ];
 
-        this.active = { username: false, name: false, email: false, bio: false };
         this.colors = [
             '#cb735c', // red-orange
             '#fdd17c', // yellow
@@ -68,16 +77,50 @@ export class UserComponent {
     }
 
     // User editing
-    public save(field: string) {
-        this.active[field] = false;
+    public edit(field: string) {
         switch (field) {
             case 'name':
+                this.nameActive = true;
+                this.prevName = this.data.user.name;
+                break;
+            case 'email':
+                this.emailActive = true;
+                this.prevEmail = this.data.user.email;
+                break;
+            case 'bio':
+                this.bioActive = true;
+                this.prevBio = this.data.user.bio;
+                break;
+        }
+    }
+    public cancel(field: string) {
+        switch (field) {
+            case 'name':
+                this.nameActive = false;
+                this.data.user.name = this.prevName;
+                break;
+            case 'email':
+                this.emailActive = false;
+                this.data.user.email = this.prevEmail;
+                break;
+            case 'bio':
+                this.bioActive = false;
+                this.data.user.bio = this.prevBio;
+                break;
+        }
+    }
+    public save(field: string) {
+        switch (field) {
+            case 'name':
+                this.nameActive = false;
                 this.userService.setUserName(this.data.user.name);
                 break;
             case 'email':
+                this.emailActive = false;
                 this.userService.setUserEmail(this.data.user.email);
                 break;
             case 'bio':
+                this.bioActive = false;
                 this.userService.setUserBio(this.data.user.bio);
                 break;
         }
