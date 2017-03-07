@@ -12,9 +12,7 @@ import { PageSummary } from '../../models/wiki/page-summary.model';
     templateUrl: './app/story/wiki/wiki.component.html'
 })
 export class WikiComponent {
-
-    @ViewChildren(Editor) editor: Editor;
-
+    
     private data: any;
     private selectedEntry: TreeNode;
     private showAddDialog: any;
@@ -70,7 +68,8 @@ export class WikiComponent {
                     this.icons.push('fa-pencil');
                     this.wikiPageContent.push({
                         'title': this.wikiPage.headings[i].title,
-                        'text': this.wikiPage.headings[i].text
+                        'text': this.wikiPage.headings[i].text,
+                        'active':false
                     });
                 }
 
@@ -104,7 +103,8 @@ export class WikiComponent {
             this.icons.push('fa-pencil');
             this.wikiPageContent.push({
                 'title': this.wikiPage.headings[i].title,
-                'text': this.wikiPage.headings[i].text
+                'text': this.wikiPage.headings[i].text,
+                'active':false
             });
         }
 
@@ -186,22 +186,22 @@ export class WikiComponent {
 
         let temp = {};
         if (this.data.selectedEntry.type == 'category') {
-            this.wikiService.addTempleteHeading(this.pageName, this.data.selectedEntry.data.id);
-
-            temp = {
-                'title': this.pageName,
-                'text': this.addContent
-            };
-            this.wikiPage.headings.push(temp);
+            this.wikiService.addTempleteHeading(this.pageName, this.data.selectedEntry.data.id); 
         }
         else {
             this.wikiService.addHeading(this.pageName, this.data.selectedEntry.data.id);
-            temp = {
-                'title': this.pageName,
-                'text': this.addContent
-            };
-            this.wikiPage.headings.push(temp);
+            
         }
+         temp = {
+                'title': this.pageName,
+                'text': this.addContent,
+            };
+
+            this.wikiPage.headings.push(temp);
+            temp['active'] = false;
+            this.wikiPageContent.push(temp);
+
+        this.onEdit(this.wikiPageContent.length-1);
         this.disabled.push(true);
         this.icons.push('fa-pencil');
         this.wikiPageContent.push({});
@@ -212,20 +212,24 @@ export class WikiComponent {
 
         let title = "";
         let text = "";
+        let prev = {};
         //saving the previous state
         if (this.disabled[idx]) {
             this.icons[idx] = 'fa-check';
             if (idx == 0) {
                 title = this.wikiPage.title;
+                prev["title"] = title;
             }
             else {
                 title = this.wikiPage.headings[idx - 1].title;
                 text = this.wikiPage.headings[idx - 1].text;
-            }
-            let prev = {
+                prev = {
                 "title": title,
                 "text": text,
+                "active": this.wikiPageContent[idx].active
+                }
             }
+
             this.wikiPageContent.splice(idx, 1, prev);
         }
         else {
@@ -267,6 +271,7 @@ export class WikiComponent {
         else {
             this.wikiPage.headings[idx - 1].title = this.wikiPageContent[idx].title;
         }
+        this.disabled[idx] = !this.disabled[idx];
     }
 
     public onSavePage() {
@@ -301,6 +306,7 @@ export class WikiComponent {
 
     public cancelAlias(alias: any) {
         alias.name = alias.prev;
+        alias.state = true;
     }
 
     public deleteAlias(alias: any) {
@@ -320,9 +326,18 @@ export class WikiComponent {
             this.wikiService.deleteSegment(this.data.selectedEntry.data.id);
         else
             this.wikiService.deletePage(this.data.selectedEntry.data.id);
+        this.wikiPage = null;
+        this.data.page=null;
+        this.wikiService.getWikiInformation(this.data.story.wiki_id);
     }
 
 
+    public onEdit(idx:any)
+    {
+        for(let i = 1; i < this.wikiPageContent.length; i++)
+            this.wikiPageContent[i].active = false;
+        this.wikiPageContent[idx].active = true;
+    }
 
     public onDeleteHeading() {
 
@@ -331,10 +346,5 @@ export class WikiComponent {
     public onReference(ref: any) {
         this.apiService.refreshContent(ref.section_id, null, { paragraphID: ref.paragraph_id });
         this.router.navigate(['/story/edit']);
-    }
-
-    public onEdit() {
-        console.log("clicked");
-        alert("clicked");
     }
 }

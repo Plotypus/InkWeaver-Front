@@ -26,4 +26,13 @@ export class StatsService {
             paragragh_id:pid
         });
     }
+
+    public get_page_frequency(sid:any,wid:any)
+    {
+        this.parser.send({
+            action: 'get_page_frequencies',
+            story_id:sid,
+            wiki_id:wid
+        })
+    }
 }

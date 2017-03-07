@@ -1,5 +1,5 @@
 ﻿.stats {
-    text-align: right;
+    text-align: left;
     font-style: italic;
     background: #e6e6e6;
     color: var(--light-blue);
@@ -11,6 +11,10 @@
     padding-bottom: .5em
 }
 
-.stats ui-datatable{
-	 
-}	
+stats .ui-tabview .ui-tabview-panel{
+	padding:0em !important;
+}
+
+stats .ui-tabview.ui-widget-content{
+	background: var(--light-blue);
+}

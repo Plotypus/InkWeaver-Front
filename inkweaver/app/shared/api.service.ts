@@ -52,7 +52,11 @@ export class ApiService {
         contentObject: new ContentObject(),
 
         statSection: new Section(),
+        statSegment: new Segment(),
         stats: new Stats(),
+        statsPages: {},
+        statsSections: {},
+        statsPageFrequency: {},
 
         wikiNav: [],
         wikiDisplay: '',
@@ -227,6 +231,12 @@ export class ApiService {
                                 this.refreshUserStoriesAndWikis();
                                 break;
                             case 'segment_added':
+                                this.data.pageidout = this.outgoing['segment' + reply.title];
+                                if (out) {
+                                    let callback: Function = out.callback;
+                                    callback(reply);
+                                    delete this.outgoing['segment' + reply.title];
+                                }.push(reply.segment_id);
                                 this.refreshWikiHierarchy();
 
                             case 'page_added':
