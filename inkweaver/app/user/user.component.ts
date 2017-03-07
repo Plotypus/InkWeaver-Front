@@ -2,15 +2,15 @@
 import { Router } from '@angular/router';
 import { SelectItem, TreeNode } from 'primeng/primeng';
 
+import { ApiService } from '../shared/api.service';
 import { UserService } from './user.service';
 import { StoryService } from '../story/story.service';
 import { WikiService } from '../story/wiki/wiki.service';
-import { ApiService } from '../shared/api.service';
 
 import { ID } from '../models/id.model';
 import { User } from '../models/user/user.model';
-import { StorySummary } from '../models/story/story-summary.model';
 import { Section } from '../models/story/section.model';
+import { StorySummary } from '../models/story/story-summary.model';
 
 @Component({
     selector: 'user',
@@ -18,8 +18,12 @@ import { Section } from '../models/story/section.model';
 })
 export class UserComponent {
     private data: any;
-    private editing: boolean;
-    private backup: User;
+    private nameActive: boolean;
+    private emailActive: boolean;
+    private bioActive: boolean;
+    private prevName: string;
+    private prevEmail: string;
+    private prevBio: string;
 
     private wikis: SelectItem[];
     private newWiki: any;
@@ -41,18 +45,25 @@ export class UserComponent {
         private apiService: ApiService) { }
 
     ngOnInit() {
+        if (this.apiService.subscribedToStory) {
+            this.storyService.unsubscribeFromStory();
+        }
+        if (this.apiService.subscribedToWiki) {
+            this.storyService.unsubscribeFromWiki();
+        }
+
         if (!this.apiService.messages) {
             this.router.navigate(['/login']);
         }
 
-        this.apiService.refreshUser();
+        this.apiService.refreshUserPreferences();
+        this.apiService.refreshUserStoriesAndWikis();
         this.data = this.apiService.data;
         this.data.menuItems = [
             { label: 'About', routerLink: ['/about'] },
             { label: 'Sign Out', routerLink: ['/login'] },
         ];
 
-        this.editing = false;
         this.colors = [
             '#cb735c', // red-orange
             '#fdd17c', // yellow
@@ -65,73 +76,97 @@ export class UserComponent {
         ];
     }
 
-    // User
-    public edit() {
-        this.backup = JSON.parse(JSON.stringify(this.data.user));
-        this.editing = true;
+    // User editing
+    public edit(field: string) {
+        switch (field) {
+            case 'name':
+                this.nameActive = true;
+                this.prevName = this.data.user.name;
+                break;
+            case 'email':
+                this.emailActive = true;
+                this.prevEmail = this.data.user.email;
+                break;
+            case 'bio':
+                this.bioActive = true;
+                this.prevBio = this.data.user.bio;
+                break;
+        }
     }
-    public cancel() {
-        this.data.user = this.backup;
-        this.editing = false;
+    public cancel(field: string) {
+        switch (field) {
+            case 'name':
+                this.nameActive = false;
+                this.data.user.name = this.prevName;
+                break;
+            case 'email':
+                this.emailActive = false;
+                this.data.user.email = this.prevEmail;
+                break;
+            case 'bio':
+                this.bioActive = false;
+                this.data.user.bio = this.prevBio;
+                break;
+        }
     }
-    public save() {
-        this.userService.setUserName(this.data.user.name);
-        this.userService.setUserEmail(this.data.user.email);
-        this.userService.setUserBio(this.data.user.bio);
-        this.editing = false;
+    public save(field: string) {
+        switch (field) {
+            case 'name':
+                this.nameActive = false;
+                this.userService.setUserName(this.data.user.name);
+                break;
+            case 'email':
+                this.emailActive = false;
+                this.userService.setUserEmail(this.data.user.email);
+                break;
+            case 'bio':
+                this.bioActive = false;
+                this.userService.setUserBio(this.data.user.bio);
+                break;
+        }
     }
 
-    // Stories
+    // Select a story
     public selectStory(story: StorySummary) {
         this.data.storyDisplay = '';
         this.data.section = new Section();
         this.data.storyNode = new Array<TreeNode>();
 
         this.data.story.story_id = story.story_id;
+        this.data.wiki.wiki_id = story.wiki_summary.wiki_id;
         this.data.story.story_title = story.title;
         this.data.story.position_context = story.position_context;
 
-        this.storyService.getStoryInformation(story.story_id);
+        this.storyService.subscribeToStory(story.story_id);
+        this.storyService.subscribeToWiki(story.wiki_summary.wiki_id);
         this.router.navigate(['/story/edit']);
     }
 
+    // Create a story
     public openStoryCreator() {
         this.displayStoryCreator = true;
-        this.wikis = [{ label: 'Create New Wiki', value: 'new_wiki' }];
+        this.wikis = [{ label: 'Create New Wiki', value: 'newWiki' }];
         for (let wiki of this.data.wikis) {
             this.wikis.push({ label: wiki.title, value: wiki.wiki_id });
         }
         this.newWiki = this.wikis[0].value;
     }
     public createStory() {
-        if (this.newWiki === 'new_wiki') {
+        this.displayStoryCreator = false;
+        if (this.newWiki === 'newWiki') {
             this.wikiService.createWiki(this.newWikiTitle, this.newWikiSummary, (reply: any) => {
-                this.data.storyDisplay = '';
-                this.data.section = new Section();
-                this.data.storyNode = new Array<TreeNode>();
-
-                this.displayStoryCreator = false;
-                this.data.story.story_title = this.title;
                 this.storyService.createStory(this.title, reply.wiki_id, this.summary);
-                this.router.navigate(['/story/edit']);
             });
         } else {
-            this.data.storyDisplay = '';
-            this.data.section = new Section();
-            this.data.storyNode = new Array<TreeNode>();
-
-            this.displayStoryCreator = false;
-            this.data.story.story_title = this.title;
             this.storyService.createStory(this.title, this.newWiki, this.summary);
-
-            this.router.navigate(['/story/edit']);
         }
     }
 
+    // Delete a story
     public openStoryDeleter(event: any, storyID: ID) {
+        event.stopPropagation();
         this.deleteID = storyID;
         this.displayStoryDeleter = true;
-        event.stopPropagation();
     }
     public deleteStory() {
         this.displayStoryDeleter = false;

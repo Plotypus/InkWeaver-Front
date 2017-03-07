@@ -9,17 +9,17 @@
             </tr>
             <tr>
                 <td><label>Summary</label></td>
-                <td><input pInputText type="text" [(ngModel)]="summary" /></td>
+                <td><textarea pInputTextArea [(ngModel)]="summary"></textarea></td>
             </tr>
             <tr>
                 <td><label>Wiki</label></td>
                 <td><p-dropdown [options]="wikis" [(ngModel)]="newWiki"></p-dropdown></td>
             </tr>
-            <tr *ngIf="newWiki == 'new_wiki'">
+            <tr *ngIf="newWiki == 'newWiki'">
                 <td><label>New Wiki Title</label></td>
                 <td><input pInputText type="text" [(ngModel)]="newWikiTitle" /></td>
             </tr>
-            <tr *ngIf="newWiki == 'new_wiki'">
+            <tr *ngIf="newWiki == 'newWiki'">
                 <td><label>New Wiki Summary</label></td>
                 <td><textarea pInputTextarea [(ngModel)]="newWikiSummary"></textarea></td>
             </tr>
@@ -28,7 +28,7 @@
                 <td></td>
                 <td>
                     <button pButton type="button" label="Create Story" (click)="createStory()"
-                            [disabled]="!(title && summary && (newWiki != 'new_wiki' || (newWikiTitle && newWikiSummary)))"></button>
+                            [disabled]="!(title && (newWiki != 'newWiki' || newWikiTitle))"></button>
                 </td>
             </tr>
         </tbody>
@@ -54,6 +54,7 @@
                             <p-panel styleClass="story-tile" (click)="selectStory(story)">
                                 <header>
                                     {{story.title}}
+                                    <div class="subheader">{{story.wiki_summary.title}}</div>
                                 </header>
                                 <div>
                                     <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>
@@ -64,7 +65,10 @@
 
                         <div *ngIf="!story.story_id">
                             <p-panel styleClass="new-story-tile" (click)="openStoryCreator()">
-                                <header>Create Story</header>
+                                <header>
+                                    Create Story
+                                    <div class="subheader">Using a New or Existing Wiki</div>
+                                </header>
                                 <div><i class="fa fa-plus-square-o"></i></div>
                             </p-panel>
                         </div>
@@ -74,34 +78,60 @@
         </div>
 
         <div class="navigation ui-grid-col-3">
-            <div class="user-info" [ngSwitch]="editing">
+            <div class="user-info">
                 <div class="user-info-fields">
                     <div class="user-info-label">Username: </div>
                     <div class="user-info-field">{{data.user.username}}</div><br />
                     <div class="user-info-label">Name: </div>
                     <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.name}}</span>
-                        <input pInputText *ngSwitchCase="true" [(ngModel)]="data.user.name" />
+                        <span [ngSwitch]="!!nameActive">
+                            <span *ngSwitchCase="false" (click)="edit('name')">
+                                {{data.user.name}}
+                                <span *ngIf="!data.user.name" class="default-field">
+                                    User name goes here
+                                </span>
+                            </span>
+                            <span *ngSwitchCase="true">
+                                <input pInputText type="text" [(ngModel)]="data.user.name" />
+                                <button pButton icon="fa-check" (click)="save('name')"></button>
+                                <button pButton icon="fa-times" (click)="cancel('name')"></button>
+                            </span>
+                        </span>
                     </div><br />
                     <div class="user-info-label">Email: </div>
                     <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.email}}</span>
-                        <input pInputText *ngSwitchCase="true" [(ngModel)]="data.user.email" />
+                        <span [ngSwitch]="!!emailActive">
+                            <span *ngSwitchCase="false" (click)="edit('email')">
+                                {{data.user.email}}
+                                <span *ngIf="!data.user.email" class="default-field">
+                                    User email goes here
+                                </span>
+                            </span>
+                            <span *ngSwitchCase="true">
+                                <input pInputText type="text" [(ngModel)]="data.user.email" />
+                                <button pButton icon="fa-check" (click)="save('email')"></button>
+                                <button pButton icon="fa-times" (click)="cancel('email')"></button>
+                            </span>
+                        </span>
                     </div><br />
                     <div class="user-info-label">Bio: </div>
                     <div class="user-info-field">
-                        <span *ngSwitchCase="false">{{data.user.bio}}</span>
-                        <textarea pInputTextArea *ngSwitchCase="true" [(ngModel)]="data.user.bio"></textarea>
+                        <span [ngSwitch]="!!bioActive">
+                            <span *ngSwitchCase="false" (click)="edit('bio')">
+                                {{data.user.bio}}
+                                <span *ngIf="!data.user.bio" class="default-field">
+                                    User biography goes here
+                                </span>
+                            </span>
+                            <span *ngSwitchCase="true">
+                                <textarea pInputTextArea [(ngModel)]="data.user.bio"></textarea>
+                                <button pButton icon="fa-check" (click)="save('bio')"></button>
+                                <button pButton icon="fa-times" (click)="cancel('bio')"></button>
+                            </span>
+                        </span>
                     </div>
-                </div>
-
-                <div class="user-buttons">
-                    <button pButton label="Edit" *ngSwitchCase="false" (click)="edit()"></button>
-                    <button pButton label="Cancel" *ngSwitchCase="true" (click)="cancel()"></button>
-                    <button pButton label="Save" *ngSwitchCase="true" (click)="save()"></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-

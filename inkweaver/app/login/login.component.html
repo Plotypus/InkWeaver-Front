@@ -1,46 +1,29 @@
 ﻿<div class="login">
-    <p-panel header="Sign In">
-        <form (ngSubmit)="signIn()" #loginForm="ngForm">
-            <table>
-                <tbody>
-                    <tr>
-                        <td><label for="username">Username</label></td>
-                        <td>
-                            <input type="text" [(ngModel)]="login.username" required autofocus
-                                   id="username" name="username" #username="ngModel">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <div class="login-warn" [hidden]="username.valid || username.pristine">
-                                Username is required
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="password">Password</label></td>
-                        <td>
-                            <input type="password" [(ngModel)]="login.password" required
-                                   id="password" name="password" #password="ngModel">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <div class="login-warn" [hidden]="password.valid || password.pristine">
-                                Password is required
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <button pButton type="submit" label="Sign In"
-                                    [disabled]="data.inflight || !(loginForm.form.valid || login.username || login.password)"></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
+    <p-panel header="Sign In" (keyup.enter)="signIn()">
+        <table>
+            <tbody>
+                <tr class="login-row">
+                    <td><label>Username</label></td>
+                    <td>
+                        <input pInputText type="text" [(ngModel)]="login.username" required autofocus />
+                    </td>
+                </tr>
+                <tr class="login-row">
+                    <td><label>Password</label></td>
+                    <td>
+                        <input pInputText type="password" [(ngModel)]="login.password" required />
+                    </td>
+                </tr>
+                <tr class="login-row">
+                    <td></td>
+                    <td *ngIf="this.error" class="login-warn">{{this.error}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button pButton (click)="signIn()" label="Sign In"></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </p-panel>
 </div>

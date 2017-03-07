@@ -24,7 +24,6 @@ export class EditComponent {
     @ViewChild(Editor) editor: Editor;
 
     private data: any;
-    private setLinks: boolean;
     private wordCount: number;
     private editorRef: any;
     private timerSub: Subscription;
@@ -62,43 +61,32 @@ export class EditComponent {
         this.data = this.apiService.data;
         this.data.tooltip.display = 'none';
 
-        if (this.apiService.messages) {
-            this.apiService.messages.subscribe((action: string) => {
-                if (action === 'get_section_content') {
-                    this.setLinks = true;
-                }
-            });
-        } else {
+        if (!this.apiService.messages) {
             this.router.navigate(['/login']);
         }
     }
 
     ngAfterViewInit() {
         // Initialize variables
-        this.setLinks = true;
         this.editorRef = this.editor.el.nativeElement.querySelector('div.ql-editor');
 
-        // Save position context every 3 seconds
-        let timer: Observable<number> = Observable.timer(3000, 3000);
-        this.timerSub = timer.subscribe((tick: number) => {
-            if (this.router.url === '/story/edit') {
-                let idx = this.editor.quill.getSelection();
-                if (idx) {
-                    let blot = this.editor.quill.getLine(idx.index);
-                    if (blot) {
-                        let block = blot[0];
-                        while (block && block.domNode && !block.domNode.id && block.parent) {
-                            block = block.parent;
-                        }
-                        if (block && block.domNode && block.domNode.id) {
-                            this.paragraphPosition = { $oid: block.domNode.id };
-                        }
+        // Add click event handlers to links when necessary
+        this.editor.onSelectionChange.subscribe((event: any) => {
+            let idx = this.editor.quill.getSelection();
+            if (idx) {
+                let blot = this.editor.quill.getLine(idx.index);
+                if (blot) {
+                    let block = blot[0];
+                    while (block && block.domNode && !block.domNode.id && block.parent) {
+                        block = block.parent;
+                    }
+                    if (block && block.domNode && block.domNode.id) {
+                        this.paragraphPosition = { $oid: block.domNode.id };
                     }
                 }
             }
         });
 
-        // Add click event handlers to links when necessary
         this.editor.onTextChange.subscribe((event: any) => {
             if (this.data.story.position_context && this.data.story.position_context.paragraph_id) {
                 this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid);
@@ -106,7 +94,6 @@ export class EditComponent {
             }
 
             this.suggest.display = 'none';
-
             let index: number = event.delta.ops[0].retain;
             if (index) {
                 let text: string = this.editor.quill.getText(0, index + 1);
@@ -126,29 +113,27 @@ export class EditComponent {
                 }
             }
 
-            if (this.setLinks) {
-                this.setLinks = false;
-
-                let threads: any[] = this.editorRef.querySelectorAll('a[href]');
-                for (let thread of threads) {
+            let threads: any[] = this.editorRef.querySelectorAll('a[href]');
+            for (let thread of threads) {
+                if (!thread.onclick) {
                     let linkID: string = thread.getAttribute('href');
                     if (linkID.startsWith('sid')) {
                         let id: string = linkID.substring(3);
                         let node: TreeNode = this.parserService.setSection(this.data.storyNode[0], JSON.stringify({ $oid: id }));
-                        thread.addEventListener('click', (event: any) => {
+                        thread.onclick = (event: any) => {
                             event.preventDefault();
                             this.selectSection({ node: node });
-                        });
+                        };
                     } else {
                         let ids: string[] = linkID.split('-');
                         let pageID: ID = { $oid: ids[1] };
 
-                        thread.addEventListener('click', (event: any) => {
+                        thread.onclick = (event: any) => {
                             event.preventDefault();
                             this.wikiService.getWikiPage(pageID);
                             this.router.navigate(['/story/wiki']);
-                        });
-                        thread.addEventListener('mouseenter', (event: any) => {
+                        };
+                        thread.onmouseenter = (event: any) => {
                             let aBlot = Quill['find'](event.target);
                             let index: number = this.editor.quill.getIndex(aBlot);
                             let bounds: any = this.editor.quill.getBounds(index);
@@ -159,10 +144,10 @@ export class EditComponent {
                                 display: 'block', top: top + 'px', left: bounds.left + 'px'
                             };
                             this.wikiService.getWikiPage(pageID, { noflight: true });
-                        });
-                        thread.addEventListener('mouseleave', (event: any) => {
+                        };
+                        thread.onmouseleave = (event: any) => {
                             this.data.tooltip.display = 'none';
-                        });
+                        };
                     }
                 }
             }
@@ -173,11 +158,10 @@ export class EditComponent {
     }
 
     ngOnDestroy() {
-        this.timerSub.unsubscribe();
         if (this.data.section.data) {
             this.data.story.position_context = { section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition };
-            this.userService.setUserStoryPositionContext(this.data.story.story_id,
-                this.data.section.data.section_id, this.paragraphPosition);
+            this.userService.setUserStoryPositionContext(this.data.section.data.section_id,
+                this.paragraphPosition);
         }
         if (this.data.prevSection.data) {
             this.save();
@@ -252,7 +236,6 @@ export class EditComponent {
         if (this.newLinkID) {
             this.editor.quill.deleteText(this.range.index, this.range.length);
 
-            this.setLinks = true;
             this.editor.quill.insertText(
                 this.range.index, this.word, 'link', 'new' + Math.random() + '-' + this.newLinkID.$oid);
             this.editor.quill.setSelection(this.range.index + this.word.length, 0);
@@ -270,7 +253,7 @@ export class EditComponent {
         this.data.section = event.node;
         this.save();
         this.data.prevSection = event.node;
-        this.editService.getSectionContent(event.node.data.section_id, event.node.data.title);
+        this.apiService.refreshContent(event.node.data.section_id, event.node.data.title);
     }
 
     public addSection() {
@@ -358,5 +341,23 @@ export class EditComponent {
                     this.data.story.story_id, this.data.prevSection.data.section_id);
             }
         }
+    }
+
+    public onDragStart(event: any, node: TreeNode) {
+        console.log('drag started');
+        console.log(event);
+        console.log(node);
+    }
+
+    public onDragEnd(event: any, node: TreeNode) {
+        console.log('drag ended');
+        console.log(event);
+        console.log(node);
+    }
+
+    public onDrop(event: any, node: TreeNode) {
+        console.log('dropped');
+        console.log(event);
+        console.log(node);
     }
 }

@@ -1,5 +1,5 @@
-﻿import { Component, OnInit,ViewChildren } from '@angular/core';
-import { TreeNode,Editor } from 'primeng/primeng';
+﻿import { Component, OnInit, ViewChildren } from '@angular/core';
+import { TreeNode, Editor } from 'primeng/primeng';
 import { Router } from '@angular/router';
 
 import { EditService } from '../edit/edit.service';
@@ -16,7 +16,7 @@ export class WikiComponent {
     @ViewChildren(Editor) editor: Editor;
 
     private data: any;
-    private selectedEntry: TreeNode;  
+    private selectedEntry: TreeNode;
     private showAddDialog: any;
     private addOptions: any;
     private addContent: any;
@@ -54,7 +54,7 @@ export class WikiComponent {
 
 
         this.apiService.messages.subscribe((action: string) => {
-            if (action == "get_wiki_segment" || action == 'get_wiki_page') {
+            if (action == "got_wiki_segment" || action == 'got_wiki_page') {
                 this.wikiPageContent = [];
                 this.wikiPage = this.data.page;
 
@@ -76,7 +76,7 @@ export class WikiComponent {
 
             }
             else if (action.includes("delete")) {
-                this.wikiService.getWikiHierarchy(this.data.story.wiki_id);
+                this.apiService.refreshWikiHierarchy();
                 if (action == "alias_deleted") {
                     this.wikiService.getWikiPage(this.data.selectedEntry.data.id);
                 }
@@ -121,7 +121,7 @@ export class WikiComponent {
         //Take care of when the title page is clicked
         if (this.data.wiki.wiki_title == page.node.data.title) {
             this.wikiPage = null;
-            this.wikiService.getWikiInformation(this.data.story.wiki_id);
+            this.apiService.refreshWikiInfo();
         }
         else if (page.node.type == "category") {
             page.node.expanded = !page.node.expanded;
@@ -329,7 +329,7 @@ export class WikiComponent {
     }
 
     public onReference(ref: any) {
-        this.editService.getSectionContent(ref.section_id, null, ref.paragraph_id);
+        this.apiService.refreshContent(ref.section_id, null, { paragraphID: ref.paragraph_id });
         this.router.navigate(['/story/edit']);
     }
 

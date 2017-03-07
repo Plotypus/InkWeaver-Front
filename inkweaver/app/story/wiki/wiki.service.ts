@@ -6,21 +6,6 @@ import { ApiService } from '../../shared/api.service';
 export class WikiService {
     constructor(private apiService: ApiService) { }
 
-    //All the GETS
-    public getWikiInformation(wiki_id: any) {
-        this.apiService.send({
-            action: 'get_wiki_information',
-            wiki_id: wiki_id
-        });
-    }
-
-    public getWikiHierarchy(wiki_id: any) {
-        this.apiService.send({
-            action: 'get_wiki_hierarchy',
-            wiki_id: wiki_id
-        });
-    }
-
     public getWikiSegmentHierarchy(segment_id: any) {
         this.apiService.send({
             action: 'get_wiki_segment_hierarchy',
@@ -38,7 +23,7 @@ export class WikiService {
         this.apiService.send({
             action: 'get_wiki_page',
             page_id: page_id
-        }, (reply: any) => { }, metadata);
+        }, () => { }, metadata);
     }
 
     //EDITS
@@ -130,7 +115,7 @@ export class WikiService {
 
     }
     //ADD
-    public addSegment(title: string, pid: any, callback: (reply: any) => void = (reply: any) => { }) {
+    public addSegment(title: string, pid: any, callback: Function = () => { }) {
         this.apiService.send({
 
             "action": "add_segment",
@@ -148,7 +133,7 @@ export class WikiService {
     }
 
     //parent_id == segment_id
-    public addPage(title: string, sid: any, callback: (reply: any) => void = (reply: any) => { }) {
+    public addPage(title: string, sid: any, callback: Function = () => { }) {
         this.apiService.send({
             "action": "add_page",
             "title": title,
@@ -167,7 +152,7 @@ export class WikiService {
     }
 
     //Delete
-    public deleteSegment(sid: any, callback: (reply: any) => void = (reply: any) => { }) {
+    public deleteSegment(sid: any, callback: Function = () => { }) {
         this.apiService.send({
 
             "action": "delete_segment",
@@ -175,7 +160,7 @@ export class WikiService {
         });
     }
 
-    public deletePage(pid: any, callback: (reply: any) => void = (reply: any) => { }) {
+    public deletePage(pid: any, callback: Function = () => { }) {
         this.apiService.send({
 
             "action": "delete_page",
@@ -209,7 +194,7 @@ export class WikiService {
         });
     }
     //CREATES
-    public createWiki(title: string, summary: string, callback: (reply: any) => void = (reply: any) => { }) {
+    public createWiki(title: string, summary: string, callback: Function = () => { }) {
         this.apiService.send({
             "action": "create_wiki",
             "title": title,

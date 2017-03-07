@@ -48,7 +48,7 @@ export class EditService {
         if (succeedingParagraphID) {
             p.succeeding_paragraph_id = succeedingParagraphID
         }
-        this.apiService.send(p, (reply: any) => { }, { noflight: true });
+        this.apiService.send(p, () => { }, { noflight: true });
     }
 
     public editParagraph(storyID: ID, sectionID: ID, text: string, paragraphID: ID) {
@@ -68,7 +68,7 @@ export class EditService {
                 text: text
             },
             paragraph_id: paragraphID
-        }, (reply: any) => { }, { noflight: true });
+        }, () => { }, { noflight: true });
     }
 
     public deleteParagraph(paragraphID: ID, sectionID: ID) {
@@ -76,30 +76,7 @@ export class EditService {
             action: 'delete_paragraph',
             paragraph_id: paragraphID,
             section_id: sectionID
-        }, (reply: any) => { }, { noflight: true });
-    }
-
-    public getSectionContent(sectionID: ID, sectionTitle: string = null, paragraphID: ID = null) {
-        if (!sectionTitle) {
-            let sectionNode: TreeNode = this.findSection(this.apiService.data.storyNode[0], JSON.stringify(sectionID));
-            if (sectionNode) {
-                sectionTitle = sectionNode.data.title;
-            }
-        }
-        this.apiService.refreshContent(sectionID, sectionTitle, { paragraph_id: paragraphID });
-    }
-
-    public findSection(start: TreeNode, sectionID: string): TreeNode {
-        if (JSON.stringify(start.data.section_id) == sectionID) {
-            return start;
-        }
-        for (let section of start.children) {
-            let found = this.findSection(section, sectionID);
-            if (found) {
-                return found;
-            }
-        }
-        return null;
+        }, () => { }, { noflight: true });
     }
 
     /**

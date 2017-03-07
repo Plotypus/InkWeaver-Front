@@ -49,8 +49,13 @@ user .ui-datagrid-content {
     bottom: 5px;
 }
 
+.subheader {
+    font-style: italic;
+    color: var(--dark-gray);
+}
+
 /* Navigation */
-.user-info{
+.user-info {
     margin: 5%;
     padding: 5%;
     height: 75%;
@@ -60,32 +65,31 @@ user .ui-datagrid-content {
 }
 
 .user-info-fields input {
-    width: 100%;
+    width: 70%;
 }
+.user-info-fields button {
+    margin: 0;
+    width: 10%;
+}
+
 .user-info-fields textarea {
     width: 100%;
     min-height: 100px;
     border-radius: 4px;
 }
+
 .user-info-label {
     color: var(--dark-gray);
 }
+
 .user-info-field {
     color: white;
+    cursor: pointer;
 }
 
-.user-buttons {
-    right: 15px;
-    bottom: 15px;
-    position: absolute;
-}
-.user-buttons button {
-    color: var(--dark-blue) !important;
-    background: var(--light-gray) !important;
-    border: 1px solid var(--dark-gray) !important;
-}
-.user-buttons button :hover {
-    background: var(--dark-gray);
+.default-field {
+    color: var(--tan);
+    font-style: italic;
 }
 
 /* -------------------- Dialog -------------------- */
