@@ -145,7 +145,7 @@ export class ParserService {
     // ---------------------------------------------- //
     // -------------------- Wiki -------------------- //
     // ---------------------------------------------- //
-    public parseWiki(json: any, selected: any) : any {
+    public parseWiki(json: any, selected: any): any {
         let nav = new Array<TreeNode>();
         let temp: TreeNode = {};
         temp.data = new PageSummary();
@@ -159,8 +159,8 @@ export class ParserService {
         let pageDic = Array<TreeNode>();
         let path = this.createPath(selected);
         for (let index in json['segments']) {
-            let result = this.jsonToWiki(json['segments'][index], path,pageDic);
-            let tree : TreeNode;
+            let result = this.jsonToWiki(json['segments'][index], path, pageDic);
+            let tree: TreeNode;
             tree = result[0];
             tree.parent = temp;
             temp.children.push(result[0]);
@@ -172,10 +172,10 @@ export class ParserService {
             pageDic.push(result.data);
         }
 
-        return [nav,pageDic];
+        return [nav, pageDic];
     }
 
-    public jsonToWiki(wikiJson: any, selected: Array<String>, pages: Array<TreeNode>){
+    public jsonToWiki(wikiJson: any, selected: Array<String>, pages: Array<TreeNode>) {
         let wiki: TreeNode = {};
 
         let parent: TreeNode = {};
@@ -192,9 +192,9 @@ export class ParserService {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
                 for (let segment in segmentJsons) {
-                   
-                    let result = this.jsonToWiki(segmentJsons[segment], selected,pages);
-                    let subsegment :TreeNode;
+
+                    let result = this.jsonToWiki(segmentJsons[segment], selected, pages);
+                    let subsegment: TreeNode;
                     subsegment = result[0];
                     pages.concat(result[1]);
                     subsegment.type = "category";
@@ -205,7 +205,7 @@ export class ParserService {
             else if (field === "pages") {
                 let pagesJsons = wikiJson[field];
                 for (let page in pagesJsons) {
-                    
+
                     let leafpage = this.jsonToPage(pagesJsons[page]);
                     pages.push(leafpage);
                     leafpage.parent = wiki;
@@ -218,7 +218,7 @@ export class ParserService {
             wiki.children = wiki.children.sort(this.sort);
         }
 
-        return [wiki,pages];
+        return [wiki, pages];
     }
 
 
@@ -243,7 +243,7 @@ export class ParserService {
     public setWikiDisplay(reply: any) {
         let html: string = "";
 
-        html += "<h1>"+reply["wiki_title"]+"</h1>";
+        html += "<h1>" + reply["wiki_title"] + "</h1>";
         for (let idx in reply['users']) {
             html += "<br>By " + reply['users'][idx].name;
         }
@@ -350,54 +350,47 @@ export class ParserService {
         return wordFreq;
     }
 
-    public flattenTree(tree:TreeNode)
-    {
-        
+    public flattenTree(tree: TreeNode) {
+
         let arr = this.getTreeArray(tree);
         let dict = {};
         let key = {};
-        for(let idx in arr)
-        {
-            
+        for (let idx in arr) {
+
             dict[JSON.stringify(arr[idx].section_id)] = arr[idx];
-            
+
         }
 
         return dict;
     }
 
-    public getTreeArray(tree:TreeNode, mode:boolean = false)
-    {
+    public getTreeArray(tree: TreeNode, mode: boolean = false) {
         let arr = [];
-        if(!mode)
+        if (!mode)
             arr.push(tree.data);
-        else
-        {
-            if(tree.type == 'page')
+        else {
+            if (tree.type == 'page')
                 arr.push(tree);
         }
-        for(let i in tree.children)
-            arr = arr.concat(this.getTreeArray(tree.children[i],mode));
+        for (let i in tree.children)
+            arr = arr.concat(this.getTreeArray(tree.children[i], mode));
         return arr;
     }
 
-    public parsePageFrequency(stats:any,wikiPages:any,sections:any)
-    {
+    public parsePageFrequency(stats: any, wikiPages: any, sections: any) {
         let result = {};
         let count = [];
-        let secList :any;
+        let secList: any;
         let temp: any;
-        let val:Number;
-         
-        for(let idx in stats)
-        {
+        let val: Number;
+
+        for (let idx in stats) {
             count = [];
             secList = stats[idx].section_frequencies;
-         
-            for(let section in sections)
-            {
+
+            for (let section in sections) {
                 val = secList[section.substr(0, 8) + " " + section.substr(8)];
-                if(val == undefined)
+                if (val == undefined)
                     val = 0;
                 count.push(val);
             }

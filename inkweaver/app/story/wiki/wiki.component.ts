@@ -12,7 +12,7 @@ import { PageSummary } from '../../models/wiki/page-summary.model';
     templateUrl: './app/story/wiki/wiki.component.html'
 })
 export class WikiComponent {
-    
+
     private data: any;
     private selectedEntry: TreeNode;
     private showAddDialog: any;
@@ -69,7 +69,7 @@ export class WikiComponent {
                     this.wikiPageContent.push({
                         'title': this.wikiPage.headings[i].title,
                         'text': this.wikiPage.headings[i].text,
-                        'active':false
+                        'active': false
                     });
                 }
 
@@ -104,7 +104,7 @@ export class WikiComponent {
             this.wikiPageContent.push({
                 'title': this.wikiPage.headings[i].title,
                 'text': this.wikiPage.headings[i].text,
-                'active':false
+                'active': false
             });
         }
 
@@ -186,22 +186,22 @@ export class WikiComponent {
 
         let temp = {};
         if (this.data.selectedEntry.type == 'category') {
-            this.wikiService.addTempleteHeading(this.pageName, this.data.selectedEntry.data.id); 
+            this.wikiService.addTempleteHeading(this.pageName, this.data.selectedEntry.data.id);
         }
         else {
             this.wikiService.addHeading(this.pageName, this.data.selectedEntry.data.id);
-            
+
         }
-         temp = {
-                'title': this.pageName,
-                'text': this.addContent,
-            };
+        temp = {
+            'title': this.pageName,
+            'text': this.addContent,
+        };
 
-            this.wikiPage.headings.push(temp);
-            temp['active'] = false;
-            this.wikiPageContent.push(temp);
+        this.wikiPage.headings.push(temp);
+        temp['active'] = false;
+        this.wikiPageContent.push(temp);
 
-        this.onEdit(this.wikiPageContent.length-1);
+        this.onEdit(this.wikiPageContent.length - 1);
         this.disabled.push(true);
         this.icons.push('fa-pencil');
         this.wikiPageContent.push({});
@@ -224,9 +224,9 @@ export class WikiComponent {
                 title = this.wikiPage.headings[idx - 1].title;
                 text = this.wikiPage.headings[idx - 1].text;
                 prev = {
-                "title": title,
-                "text": text,
-                "active": this.wikiPageContent[idx].active
+                    "title": title,
+                    "text": text,
+                    "active": this.wikiPageContent[idx].active
                 }
             }
 
@@ -327,14 +327,13 @@ export class WikiComponent {
         else
             this.wikiService.deletePage(this.data.selectedEntry.data.id);
         this.wikiPage = null;
-        this.data.page=null;
-        this.wikiService.getWikiInformation(this.data.story.wiki_id);
+        this.data.page = null;
+        this.apiService.refreshWikiInfo();
     }
 
 
-    public onEdit(idx:any)
-    {
-        for(let i = 1; i < this.wikiPageContent.length; i++)
+    public onEdit(idx: any) {
+        for (let i = 1; i < this.wikiPageContent.length; i++)
             this.wikiPageContent[i].active = false;
         this.wikiPageContent[idx].active = true;
     }

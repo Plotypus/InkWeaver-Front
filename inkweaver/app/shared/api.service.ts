@@ -231,14 +231,14 @@ export class ApiService {
                                 this.refreshUserStoriesAndWikis();
                                 break;
                             case 'segment_added':
-                                this.data.pageidout = this.outgoing['segment' + reply.title];
-                                if (out) {
-                                    let callback: Function = out.callback;
+                                if (this.outgoing['segment' + reply.title]) {
+                                    let callback: Function =
+                                        this.outgoing['segment' + reply.title].callback;
                                     callback(reply);
                                     delete this.outgoing['segment' + reply.title];
-                                }.push(reply.segment_id);
+                                }
                                 this.refreshWikiHierarchy();
-
+                                break;
                             case 'page_added':
                                 if (this.outgoing['page' + reply.title]) {
                                     let callback: Function =
@@ -390,6 +390,8 @@ export class ApiService {
         let key: string = '';
         if (message.action === 'add_page') {
             key = 'page' + message.title;
+        } else if (message.action === 'add_segment') {
+            key = 'segment' + message.title;
         } else {
             key = message.identifier.message_id;
         }
