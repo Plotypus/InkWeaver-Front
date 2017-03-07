@@ -226,7 +226,6 @@ export class EditComponent {
             editor.newLinkID = editor.newLinkPages[0].value;
             editor.newSegmentID = editor.newSegments[0].value;
 
-            editor.editor.quill.disable();
             editor.displayLinkCreator = true;
         }
     }

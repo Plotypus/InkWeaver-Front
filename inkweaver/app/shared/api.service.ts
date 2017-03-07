@@ -247,10 +247,12 @@ export class ApiService {
                                     callback(reply);
                                     delete this.outgoing['page' + reply.title];
                                 }
-                            case 'alias_deleted':
-                            case 'alias_name_changed':
-                                this.refreshContent();
                                 this.refreshWikiHierarchy();
+                                break;
+                            case 'alias_deleted':
+                            case 'alias_updated':
+                                this.refreshWikiHierarchy();
+                                this.refreshContent();
                                 break;
 
                             case 'subscribed_to_wiki':

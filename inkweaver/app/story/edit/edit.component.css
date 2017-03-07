@@ -112,3 +112,9 @@
 code {
     display: none;
 }
+
+.modal-label {
+    color: var(--dark-gray);
+    font-style: italic;
+    margin: 5% 0 2% 0;
+}
