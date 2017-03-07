@@ -177,6 +177,7 @@ export class ApiService {
                                 this.data.section = this.parser.setSection(this.data.storyNode[0],
                                     JSON.stringify(this.data.section.data.section_id));
                                 this.data.prevSection = this.data.section;
+                                this.data.statsSections = this.parser.flattenTree(this.data.storyNode[0]);
                                 this.refreshContent();
                                 break;
                             case 'inner_subsection_added':
@@ -268,8 +269,10 @@ export class ApiService {
                             case 'got_wiki_hierarchy':
                             case 'got_wiki_segment_hierarchy':
                                 this.data.segment = reply.hierarchy;
-                                this.data.wikiNav = this.parser.parseWiki(
+                                let result = this.parser.parseWiki(
                                     reply.hierarchy, this.data.selectedEntry);
+                                this.data.wikiNav = result[0];
+                                this.data.statsPages = result[1];
                                 this.data.linkTable = this.parser.parseLinkTable(
                                     reply.link_table);
                                 break;
@@ -288,6 +291,10 @@ export class ApiService {
                                 break;
 
                             /*Statistics*/
+                            case 'got_page_frequencies':
+                                this.data.statsPageFrequency = this.parser.parsePageFrequency(
+                                    reply.pages, this.data.statsPages, this.data.statsSections);
+                                break;
                             case 'got_story_statistics':
                             case 'got_section_statistics':
                             case 'got_paragraph_statistics':
