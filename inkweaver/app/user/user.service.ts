@@ -59,6 +59,6 @@ export class UserService {
         this.apiService.send({
             action: 'set_user_story_position_context',
             position_context: { section_id: sectionID, paragraph_id: paragraphID }
-        });
+        }, () => { }, { noflight: true });
     }
 }
