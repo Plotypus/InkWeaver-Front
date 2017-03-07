@@ -389,7 +389,7 @@ export class ParserService {
             secList = stats[idx].section_frequencies;
 
             for (let section in sections) {
-                val = secList[section.substr(0, 8) + " " + section.substr(8)];
+                val = secList[section];
                 if (val == undefined)
                     val = 0;
                 count.push(val);

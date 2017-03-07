@@ -302,7 +302,10 @@ export class ApiService {
                                 this.data.stats.word_frequency = this.parser.parseWordFrequency(
                                     reply.statistics.word_frequency);
                                 break;
-
+                            case 'got_page_frequencies':
+                                this.data.statsPageFrequency=this.parser.parsePageFrequency(reply.pages,
+                                    this.data.statsPages,this.data.statsSections);
+                                break;     
                             default:
                                 break;
                         }
