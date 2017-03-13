@@ -134,19 +134,19 @@ export class ApiService {
                                     access_level: null
                                 });
                                 break;
-                            case 'set_user_name':
-                            case 'set_user_email':
-                            case 'set_user_bio':
+                            case 'user_name_updated':
+                            case 'user_email_updated':
+                            case 'user_bio_updated':
                                 this.refreshUserPreferences();
                                 break;
 
                             // ----- Story ----- //
+                            case 'story_updated':
+                                this.refreshStoryInfo();
                             case 'story_created':
                             case 'story_deleted':
                                 this.refreshUserStoriesAndWikis();
                                 break;
-                            case 'story_updated':
-                                this.refreshUserStoriesAndWikis();
                             case 'subscribed_to_story':
                                 this.subscribedToStory = true;
                                 this.refreshStoryInfo();
@@ -178,7 +178,7 @@ export class ApiService {
                                     JSON.stringify(this.data.section.data.section_id));
                                 this.data.prevSection = this.data.section;
                                 this.data.statsSections = this.parser.flattenTree(this.data.storyNode[0]);
-                                this.refreshContent();
+                                this.refreshStoryContent();
                                 break;
                             case 'inner_subsection_added':
                             case 'section_title_updated':
@@ -188,7 +188,7 @@ export class ApiService {
                             case 'paragraph_added':
                             case 'paragraph_updated':
                             case 'paragraph_deleted':
-                                this.refreshContent();
+                                this.refreshStoryContent();
                                 break;
                             case 'got_section_content':
                                 this.data.contentObject = this.parser.parseContent(
@@ -205,9 +205,7 @@ export class ApiService {
                                         this.data.storyDisplay =
                                             '<p><em>Write a summary here!</em></p>';
                                     }
-                                    this.data.storyDisplay = '<h1>Summary</h1>'
-                                        + this.data.storyDisplay + '<h1>Table of Contents</h1>'
-                                        + this.setTableOfContents(this.data.storyNode[0], 0);
+                                    this.data.storyDisplay = '<h1>Summary</h1>';
                                 } else {
                                     this.data.storyDisplay = '<h1>' + metadata.title + '</h1>'
                                         + this.data.storyDisplay;
@@ -252,7 +250,7 @@ export class ApiService {
                             case 'alias_deleted':
                             case 'alias_updated':
                                 this.refreshWikiHierarchy();
-                                this.refreshContent();
+                                this.refreshStoryContent();
                                 break;
 
                             case 'subscribed_to_wiki':
@@ -305,9 +303,9 @@ export class ApiService {
                                     reply.statistics.word_frequency);
                                 break;
                             case 'got_page_frequencies':
-                                this.data.statsPageFrequency=this.parser.parsePageFrequency(reply.pages,
-                                    this.data.statsPages,this.data.statsSections);
-                                break;     
+                                this.data.statsPageFrequency = this.parser.parsePageFrequency(reply.pages,
+                                    this.data.statsPages, this.data.statsSections);
+                                break;
                             default:
                                 break;
                         }
@@ -337,7 +335,7 @@ export class ApiService {
     public refreshStoryHierarchy() {
         this.send({ action: 'get_story_hierarchy' });
     }
-    public refreshContent(
+    public refreshStoryContent(
         sectionID: ID = this.data.section.data.section_id,
         title: string = this.data.section.data.title,
         positionContext: any = this.data.story.position_context) {
@@ -351,22 +349,6 @@ export class ApiService {
         this.data.storyDisplay = '';
         this.send({ action: 'get_section_content', section_id: sectionID }, () => { },
             { sectionID: sectionID, title: title, positionContext: positionContext });
-    }
-    public setTableOfContents(storyNode: TreeNode, indent: number): string {
-        let result: string = '<a href="sid' + storyNode.data.section_id.$oid + '">'
-            + storyNode.data.title + '</a>';
-        if (indent === 0) {
-            result = '<h3>' + result + '</h3>';
-        }
-        if (storyNode.children) {
-            result += '<ul>';
-            for (let node of storyNode.children) {
-                result += '<li class=ql-indent-' + indent + '>' + this.setTableOfContents(
-                    node, indent + 1) + '</li>';
-            }
-            result += '</ul>';
-        }
-        return result;
     }
     public findSection(start: TreeNode, sectionID: string): TreeNode {
         if (JSON.stringify(start.data.section_id) === sectionID) {

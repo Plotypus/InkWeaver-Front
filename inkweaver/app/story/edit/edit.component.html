@@ -85,7 +85,7 @@
 
                 <div class="tooltip" [innerHTML]="data.tooltip.text" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}"></div>
                 <div class="suggest" [ngStyle]="{'display': suggest.display,'top': suggest.top, 'left': suggest.left}">
-                    {{suggest.title}}<br />
+                    <p-listbox [options]="suggest.options" [(ngModel)]="suggest.value"></p-listbox>
                 </div>
 
                 <!-- Word Count -->

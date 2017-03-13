@@ -45,7 +45,8 @@ export class EditComponent {
     private displaySectionEditor: boolean;
     private displaySectionCreator: boolean;
 
-    private suggest: any;
+    private suggest: any = {};
+    private predict: string = '';
 
     constructor(
         private router: Router,
@@ -57,7 +58,6 @@ export class EditComponent {
         private parserService: ParserService) { }
 
     ngOnInit() {
-        this.suggest = {};
         this.data = this.apiService.data;
         this.data.tooltip.display = 'none';
 
@@ -94,22 +94,39 @@ export class EditComponent {
             }
 
             this.suggest.display = 'none';
-            let index: number = event.delta.ops[0].retain;
-            if (index) {
-                let text: string = this.editor.quill.getText(0, index + 1);
-                let predict: string = text.slice(text.lastIndexOf(' ') + 1);
-
-                if (predict) {
-                    this.loopPages(this, this.data.segment, (page: PageSummary) => {
-                        if (page.title.startsWith(predict)) {
-                            let bounds = this.editor.quill.getBounds(index);
-                            let top: number = bounds.top + 70;
-                            this.suggest = {
-                                title: page.title, page_id: page.page_id,
-                                display: 'block', top: top + 'px', left: bounds.left + 'px'
-                            };
+            if (event.delta.ops[0] && event.delta.ops[1]) {
+                let index: number = event.delta.ops[0].retain;
+                let insert: string = event.delta.ops[1].insert;
+                let deleted: number = event.delta.ops[1].delete;
+                if (index && (insert || deleted)) {
+                    if (insert) {
+                        this.predict += insert;
+                    } else if (this.predict && deleted) {
+                        this.predict = this.predict.substring(0, this.predict.length - deleted);
+                    }
+                    if (this.predict) {
+                        let valIndex: number = 0;
+                        let bounds = this.editor.quill.getBounds(index);
+                        let top: number = bounds.top + 70;
+                        this.loopPages(this, this.data.segment, (page: PageSummary) => {
+                            if (page.title.startsWith(this.predict)) {
+                                if (this.suggest.display === 'none') {
+                                    this.suggest = {
+                                        options: [{ label: page.title, value: { title: page.title, page_id: page.page_id, index: valIndex++ } }],
+                                        display: 'block', top: top + 'px', left: bounds.left + 'px'
+                                    };
+                                    this.suggest.value = this.suggest.options[0].value;
+                                } else {
+                                    this.suggest.options.push({ label: page.title, value: { title: page.title, page_id: page.page_id, index: valIndex++ } });
+                                }
+                            }
+                        }, (seg: Segment) => { });
+                        if (this.suggest.display === 'none') {
+                            this.predict = '';
                         }
-                    }, (seg: Segment) => { });
+                    }
+                } else {
+                    this.predict = '';
                 }
             }
 
@@ -185,12 +202,38 @@ export class EditComponent {
                         let index: number = range.index - word.length;
 
                         editComp.suggest.display = 'none';
-                        editComp.newLinkID = editComp.suggest.page_id;
-                        editComp.word = editComp.suggest.title;
+                        editComp.word = editComp.suggest.value.title;
+                        editComp.newLinkID = editComp.suggest.value.page_id;
                         editComp.range = { index: index, length: word.length };
                         editComp.createLink();
                         editComp.editor.quill.insertText(index + editComp.word.length, ' ', 'link', false);
                         editComp.editor.quill.setSelection(index + editComp.word.length + 1, 0);
+                    } else {
+                        return true;
+                    }
+                });
+                editComp.editor.quill.keyboard.addBinding({
+                    key: 'up'
+                }, function (range, context) {
+                    if (editComp.suggest.display === 'block') {
+                        let index: number = editComp.suggest.value.index;
+                        if (index > 0) {
+                            editComp.suggest.value = editComp.suggest.options[--index].value;
+                        }
+                    } else {
+                        return true;
+                    }
+                });
+                editComp.editor.quill.keyboard.addBinding({
+                    key: 'down'
+                }, function (range, context) {
+                    if (editComp.suggest.display === 'block') {
+                        let index: number = editComp.suggest.value.index;
+                        if (index < editComp.suggest.options.length - 1) {
+                            editComp.suggest.value = editComp.suggest.options[++index].value;
+                        }
+                    } else {
+                        return true;
                     }
                 });
             } else {
@@ -252,7 +295,7 @@ export class EditComponent {
         this.data.section = event.node;
         this.save();
         this.data.prevSection = event.node;
-        this.apiService.refreshContent(event.node.data.section_id, event.node.data.title);
+        this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
     }
 
     public addSection() {

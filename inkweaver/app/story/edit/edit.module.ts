@@ -10,7 +10,8 @@ import {
     InputTextModule,
     TreeTableModule,
     ContextMenuModule,
-    DragDropModule
+    DragDropModule,
+    ListboxModule
 } from 'primeng/primeng';
 
 import { EditService } from './edit.service';
@@ -29,7 +30,8 @@ import { SharedModule } from '../../shared/shared.module';
         InputTextModule,
         TreeTableModule,
         ContextMenuModule,
-        DragDropModule
+        DragDropModule,
+        ListboxModule
     ],
     providers: [EditService],
     declarations: [EditComponent],

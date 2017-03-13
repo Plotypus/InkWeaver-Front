@@ -92,7 +92,7 @@
     position: absolute;
     padding: 0 5px 0 5px;
     background: floralwhite;
-    font-size: 0.9em;
+    font-size: 0.8em;
     border-radius: 2px;
     color: var(--light-blue);
     border: 1px solid var(--light-blue);
@@ -101,12 +101,17 @@
 
 .suggest {
     position: absolute;
-    padding: 0 5px 0 5px;
-    color: white;
-    font-size: 0.9em;
+    font-size: 0.8em;
     border-radius: 2px;
-    border: 1px solid white;
-    background: var(--link-blue);
+    border: 1px solid var(--dark-blue);
+}
+
+.suggest .ui-listbox {
+    width: 100%;
+}
+
+.suggest .ui-state-highlight, .suggest .ui-state-hover  {
+    border: none;
 }
 
 code {

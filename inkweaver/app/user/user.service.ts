@@ -8,24 +8,6 @@ import { ID } from '../models/id.model';
 export class UserService {
     constructor(private apiService: ApiService) { }
 
-    public getUserPreferences() {
-        this.apiService.send({
-            action: 'get_user_preferences'
-        });
-    }
-
-    public getUserStories() {
-        this.apiService.send({
-            action: 'get_user_stories'
-        });
-    }
-
-    public getUserWikis() {
-        this.apiService.send({
-            action: 'get_user_wikis'
-        });
-    }
-
     // Set User Information
     public setUserName(name: string) {
         this.apiService.send({
