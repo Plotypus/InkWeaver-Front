@@ -12,7 +12,6 @@ Inplace editing for user information
 Delete prompt for sections
 Edit story title by clicking on Header
 Inline story creation
-Move Table of Contents out of editor
 
 Tier 3
 Allow indentation in the editor

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 // Third party
-import { PanelModule, TabMenuModule } from 'primeng/primeng';
+import { PanelModule, TabMenuModule, ButtonModule } from 'primeng/primeng';
 
 // Modules, services, and components
 
@@ -22,6 +22,7 @@ import { StoryService } from './story.service';
         RouterModule,
         PanelModule,
         TabMenuModule,
+        ButtonModule,
         EditModule,
         WikiModule,
         StatsModule

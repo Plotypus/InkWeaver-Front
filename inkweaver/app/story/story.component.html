@@ -1,7 +1,17 @@
 ﻿<p-panel>
     <header>
         <div class="title ui-g-9">
-            {{data.story.story_title}}<p>By: {{data.user.name}}</p>
+            <span [ngSwitch]="!!editing">
+                <span *ngSwitchCase="false" (click)="edit()">
+                    {{data.story.story_title}}
+                </span>
+                <span *ngSwitchCase="true">
+                    <input pInputText type="text" [(ngModel)]="data.story.story_title" />
+                    <button pButton icon="fa-check" (click)="save()"></button>
+                    <button pButton icon="fa-times" (click)="cancel()"></button>
+                </span>
+            </span>
+            <p>By: {{data.user.name}}</p>
         </div>
         <div class="menu ui-g-3">
             <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>

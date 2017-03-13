@@ -3,6 +3,7 @@ import { Router, NavigationStart, Event } from '@angular/router';
 
 import { MenuItem } from 'primeng/primeng';
 import { ApiService } from '../shared/api.service';
+import { StoryService } from './story.service';
 
 @Component({
     selector: 'story',
@@ -13,7 +14,13 @@ export class StoryComponent {
     private items: MenuItem[];
     private activeItem: MenuItem;
 
-    constructor(private router: Router, private apiService: ApiService) { }
+    private editing: boolean;
+    private prevTitle: string;
+
+    constructor(
+        private router: Router,
+        private apiService: ApiService,
+        private storyService: StoryService) { }
 
     ngOnInit() {
         this.data = this.apiService.data;
@@ -44,5 +51,18 @@ export class StoryComponent {
                     this.activeItem = this.items[2];
                 }
             });
+    }
+
+    public edit() {
+        this.editing = true;
+        this.prevTitle = this.data.story.story_title;
+    }
+    public save() {
+        this.editing = false;
+        this.storyService.editStory(this.data.story.story_id, this.data.story.story_title);
+    }
+    public cancel() {
+        this.editing = false;
+        this.data.story.story_title = this.prevTitle;
     }
 }

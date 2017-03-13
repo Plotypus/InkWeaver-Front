@@ -205,7 +205,8 @@ export class ApiService {
                                         this.data.storyDisplay =
                                             '<p><em>Write a summary here!</em></p>';
                                     }
-                                    this.data.storyDisplay = '<h1>Summary</h1>';
+                                    this.data.storyDisplay = '<h1>Summary</h1>'
+                                        + this.data.storyDisplay;
                                 } else {
                                     this.data.storyDisplay = '<h1>' + metadata.title + '</h1>'
                                         + this.data.storyDisplay;
