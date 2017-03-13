@@ -44,6 +44,8 @@ export class EditComponent {
     private sectionTitle: string;
     private displaySectionEditor: boolean;
     private displaySectionCreator: boolean;
+    private displaySectionDeleter: boolean;
+    private deleteNode: TreeNode = { data: { title: null } };
 
     private suggest: any = {};
     private predict: string = '';
@@ -305,6 +307,12 @@ export class EditComponent {
         this.displaySectionCreator = false;
     }
 
+    public deleteSection() {
+        this.selectSection({ node: this.deleteNode.parent });
+        this.editService.deleteSection(this.deleteNode.data.section_id);
+        this.displaySectionDeleter = false;
+    }
+
     public editSectionTitle() {
         if (this.newSectionID) {
             this.editService.editSectionTitle(this.sectionTitle, this.newSectionID);
@@ -328,8 +336,8 @@ export class EditComponent {
                 },
                 {
                     label: 'Delete Section', command: () => {
-                        this.selectSection({ node: node.parent });
-                        this.editService.deleteSection(node.data.section_id);
+                        this.deleteNode = node;
+                        this.displaySectionDeleter = true;
                     }
                 }
             ];

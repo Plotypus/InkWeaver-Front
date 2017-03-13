@@ -8,15 +8,11 @@ Add notes
 Drag and drop sections/segments
 Create User
 Versioning of story
-Inplace editing for user information
 Delete prompt for sections
-Edit story title by clicking on Header
 Inline story creation
 
 Tier 3
 Allow indentation in the editor
-Bigger text boxes for summaries
-Ability to turn off spellcheck
 Allow for pressing Enter to create a link during IntelliSense
 Publishing of subsections
 Expand menu in top-right

@@ -3,7 +3,6 @@
 <!-- Link Creator Dialog -->
 <p-dialog modal="true" header="Create New Link" [(visible)]="displayLinkCreator"
           width="450" height="450" responsive="true" (keyup.enter)="createLink()">
-
     <input pInputText type="text" #link [(ngModel)]="word" />
     <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkID" filter="link"></p-dropdown><br />
 
@@ -19,11 +18,10 @@
 <!-- Add Section Dialog -->
 <p-dialog modal="true" header="Add New Section" [(visible)]="displaySectionCreator"
           width="450" height="450" responsive="true" (keyup.enter)="addSection()">
-
     <input pInputText type="text" [(ngModel)]="sectionTitle" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button pButton type="button" label="Add Section" icon="fa-link" iconPos="right" (click)="addSection()"></button>
+            <button pButton type="button" label="Add Section" (click)="addSection()"></button>
         </div>
     </footer>
 </p-dialog>
@@ -31,11 +29,21 @@
 <!-- Edit Section Title Dialog -->
 <p-dialog modal="true" header="Edit Section Title" [(visible)]="displaySectionEditor"
           width="450" height="450" responsive="true" (keyup.enter)="editSectionTitle()">
-
     <input pInputText type="text" [(ngModel)]="sectionTitle" />
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button pButton type="button" label="Rename Section" icon="fa-link" iconPos="right" (click)="editSectionTitle()"></button>
+            <button pButton type="button" label="Rename Section" (click)="editSectionTitle()"></button>
+        </div>
+    </footer>
+</p-dialog>
+
+<!-- Delete Section Dialog -->
+<p-dialog modal="true" header="Delete Section" [(visible)]="displaySectionDeleter"
+          width="450" height="450" responsive="true" (keyup.enter)="deleteSection()">
+    Are you sure you want to delete {{deleteNode.data.title}}?
+    <footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button pButton type="button" label="Delete Section" (click)="deleteSection()"></button>
         </div>
     </footer>
 </p-dialog>
