@@ -79,6 +79,30 @@ export class EditService {
         }, () => { }, { noflight: true });
     }
 
+    public addBookmark(sectionID: ID, paragraphID: ID, name: string, index: number) {
+        this.apiService.send({
+            action: 'add_bookmark',
+            section_id: sectionID,
+            paragraph_id: paragraphID,
+            name: name, index: index
+        });
+    }
+
+    public editBookmark(bookmarkID: ID, name: string) {
+        this.apiService.send({
+            action: 'edit_bookmark',
+            bookmark_id: bookmarkID,
+            update: { update_type: 'set_name', name: name }
+        });
+    }
+
+    public deleteBookmark(bookmarkID: ID) {
+        this.apiService.send({
+            action: 'delete_bookmark',
+            bookmark_id: bookmarkID
+        });
+    }
+
     /**
      * Makes the appropriate calls to save changes between the
      * previous state of the story (obj1) and the new state (obj2)

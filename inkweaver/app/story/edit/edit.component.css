@@ -123,3 +123,19 @@ code {
     font-style: italic;
     margin: 5% 0 2% 0;
 }
+
+.bookmarks {
+    padding: 10% 0 10% 10%;
+    color: var(--light-gray);
+}
+
+.add-bookmark {
+    cursor: pointer;
+    font-style: italic;
+    color: var(--dark-gray);
+}
+
+.bookmarks-content {
+    cursor: pointer;
+    padding-left: 6%;
+}

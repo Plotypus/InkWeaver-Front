@@ -1,26 +1,23 @@
-﻿Tier 1
-Cannot read property ID of undefined when creating wiki heading (if page was created from link creator)
-
-Tier 2
-Have list of aliases for IntelliSense
-Add bookmarks
+﻿TIER 1
 Add notes
-Drag and drop sections/segments
 Create User
+Add bookmarks
 Versioning of story
-Delete prompt for sections
 Inline story creation
+Drag and drop sections/segments
+Have list of aliases for IntelliSense
 
-Tier 3
+TIER 2
+Expand menu in top-right
+Publishing of subsections
 Allow indentation in the editor
 Allow for pressing Enter to create a link during IntelliSense
-Publishing of subsections
-Expand menu in top-right
 
-Front-end Bugs
+FRONT-END BUGS
 FA icons not always showing up
+Cannot read property ID of undefined when creating wiki heading (if page was created from link creator)
 
-Backend Bugs
+BACKEND BUGS
 Traceback (most recent call last):
   File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\ioloop.py", line 604, in _run_callback
     ret = callback()

@@ -18,6 +18,7 @@ import { Section } from '../models/story/section.model';
 import { Paragraph } from '../models/story/paragraph.model';
 import { Tooltip } from '../models/story/tooltip.model';
 import { ContentObject } from '../models/story/content-object.model';
+import { Bookmark } from '../models/story/bookmark.model';
 
 import { WikiSummary } from '../models/wiki/wiki-summary.model';
 import { Wiki } from '../models/wiki/wiki.model';
@@ -50,6 +51,7 @@ export class ApiService {
         section: new Section(),
         storyNode: new Array<TreeNode>(),
         contentObject: new ContentObject(),
+        bookmarks: new Array<Bookmark>(),
 
         statSection: new Section(),
         statSegment: new Segment(),
@@ -151,13 +153,14 @@ export class ApiService {
                                 this.subscribedToStory = true;
                                 this.refreshStoryInfo();
                                 break;
-                            case 'unsubscribed_from_story':
+                            case 'unsubscribed_to_story':
                                 this.subscribedToStory = false;
                                 break;
                             case 'got_story_information':
                                 reply.story_id = this.data.story.story_id;
                                 reply.position_context = this.data.story.position_context;
                                 this.data.story = reply;
+                                this.refreshBookmarks();
                                 this.refreshStoryHierarchy();
                                 break;
                             case 'got_story_hierarchy':
@@ -213,6 +216,15 @@ export class ApiService {
                                 }
                                 break;
 
+                            case 'bookmark_added':
+                            case 'bookmark_updated':
+                            case 'bookmark_deleted':
+                                this.refreshBookmarks();
+                                break;
+                            case 'got_story_bookmarks':
+                                this.data.bookmarks = reply.bookmarks;
+                                break;
+
                             // ----- Links ----- //
                             case 'link_created':
                                 this.data.linkTable[JSON.stringify(reply.link_id)] = {
@@ -258,7 +270,7 @@ export class ApiService {
                                 this.subscribedToWiki = true;
                                 this.refreshWikiInfo();
                                 break;
-                            case 'unsubscribed_from_wiki':
+                            case 'unsubscribed_to_wiki':
                                 this.subscribedToWiki = false;
                                 break;
                             case 'got_wiki_information':
@@ -362,6 +374,9 @@ export class ApiService {
             }
         }
         return null;
+    }
+    public refreshBookmarks() {
+        this.send({ action: 'get_story_bookmarks' });
     }
 
     // ----- WIKI ----- //

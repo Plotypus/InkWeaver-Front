@@ -13,6 +13,7 @@ import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
 import { ID } from '../../models/id.model';
+import { Bookmark } from '../../models/story/bookmark.model';
 import { Segment } from '../../models/wiki/segment.model';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 
@@ -389,6 +390,31 @@ export class EditComponent {
                 let newContentObject: any = this.parserService.parseHtml(paragraphs);
                 this.editService.compare(this.data.contentObject, newContentObject,
                     this.data.story.story_id, this.data.prevSection.data.section_id);
+            }
+        }
+    }
+
+    public goToBookmark(bookmark: Bookmark) {
+        if (JSON.stringify(this.data.section.data.section_id) === JSON.stringify(bookmark.section_id)) {
+            this.scrollToParagraph(bookmark.paragraph_id.$oid);
+        } else {
+            this.apiService.refreshStoryContent(bookmark.section_id, null, { paragraph_id: bookmark.paragraph_id });
+        }
+    }
+
+    public addBookmark(name: string) {
+        let idx = this.editor.quill.getSelection(true);
+        if (idx) {
+            let blot = this.editor.quill.getLine(idx.index);
+            if (blot) {
+                let block = blot[0];
+                while (block && block.domNode && !block.domNode.id && block.parent) {
+                    block = block.parent;
+                }
+                if (block && block.domNode && block.domNode.id) {
+                    this.editService.addBookmark(this.data.section.data.section_id,
+                        { $oid: block.domNode.id }, name, null);
+                }
             }
         }
     }

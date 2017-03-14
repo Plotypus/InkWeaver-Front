@@ -10,7 +10,7 @@
     <p-dropdown [options]="newSegments" [(ngModel)]="newSegmentID" *ngIf="!newLinkID" filter="segment"></p-dropdown>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button pButton type="button" label="Create Link" icon="fa-link" iconPos="right" (click)="createLink()"></button>
+            <button pButton type="button" label="Create Link" icon="fa fa-link" iconPos="right" (click)="createLink()"></button>
         </div>
     </footer>
 </p-dialog>
@@ -120,6 +120,17 @@
                     </template>
                 </p-column>
             </p-treeTable>
+            <div class="bookmarks">
+                <div class="add-bookmark" (click)="addBookmark('Bookmark')">
+                    <i class="fa fa-bookmark"></i> Bookmark Cursor Position
+                </div>
+                <div>Bookmarks</div>
+                <div class="bookmarks-content">
+                    <div *ngFor="let bookmark of data.bookmarks" (click)="goToBookmark(bookmark)">
+                        {{bookmark.name}}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

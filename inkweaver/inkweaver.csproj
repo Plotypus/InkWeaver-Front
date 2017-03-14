@@ -106,6 +106,7 @@
     <TypeScriptCompile Include="app\models\link\link.model.ts" />
     <TypeScriptCompile Include="app\models\stats\stats.model.ts" />
     <TypeScriptCompile Include="app\models\stats\word.model.ts" />
+    <TypeScriptCompile Include="app\models\story\bookmark.model.ts" />
     <TypeScriptCompile Include="app\models\story\content-object.model.ts" />
     <TypeScriptCompile Include="app\models\story\tooltip.model.ts" />
     <TypeScriptCompile Include="app\models\wiki\reference.model.ts" />
