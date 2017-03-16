@@ -104,3 +104,8 @@ body {
 .wiki .fa {
     color: white;
 }
+
+.ui-button {
+    border: none !important;
+    background: var(--link-blue) !important;
+}

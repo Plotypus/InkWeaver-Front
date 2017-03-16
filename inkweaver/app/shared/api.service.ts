@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs/Rx';
-import { MenuItem, TreeNode } from 'primeng/primeng';
+import { MenuItem, TreeNode, SelectItem } from 'primeng/primeng';
 
 import { WebSocketService } from './websocket.service';
 import { ParserService } from './parser.service';
@@ -18,7 +18,6 @@ import { Section } from '../models/story/section.model';
 import { Paragraph } from '../models/story/paragraph.model';
 import { Tooltip } from '../models/story/tooltip.model';
 import { ContentObject } from '../models/story/content-object.model';
-import { Bookmark } from '../models/story/bookmark.model';
 
 import { WikiSummary } from '../models/wiki/wiki-summary.model';
 import { Wiki } from '../models/wiki/wiki.model';
@@ -51,7 +50,7 @@ export class ApiService {
         section: new Section(),
         storyNode: new Array<TreeNode>(),
         contentObject: new ContentObject(),
-        bookmarks: new Array<Bookmark>(),
+        bookmarks: new Array<TreeNode>(),
 
         statSection: new Section(),
         statSegment: new Segment(),
@@ -222,7 +221,11 @@ export class ApiService {
                                 this.refreshBookmarks();
                                 break;
                             case 'got_story_bookmarks':
-                                this.data.bookmarks = reply.bookmarks;
+                                this.data.bookmarks = [{ data: { name: 'Bookmarks', bookmark_id: { $oid: null } }, expanded: true, children: [] }];
+                                for (let bookmark of reply.bookmarks) {
+                                    bookmark.index = this.data.bookmarks[0].children.length;
+                                    this.data.bookmarks[0].children.push({ data: bookmark, parent: this.data.bookmarks[0] });
+                                }
                                 break;
 
                             // ----- Links ----- //

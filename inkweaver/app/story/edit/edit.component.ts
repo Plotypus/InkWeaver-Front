@@ -13,7 +13,6 @@ import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
 import { ID } from '../../models/id.model';
-import { Bookmark } from '../../models/story/bookmark.model';
 import { Segment } from '../../models/wiki/segment.model';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 
@@ -25,10 +24,16 @@ export class EditComponent {
     @ViewChild(Editor) editor: Editor;
 
     private data: any;
-    private wordCount: number;
     private editorRef: any;
-    private timerSub: Subscription;
+    private wordCount: number;
     private paragraphPosition: ID;
+
+    // Dialogs
+    private displayLinkCreator: boolean;
+    private displaySectionCreator: boolean;
+    private displaySectionDeleter: boolean;
+    private displayBookmarkCreator: boolean;
+    private displayBookmarkDeleter: boolean;
 
     // Creating links
     private range: any;
@@ -37,16 +42,17 @@ export class EditComponent {
     private newLinkPages: any;
     private newSegmentID: ID;
     private newSegments: any;
-    private displayLinkCreator: boolean;
 
     // Adding/editing sections
-    private newSectionID: ID;
-    private items: MenuItem[];
-    private sectionTitle: string;
-    private displaySectionEditor: boolean;
-    private displaySectionCreator: boolean;
-    private displaySectionDeleter: boolean;
-    private deleteNode: TreeNode = { data: { title: null } };
+    private renaming: boolean;
+    private newSectionTitle: string;
+    private contextMenuItems: MenuItem[];
+
+    // Bookmarks
+    private bookmark: TreeNode = { data: {} };
+    private oldBookmark: TreeNode;
+    private newBookmark: any = {};
+    private bookmarkRenaming: boolean;
 
     private suggest: any = {};
     private predict: string = '';
@@ -91,8 +97,10 @@ export class EditComponent {
         });
 
         this.editor.onTextChange.subscribe((event: any) => {
-            if (this.data.story.position_context && this.data.story.position_context.paragraph_id) {
-                this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid);
+            if (this.data.story.position_context) {
+                if (this.data.story.position_context.paragraph_id) {
+                    this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid);
+                }
                 this.data.story.position_context = null;
             }
 
@@ -137,38 +145,29 @@ export class EditComponent {
             for (let thread of threads) {
                 if (!thread.onclick) {
                     let linkID: string = thread.getAttribute('href');
-                    if (linkID.startsWith('sid')) {
-                        let id: string = linkID.substring(3);
-                        let node: TreeNode = this.parserService.setSection(this.data.storyNode[0], JSON.stringify({ $oid: id }));
-                        thread.onclick = (event: any) => {
-                            event.preventDefault();
-                            this.selectSection({ node: node });
-                        };
-                    } else {
-                        let ids: string[] = linkID.split('-');
-                        let pageID: ID = { $oid: ids[1] };
+                    let ids: string[] = linkID.split('-');
+                    let pageID: ID = { $oid: ids[1] };
 
-                        thread.onclick = (event: any) => {
-                            event.preventDefault();
-                            this.wikiService.getWikiPage(pageID);
-                            this.router.navigate(['/story/wiki']);
-                        };
-                        thread.onmouseenter = (event: any) => {
-                            let aBlot = Quill['find'](event.target);
-                            let index: number = this.editor.quill.getIndex(aBlot);
-                            let bounds: any = this.editor.quill.getBounds(index);
+                    thread.onclick = (event: any) => {
+                        event.preventDefault();
+                        this.wikiService.getWikiPage(pageID);
+                        this.router.navigate(['/story/wiki']);
+                    };
+                    thread.onmouseenter = (event: any) => {
+                        let aBlot = Quill['find'](event.target);
+                        let index: number = this.editor.quill.getIndex(aBlot);
+                        let bounds: any = this.editor.quill.getBounds(index);
 
-                            let top: number = bounds.top + 70;
-                            this.data.tooltip = {
-                                text: '',
-                                display: 'block', top: top + 'px', left: bounds.left + 'px'
-                            };
-                            this.wikiService.getWikiPage(pageID, { noflight: true });
+                        let top: number = bounds.top + 70;
+                        this.data.tooltip = {
+                            text: '',
+                            display: 'block', top: top + 'px', left: bounds.left + 'px'
                         };
-                        thread.onmouseleave = (event: any) => {
-                            this.data.tooltip.display = 'none';
-                        };
-                    }
+                        this.wikiService.getWikiPage(pageID, { noflight: true });
+                    };
+                    thread.onmouseleave = (event: any) => {
+                        this.data.tooltip.display = 'none';
+                    };
                 }
             }
             this.wordCount = event.textValue.split(/\s+/).length;
@@ -194,7 +193,7 @@ export class EditComponent {
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'L',
                     altKey: true
-                }, function () { editComp.openLink(editComp); });
+                }, function () { editComp.openLinkCreator(editComp); });
 
                 delete editComp.editor.quill.keyboard.bindings['9'];
                 editComp.editor.quill.keyboard.addBinding({
@@ -245,8 +244,8 @@ export class EditComponent {
         }, 500);
     }
 
-    /* ------------------------- Create Link ------------------------- */
-    public openLink(editor: EditComponent) {
+    /* ------------------------- Open Dialogs ------------------------- */
+    public openLinkCreator(editor: EditComponent) {
         if (!editor) {
             editor = this;
         }
@@ -275,7 +274,37 @@ export class EditComponent {
             editor.displayLinkCreator = true;
         }
     }
+    public openSectionCreator() {
+        this.newSectionTitle = '';
+        this.displaySectionCreator = true;
+    }
+    public openSectionRenamer() {
+        this.renaming = true;
+        this.newSectionTitle = this.data.section.data.title;
+    }
+    public openBookmarkCreator() {
+        let idx = this.editor.quill.getSelection(true);
+        if (idx) {
+            let blot = this.editor.quill.getLine(idx.index);
+            if (blot) {
+                let block = blot[0];
+                while (block && block.domNode && !block.domNode.id && block.parent) {
+                    block = block.parent;
+                }
+                if (block && block.domNode && block.domNode.id) {
+                    this.displayBookmarkCreator = true;
+                    this.newBookmark.name = '';
+                    this.newBookmark.paragraphID = { $oid: block.domNode.id };
+                }
+            }
+        }
+    }
+    public openBookmarkRenamer() {
+        this.bookmarkRenaming = true;
+        this.newBookmark.name = this.bookmark.data.name;
+    }
 
+    // Link
     public createLink() {
         this.word = this.word.trim();
         if (this.newLinkID) {
@@ -293,68 +322,69 @@ export class EditComponent {
         }
     }
 
-    // -------------------- Select, Add, and Edit Sections -------------------- //
+    // Section
     public selectSection(event: any) {
+        this.renaming = false;
         this.data.section = event.node;
         this.save();
         this.data.prevSection = event.node;
         this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
     }
-
     public addSection() {
-        this.editService.addSection(this.sectionTitle, this.newSectionID);
-        this.sectionTitle = '';
-        this.newSectionID = new ID();
         this.displaySectionCreator = false;
+        this.editService.addSection(this.data.section.data.section_id, this.newSectionTitle);
     }
-
+    public renameStory(event: any) {
+        this.renaming = false;
+        event.stopPropagation();
+        this.storyService.editStory(this.data.story.story_id, this.newSectionTitle);
+    }
+    public renameSection(event: any) {
+        this.renaming = false;
+        event.stopPropagation();
+        this.editService.editSectionTitle(this.data.section.data.section_id, this.newSectionTitle);
+    }
+    public cancelRenameSection(event: any) {
+        this.renaming = false;
+        event.stopPropagation();
+    }
     public deleteSection() {
-        this.selectSection({ node: this.deleteNode.parent });
-        this.editService.deleteSection(this.deleteNode.data.section_id);
         this.displaySectionDeleter = false;
+        this.editService.deleteSection(this.data.section.data.section_id);
+        this.selectSection({ node: this.data.section.parent });
     }
 
-    public editSectionTitle() {
-        if (this.newSectionID) {
-            this.editService.editSectionTitle(this.sectionTitle, this.newSectionID);
+    // Bookmark
+    public selectBookmark(event: any) {
+        if (event.node.data.section_id) {
+            this.bookmark = event.node;
+            this.bookmarkRenaming = false;
+            let bookmark: any = event.node.data;
+            if (JSON.stringify(this.data.section.data.section_id) === JSON.stringify(bookmark.section_id)) {
+                this.scrollToParagraph(bookmark.paragraph_id.$oid);
+            } else {
+                this.apiService.refreshStoryContent(bookmark.section_id, null, { paragraph_id: bookmark.paragraph_id });
+            }
         } else {
-            this.storyService.editStory(this.data.story.story_id, this.sectionTitle);
+            this.oldBookmark = this.bookmark;
         }
-        this.sectionTitle = '';
-        this.newSectionID = new ID();
-        this.displaySectionEditor = false;
     }
-
-    // Context Menu
-    public setContextMenu(node: TreeNode) {
-        this.selectSection({ node: node });
-        this.newSectionID = node.data.section_id;
-        if (node.parent) {
-            this.items = [
-                {
-                    label: 'Rename Section',
-                    command: () => { this.displaySectionEditor = true; }
-                },
-                {
-                    label: 'Delete Section', command: () => {
-                        this.deleteNode = node;
-                        this.displaySectionDeleter = true;
-                    }
-                }
-            ];
-        } else {
-            this.items = [{
-                label: 'Rename Story',
-                command: () => {
-                    this.newSectionID = null;
-                    this.displaySectionEditor = true;
-                }
-            }];
-        }
-        this.items.unshift({
-            label: 'Add Subsection',
-            command: () => { this.displaySectionCreator = true; }
-        });
+    public addBookmark() {
+        this.displayBookmarkCreator = false;
+        this.editService.addBookmark(this.data.section.data.section_id, this.newBookmark.paragraphID, this.newBookmark.name, this.bookmark.data.index + 1);
+    }
+    public renameBookmark(event: any) {
+        event.stopPropagation();
+        this.bookmarkRenaming = false;
+        this.editService.editBookmark(this.bookmark.data.bookmark_id, this.newBookmark.name);
+    }
+    public cancelRenameBookmark(event: any) {
+        event.stopPropagation();
+        this.bookmarkRenaming = false;
+    }
+    public deleteBookmark() {
+        this.displayBookmarkDeleter = false;
+        this.editService.deleteBookmark(this.bookmark.data.bookmark_id);
     }
 
     // -------------------- Other -------------------- //
@@ -367,6 +397,19 @@ export class EditComponent {
             sFunc(seg);
             editor.loopPages(editor, seg, func, sFunc);
         }
+    }
+
+    public setContextMenu(node: TreeNode) {
+        this.selectSection({ node: node });
+        if (node.parent) {
+            this.contextMenuItems = [
+                { label: 'Rename Section', command: () => { this.openSectionRenamer(); } },
+                { label: 'Delete Section', command: () => { this.displaySectionDeleter = true; } }
+            ];
+        } else {
+            this.contextMenuItems = [{ label: 'Rename Story', command: () => { this.openSectionRenamer(); } }];
+        }
+        this.contextMenuItems.unshift({ label: 'Add Subsection', command: () => { this.openSectionCreator(); } });
     }
 
     public scrollToParagraph(paragraphID: string) {
@@ -394,31 +437,7 @@ export class EditComponent {
         }
     }
 
-    public goToBookmark(bookmark: Bookmark) {
-        if (JSON.stringify(this.data.section.data.section_id) === JSON.stringify(bookmark.section_id)) {
-            this.scrollToParagraph(bookmark.paragraph_id.$oid);
-        } else {
-            this.apiService.refreshStoryContent(bookmark.section_id, null, { paragraph_id: bookmark.paragraph_id });
-        }
-    }
-
-    public addBookmark(name: string) {
-        let idx = this.editor.quill.getSelection(true);
-        if (idx) {
-            let blot = this.editor.quill.getLine(idx.index);
-            if (blot) {
-                let block = blot[0];
-                while (block && block.domNode && !block.domNode.id && block.parent) {
-                    block = block.parent;
-                }
-                if (block && block.domNode && block.domNode.id) {
-                    this.editService.addBookmark(this.data.section.data.section_id,
-                        { $oid: block.domNode.id }, name, null);
-                }
-            }
-        }
-    }
-
+    // Drag and drop
     public onDragStart(event: any, node: TreeNode) {
         console.log('drag started');
         console.log(event);

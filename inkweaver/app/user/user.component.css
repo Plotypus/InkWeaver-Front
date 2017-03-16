@@ -67,6 +67,7 @@ user .ui-datagrid-content {
 .user-info-fields input {
     width: 70%;
 }
+
 .user-info-fields button {
     margin: 0;
     width: 10%;
@@ -93,10 +94,33 @@ user .ui-datagrid-content {
 }
 
 /* -------------------- Dialog -------------------- */
-p-dialog .ui-dialog-titlebar,
+.modal-label {
+    color: var(--dark-gray);
+    font-style: italic;
+    margin: 5% 0 2% 0;
+}
+
+p-dialog .ui-dropdown-item {
+    border: none !important;
+}
+
+p-dialog .ui-dialog-titlebar {
+    border-radius: 0;
+    color: var(--light-gray);
+    background: var(--dark-blue) !important;
+}
+
 p-dialog .ui-dialog-titlebar-close {
-    color: white;
-    background: var(--light-blue);
+    color: var(--light-gray);
+    background: var(--dark-blue);
+}
+
+p-dialog footer {
+    padding-right: 1.5em;
+}
+
+p-dialog .ui-dialog .ui-button {
+    float: right;
 }
 
 p-dialog table,
@@ -104,7 +128,6 @@ p-dialog input,
 p-dialog textarea,
 p-dialog .ui-dropdown {
     width: 100% !important;
-    margin-bottom: 5px !important;
 }
 
 p-dialog .ui-dialog-content {

@@ -106,36 +106,45 @@
     border: 1px solid var(--dark-blue);
 }
 
-.suggest .ui-listbox {
-    width: 100%;
+    .suggest .ui-listbox {
+        width: 100%;
+    }
+
+    .suggest .ui-state-highlight, .suggest .ui-state-hover {
+        border: none;
+    }
+
+.edit-title input {
+    width: 65%;
 }
 
-.suggest .ui-state-highlight, .suggest .ui-state-hover  {
-    border: none;
+.edit-title button {
+    width: 8%;
+    background: var(--dark-blue) !important;
 }
 
-code {
-    display: none;
-}
-
-.modal-label {
-    color: var(--dark-gray);
-    font-style: italic;
-    margin: 5% 0 2% 0;
-}
-
-.bookmarks {
-    padding: 10% 0 10% 10%;
-    color: var(--light-gray);
-}
-
-.add-bookmark {
+.nav-actions {
     cursor: pointer;
+    text-align: center;
     font-style: italic;
     color: var(--dark-gray);
+    padding: 1em 0.5em 1em 0.5em;
 }
 
-.bookmarks-content {
-    cursor: pointer;
-    padding-left: 6%;
+.navigation hr {
+    width: 90%;
+    border-color: var(--dark-gray);
+}
+
+.bookmarks .ui-treetable-toggler {
+    visibility: hidden !important;
+}
+
+.bookmarks .bookmark-header {
+    left: -1em;
+    position: relative;
+}
+
+.bookmark-header i {
+    margin-right: 0.5em;
 }

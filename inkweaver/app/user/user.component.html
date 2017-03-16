@@ -1,5 +1,5 @@
 ﻿<!-- Story Creator Dialog -->
-<p-dialog modal="true" header="Create New Story" [(visible)]="displayStoryCreator"
+<p-dialog modal="true" header="Create Story" [(visible)]="displayStoryCreator"
           width="450" height="450" responsive="true" (keyup.enter)="createStory()">
     <table>
         <tbody>
@@ -9,7 +9,7 @@
             </tr>
             <tr>
                 <td><label>Summary</label></td>
-                <td><textarea pInputTextArea [(ngModel)]="summary"></textarea></td>
+                <td><textarea pInputTextarea [(ngModel)]="summary"></textarea></td>
             </tr>
             <tr>
                 <td><label>Wiki</label></td>
@@ -24,27 +24,27 @@
                 <td><textarea pInputTextarea [(ngModel)]="newWikiSummary"></textarea></td>
             </tr>
             <tr></tr>
-            <tr>
-                <td></td>
-                <td>
-                    <button pButton type="button" label="Create Story" (click)="createStory()"
-                            [disabled]="!(title && (newWiki != 'newWiki' || newWikiTitle))"></button>
-                </td>
-            </tr>
         </tbody>
     </table>
+    <footer>
+        <button pButton type="button" label="Create Story" (click)="createStory()"
+                [disabled]="!(title && (newWiki != 'newWiki' || newWikiTitle))"></button>
+    </footer>
 </p-dialog>
 
 <!-- Story Deleter Dialog -->
 <p-dialog modal="true" header="Delete Story" [(visible)]="displayStoryDeleter"
           width="450" height="450" responsive="true">
-    <button pButton type="button" label="Cancel" (click)="displayStoryDeleter = false"></button>
-    <button pButton type="button" label="Delete" (click)="deleteStory()"></button>
+    Are you sure you want to delete {{deletedStory.title}}?
+    <footer>
+        <button pButton type="button" label="Delete Story" (click)="deleteStory()"></button>
+    </footer>
 </p-dialog>
 
-<!-- User Stories -->
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
+
+        <!-- User Stories -->
         <div class="ui-grid-col-9">
             <p-dataGrid [value]="data.stories" [paginator]="true" [rows]="6">
                 <header>{{data.user.name}}'s Stories</header>
@@ -58,7 +58,7 @@
                                 </header>
                                 <div>
                                     <i class="fa fa-book" [ngStyle]="{'color': randomColor(story.title)}"></i>
-                                    <i class="fa fa-trash" (click)="openStoryDeleter($event, story.story_id)"></i>
+                                    <i class="fa fa-trash" (click)="openStoryDeleter($event, story)"></i>
                                 </div>
                             </p-panel>
                         </div>
@@ -77,6 +77,7 @@
             </p-dataGrid>
         </div>
 
+        <!-- User Info -->
         <div class="navigation ui-grid-col-3">
             <div class="user-info">
                 <div class="user-info-fields">
@@ -124,7 +125,7 @@
                                 </span>
                             </span>
                             <span *ngSwitchCase="true">
-                                <textarea pInputTextArea [(ngModel)]="data.user.bio"></textarea>
+                                <textarea pInputTextarea [(ngModel)]="data.user.bio"></textarea>
                                 <button pButton icon="fa-check" (click)="save('bio')"></button>
                                 <button pButton icon="fa-times" (click)="cancel('bio')"></button>
                             </span>

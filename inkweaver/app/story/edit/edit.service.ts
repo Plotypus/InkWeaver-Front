@@ -11,7 +11,7 @@ export class EditService {
     constructor(private storyService: StoryService, private apiService: ApiService) { }
 
     // Sections
-    public addSection(title: string, parentID: ID) {
+    public addSection(parentID: ID, title: string) {
         this.apiService.send({
             action: 'add_inner_subsection',
             title: title,
@@ -19,7 +19,7 @@ export class EditService {
         });
     }
 
-    public editSectionTitle(newTitle: string, sectionID: ID) {
+    public editSectionTitle(sectionID: ID, newTitle: string) {
         this.apiService.send({
             action: 'edit_section_title',
             section_id: sectionID,

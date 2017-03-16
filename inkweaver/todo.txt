@@ -1,14 +1,13 @@
 ﻿TIER 1
 Add notes
 Create User
-Add bookmarks
 Versioning of story
-Inline story creation
+Expand menu in top-right
 Drag and drop sections/segments
 Have list of aliases for IntelliSense
+Change events so that they update locally
 
 TIER 2
-Expand menu in top-right
 Publishing of subsections
 Allow indentation in the editor
 Allow for pressing Enter to create a link during IntelliSense
@@ -38,5 +37,29 @@ Traceback (most recent call last):
   File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\messages\incoming\wiki_messages.py", line 18, in dispatch
     return self._dispatcher.create_wiki(self.uuid, self.message_id, self.title, self.summary)
 TypeError: create_wiki() missing 1 required positional argument: 'summary'
+
+ERROR:tornado.application:Exception in callback functools.partial(<function wrap.<locals>.null_wrapper at 0x0000024407481950>, <tornado.concurrent.Future object at 0x0000024407496978>)
+Traceback (most recent call last):
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\ioloop.py", line 604, in _run_callback
+    ret = callback()
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\stack_context.py", line 275, in null_wrapper
+    return fn(*args, **kwargs)
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\ioloop.py", line 619, in <lambda>
+    self.add_future(ret, lambda f: f.result())
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\concurrent.py", line 237, in result
+    raise_exc_info(self._exc_info)
+  File "<string>", line 3, in raise_exc_info
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\gen.py", line 1024, in run
+    yielded = self.gen.send(value)
+  File "<string>", line 6, in _wrap_awaitable
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\routers.py", line 54, in process_tuples
+    await self.handle_message_tuple(message_tuple)
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\routers.py", line 97, in handle_message_tuple
+    async for response in message_object.dispatch():
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\messages\incoming\statistics_messages.py", line 45, in dispatch
+    return self._dispatcher.get_page_frequencies(self.uuid, self.message_id, self.story_id, self.wiki_id)
+TypeError: get_page_frequencies() takes 4 positional arguments but 5 were given
+<LoomHandler d2d09159-916f-4681-b7b2-0c2df83da12a> received: {"action":"get_section_content","section_id":{"$oid":"58c9f9bc73f8aa36b8225ded"},"identifier":{"message_id":20,"uuid":"d2d09159-916f-4681-b7b2-0c2df83da12a"}}
+INFO:ws_connections:<LoomHandler d2d09159-916f-4681-b7b2-0c2df83da12a> received: {"action":"get_section_content","section_id":{"$oid":"58c9f9bc73f8aa36b8225ded"},"identifier":{"message_id":20,"uuid":"d2d09159-916f-4681-b7b2-0c2df83da12a"}}
 
 Whenever an error happens, you need to restart the server

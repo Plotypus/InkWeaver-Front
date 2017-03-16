@@ -30,12 +30,12 @@ export class UserComponent {
     private newWikiTitle: string;
     private newWikiSummary: string;
 
-    private deleteID: ID;
     private title: string;
     private summary: string;
     private colors: string[];
     private displayStoryCreator: boolean;
     private displayStoryDeleter: boolean;
+    private deletedStory: StorySummary = new StorySummary();
 
     constructor(
         private router: Router,
@@ -147,7 +147,9 @@ export class UserComponent {
         this.displayStoryCreator = true;
         this.wikis = [{ label: 'Create New Wiki', value: 'newWiki' }];
         for (let wiki of this.data.wikis) {
-            this.wikis.push({ label: wiki.title, value: wiki.wiki_id });
+            if (wiki.title) {
+                this.wikis.push({ label: wiki.title, value: wiki.wiki_id });
+            }
         }
         this.newWiki = this.wikis[0].value;
     }
@@ -163,14 +165,14 @@ export class UserComponent {
     }
 
     // Delete a story
-    public openStoryDeleter(event: any, storyID: ID) {
+    public openStoryDeleter(event: any, story: StorySummary) {
         event.stopPropagation();
-        this.deleteID = storyID;
+        this.deletedStory = story;
         this.displayStoryDeleter = true;
     }
     public deleteStory() {
         this.displayStoryDeleter = false;
-        this.storyService.deleteStory(this.deleteID);
+        this.storyService.deleteStory(this.deletedStory.story_id);
     }
 
     // Other
