@@ -6,4 +6,5 @@ export class Paragraph {
     succeeding_id: ID;
     text: string;
     links: LinkTable;
+    note: string;
 }

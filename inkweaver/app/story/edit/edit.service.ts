@@ -40,6 +40,8 @@ export class EditService {
             /<a href="new.+?-([a-f0-9]{24})" target="_blank">(.*?)<\/a>/g,
             '{#|' + JSON.stringify(storyID) + '|{"$$oid":"$1"}|$2|#}');
 
+        text = text.replace(/<code>(.*?)<\/code>/g, '');
+
         let p: any = {
             action: 'add_paragraph',
             section_id: sectionID,
@@ -59,6 +61,8 @@ export class EditService {
         text = text.replace(
             /<a href="([a-f0-9]{24})-[a-f0-9]{24}" target="_blank">.*?<\/a>/g,
             '{"$$oid":"$1"}');
+
+        text = text.replace(/<code>(.*?)<\/code>/g, '');
 
         this.apiService.send({
             action: 'edit_paragraph',
@@ -103,6 +107,23 @@ export class EditService {
         });
     }
 
+    public setNote(sectionID: ID, paragraphID: ID, note: string) {
+        this.apiService.send({
+            action: 'set_note',
+            section_id: sectionID,
+            paragraph_id: paragraphID,
+            note: note
+        });
+    }
+
+    public deleteNote(sectionID: ID, paragraphID: ID) {
+        this.apiService.send({
+            action: 'delete_note',
+            section_id: sectionID,
+            paragraph_id: paragraphID
+        });
+    }
+
     /**
      * Makes the appropriate calls to save changes between the
      * previous state of the story (obj1) and the new state (obj2)
@@ -132,7 +153,14 @@ export class EditService {
                         this.storyService.deleteLink(JSON.parse(link));
                     }
                 }
-                if (obj1[id].text != obj2[id].text) {
+                if (obj1[id].note !== obj2[id].note) {
+                    if (obj2[id].note) {
+                        this.setNote(sectionID, JSON.parse(id), obj2[id].note);
+                    } else {
+                        this.deleteNote(sectionID, JSON.parse(id));
+                    }
+                }
+                if (obj1[id].text !== obj2[id].text) {
                     this.editParagraph(storyID, sectionID, obj2[id].text, JSON.parse(id));
                 }
             }

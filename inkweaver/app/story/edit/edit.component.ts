@@ -56,6 +56,7 @@ export class EditComponent {
 
     private suggest: any = {};
     private predict: string = '';
+    private note: any = { display: 'none' };
 
     constructor(
         private router: Router,
@@ -170,9 +171,28 @@ export class EditComponent {
                     };
                 }
             }
+
+            let notes: any[] = this.editorRef.querySelectorAll('code');
+            for (let note of notes) {
+                if (!note.onmouseenter) {
+                    note.onmouseenter = (event: any) => {
+                        let cBlot = Quill['find'](event.target);
+                        let index: number = this.editor.quill.getIndex(cBlot);
+                        let bounds: any = this.editor.quill.getBounds(index);
+
+                        let top: number = bounds.top + 50;
+                        this.note = {
+                            text: event.target.innerHTML,
+                            display: 'block', top: top + 'px', left: bounds.left + 'px'
+                        };
+                    };
+                    note.onmouseleave = (event: any) => {
+                        this.note.display = 'none';
+                    };
+                }
+            }
             this.wordCount = event.textValue.split(/\s+/).length;
         });
-
         this.setHotkey(this);
     }
 
@@ -421,6 +441,22 @@ export class EditComponent {
                 let idx: number = this.editor.quill.getIndex(pBlot);
                 this.editor.quill.setSelection(idx, 0);
                 break;
+            }
+        }
+    }
+
+    public addNote() {
+        let idx = this.editor.quill.getSelection(true);
+        if (idx) {
+            let blot = this.editor.quill.getLine(idx.index);
+            if (blot) {
+                let block = blot[0];
+                while (block && block.domNode && !block.domNode.id && block.parent) {
+                    block = block.parent;
+                }
+                if (block && block.domNode && block.domNode.id) {
+                    this.editService.setNote(this.data.section.data.section_id, { $oid: block.domNode.id }, 'Testing');
+                }
             }
         }
     }

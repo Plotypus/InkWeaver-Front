@@ -148,3 +148,15 @@
 .bookmark-header i {
     margin-right: 0.5em;
 }
+
+code {
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5em;
+    cursor: pointer;
+    overflow: hidden;
+    display: inline-block;
+    color: floralwhite;
+    border: 1px solid yellow;
+    background: floralwhite !important;
+}

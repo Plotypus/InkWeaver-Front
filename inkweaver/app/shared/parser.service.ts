@@ -55,7 +55,11 @@ export class ParserService {
         let content: string = '';
         for (let paragraph of paragraphs) {
             if (paragraph.paragraph_id) {
-                content += '<p id="' + paragraph.paragraph_id.$oid + '">' + paragraph.text + '</p>';
+                content += '<p id="' + paragraph.paragraph_id.$oid + '">';
+                if (paragraph.note) {
+                    content += '<code>' + paragraph.note + '</code>';
+                }
+                content += paragraph.text + '</p>';
             }
         }
         return content;
@@ -97,7 +101,8 @@ export class ParserService {
                 paragraph_id: new ID(),
                 succeeding_id: new ID(),
                 text: paragraph.innerHTML,
-                links: new LinkTable()
+                links: new LinkTable(),
+                note: null
             };
 
             let id: string = paragraph.id;
@@ -112,6 +117,11 @@ export class ParserService {
                 obj[JSON.stringify(oid)] = p;
             } else {
                 add.push(p);
+            }
+
+            let code: any = paragraph.querySelector('code');
+            if (code) {
+                p.note = code.innerHTML;
             }
 
             let links: any[] = paragraph.querySelectorAll('a');

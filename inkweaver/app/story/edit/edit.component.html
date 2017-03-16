@@ -94,12 +94,14 @@
                             <button class="ql-clean"></button>
                         </span>
                         <span class="ql-save">
+                            <button pButton type="button" label="Add Note" (click)="addNote()"></button>
                             <button pButton type="button" label="Save" (click)="save()"></button>
                         </span>
                     </header>
                 </p-editor>
 
                 <div class="tooltip" [innerHTML]="data.tooltip.text" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}"></div>
+                <div class="tooltip" [innerHTML]="note.text" [ngStyle]="{'display': note.display,'top': note.top, 'left': note.left}"></div>
                 <div class="suggest" [ngStyle]="{'display': suggest.display,'top': suggest.top, 'left': suggest.left}">
                     <p-listbox [options]="suggest.options" [(ngModel)]="suggest.value"></p-listbox>
                 </div>
