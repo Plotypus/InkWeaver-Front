@@ -92,6 +92,7 @@ export class ApiService {
 
                 if (reply) {
                     // Extract the fields from the original message
+                    let index: number = 0;
                     let metadata: any = {};
                     let callback: Function = () => { };
                     let identifier: any = reply.identifier;
@@ -135,40 +136,38 @@ export class ApiService {
                                     access_level: null
                                 });
                                 break;
-                            case 'user_name_updated':
-                            case 'user_email_updated':
-                            case 'user_bio_updated':
-                                this.refreshUserPreferences();
-                                break;
 
                             // ----- Story ----- //
-                            case 'story_updated':
-                                this.refreshStoryInfo();
                             case 'story_created':
-                            case 'story_deleted':
-                                this.refreshUserStoriesAndWikis();
+                                this.data.stories.push(reply);
                                 break;
+                            case 'story_updated':
+                                this.data.story.story_title = reply.update.title;
+                                this.data.storyNode[0].data.title = reply.update.title;
+                                break;
+                            case 'story_deleted':
+                                break;
+
                             case 'subscribed_to_story':
                                 this.subscribedToStory = true;
                                 this.refreshStoryInfo();
+                                this.refreshStoryHierarchy();
+                                this.refreshBookmarks();
                                 break;
                             case 'unsubscribed_to_story':
                                 this.subscribedToStory = false;
                                 break;
+
                             case 'got_story_information':
                                 reply.story_id = this.data.story.story_id;
                                 reply.position_context = this.data.story.position_context;
                                 this.data.story = reply;
-                                this.refreshBookmarks();
-                                this.refreshStoryHierarchy();
                                 break;
                             case 'got_story_hierarchy':
                             case 'got_section_hierarchy':
-                                this.data.storyNode = [this.parser.sectionToTree(
-                                    this.parser, reply.hierarchy, null)];
+                                this.data.storyNode = [this.parser.sectionToTree(this.parser, reply.hierarchy, null)];
 
-                                if (this.data.story.position_context &&
-                                    this.data.story.position_context.section_id) {
+                                if (this.data.story.position_context && this.data.story.position_context.section_id) {
                                     this.data.section.data = {
                                         section_id: this.data.story.position_context.section_id
                                     };
@@ -176,50 +175,38 @@ export class ApiService {
                                     this.data.section = this.data.storyNode[0];
                                 }
 
-                                this.data.section = this.parser.setSection(this.data.storyNode[0],
-                                    JSON.stringify(this.data.section.data.section_id));
+                                this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(this.data.section.data.section_id));
                                 this.data.prevSection = this.data.section;
                                 this.data.statsSections = this.parser.flattenTree(this.data.storyNode[0]);
-                                this.refreshStoryContent();
-                                break;
-                            case 'inner_subsection_added':
-                            case 'section_title_updated':
-                            case 'section_deleted':
-                                this.refreshStoryHierarchy();
-                                break;
-                            case 'paragraph_added':
-                            case 'paragraph_updated':
-                            case 'paragraph_deleted':
-                                this.refreshStoryContent();
                                 break;
                             case 'got_section_content':
-                                this.data.contentObject = this.parser.parseContent(
-                                    reply.content, this.data.linkTable);
-                                this.data.storyDisplay = this.parser.setContentDisplay(
-                                    reply.content);
-                                this.data.story.position_context = metadata.positionContext;
-                                this.data.section = this.parser.setSection(
-                                    this.data.storyNode[0], JSON.stringify(metadata.sectionID));
+                                this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
+                                this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
+                                this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(metadata.sectionID));
 
-                                if (JSON.stringify(metadata.sectionID) ===
-                                    JSON.stringify(this.data.story.section_id)) {
+                                this.data.story.position_context = metadata.positionContext;
+                                if (JSON.stringify(metadata.sectionID) === JSON.stringify(this.data.story.section_id)) {
                                     if (!this.data.storyDisplay) {
-                                        this.data.storyDisplay =
-                                            '<p><em>Write a summary here!</em></p>';
+                                        this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
                                     }
-                                    this.data.storyDisplay = '<h1>Summary</h1>'
-                                        + this.data.storyDisplay;
+                                    this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay;
                                 } else {
-                                    this.data.storyDisplay = '<h1>' + metadata.title + '</h1>'
-                                        + this.data.storyDisplay;
+                                    this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
                                 }
                                 break;
 
-                            case 'bookmark_added':
-                            case 'bookmark_updated':
-                            case 'bookmark_deleted':
-                                this.refreshBookmarks();
+                            // Section
+                            case 'inner_subsection_added':
+                                this.parser.addSection(this.data.storyNode[0], reply);
                                 break;
+                            case 'section_title_updated':
+                                this.parser.updateSection(this.data.storyNode[0], JSON.stringify(reply.section_id), reply.new_title);
+                                break;
+                            case 'section_deleted':
+                                this.parser.deleteSection(this.data.storyNode[0], JSON.stringify(reply.section_id));
+                                break;
+
+                            // Bookmarks
                             case 'got_story_bookmarks':
                                 this.data.bookmarks = [{ data: { name: 'Bookmarks', bookmark_id: { $oid: null } }, expanded: true, children: [] }];
                                 for (let bookmark of reply.bookmarks) {
@@ -227,8 +214,20 @@ export class ApiService {
                                     this.data.bookmarks[0].children.push({ data: bookmark, parent: this.data.bookmarks[0] });
                                 }
                                 break;
+                            case 'bookmark_added':
+                                reply.index = reply.index ? reply.index : this.data.bookmarks[0].children.length;
+                                this.data.bookmarks[0].children.splice(reply.index, 0, { data: reply, parent: this.data.bookmarks[0] });
+                                break;
+                            case 'bookmark_updated':
+                                index = this.data.bookmarks[0].children.findIndex((bookmark: TreeNode) => JSON.stringify(reply.bookmark_id) === JSON.stringify(bookmark.data.bookmark_id));
+                                this.data.bookmarks[0].children[index].data.name = reply.update.name;
+                                break;
+                            case 'bookmark_deleted':
+                                index = this.data.bookmarks[0].children.findIndex((bookmark: TreeNode) => JSON.stringify(reply.bookmark_id) === JSON.stringify(bookmark.data.bookmark_id));
+                                this.data.bookmarks[0].children.splice(index, 1);
+                                break;
 
-                            // ----- Links ----- //
+                            // Links
                             case 'link_created':
                                 this.data.linkTable[JSON.stringify(reply.link_id)] = {
                                     page_id: reply.page_id, name: reply.name
@@ -238,9 +237,7 @@ export class ApiService {
                                 delete this.data.linkTable[JSON.stringify(reply.link_id)];
                                 break;
 
-
-                            // ----- Wiki ----- //
-                            // ---------- Wiki ---------- //
+                            // Wiki
                             case 'wiki_created':
                             case 'wiki_deleted':
                                 this.refreshUserStoriesAndWikis();
@@ -306,7 +303,7 @@ export class ApiService {
                                 }
                                 break;
 
-                            /*Statistics*/
+                            // Statistics
                             case 'got_page_frequencies':
                                 this.data.statsPageFrequency = this.parser.parsePageFrequency(
                                     reply.pages, this.data.statsPages, this.data.statsSections);
@@ -339,7 +336,6 @@ export class ApiService {
     public refreshUserPreferences() {
         this.send({ action: 'get_user_preferences' });
     }
-
     public refreshUserStoriesAndWikis() {
         this.send({ action: 'get_user_stories_and_wikis' });
     }
@@ -351,13 +347,15 @@ export class ApiService {
     public refreshStoryHierarchy() {
         this.send({ action: 'get_story_hierarchy' });
     }
+    public refreshBookmarks() {
+        this.send({ action: 'get_story_bookmarks' });
+    }
     public refreshStoryContent(
         sectionID: ID = this.data.section.data.section_id,
         title: string = this.data.section.data.title,
         positionContext: any = this.data.story.position_context) {
         if (!title) {
-            let sectionNode: TreeNode = this.findSection(
-                this.data.storyNode[0], JSON.stringify(sectionID));
+            let sectionNode: TreeNode = this.findSection(this.data.storyNode[0], JSON.stringify(sectionID));
             if (sectionNode) {
                 title = sectionNode.data.title;
             }
@@ -377,9 +375,6 @@ export class ApiService {
             }
         }
         return null;
-    }
-    public refreshBookmarks() {
-        this.send({ action: 'get_story_bookmarks' });
     }
 
     // ----- WIKI ----- //

@@ -57,6 +57,7 @@ export class EditComponent {
     private suggest: any = {};
     private predict: string = '';
     private note: any = { display: 'none' };
+    private noteEditing: boolean = false;
 
     constructor(
         private router: Router,
@@ -174,20 +175,21 @@ export class EditComponent {
 
             let notes: any[] = this.editorRef.querySelectorAll('code');
             for (let note of notes) {
-                if (!note.onmouseenter) {
-                    note.onmouseenter = (event: any) => {
-                        let cBlot = Quill['find'](event.target);
-                        let index: number = this.editor.quill.getIndex(cBlot);
-                        let bounds: any = this.editor.quill.getBounds(index);
+                if (!note.onclick) {
+                    note.onclick = (event: any) => {
+                        if (this.note.display === 'block') {
+                            this.note.display = 'none';
+                        } else {
+                            let cBlot = Quill['find'](event.target);
+                            let index: number = this.editor.quill.getIndex(cBlot);
+                            let bounds: any = this.editor.quill.getBounds(index);
 
-                        let top: number = bounds.top + 50;
-                        this.note = {
-                            text: event.target.innerHTML,
-                            display: 'block', top: top + 'px', left: bounds.left + 'px'
-                        };
-                    };
-                    note.onmouseleave = (event: any) => {
-                        this.note.display = 'none';
+                            let top: number = bounds.top + 70;
+                            this.note = {
+                                text: event.target.innerHTML, index: index, length: event.target.innerHTML.length,
+                                display: 'block', top: top + 'px', left: bounds.left + 'px'
+                            };
+                        }
                     };
                 }
             }
@@ -344,6 +346,10 @@ export class EditComponent {
 
     // Section
     public selectSection(event: any) {
+        this.note.display = false;
+        this.data.tooltip.display = false;
+        this.suggest.display = false;
+
         this.renaming = false;
         this.data.section = event.node;
         this.save();
@@ -455,10 +461,24 @@ export class EditComponent {
                     block = block.parent;
                 }
                 if (block && block.domNode && block.domNode.id) {
-                    this.editService.setNote(this.data.section.data.section_id, { $oid: block.domNode.id }, 'Testing');
+                    idx = this.editor.quill.getIndex(block);
+                    this.editor.quill.insertText(idx, ' ', 'code', ' ');
+                    let bounds = this.editor.quill.getBounds(idx);
+                    let top: number = bounds.top + 70;
+                    this.note = {
+                        text: '', index: idx, length: 0,
+                        display: 'block', top: top + 'px', left: bounds.left + 'px'
+                    };
+                    this.noteEditing = true;
                 }
             }
         }
+    }
+
+    public saveNote() {
+        this.noteEditing = false;
+        this.editor.quill.deleteText(this.note.index, this.note.length);
+        this.editor.quill.insertText(this.note.index, this.note.text);
     }
 
     public save() {

@@ -94,14 +94,23 @@
                             <button class="ql-clean"></button>
                         </span>
                         <span class="ql-save">
-                            <button pButton type="button" label="Add Note" (click)="addNote()"></button>
                             <button pButton type="button" label="Save" (click)="save()"></button>
+                            <button pButton type="button" label="Note" (click)="addNote()"></button>
                         </span>
                     </header>
                 </p-editor>
 
                 <div class="tooltip" [innerHTML]="data.tooltip.text" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}"></div>
-                <div class="tooltip" [innerHTML]="note.text" [ngStyle]="{'display': note.display,'top': note.top, 'left': note.left}"></div>
+                <div class="tooltip" [ngSwitch]="!!noteEditing" [ngStyle]="{'display': note.display,'top': note.top, 'left': note.left}">
+                    <div *ngSwitchCase="false">
+                        <div>{{note.text}}</div>
+                        <button pButton type="button" label="Edit" (click)="noteEditing = true"></button>
+                    </div>
+                    <div *ngSwitchCase="true">
+                        <div><textarea pInputTextarea [(ngModel)]="note.text"></textarea></div>
+                        <button pButton type="button" label="Save" (click)="saveNote()"></button>
+                    </div>
+                </div>
                 <div class="suggest" [ngStyle]="{'display': suggest.display,'top': suggest.top, 'left': suggest.left}">
                     <p-listbox [options]="suggest.options" [(ngModel)]="suggest.value"></p-listbox>
                 </div>
@@ -150,8 +159,8 @@
                             <span pDraggable="bookmarkdragdrop" pDroppable="bookmarkdragdrop" (onDragStart)="onDragStart($event, node)" (onDragEnd)="onDragEnd($event, node)" (onDrop)="onDrop($event, node)">
                                 <span [ngSwitch]="!!bookmarkRenaming && node.data.bookmark_id.$oid === bookmark.data.bookmark_id.$oid">
                                     <span *ngSwitchCase="false">
-                                        <span *ngIf="!node.parent" class="bookmark-header"><i class="fa fa-bookmark"></i> {{node.data.name | truncate : 25}}</span>
-                                        <span *ngIf="node.parent">{{node.data.name | truncate : 25}}</span>
+                                        <span *ngIf="!node.parent && node.data.name" class="bookmark-header"><i class="fa fa-bookmark"></i> {{node.data.name | truncate : 25}}</span>
+                                        <span *ngIf="node.parent && node.data.name">{{node.data.name | truncate : 25}}</span>
                                     </span>
                                     <span *ngSwitchCase="true" class="edit-title">
                                         <input pInputText type="text" [(ngModel)]="newBookmark.name" (click)="$event.stopPropagation()" />

@@ -16,6 +16,8 @@ export class ParserService {
     // ----------------------------------------------- //
     // -------------------- Story -------------------- //
     // ----------------------------------------------- //
+
+    // Sections
     public sectionToTree(parserService: ParserService, story: any, parent: TreeNode): TreeNode {
         let treeNode: TreeNode = {};
         treeNode.data = {
@@ -35,13 +37,13 @@ export class ParserService {
         return treeNode;
     }
 
-    public setSection(story: TreeNode, section_id: string): TreeNode {
+    public setSection(story: TreeNode, sectionID: string): TreeNode {
         let newSection: TreeNode = null;
-        if (JSON.stringify(story.data.section_id) === section_id) {
+        if (JSON.stringify(story.data.section_id) === sectionID) {
             newSection = story;
         } else {
             for (let child of story.children) {
-                let findSection: TreeNode = this.setSection(child, section_id);
+                let findSection: TreeNode = this.setSection(child, sectionID);
                 newSection = findSection ? findSection : newSection;
             }
         }
@@ -51,6 +53,42 @@ export class ParserService {
         return newSection;
     }
 
+    public addSection(story: TreeNode, reply: any) {
+        if (JSON.stringify(reply.parent_id) === JSON.stringify(story.data.section_id)) {
+            story.children.push({
+                parent: story, data: { title: reply.title, section_id: reply.section_id }, children: []
+            });
+        } else {
+            for (let child of story.children) {
+                this.addSection(child, reply);
+            }
+        }
+    }
+
+    public deleteSection(story: TreeNode, section_id: string) {
+        let index: number = story.children.findIndex((child: TreeNode) => {
+            return section_id === JSON.stringify(child.data.section_id);
+        });
+        if (index !== -1) {
+            story.children.splice(index, 1);
+        } else {
+            for (let child of story.children) {
+                this.deleteSection(child, section_id);
+            }
+        }
+    }
+
+    public updateSection(story: TreeNode, sectionID: string, newTitle: string) {
+        if (sectionID === JSON.stringify(story.data.section_id)) {
+            story.data.title = newTitle;
+        } else {
+            for (let child of story.children) {
+                this.updateSection(child, sectionID, newTitle);
+            }
+        }
+    }
+
+    // Content
     public setContentDisplay(paragraphs: Paragraph[]): string {
         let content: string = '';
         for (let paragraph of paragraphs) {
@@ -144,6 +182,7 @@ export class ParserService {
         return obj;
     }
 
+    // Links
     public parseLinkTable(linkArray: any): LinkTable {
         let linkTable: LinkTable = new LinkTable();
         for (let link of linkArray) {

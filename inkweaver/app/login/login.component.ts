@@ -26,14 +26,14 @@ export class LoginComponent {
         private parserService: ParserService) { }
 
     ngOnInit() {
+        this.data = this.apiService.data;
         if (this.apiService.subscribedToStory) {
-            this.storyService.unsubscribeFromStory();
+            this.storyService.unsubscribeFromStory(this.data.story.story_id);
         }
         if (this.apiService.subscribedToWiki) {
-            this.storyService.unsubscribeFromWiki();
+            this.storyService.unsubscribeFromWiki(this.data.story.wiki_id);
         }
 
-        this.data = this.apiService.data;
         this.data.menuItems = [{ label: 'About', routerLink: ['/about'] }];
         this.login = { username: '', password: '' };
     }

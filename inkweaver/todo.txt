@@ -17,6 +17,10 @@ FA icons not always showing up
 Cannot read property ID of undefined when creating wiki heading (if page was created from link creator)
 
 BACKEND BUGS
+bookmark_added doesn't include a name
+Whenever an error happens, you need to restart the server
+Unsubscribing is not working
+
 Traceback (most recent call last):
   File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\ioloop.py", line 604, in _run_callback
     ret = callback()
@@ -61,5 +65,3 @@ Traceback (most recent call last):
 TypeError: get_page_frequencies() takes 4 positional arguments but 5 were given
 <LoomHandler d2d09159-916f-4681-b7b2-0c2df83da12a> received: {"action":"get_section_content","section_id":{"$oid":"58c9f9bc73f8aa36b8225ded"},"identifier":{"message_id":20,"uuid":"d2d09159-916f-4681-b7b2-0c2df83da12a"}}
 INFO:ws_connections:<LoomHandler d2d09159-916f-4681-b7b2-0c2df83da12a> received: {"action":"get_section_content","section_id":{"$oid":"58c9f9bc73f8aa36b8225ded"},"identifier":{"message_id":20,"uuid":"d2d09159-916f-4681-b7b2-0c2df83da12a"}}
-
-Whenever an error happens, you need to restart the server

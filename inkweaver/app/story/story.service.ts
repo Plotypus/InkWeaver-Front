@@ -14,9 +14,10 @@ export class StoryService {
             story_id: storyID
         });
     }
-    public unsubscribeFromStory() {
+    public unsubscribeFromStory(storyID: ID) {
         this.apiService.send({
-            action: 'unsubscribe_to_story'
+            action: 'unsubscribe_to_story',
+            story_id: storyID
         });
     }
 
@@ -54,9 +55,10 @@ export class StoryService {
             wiki_id: wikiID
         });
     }
-    public unsubscribeFromWiki() {
+    public unsubscribeFromWiki(wikiID: ID) {
         this.apiService.send({
-            action: 'unsubscribe_to_wiki'
+            action: 'unsubscribe_to_wiki',
+            wiki_id: wikiID
         });
     }
 

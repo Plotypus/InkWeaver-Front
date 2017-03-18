@@ -90,13 +90,20 @@
 
 .tooltip {
     position: absolute;
-    padding: 0 5px 0 5px;
+    padding: 0.5em;
     background: floralwhite;
     font-size: 0.8em;
     border-radius: 2px;
     color: var(--light-blue);
     border: 1px solid var(--light-blue);
     max-width: 50%;
+}
+
+.tooltip button {
+    float: right;
+    margin-top: 0.5em !important;
+    color: var(--light-blue) !important;
+    background: var(--light-gray) !important;
 }
 
 .suggest {

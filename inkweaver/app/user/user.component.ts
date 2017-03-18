@@ -45,11 +45,12 @@ export class UserComponent {
         private apiService: ApiService) { }
 
     ngOnInit() {
+        this.data = this.apiService.data;
         if (this.apiService.subscribedToStory) {
-            this.storyService.unsubscribeFromStory();
+            this.storyService.unsubscribeFromStory(this.data.story.story_id);
         }
         if (this.apiService.subscribedToWiki) {
-            this.storyService.unsubscribeFromWiki();
+            this.storyService.unsubscribeFromWiki(this.data.story.wiki_id);
         }
 
         if (!this.apiService.messages) {
@@ -58,12 +59,10 @@ export class UserComponent {
 
         this.apiService.refreshUserPreferences();
         this.apiService.refreshUserStoriesAndWikis();
-        this.data = this.apiService.data;
         this.data.menuItems = [
             { label: 'About', routerLink: ['/about'] },
             { label: 'Sign Out', routerLink: ['/login'] },
         ];
-
         this.colors = [
             '#cb735c', // red-orange
             '#fdd17c', // yellow
