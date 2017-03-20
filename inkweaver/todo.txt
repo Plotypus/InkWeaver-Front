@@ -1,5 +1,4 @@
 ﻿TIER 1
-Add notes
 Create User
 Versioning of story
 Expand menu in top-right
@@ -65,3 +64,32 @@ Traceback (most recent call last):
 TypeError: get_page_frequencies() takes 4 positional arguments but 5 were given
 <LoomHandler d2d09159-916f-4681-b7b2-0c2df83da12a> received: {"action":"get_section_content","section_id":{"$oid":"58c9f9bc73f8aa36b8225ded"},"identifier":{"message_id":20,"uuid":"d2d09159-916f-4681-b7b2-0c2df83da12a"}}
 INFO:ws_connections:<LoomHandler d2d09159-916f-4681-b7b2-0c2df83da12a> received: {"action":"get_section_content","section_id":{"$oid":"58c9f9bc73f8aa36b8225ded"},"identifier":{"message_id":20,"uuid":"d2d09159-916f-4681-b7b2-0c2df83da12a"}}
+
+INFO:ws_connections:<LoomHandler 70fa9121-d164-4f4c-845b-6b637447ba7a> received: {"action":"set_note","section_id":{"$oid":"58d005a173f8aa168cb9194c"},"paragraph_id":{"$oid":"58d005a173f8aa168cb91950"},"note":"Another note ","identifier":{"message_id":38,"uuid":"70fa9121-d164-4f4c-845b-6b637447ba7a"}}
+ERROR:tornado.application:Exception in callback functools.partial(<function wrap.<locals>.null_wrapper at 0x000001F1F5D51950>, <tornado.concurrent.Future object at 0x000001F1F5D66908>)
+Traceback (most recent call last):
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\ioloop.py", line 604, in _run_callback
+    ret = callback()
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\stack_context.py", line 275, in null_wrapper
+    return fn(*args, **kwargs)
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\ioloop.py", line 619, in <lambda>
+    self.add_future(ret, lambda f: f.result())
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\concurrent.py", line 237, in result
+    raise_exc_info(self._exc_info)
+  File "<string>", line 3, in raise_exc_info
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\gen.py", line 1024, in run
+    yielded = self.gen.send(value)
+  File "<string>", line 6, in _wrap_awaitable
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\routers.py", line 54, in process_tuples
+    await self.handle_message_tuple(message_tuple)
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\routers.py", line 97, in handle_message_tuple
+    async for response in message_object.dispatch():
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\dispatchers\LAWProtocolDispatcher.py", line 232, in set_note
+    await self.db_interface.set_note(section_id, paragraph_id, note)
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\database\interfaces\mongodb_interfaces.py", line 405, in set_note
+    await self.client.set_note(section_id, paragraph_id, text)
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\database\clients\mongodb_clients.py", line 584, in set_note
+    self.assert_update_one_was_successful(update_result)
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\database\clients\mongodb_clients.py", line 145, in assert_update_one_was_successful
+    raise NoMatchError                  # pragma: no cover
+loom.database.clients.mongodb_clients.NoMatchError

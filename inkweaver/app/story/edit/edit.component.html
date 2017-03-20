@@ -27,7 +27,7 @@
 <!-- Delete Section Dialog -->
 <p-dialog modal="true" header="Delete Section" [(visible)]="displaySectionDeleter"
           width="450" height="450" responsive="true" (keyup.enter)="deleteSection()">
-    <div class="modal-label" *ngIf="data.section.data">
+    <div class="modal-label" *ngIf="data.section && data.section.data">
         Are you sure you want to delete {{data.section.data.title}}?
     </div>
     <footer>
