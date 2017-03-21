@@ -346,9 +346,9 @@ export class EditComponent {
 
     // Section
     public selectSection(event: any) {
-        this.note.display = false;
-        this.data.tooltip.display = false;
-        this.suggest.display = false;
+        this.note.display = 'none';
+        this.data.tooltip.display = 'none';
+        this.suggest.display = 'none';
 
         this.renaming = false;
         this.data.section = event.node;
@@ -478,7 +478,8 @@ export class EditComponent {
     public saveNote() {
         this.noteEditing = false;
         this.editor.quill.deleteText(this.note.index, this.note.length);
-        this.editor.quill.insertText(this.note.index, this.note.text);
+        this.editor.quill.insertText(this.note.index, this.note.text, 'code', ' ');
+        this.note.display = 'none';
     }
 
     public save() {

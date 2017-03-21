@@ -178,6 +178,9 @@ export class ApiService {
                                 this.data.section = this.parser.setSection(this.data.storyNode[0], JSON.stringify(this.data.section.data.section_id));
                                 this.data.prevSection = this.data.section;
                                 this.data.statsSections = this.parser.flattenTree(this.data.storyNode[0]);
+                                if (!this.data.storyDisplay) {
+                                    this.refreshStoryContent();
+                                }
                                 break;
                             case 'got_section_content':
                                 this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
