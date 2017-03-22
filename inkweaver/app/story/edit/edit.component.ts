@@ -439,15 +439,14 @@ export class EditComponent {
     }
 
     public scrollToParagraph(paragraphID: string) {
-        let paragraphs: any[] = this.editorRef.querySelectorAll('p');
+        let paragraph: any = document.getElementById(paragraphID);
 
-        for (let paragraph of paragraphs) {
-            if (paragraph.id === paragraphID) {
-                let pBlot = Quill['find'](paragraph);
-                let idx: number = this.editor.quill.getIndex(pBlot);
-                this.editor.quill.setSelection(idx, 0);
-                break;
-            }
+        if (paragraph) {
+            paragraph.scrollIntoView();
+            window.scrollBy(0, -10000);
+            paragraph.animate({
+                background: ['lightyellow', 'white'], easing: 'ease'
+            }, 3000);
         }
     }
 
