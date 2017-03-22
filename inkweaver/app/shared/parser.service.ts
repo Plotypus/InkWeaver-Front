@@ -336,14 +336,15 @@ export class ParserService {
                 while (linkMatch) {
                     let linkID: string = linkMatch[0].replace(r1, '');
                     let link: Link = linktable[linkID];
-
-                    if (id === linkID) {
-                        ref.text = ref.text.replace(linkMatch[0],
-                            '<h1>' + link.name + '</h1>');
-                    }
-                    else {
-                        ref.text = ref.text.replace(linkMatch[0],
-                            '<h2>' + link.name + '</h2>');
+                    if (link) {
+                        if (id === linkID) {
+                            ref.text = ref.text.replace(linkMatch[0],
+                                '<h1>' + link.name + '</h1>');
+                        }
+                        else {
+                            ref.text = ref.text.replace(linkMatch[0],
+                                '<h2>' + link.name + '</h2>');
+                        }
                     }
                     linkMatch = r2.exec(text);
                 }
