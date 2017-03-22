@@ -154,7 +154,7 @@ export class ApiService {
                                 this.refreshStoryHierarchy();
                                 this.refreshBookmarks();
                                 break;
-                            case 'unsubscribed_to_story':
+                            case 'unsubscribed_from_story':
                                 this.subscribedToStory = false;
                                 break;
 
@@ -273,7 +273,7 @@ export class ApiService {
                                 this.subscribedToWiki = true;
                                 this.refreshWikiInfo();
                                 break;
-                            case 'unsubscribed_to_wiki':
+                            case 'unsubscribed_from_wiki':
                                 this.subscribedToWiki = false;
                                 break;
                             case 'got_wiki_information':

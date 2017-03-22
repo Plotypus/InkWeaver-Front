@@ -16,8 +16,7 @@ export class StoryService {
     }
     public unsubscribeFromStory(storyID: ID) {
         this.apiService.send({
-            action: 'unsubscribe_to_story',
-            story_id: storyID
+            action: 'unsubscribe_from_story'
         });
     }
 
@@ -57,8 +56,7 @@ export class StoryService {
     }
     public unsubscribeFromWiki(wikiID: ID) {
         this.apiService.send({
-            action: 'unsubscribe_to_wiki',
-            wiki_id: wikiID
+            action: 'unsubscribe_from_wiki'
         });
     }
 
