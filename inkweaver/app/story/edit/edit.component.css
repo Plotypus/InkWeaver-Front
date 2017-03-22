@@ -131,12 +131,21 @@
 }
 
 .nav-actions {
-    cursor: pointer;
+    cursor: default;
     text-align: center;
     font-style: italic;
     color: var(--dark-gray);
     padding: 1em 0.5em 1em 0.5em;
 }
+
+.nav-actions div{
+  cursor:pointer;
+}
+
+.nav-actions i{
+  cursor:pointer;
+}
+
 
 .navigation hr {
     width: 90%;

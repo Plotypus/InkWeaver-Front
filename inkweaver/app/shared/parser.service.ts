@@ -201,7 +201,7 @@ export class ParserService {
         temp.data.id = json['segment_id'];
         temp.data.title = json['title'];
         temp.label = json['title'];
-        temp.type = "title";
+        temp.type = "category";
         temp.children = [];
         temp.expanded = true;
         nav.push(temp);
@@ -355,6 +355,10 @@ export class ParserService {
         if (page.hasOwnProperty("type") && page.type === 'title')
             return new Array<String>();
         page.expanded = true;
+        if(!page.hasOwnProperty("type"))
+        {
+            page.type = "";
+        }
         let path = new Array<String>();
         path.push(page.label);
         let parent = page.parent;
@@ -366,6 +370,73 @@ export class ParserService {
         return path.reverse();
 
     }
+
+    public findSegment(wiki: TreeNode, reply: any) {
+        let found: any;
+        for (let child of wiki.children) {
+                if(JSON.stringify(reply.segment_id) === JSON.stringify(child.data.id))
+                {
+                    found = child;
+                    break;
+                }
+                else if(child.hasOwnProperty("children") && child.children.length != 0)
+                {
+                    found = this.findSegment(child, reply);
+                    if (found)
+                        break;
+                }
+            }
+        if (found)
+            return found;
+    }
+
+    public findPage(wiki: TreeNode, reply: any) {
+        let found: any;
+        for (let child of wiki.children) {
+                if(JSON.stringify(reply.page_id) === JSON.stringify(child.data.id))
+                {
+                    found = child;
+                    break;
+                }
+                else if(child.hasOwnProperty("children") && child.children.length != 0){
+                    found = this.findPage(child, reply);
+                    if (found)
+                        break;
+                }
+            }
+
+        if (found)
+            return found;
+    }
+
+    public addSegment(wiki: TreeNode, reply:any)
+    {
+        if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
+            wiki.children.push({
+                parent: wiki, data: { title: reply.title, id: reply.segment_id },type: 'category', label:reply.title , children: []
+            });
+        } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
+            for (let child of wiki.children) {
+                console.log(child);
+                this.addSegment(child, reply);
+            }
+        }
+    }
+
+    public addPage(wiki: TreeNode, reply:any)
+    {
+        if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
+            wiki.children.push({
+                parent: wiki, data: { title: reply.title, id: reply.segment_id },type: 'page', label:reply.title , children: []
+            });
+        } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
+            for (let child of wiki.children) {
+                this.addPage(child, reply);
+            
+            }
+        }
+    }
+
     public sort(o1: any, o2: any) {
         if (o1.type === 'category' && o2.type === 'category')
             return 0;
@@ -438,7 +509,7 @@ export class ParserService {
             secList = stats[idx].section_frequencies;
 
             for (let section in sections) {
-                val = secList[section];
+                val = secList[section.substr(0, 8) + " " + section.substr(8)];
                 if (val == undefined)
                     val = 0;
                 count.push(val);

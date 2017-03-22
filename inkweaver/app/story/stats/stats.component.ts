@@ -53,7 +53,7 @@ export class StatsComponent {
 
     public selectSegment(event:any)
     {
-        /*
+        
         this.mode = false;
         this.data.statSegment = event.node;
         let label = [];
@@ -73,7 +73,7 @@ export class StatsComponent {
         setTimeout( () => {
             this.chart.refresh();
         }, 50);
-        */
+        
 
      
     }

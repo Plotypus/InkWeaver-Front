@@ -165,7 +165,7 @@ export class EditComponent {
                             text: '',
                             display: 'block', top: top + 'px', left: bounds.left + 'px'
                         };
-                        this.wikiService.getWikiPage(pageID, { noflight: true });
+                        this.wikiService.getWikiPage( pageID, undefined, { noflight: true });
                     };
                     thread.onmouseleave = (event: any) => {
                         this.data.tooltip.display = 'none';
