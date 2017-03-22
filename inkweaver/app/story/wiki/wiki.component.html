@@ -193,14 +193,14 @@
             </p-overlayPanel>
 
              <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category'">
-                <div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>
+                <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
                 <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
                 <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
                 <i class="ui-grid-col-1 fa fa-ellipsis-v" style="float: none" (click)="op.toggle($event)"></i>
             </div>
             <!--When a page is selected-->
             <div class="nav-actions" *ngIf="data.selectedEntry.type == 'page'">
-                <div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>
+                <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
                 <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
             </div>
             

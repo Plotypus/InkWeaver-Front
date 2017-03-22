@@ -194,7 +194,6 @@ export class WikiComponent {
             this.onEdit(this.wikiPageContent.length - 1);
             this.disabled.push(true);
             this.icons.push('fa-pencil');
-            this.wikiPageContent.push({});
             this.addContent = "";
             this.pageName = "";
         }
