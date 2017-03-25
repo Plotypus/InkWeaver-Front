@@ -5,7 +5,8 @@ import { HttpModule } from '@angular/http';
 
 import {
     PanelModule,
-    ButtonModule
+    ButtonModule,
+    GrowlModule
 } from 'primeng/primeng';
 import { LoginService } from './login.service';
 import { LoginComponent } from './login.component';
@@ -16,7 +17,8 @@ import { LoginComponent } from './login.component';
         CommonModule,
         HttpModule,
         PanelModule,
-        ButtonModule
+        ButtonModule,
+        GrowlModule
     ],
     providers: [LoginService],
     declarations: [LoginComponent],

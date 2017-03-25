@@ -12,7 +12,7 @@ import { UserService } from '../../user/user.service';
 import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
-import { ID } from '../../models/id.model';
+import { ID } from '../../models/id.model'; 
 import { Segment } from '../../models/wiki/segment.model';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 
