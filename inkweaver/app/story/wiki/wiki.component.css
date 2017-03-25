@@ -227,3 +227,14 @@ cursor: default;
     cursor:pointer;
     
 }
+
+.ui-listbox-header .ui-listbox-filter-container {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    width: 90%;
+}
+
+.ui-listbox{
+  width: 100%;
+}

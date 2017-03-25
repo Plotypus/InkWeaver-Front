@@ -16,7 +16,8 @@ import {
     DataListModule,
     InputTextareaModule,
     OverlayPanelModule,
-    DataGridModule
+    DataGridModule,
+    ListboxModule
     
 } from 'primeng/primeng';
 
@@ -40,6 +41,7 @@ import { WikiComponent } from './wiki.component';
         InputTextareaModule,
         OverlayPanelModule,
         ConfirmDialogModule,
+        ListboxModule
         
     ],
     providers: [WikiService],

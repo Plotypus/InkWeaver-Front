@@ -475,7 +475,7 @@ export class ParserService {
 
         let arr = this.getTreeArray(tree);
         let dict = {};
-        let key = {};
+       
         for (let idx in arr) {
 
             dict[JSON.stringify(arr[idx].section_id)] = arr[idx];
@@ -488,7 +488,7 @@ export class ParserService {
     public getTreeArray(tree: TreeNode, mode: boolean = false) {
         let arr = [];
         if (!mode)
-            arr.push(tree.data);
+            arr.push(tree);
         else {
             if (tree.type == 'page')
                 arr.push(tree);

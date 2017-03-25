@@ -147,7 +147,7 @@ export class WikiService {
             "action": "add_heading",
             "title": title,
             "page_id": page_id,
-            "index": 0
+            
         });
     }
 

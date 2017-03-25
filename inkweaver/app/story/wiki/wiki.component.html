@@ -1,32 +1,45 @@
-﻿<p-dialog modal="true" header="Adding to {{addTo}}" [(visible)]="showAddDialog"
+﻿<p-dialog modal="true" header="Adding {{addContent}}" [(visible)]="showAddDialog"
           width="450" height="450" responsive="true">
 
-    <p-dropdown [options]="addOptions" [(ngModel)]="addContent" filter="true" required="true"></p-dropdown>
+    <p-dropdown [options]="allCategories" [(ngModel)]="defAdd" filter="true" required="true"></p-dropdown>
     <input type="text" pInputText [(ngModel)]="pageName" />
     <footer>
-        <button pButton type="button" label="Create Content" icon="fa fa-link" iconPos="right" (click)="addToWiki($event)"></button>
+        <button pButton type="button" label="Adding {{addContent}}" (click)="addToWiki($event)"></button>
     </footer>
 </p-dialog>
 
-<p-dialog modal="true" header="Create Heading for {{addTo}}" [(visible)]="showAddHeadDialog"
+<p-dialog modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
           width="450" height="450" responsive="true">
 
-    Heading: <input type="text" pInputText [(ngModel)]="pageName" />
-    Summary: <input type="text" pInputText [(ngModel)]="addContent" />
+    {{heading}}: <input type="text" pInputText [(ngModel)]="headingName" />
+    Summary: <input type="text" pInputText [(ngModel)]="summary" />
     <footer>
         <button pButton type="button" label="Create Heading" (click)="createHeading(false)"></button>
         <button pButton type="button" label="Create Another Heading" (click)="createHeading(true)"></button>
     </footer>
 </p-dialog>
 
-<p-dialog modal="true" header="Do you want to delete {{toDelete}}" [(visible)]="showDeleteDialog"
+<p-dialog modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
           width="450" height="450" responsive="true">
-    All the content in {{toDelete}} will be gone.
+
+    <p-dropdown [options]="wiki" [(ngModel)]="defDel" (ngModelChange)="changeSelected($event,defDel)" filter="true" required="true"></p-dropdown>
+    <div *ngIf=" defDel && defDel.type == 'category'">
+        You are going to be deleting a section all the following pages will be deleted
+
+        <p-listbox [options]="nestedPages" [(ngModel)]="selectedValues" (ngModelChange)="deleteChange($event,selectedValues)" multiple="multiple" checkbox="checkbox" filter="filter">
+         </p-listbox> 
+
+        
+    </div>
+    <div *ngIf=" defDel && defDel.type == 'page'">
+    </div>
+    
     <footer>
         <button pButton type="button" label="Yes" (click)="onDeletePage(true)"></button>
         <button pButton type="button" label="Cancel" (click)="onDeletePage(false)"></button>
     </footer>
 </p-dialog>
+
 
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
