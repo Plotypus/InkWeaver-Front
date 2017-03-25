@@ -6,24 +6,24 @@ import { ApiService } from '../../shared/api.service';
 export class WikiService {
     constructor(private apiService: ApiService) { }
 
-    public getWikiSegmentHierarchy(segment_id: any) {
+    public getWikiSegmentHierarchy(segment_id: any, callback: Function = () => { }) {
         this.apiService.send({
             action: 'get_wiki_segment_hierarchy',
             segment_id: segment_id
-        });
+        },callback);
     }
 
-    public getWikiSegment(sid: any) {
+    public getWikiSegment(sid: any, callback: Function = () => { }) {
         this.apiService.send({
             "action": "get_wiki_segment",
             "segment_id": sid
-        });
+        },callback);
     }
-    public getWikiPage(page_id: any, metadata: any = {}) {
+    public getWikiPage(page_id: any, callback: Function = () => { } ,metadata: any = {}) {
         this.apiService.send({
             action: 'get_wiki_page',
             page_id: page_id
-        }, () => { }, metadata);
+        }, callback, metadata);
     }
 
     //EDITS
@@ -121,7 +121,7 @@ export class WikiService {
             "action": "add_segment",
             "title": title,
             "parent_id": pid
-        },);
+        },callback);
     }
 
     public addTempleteHeading(title: string, sid: any) {

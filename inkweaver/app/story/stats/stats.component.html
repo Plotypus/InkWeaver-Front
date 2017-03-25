@@ -28,7 +28,7 @@
         <!-- Navigation -->
         <div class="navigation ui-grid-col-3">
         <p-tabView>
-        <p-tabPanel header="Story">
+        <p-tabPanel header={{data.story.story_title}}>
             <p-treeTable [value]="data.storyNode"
                          selectionMode="single"
                          [(selection)]="data.statSection"
@@ -42,8 +42,8 @@
                 </p-column>
             </p-treeTable>
         </p-tabPanel>
-        <!--
-        <p-tabPanel header="Wiki">
+        
+        <p-tabPanel header={{data.segment.title}}>
             <p-treeTable [value]="data.statsPages" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegment" (onNodeSelect)="selectSegment($event)">
                     <p-column field="data.title">
                         <template let-node="rowData" pTemplate="body">
@@ -52,7 +52,7 @@
 
                     </p-column>
             </p-treeTable>
-        </p-tabPanel>-->
+        </p-tabPanel>
         </p-tabView>
         </div>
     </div>

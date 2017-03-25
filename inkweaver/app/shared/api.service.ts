@@ -246,29 +246,36 @@ export class ApiService {
                                 this.refreshUserStoriesAndWikis();
                                 break;
                             case 'segment_added':
+                                this.parser.addSegment(this.data.wikiNav[0],reply);
+                                //this.refreshWikiHierarchy();
                                 if (this.outgoing['segment' + reply.title]) {
                                     let callback: Function =
                                         this.outgoing['segment' + reply.title].callback;
                                     callback(reply);
                                     delete this.outgoing['segment' + reply.title];
                                 }
-                                this.refreshWikiHierarchy();
+                                
                                 break;
                             case 'page_added':
+                                this.parser.addPage(this.data.wikiNav[0],reply);
+                                //this.refreshWikiHierarchy();
                                 if (this.outgoing['page' + reply.title]) {
                                     let callback: Function =
                                         this.outgoing['page' + reply.title].callback;
                                     callback(reply);
                                     delete this.outgoing['page' + reply.title];
                                 }
-                                this.refreshWikiHierarchy();
+                                
                                 break;
                             case 'alias_deleted':
                             case 'alias_updated':
                                 this.refreshWikiHierarchy();
                                 this.refreshStoryContent();
                                 break;
-
+                            case 'segment_deleted':
+                            case 'page_deleted':
+                                this.refreshWikiHierarchy();
+                                break;
                             case 'subscribed_to_wiki':
                                 this.subscribedToWiki = true;
                                 this.refreshWikiInfo();
@@ -295,14 +302,27 @@ export class ApiService {
                             case 'got_wiki_segment':
                                 this.data.page = JSON.parse(JSON.stringify(reply).replace(
                                     'template_headings', 'headings'));
+                                if (this.outgoing["segment"+reply.identifier.message_id]) {
+                                    let callback: Function =
+                                        this.outgoing["segment"+reply.identifier.message_id].callback;
+                                    callback(reply);
+                                    delete this.outgoing["segment"+reply.identifier.message_id];
+                                }
                                 break;
                             case 'got_wiki_page':
+                                
                                 this.data.page = this.parser.setPageDisplay(
                                     reply, this.data.linkTable);
                                 this.data.tooltip.text = '<b>' + reply.title + '</b>';
                                 if (reply.headings && reply.headings[0]) {
                                     this.data.tooltip.text += '<br/><u>' + reply.headings[0].title
                                         + '</u><br/>' + reply.headings[0].text;
+                                }
+                                 if (this.outgoing["page"+reply.identifier.message_id]) {
+                                    let callback: Function =
+                                        this.outgoing["page"+reply.identifier.message_id].callback;
+                                    callback(reply);
+                                    delete this.outgoing["page"+reply.identifier.message_id];
                                 }
                                 break;
 
@@ -381,8 +401,8 @@ export class ApiService {
     }
 
     // ----- WIKI ----- //
-    public refreshWikiInfo() {
-        this.send({ action: 'get_wiki_information' });
+    public refreshWikiInfo(callback: Function = () => { }) {
+        this.send({ action: 'get_wiki_information' },callback);
     }
     public refreshWikiHierarchy() {
         this.send({ action: 'get_wiki_hierarchy' });
@@ -399,13 +419,21 @@ export class ApiService {
 
         // Keep track of outgoing messages
         let key: string = '';
-        if (message.action === 'add_page') {
+        if (message.action === 'add_page' ) {
             key = 'page' + message.title;
-        } else if (message.action === 'add_segment') {
+
+        } else if(message.action === 'get_wiki_page'){
+             key = 'page' + message.identifier.message_id;
+        }else if (message.action === 'add_segment') {
             key = 'segment' + message.title;
-        } else {
+        } else if (message.action === 'get_wiki_segment')
+        {
+            key = 'segment' + message.identifier.message_id;
+        }
+        else {
             key = message.identifier.message_id;
         }
+
         this.outgoing[key] = {
             callback: callback,
             metadata: metadata

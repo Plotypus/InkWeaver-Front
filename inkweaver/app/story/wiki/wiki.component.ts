@@ -1,10 +1,11 @@
 ﻿import { Component, OnInit, ViewChildren } from '@angular/core';
-import { TreeNode, Editor } from 'primeng/primeng';
+import { TreeNode, Editor, MenuItem } from 'primeng/primeng';
 import { Router } from '@angular/router';
 
 import { EditService } from '../edit/edit.service';
 import { WikiService } from './wiki.service';
 import { ApiService } from '../../shared/api.service';
+import { ParserService } from '../../shared/parser.service';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 
 @Component({
@@ -14,7 +15,6 @@ import { PageSummary } from '../../models/wiki/page-summary.model';
 export class WikiComponent {
 
     private data: any;
-    private selectedEntry: TreeNode;
     private showAddDialog: any;
     private addOptions: any;
     private addContent: any;
@@ -30,12 +30,14 @@ export class WikiComponent {
     private showDeleteDialog: any;
     private toDelete: any;
     private nav: any;
-
+    private items:any;
+    private info: boolean;
 
     constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
         private editService: EditService,
+        private parserService:ParserService,
         private router: Router) { }
 
     ngOnInit() {
@@ -48,40 +50,27 @@ export class WikiComponent {
         this.addContent = this.addOptions[0]['value'];
         if (this.data.page.hasOwnProperty("title")) {
             this.parsePage();
-        }
-
+        }else
+            this.data.selectedEntry = this.data.wikiNav[0];
+        this.items = [{
+            label: 'Delete',
+            item:[]
+        }];
 
         this.apiService.messages.subscribe((action: string) => {
-            if (action == "got_wiki_segment" || action == 'got_wiki_page') {
-                this.wikiPageContent = [];
-                this.wikiPage = this.data.page;
-
-                this.disabled = [true];
-                this.icons = ['fa-pencil'];
-                this.wikiPageContent.push({
-                    'title': this.wikiPage.title,
-                    'text': ""
-                })
-                this.toDelete = this.wikiPage.title;
-                for (let i = 0; i < this.wikiPage.headings.length; i++) {
-                    this.disabled.push(true);
-                    this.icons.push('fa-pencil');
-                    this.wikiPageContent.push({
-                        'title': this.wikiPage.headings[i].title,
-                        'text': this.wikiPage.headings[i].text,
-                        'active': false
-                    });
-                }
-
-            }
-            else if (action.includes("delete")) {
-                this.apiService.refreshWikiHierarchy();
+            
                 if (action == "alias_deleted") {
-                    this.wikiService.getWikiPage(this.data.selectedEntry.data.id);
+                    this.wikiService.getWikiPage(this.data.selectedEntry.data.id,this.onGetCallback());
                 }
-            }
-
-
+                else if (action == "got_wiki_information")
+                {
+                    this.info = true;
+                }
+                else if (action == "got_wiki_hierarchy" && this.info)
+                {
+                    this.data.selectedEntry = this.data.wikiNav[0];
+                    this.info = false;
+                }
         });
     }
 
@@ -108,7 +97,7 @@ export class WikiComponent {
             });
         }
 
-        //getting the references
+
 
     }
 
@@ -116,234 +105,280 @@ export class WikiComponent {
      * Switch between pages for the wiki
      * @param page
      */
-    public onSelected(page: any) {
+     public onSelected(page: any) {
 
-        //Take care of when the title page is clicked
-        if (this.data.wiki.wiki_title == page.node.data.title) {
-            this.wikiPage = null;
-            this.apiService.refreshWikiInfo();
-        }
-        else if (page.node.type == "category") {
-            page.node.expanded = !page.node.expanded;
-            //get information for the page. 
-            this.wikiService.getWikiSegment(page.node.data.id);
-
-
-        }
-        else {
-            this.data.selectedPage = page.node.data.id;
-            this.wikiService.getWikiPage(page.node.data.id);
-        }
+         //Take care of when the title page is clicked
+         if (this.data.wiki.wiki_title == page.node.data.title) {
+             this.wikiPage = null;
+             this.apiService.refreshWikiInfo();
+             
+         }
+         else if (page.node.type == "category") {
+             page.node.expanded = !page.node.expanded;
+             //get information for the page.
+             
+             this.wikiService.getWikiSegment(page.node.data.id,this.onGetCallback());
 
 
-    }
+         }
+         else {
+            
+             this.wikiService.getWikiPage(page.node.data.id,this.onGetCallback());
+
+         }
+         this.data.selectedEntry = page.node;
+
+     }
 
     /**
      * All adding methods
      */
 
-    public addToWiki() {
-        //creating the new node to be added to the navigation
+     public addToWiki() {
+         //creating the new node to be added to the navigation
 
-        this.showAddDialog = false;
+         this.showAddDialog = false;
 
-        if (this.addContent == 'category') {
+         if (this.addContent == 'category') {
 
-            this.wikiService.addSegment(this.pageName, this.data.selectedEntry.data.id);
-        }
-        else {
-            this.wikiService.addPage(this.pageName, this.data.selectedEntry.data.id);
-        }
+             this.wikiService.addSegment(this.pageName, this.data.selectedEntry.data.id,this.onAddCallback());
+         }
+         else {
+             this.wikiService.addPage(this.pageName, this.data.selectedEntry.data.id, this.onAddCallback());
+         }
 
-        //need to send this info over network and get id;
-        this.addContent = this.addOptions[0]['value'];
-        this.pageName = "";
-    }
+         //need to send this info over network and get id;
+         this.addContent = this.addOptions[0]['value'];
+         this.pageName = "";
+     }
 
     /*
         Will toogle value of button variable to indicate whether something needs to be added or not
-    */
-    public onAddPage(event: any, page: any) {
-        this.addTo = page.label;
-        this.showAddDialog = true;
-        this.data.selectedEntry = page;
-        this.addContent = this.addOptions[0]['value'];
-        this.pageName = "";
-        event.stopPropagation();
-    }
-
-
-    public addHeading() {
-        this.addTo = this.data.selectedEntry.label;
-        this.addContent = "";
-        this.showAddHeadDialog = true;
-    }
-
-    public createHeading(addMore: boolean) {
-
-        if (!addMore)
-            this.showAddHeadDialog = false;
-
-        let temp = {};
-        if (this.data.selectedEntry.type == 'category') {
-            this.wikiService.addTempleteHeading(this.pageName, this.data.selectedEntry.data.id);
+        */
+        public onAddPage(type:any) {
+            this.addTo = this.data.selectedEntry.label;
+            this.showAddDialog = true;
+            this.addContent = this.addOptions[type]['value'];
+            this.pageName = "";
         }
-        else {
-            this.wikiService.addHeading(this.pageName, this.data.selectedEntry.data.id);
 
+
+        public addHeading() {
+            this.addTo = this.data.selectedEntry.label;
+            this.addContent = "";
+            this.showAddHeadDialog = true;
         }
-        temp = {
-            'title': this.pageName,
-            'text': this.addContent,
-        };
 
-        this.wikiPage.headings.push(temp);
-        temp['active'] = false;
-        this.wikiPageContent.push(temp);
+        public createHeading(addMore: boolean) {
 
-        this.onEdit(this.wikiPageContent.length - 1);
-        this.disabled.push(true);
-        this.icons.push('fa-pencil');
-        this.wikiPageContent.push({});
-        this.addContent = "";
-        this.pageName = "";
-    }
-    public onDisable(idx: any) {
+            if (!addMore)
+                this.showAddHeadDialog = false;
 
-        let title = "";
-        let text = "";
-        let prev = {};
-        //saving the previous state
-        if (this.disabled[idx]) {
-            this.icons[idx] = 'fa-check';
-            if (idx == 0) {
-                title = this.wikiPage.title;
-                prev["title"] = title;
-            }
-            else {
-                title = this.wikiPage.headings[idx - 1].title;
-                text = this.wikiPage.headings[idx - 1].text;
-                prev = {
-                    "title": title,
-                    "text": text,
-                    "active": this.wikiPageContent[idx].active
-                }
-            }
-
-            this.wikiPageContent.splice(idx, 1, prev);
-        }
-        else {
-            //need to send the new state to the server
-            this.icons[idx] = 'fa-pencil';
+            let temp = {};
             if (this.data.selectedEntry.type == 'category') {
-                //editing the category title
-                if (idx == 0 && !(this.wikiPageContent[0].title === this.wikiPage.title)) {
-                    this.wikiService.editSegment(this.data.selectedEntry.data.id, 'set_title', this.wikiPage.title);
-                    this.data.selectedEntry.data.title = this.wikiPage.title;
-                }
-                else if (idx != 0 && !(this.wikiPageContent[idx].title === this.wikiPage.title)) {
-                    this.wikiService.editTempleteHeading(this.data.selectedEntry.data.id, this.wikiPageContent[idx].title, "set_title", this.wikiPage.headings[idx - 1].title);
-                    //editing templete heading
-                }
-
-
+                this.wikiService.addTempleteHeading(this.pageName, this.data.selectedEntry.data.id);
             }
-            //saving page information
             else {
-                if (idx == 0 && !(this.wikiPageContent[0].title === this.wikiPage.title)) {
-                    //sending a null response so server closes connection
-                    this.wikiService.editPage(this.data.selectedEntry.data.id, 'set_title', this.wikiPage.title);
-                    this.data.selectedEntry.data.title = this.wikiPage.title;
+                this.wikiService.addHeading(this.pageName, this.data.selectedEntry.data.id);
+
+            }
+            temp = {
+                'title': this.pageName,
+                'text': this.addContent,
+            };
+
+            this.wikiPage.headings.push(temp);
+            temp['active'] = false;
+            this.wikiPageContent.push(temp);
+
+            this.onEdit(this.wikiPageContent.length - 1);
+            this.disabled.push(true);
+            this.icons.push('fa-pencil');
+            this.addContent = "";
+            this.pageName = "";
+        }
+        public onDisable(idx: any) {
+
+            let title = "";
+            let text = "";
+            let prev = {};
+            //saving the previous state
+            if (this.disabled[idx]) {
+                this.icons[idx] = 'fa-check';
+                if (idx == 0) {
+                    title = this.wikiPage.title;
+                    prev["title"] = title;
                 }
-                else if (idx != 0 && !(this.wikiPageContent[idx].title === this.wikiPage.title)) {
-                    this.wikiService.editHeading(this.data.selectedEntry.data.id, this.wikiPageContent[idx].title, 'set_title', this.wikiPage.headings[idx - 1].title);
+                else {
+                    title = this.wikiPage.headings[idx - 1].title;
+                    text = this.wikiPage.headings[idx - 1].text;
+                    prev = {
+                        "title": title,
+                        "text": text,
+                        "active": this.wikiPageContent[idx].active
+                    }
+                }
+
+                this.wikiPageContent.splice(idx, 1, prev);
+            }
+            else {
+                //need to send the new state to the server
+                this.icons[idx] = 'fa-pencil';
+                if (this.data.selectedEntry.type == 'category') {
+                    //editing the category title
+                    if (idx == 0 && !(this.wikiPageContent[0].title === this.wikiPage.title)) {
+                        this.wikiService.editSegment(this.data.selectedEntry.data.id, 'set_title', this.wikiPage.title);
+                        this.data.selectedEntry.data.title = this.wikiPage.title;
+                    }
+                    else if (idx != 0 && !(this.wikiPageContent[idx].title === this.wikiPage.title)) {
+                        this.wikiService.editTempleteHeading(this.data.selectedEntry.data.id, this.wikiPageContent[idx].title, "set_title", this.wikiPage.headings[idx - 1].title);
+                        //editing templete heading
+                    }
+
+
+                }
+                //saving page information
+                else {
+                    if (idx == 0 && !(this.wikiPageContent[0].title === this.wikiPage.title)) {
+                        //sending a null response so server closes connection
+                        this.wikiService.editPage(this.data.selectedEntry.data.id, 'set_title', this.wikiPage.title);
+                        this.data.selectedEntry.data.title = this.wikiPage.title;
+                    }
+                    else if (idx != 0 && !(this.wikiPageContent[idx].title === this.wikiPage.title)) {
+                        this.wikiService.editHeading(this.data.selectedEntry.data.id, this.wikiPageContent[idx].title, 'set_title', this.wikiPage.headings[idx - 1].title);
+                    }
+                }
+            }
+
+            this.disabled[idx] = !this.disabled[idx];
+        }
+
+        public onCancel(idx: any) {
+            if (idx == 0) {
+                this.wikiPage.title = this.wikiPageContent[0].title;
+            }
+            else {
+                this.wikiPage.headings[idx - 1].title = this.wikiPageContent[idx].title;
+            }
+            this.disabled[idx] = !this.disabled[idx];
+        }
+
+        public onSavePage() {
+            for (let i = 0; i < this.wikiPage.headings.length; i++) {
+                if (!(this.wikiPageContent[i + 1].text === this.wikiPage.headings[i].text)) {
+                    if (this.data.selectedEntry.type == 'category')
+                        this.wikiService.editTempleteHeading(this.data.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
+
+                    else
+                        this.wikiService.editHeading(this.data.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
                 }
             }
         }
 
-        this.disabled[idx] = !this.disabled[idx];
-    }
 
-    public onCancel(idx: any) {
-        if (idx == 0) {
-            this.wikiPage.title = this.wikiPageContent[0].title;
+        public editAlias(alias: any) {
+            //enable the textbox
+            if (alias.state) {
+                alias.state = !alias.state;
+                alias.icon = "fa-check"
+                alias.prev = alias.name;
+            }
+            //disable textbox
+            else {
+                alias.state = !alias.state;
+                alias.icon = "fa-pencil"
+                if (!(alias.prev === alias.name))
+                    this.wikiService.editAlias(alias.id, alias.name);
+                alias.prev = "";
+            }
         }
-        else {
-            this.wikiPage.headings[idx - 1].title = this.wikiPageContent[idx].title;
+
+        public cancelAlias(alias: any) {
+            alias.name = alias.prev;
+            alias.state = true;
         }
-        this.disabled[idx] = !this.disabled[idx];
-    }
 
-    public onSavePage() {
-        for (let i = 0; i < this.wikiPage.headings.length; i++) {
-            if (!(this.wikiPageContent[i + 1].text === this.wikiPage.headings[i].text)) {
-                if (this.data.selectedEntry.type == 'category')
-                    this.wikiService.editTempleteHeading(this.data.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
+        public deleteAlias(alias: any) {
+            this.wikiService.deleteAlias(alias.id);
+        }
 
-                else
-                    this.wikiService.editHeading(this.data.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
+        //Delete Methods
+        public onShow() {
+            this.showDeleteDialog = true;
+        }
+
+        public onDeletePage(page: any) {
+            this.showDeleteDialog = false;
+            if (!page)
+                return;
+            if (this.data.selectedEntry.type === 'category')
+                this.wikiService.deleteSegment(this.data.selectedEntry.data.id);
+            else
+                this.wikiService.deletePage(this.data.selectedEntry.data.id);
+            this.wikiPage = null;
+            this.data.page = null;
+            this.apiService.refreshWikiInfo();
+        }
+
+
+        public onEdit(idx: any) {
+            for (let i = 1; i < this.wikiPageContent.length; i++)
+            {
+                this.wikiPageContent[i].active = false;
+                let temp = this.wikiPage.headings[i-1].text;
+                this.wikiPage.headings[i-1].text = "";
+                this.wikiPage.headings[i-1].text = temp;
+            }
+            this.wikiPageContent[idx].active = true;
+        }
+
+        public onDeleteHeading() {
+
+        }
+
+        public onReference(ref: any) {
+            this.apiService.refreshStoryContent(ref.section_id, null, { paragraphID: ref.paragraph_id });
+            this.router.navigate(['/story/edit']);
+        }
+
+        public onAddCallback() : Function
+        {
+            return (reply:any) => {
+                if(reply.event === "segment_added")
+                {
+                    this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply)
+                    this.wikiService.getWikiSegment(reply.segment_id,this.onGetCallback());
+                }
+                else if(reply.event ==="page_added")
+                {
+                    this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply)
+                    this.wikiService.getWikiPage(reply.page_id,this.onGetCallback());
+                }
+            }
+        }
+
+        public onGetCallback() : Function 
+        {
+            return (reply:any) => {
+                this.wikiPageContent = [];
+                this.wikiPage = this.data.page;
+
+                this.disabled = [true];
+                this.icons = ['fa-pencil'];
+                this.wikiPageContent.push({
+                    'title': this.wikiPage.title,
+                    'text': ""
+                })
+                this.toDelete = this.wikiPage.title;
+                for (let i = 0; i < this.wikiPage.headings.length; i++) {
+                    this.disabled.push(true);
+                    this.icons.push('fa-pencil');
+                    this.wikiPageContent.push({
+                        'title': this.wikiPage.headings[i].title,
+                        'text': this.wikiPage.headings[i].text,
+                        'active': false
+                    });
+                }
             }
         }
     }
-
-
-    public editAlias(alias: any) {
-        //enable the textbox
-        if (alias.state) {
-            alias.state = !alias.state;
-            alias.icon = "fa-check"
-            alias.prev = alias.name;
-        }
-        //disable textbox
-        else {
-            alias.state = !alias.state;
-            alias.icon = "fa-pencil"
-            if (!(alias.prev === alias.name))
-                this.wikiService.editAlias(alias.id, alias.name);
-            alias.prev = "";
-        }
-    }
-
-    public cancelAlias(alias: any) {
-        alias.name = alias.prev;
-        alias.state = true;
-    }
-
-    public deleteAlias(alias: any) {
-        this.wikiService.deleteAlias(alias.id);
-    }
-
-    //Delete Methods
-    public onShow() {
-        this.showDeleteDialog = true;
-    }
-
-    public onDeletePage(page: any) {
-        this.showDeleteDialog = false;
-        if (!page)
-            return;
-        if (this.data.selectedEntry.type === 'category')
-            this.wikiService.deleteSegment(this.data.selectedEntry.data.id);
-        else
-            this.wikiService.deletePage(this.data.selectedEntry.data.id);
-        this.wikiPage = null;
-        this.data.page = null;
-        this.apiService.refreshWikiInfo();
-    }
-
-
-    public onEdit(idx: any) {
-        for (let i = 1; i < this.wikiPageContent.length; i++)
-            this.wikiPageContent[i].active = false;
-        this.wikiPageContent[idx].active = true;
-    }
-
-    public onDeleteHeading() {
-
-    }
-
-    public onReference(ref: any) {
-        this.apiService.refreshStoryContent(ref.section_id, null, { paragraphID: ref.paragraph_id });
-        this.router.navigate(['/story/edit']);
-    }
-}

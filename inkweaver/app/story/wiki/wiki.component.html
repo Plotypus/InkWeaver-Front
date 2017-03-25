@@ -1,4 +1,4 @@
-﻿<p-dialog modal="true" header="Create for {{addTo}}" [(visible)]="showAddDialog"
+﻿<p-dialog modal="true" header="Adding to {{addTo}}" [(visible)]="showAddDialog"
           width="450" height="450" responsive="true">
 
     <p-dropdown [options]="addOptions" [(ngModel)]="addContent" filter="true" required="true"></p-dropdown>
@@ -45,9 +45,8 @@
                     <span *ngSwitchCase='true'>
                         <h1 (click)="onDisable(0)">{{wikiPage.title}}</h1>
                         <span class="icons">
-                            <i class="fa fa-plus" float="right" (click)="addHeading()"></i>
-                            <i class="fa fa-floppy-o" (click)="onSavePage()"></i>
-                            <i class="fa fa-trash-o" (click)="onShow()"></i>
+                            <button pButton type="button" label="Add Heading" (click)="addHeading()"></button>
+                            <button pButton type="button" label="Save" (click)="onSavePage()"></button>
                         </span>
 
                     </span>
@@ -93,8 +92,11 @@
 
                         <header *ngSwitchCase='false'>
                             <input type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
+                            <span>
                             <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
                             <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
+                            </span>
+                           
                         </header>
 
                     </div>
@@ -129,7 +131,10 @@
 
                         </p-editor>
 
-                        <div class="text" *ngSwitchCase='false' [innerHTML]='section.text' (click)="onEdit(i+1)"> </div>
+                        <div *ngSwitchCase='false' (click)="onEdit(i+1)">
+                        <p-editor id="read-only" [(ngModel)]="section.text">
+                        </p-editor>
+                        </div>
 
                     </div>
                 </div>
@@ -180,19 +185,29 @@
 
 
         <div class="navigation ui-g-3">
+            
+             <!--When a category is selected-->
+           
+            <p-overlayPanel #op appendTo="body">
+                <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
+            </p-overlayPanel>
+
+             <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category'">
+                <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
+                <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
+                <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
+                <i class="ui-grid-col-1 fa fa-ellipsis-v" style="float: none" (click)="op.toggle($event)"></i>
+            </div>
+            <!--When a page is selected-->
+            <div class="nav-actions" *ngIf="data.selectedEntry.type == 'page'">
+                <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
+                <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
+            </div>
+            
             <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
                 <p-column field="data.title">
                     <template let-node="rowData" pTemplate="body">
-                        <span *ngIf="node.type == 'page'">
-                            {{node.data.title}}
-
-                        </span>
-                        <span *ngIf="node.type == 'category' || node.type == 'title'">
-                            {{node.data.title}}
-
-                            <i class="fa fa-plus-square-o" (click)="onAddPage($event,node)"></i>
-                        </span>
-
+                        {{node.data.title}}
                     </template>
 
                 </p-column>
