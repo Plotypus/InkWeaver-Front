@@ -26,6 +26,12 @@ export class WikiService {
         }, callback, metadata);
     }
 
+    public getWikiAliasList(){
+        this.apiService.send({
+            action: 'get_wiki_alias_list'
+        });
+    }
+
     //EDITS
     //update type: set_title;
     public editSegment(segment_id: any, update_type: string, new_text: string) {

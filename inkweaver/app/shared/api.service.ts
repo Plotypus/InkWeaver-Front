@@ -9,6 +9,8 @@ import { ParserService } from './parser.service';
 import { User } from '../models/user/user.model';
 import { Collaborator } from '../models/user/collaborator.model';
 import { LinkTable } from '../models/link/link-table.model';
+import { AliasTable } from '../models/link/alias-table.model';
+
 import { Link } from '../models/link/link.model';
 import { ID } from '../models/id.model';
 
@@ -43,6 +45,7 @@ export class ApiService {
         stories: new Array<StorySummary>(),
         wikis: new Array<WikiSummary>(),
         linkTable: new LinkTable(),
+        aliasTable: new AliasTable();
 
         storyDisplay: '',
         story: new Story(),
@@ -296,8 +299,12 @@ export class ApiService {
                                     reply.hierarchy, this.data.selectedEntry);
                                 this.data.wikiNav = result[0];
                                 this.data.statsPages = result[1];
-                                this.data.linkTable = this.parser.parseLinkTable(
-                                    reply.link_table);
+                                this.refreshLinkAliasTable();
+                                break;
+                            case 'got_wiki_alias_list':
+                                let temp = this.parser.parseAlias_List(reply.alias_list);
+                                this.data.linkTable = temp[0];
+                                this.data.aliasTable = temp[1];
                                 break;
                             case 'got_wiki_segment':
                                 this.data.page = JSON.parse(JSON.stringify(reply).replace(
@@ -406,6 +413,10 @@ export class ApiService {
     }
     public refreshWikiHierarchy() {
         this.send({ action: 'get_wiki_hierarchy' });
+    }
+
+    public refreshLinkAliasTable(){
+        this.send({ action: 'get_wiki_alias_list' });
     }
 
     /**

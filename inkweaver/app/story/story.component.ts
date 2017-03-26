@@ -25,15 +25,15 @@ export class StoryComponent {
     ngOnInit() {
         this.data = this.apiService.data;
         this.data.menuItems = [
-            { label: 'User', routerLink: ['/user'] },
+            { label: 'User', routerLink: ['/user']  },
             { label: 'About', routerLink: ['/about'] },
             { label: 'Sign Out', routerLink: ['/login'] },
         ];
 
         this.items = [
-            { label: '', icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
-            { label: '', icon: 'fa-book', routerLink: ['/story/wiki'] },
-            { label: '', icon: 'fa-ellipsis-v', routerLink: ['/story/stats'] }
+            { label: '', disabled: true, icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
+            { label: '', disabled: true, icon: 'fa-book', routerLink: ['/story/wiki'] },
+            { label: '', disabled: true, icon: 'fa-ellipsis-v', routerLink: ['/story/stats'] }
         ];
         this.activeItem = this.items[0];
 
@@ -51,6 +51,16 @@ export class StoryComponent {
                     this.activeItem = this.items[2];
                 }
             });
+
+        this.apiService.messages.subscribe((action: string) => {
+            if (action == "got_wiki_hierarchy")
+            {
+                for(let item of this.items)
+                {
+                    item['disabled'] = false;
+                }
+            }
+        });
     }
 
     public edit() {
