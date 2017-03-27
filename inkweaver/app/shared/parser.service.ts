@@ -3,6 +3,7 @@ import { TreeNode } from 'primeng/primeng';
 
 import { ID } from '../models/id.model';
 import { Link } from '../models/link/link.model';
+import { AliasTable } from '../models/link/alias-table.model';
 import { LinkTable } from '../models/link/link-table.model';
 import { Section } from '../models/story/section.model';
 import { Paragraph } from '../models/story/paragraph.model';
@@ -183,7 +184,7 @@ export class ParserService {
     }
 
     // Links
-    public parseLinkTable(linkArray: any): LinkTable {
+    public parseAlias_List(alias_list: any): any {
         let linkTable: LinkTable = new LinkTable();
         let aliasTable: AliasTable = new AliasTable();
         for (let alias of alias_list) {
@@ -193,7 +194,7 @@ export class ParserService {
                 linkTable[JSON.stringify(link)] = { page_id: alias.page_id, name: alias.alias_name }
             }
         }
-        return linkTable;
+        return [linkTable,aliasTable];
     }
 
     // ---------------------------------------------- //
