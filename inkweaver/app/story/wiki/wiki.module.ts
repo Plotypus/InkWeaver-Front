@@ -1,7 +1,7 @@
 ﻿import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { FilterPipe } from '../../shared/filter.pipe';
 import {
     MenuModule,
     SharedModule,
@@ -16,7 +16,9 @@ import {
     DataListModule,
     InputTextareaModule,
     OverlayPanelModule,
-    DataGridModule
+    DataGridModule,
+    ListboxModule,
+    CheckboxModule
     
 } from 'primeng/primeng';
 
@@ -40,10 +42,12 @@ import { WikiComponent } from './wiki.component';
         InputTextareaModule,
         OverlayPanelModule,
         ConfirmDialogModule,
+        ListboxModule,
+        CheckboxModule
         
     ],
-    providers: [WikiService],
-    declarations: [WikiComponent],
+    providers: [WikiService, FilterPipe],
+    declarations: [WikiComponent, FilterPipe],
     bootstrap: [WikiComponent]
 })
 export class WikiModule { }
