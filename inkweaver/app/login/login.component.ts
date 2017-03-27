@@ -37,7 +37,6 @@ export class LoginComponent {
         if (this.apiService.subscribedToWiki) {
             this.storyService.unsubscribeFromWiki(this.data.story.wiki_id);
         }
-        this.data.menuItems = [{ label: 'About', routerLink: ['/about'] }];
     }
 
     public signIn() {

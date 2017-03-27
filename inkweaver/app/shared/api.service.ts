@@ -37,7 +37,6 @@ export class ApiService {
     public data = {
         inflight: false,
         tooltip: new Tooltip(),
-        menuItems: new Array<MenuItem>(),
 
         user: new User(),
         stories: new Array<StorySummary>(),

@@ -1,5 +1,5 @@
 ﻿TIER 1
-Create User
+Sign out
 Versioning of story
 Expand menu in top-right
 Drag and drop sections/segments

@@ -43,4 +43,10 @@ export class UserService {
             position_context: { section_id: sectionID, paragraph_id: paragraphID }
         }, () => { }, { noflight: true });
     }
+
+    public signOut() {
+        this.apiService.send({
+            action: 'sign_out'
+        });
+    }
 }
