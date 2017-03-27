@@ -185,8 +185,13 @@ export class ParserService {
     // Links
     public parseLinkTable(linkArray: any): LinkTable {
         let linkTable: LinkTable = new LinkTable();
-        for (let link of linkArray) {
-            linkTable[JSON.stringify(link.link_id)] = { page_id: link.page_id, name: link.name };
+        let aliasTable: AliasTable = new AliasTable();
+        for (let alias of alias_list) {
+
+            aliasTable[alias.alias_name] = { page_id: alias.page_id };
+            for (let link of alias.link_ids) {
+                linkTable[JSON.stringify(link)] = { page_id: alias.page_id, name: alias.alias_name }
+            }
         }
         return linkTable;
     }

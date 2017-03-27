@@ -43,6 +43,7 @@ export class ApiService {
         stories: new Array<StorySummary>(),
         wikis: new Array<WikiSummary>(),
         linkTable: new LinkTable(),
+        aliasTable: new AliasTable(),
 
         storyDisplay: '',
         story: new Story(),

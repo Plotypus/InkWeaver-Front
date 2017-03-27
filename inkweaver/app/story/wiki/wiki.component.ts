@@ -381,4 +381,76 @@ export class WikiComponent {
                 }
             }
         }
+
+        public changeSelected(event:any, defDel:any){
+            this.nestedPages = this.convertLabelValueArray(defDel);
+            if (defDel.type == 'category')
+                this.selectAllVal = true;
+            else
+                this.selectAllVal = false;
+        }
+
+        public deleteChange(event:any ,selected:any){
+            let temp = [];
+            this.selectedValues = [];
+            if (event) {
+                if (selected) {
+                    temp = [];
+                    for (let page of this.nestedPages) {
+                        temp.push(JSON.stringify(page.value.data.id));
+
+                    }
+                }
+            }
+            else {
+                //need to remove visted entry before adding it to selcted
+                temp = [];
+                
+                for (let check of selected) {
+                    let node: TreeNode;
+                    //first need to find the node
+
+                    node = this.findNode(this.defDel, JSON.parse(check));
+                    if (node) {
+                        if (node.type === "category") {
+                            if (!temp.includes(JSON.stringify(node.data.id))) {
+                                let childs = this.parserService.getTreeArray(node);
+                                for (let page of childs) {
+                                    if (!temp.includes(JSON.stringify(page.data.id)))
+                                        temp.push(JSON.stringify(page.data.id));
+                                }
+
+                            }
+                        }
+                        else {
+                            if (!temp.includes(JSON.stringify(node.data.id)))
+                                temp.push(JSON.stringify(node.data.id));
+                        }
+                    }
+                }
+            }
+                for(let ele of temp)
+                {
+                    if (ele.indexOf("visited") != -1) {
+                        let obj = JSON.parse(ele);
+                        delete obj["_$visited"]
+                        if(!this.selectedValues.includes(JSON.stringify(obj)))
+                        this.selectedValues.push(JSON.stringify(obj));
+                    }
+                    else
+                    {
+                        if (!this.selectedValues.includes(ele))
+                        this.selectedValues.push(ele);
+                    }
+
+                
+            }
+        }
+
+        public findNode(head:TreeNode,nid:any){
+            let node = this.parserService.findSegment(head, nid,true);
+            if (!node)
+                node = this.parserService.findPage(head, nid,true);
+            return node;
+        }
     }
