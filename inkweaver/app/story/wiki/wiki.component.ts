@@ -7,6 +7,7 @@ import { WikiService } from './wiki.service';
 import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 import { PageSummary } from '../../models/wiki/page-summary.model';
+import { FilterPipe } from '../../shared/filter.pipe';
 
 @Component({
     selector: 'wiki',
@@ -16,7 +17,7 @@ export class WikiComponent {
 
     private data: any;
     private showAddDialog: any;
-    private addOptions: any;
+    
     private addContent: any;
     private pageName: any;
     private addTo: any;
@@ -30,10 +31,25 @@ export class WikiComponent {
     private showDeleteDialog: any;
     private toDelete: any;
     private nav: any;
-    private items:any;
     private info: boolean;
 
-    constructor(
+    //adding and deleting pages anc categories
+    private allCategories = [];
+    private allPages = [];
+    private nestedPages = [];
+    private defAdd: any;
+    private defDel: any;
+    private wiki = [];
+    private selectedValues = [];
+    private selectAllVal: boolean;
+    private filter: string;
+
+    //adding and deleting templetes
+    private headingName:any;
+    private summary: any;
+    private heading: any;
+
+        constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
         private editService: EditService,
@@ -44,18 +60,14 @@ export class WikiComponent {
 
         this.data = this.apiService.data;
         this.nav = this.apiService.data.wikiNav;
-        this.addOptions = [];
-        this.addOptions.push({ label: 'Category', value: 'category' });
-        this.addOptions.push({ label: 'Page', value: 'page' });
-        this.addContent = this.addOptions[0]['value'];
-        if (this.data.page.hasOwnProperty("title")) {
+        this.filter = "";
+
+        if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
             this.parsePage();
         }else
             this.data.selectedEntry = this.data.wikiNav[0];
-        this.items = [{
-            label: 'Delete',
-            item:[]
-        }];
+
+        this.updateData();
 
         this.apiService.messages.subscribe((action: string) => {
             
@@ -118,8 +130,6 @@ export class WikiComponent {
              //get information for the page.
              
              this.wikiService.getWikiSegment(page.node.data.id,this.onGetCallback());
-
-
          }
          else {
             
@@ -139,7 +149,7 @@ export class WikiComponent {
 
          this.showAddDialog = false;
 
-         if (this.addContent == 'category') {
+         if (this.addContent == 'Category') {
 
              this.wikiService.addSegment(this.pageName, this.data.selectedEntry.data.id,this.onAddCallback());
          }
@@ -148,7 +158,6 @@ export class WikiComponent {
          }
 
          //need to send this info over network and get id;
-         this.addContent = this.addOptions[0]['value'];
          this.pageName = "";
      }
 
@@ -156,16 +165,24 @@ export class WikiComponent {
         Will toogle value of button variable to indicate whether something needs to be added or not
         */
         public onAddPage(type:any) {
-            this.addTo = this.data.selectedEntry.label;
             this.showAddDialog = true;
-            this.addContent = this.addOptions[type]['value'];
+            if (type == 0)
+                this.addContent = "Category";
+            else
+                this.addContent = "Page";
             this.pageName = "";
+            let idx = this.allCategories.findIndex(this.selectedEntry());
+            if (idx != -1)
+                this.defAdd = this.allCategories[idx].value;
         }
 
 
         public addHeading() {
-            this.addTo = this.data.selectedEntry.label;
-            this.addContent = "";
+            this.summary = "";
+            if (this.data.selectedEntry.type == 'category')
+                this.heading = "Templete Heading";
+            else
+                this.heading = "Heading"; 
             this.showAddHeadDialog = true;
         }
 
@@ -184,7 +201,7 @@ export class WikiComponent {
             }
             temp = {
                 'title': this.pageName,
-                'text': this.addContent,
+                'text': this.summary,
             };
 
             this.wikiPage.headings.push(temp);
@@ -194,7 +211,7 @@ export class WikiComponent {
             this.onEdit(this.wikiPageContent.length - 1);
             this.disabled.push(true);
             this.icons.push('fa-pencil');
-            this.addContent = "";
+            this.summary = "";
             this.pageName = "";
         }
         public onDisable(idx: any) {
@@ -304,7 +321,20 @@ export class WikiComponent {
 
         //Delete Methods
         public onShow() {
+            //need take care of the case where nested section is selected but pages in it are not
+
+            let idx = this.wiki.findIndex(this.selectedEntry());
+            if (idx != -1)
+                this.defDel = this.wiki[idx].value;
+            this.nestedPages = this.convertLabelValueArray(this.defDel);
+            this.selectAllVal = false;
+            for(let page of this.nestedPages)
+            {
+                this.selectedValues.push(JSON.stringify(page.value.data.id));
+                this.selectAllVal = true;
+            }
             this.showDeleteDialog = true;
+
         }
 
         public onDeletePage(page: any) {
@@ -341,22 +371,66 @@ export class WikiComponent {
             this.router.navigate(['/story/edit']);
         }
 
+        public updateData(){
+            
+            let ele: TreeNode
+            let temp= [];
+            if(this.data.wikiNav){
+                temp = this.parserService.getTreeArray(this.data.wikiNav[0]);
+                for( let idx in temp)
+                {    
+                    ele = temp[idx];
+                    if(ele.type == 'category')
+                    {
+                        this.allCategories.push({ label: ele.label, value: ele });
+                    }
+                    else
+                        this.allPages.push({ label: ele.label, value: ele });
+                    this.wiki.push({ label: ele.label, value: ele });
+                }
+                
+            }
+        }
+
+        public convertLabelValueArray(node:TreeNode){
+            if (node) {
+                let result = [];
+                let temp = this.parserService.getTreeArray(node);
+                for (let idx in temp) {
+                    result.push({ label: temp[idx].label, value: temp[idx] });
+                }
+                return result;
+            }
+            return [];
+        }
+
+        public selectedEntry() {
+            return (option: any) => {
+                return this.data.selectedEntry.label === option.label;
+            }
+        }
+
         public onAddCallback() : Function
         {
             return (reply:any) => {
                 if(reply.event === "segment_added")
                 {
-                    this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply)
+                    this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply.segment_id);
                     this.wikiService.getWikiSegment(reply.segment_id,this.onGetCallback());
                 }
                 else if(reply.event ==="page_added")
                 {
-                    this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply)
+                    this.data.selectedEntry = this.parserService.findPage(this.data.wikiNav[0], reply.page_id);
                     this.wikiService.getWikiPage(reply.page_id,this.onGetCallback());
                 }
             }
         }
 
+        public onDeleteCallback() : Function {
+            return (reply:any) =>{
+
+            }
+        }
         public onGetCallback() : Function 
         {
             return (reply:any) => {
@@ -380,5 +454,76 @@ export class WikiComponent {
                     });
                 }
             }
+        }
+
+        public changeSelected(event:any, defDel:any){
+            this.nestedPages = this.convertLabelValueArray(defDel);
+            if (defDel.type == 'category')
+                this.selectAllVal = true;
+            else
+                this.selectAllVal = false;
+        }
+
+        public deleteChange(event:any ,selected:any){
+            let temp = [];
+            this.selectedValues = [];
+            if (event) {
+                if (selected) {
+                    temp = [];
+                    for (let page of this.nestedPages) {
+                        temp.push(JSON.stringify(page.value.data.id));
+
+                    }
+                }
+            }
+            else {
+                //need to remove visted entry before adding it to selcted
+                temp = [];
+                for (let check of selected) {
+                    let node: TreeNode;
+                    //first need to find the node
+
+                    node = this.findNode(this.defDel, JSON.parse(check));
+                    if (node) {
+                        if (node.type === "category") {
+                            if (!temp.includes(JSON.stringify(node.data.id))) {
+                                let childs = this.parserService.getTreeArray(node);
+                                for (let page of childs) {
+                                    if (!temp.includes(JSON.stringify(page.data.id)))
+                                        temp.push(JSON.stringify(page.data.id));
+                                }
+
+                            }
+                        }
+                        else {
+                            if (!temp.includes(JSON.stringify(node.data.id)))
+                                temp.push(JSON.stringify(node.data.id));
+                        }
+                    }
+                }
+            }
+                for(let ele of temp)
+                {
+                    if (ele.indexOf("visited") != -1) {
+                        let obj = JSON.parse(ele);
+                        delete obj["_$visited"]
+                        if(!this.selectedValues.includes(JSON.stringify(obj)))
+                        this.selectedValues.push(JSON.stringify(obj));
+                    }
+                    else
+                    {
+                        if (!this.selectedValues.includes(ele))
+                        this.selectedValues.push(ele);
+                    }
+
+                
+            }
+        }
+
+        public findNode(head:TreeNode,nid:any){
+            let node = this.parserService.findSegment(head, nid,true);
+            if (!node)
+                node = this.parserService.findPage(head, nid,true);
+            return node;
         }
     }

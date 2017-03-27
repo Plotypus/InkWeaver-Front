@@ -3,6 +3,7 @@ import { TreeNode } from 'primeng/primeng';
 
 import { ID } from '../models/id.model';
 import { Link } from '../models/link/link.model';
+import { AliasTable } from '../models/link/alias-table.model';
 import { LinkTable } from '../models/link/link-table.model';
 import { Section } from '../models/story/section.model';
 import { Paragraph } from '../models/story/paragraph.model';
@@ -183,12 +184,17 @@ export class ParserService {
     }
 
     // Links
-    public parseLinkTable(linkArray: any): LinkTable {
+    public parseAlias_List(alias_list: any): any {
         let linkTable: LinkTable = new LinkTable();
-        for (let link of linkArray) {
-            linkTable[JSON.stringify(link.link_id)] = { page_id: link.page_id, name: link.name };
+        let aliasTable: AliasTable = new AliasTable();
+        for (let alias of alias_list) {
+
+            aliasTable[alias.alias_name] = { page_id: alias.page_id };
+            for (let link of alias.link_ids) {
+                linkTable[JSON.stringify(link)] = { page_id: alias.page_id, name: alias.alias_name }
+            }
         }
-        return linkTable;
+        return [linkTable,aliasTable];
     }
 
     // ---------------------------------------------- //
@@ -372,39 +378,46 @@ export class ParserService {
 
     }
 
-    public findSegment(wiki: TreeNode, reply: any) {
+    public findSegment(wiki: TreeNode, sid: any, mode: boolean = false) {
         let found: any;
+        if ((mode ? JSON.stringify(sid["$oid"]) : JSON.stringify(sid)) ===
+            (mode ? JSON.stringify(wiki.data.id["$oid"]) : JSON.stringify(wiki.data.id))) {
+            return wiki;
+        }
         for (let child of wiki.children) {
-                if(JSON.stringify(reply.segment_id) === JSON.stringify(child.data.id))
-                {
-                    found = child;
-                    break;
-                }
-                else if(child.hasOwnProperty("children") && child.children.length != 0)
-                {
-                    found = this.findSegment(child, reply);
-                    if (found)
-                        break;
-                }
+            if ((mode ? JSON.stringify(sid["$oid"]) : JSON.stringify(sid)) ===
+                (mode ? JSON.stringify(child.data.id["$oid"]) : JSON.stringify(child.data.id))) {
+                found = child;
+                break;
             }
+            else if (child.hasOwnProperty("children") && child.children.length != 0) {
+                found = this.findSegment(child, sid, mode);
+                if (found)
+                    break;
+            }
+        }
         if (found)
             return found;
     }
 
-    public findPage(wiki: TreeNode, reply: any) {
+    public findPage(wiki: TreeNode, pid: any, mode: boolean = false) {
         let found: any;
+        if ((mode ? JSON.stringify(pid["$oid"]) : JSON.stringify(pid)) ===
+            (mode ? JSON.stringify(wiki.data.id["$oid"]) : JSON.stringify(wiki.data.id))) {
+            return wiki;
+        }
         for (let child of wiki.children) {
-                if(JSON.stringify(reply.page_id) === JSON.stringify(child.data.id))
-                {
-                    found = child;
-                    break;
-                }
-                else if(child.hasOwnProperty("children") && child.children.length != 0){
-                    found = this.findPage(child, reply);
-                    if (found)
-                        break;
-                }
+            if ((mode ? JSON.stringify(pid["$oid"]) : JSON.stringify(pid)) ===
+                (mode ? JSON.stringify(child.data.id["$oid"]) : JSON.stringify(child.data.id))) {
+                found = child;
+                break;
             }
+            else if (child.hasOwnProperty("children") && child.children.length != 0) {
+                found = this.findPage(child, pid, mode);
+                if (found)
+                    break;
+            }
+        }
 
         if (found)
             return found;
