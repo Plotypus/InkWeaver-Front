@@ -52,19 +52,19 @@ body {
     display: inline-block;
 }
 
-.master-menu .ui-menubar {
-    background: var(--dark-blue);
-}
+    .master-menu .ui-menubar {
+        background: var(--dark-blue);
+    }
 
-.master-menu .ui-menuitem :hover {
-    background: var(--light-blue);
-    border-color: var(--light-blue);
-}
+    .master-menu .ui-menuitem :hover {
+        background: var(--light-blue);
+        border-color: var(--light-blue);
+    }
 
-.master-menu .ui-menuitem-text {
-    padding: 0 1em 0 1em;
-    color: var(--light-gray);
-}
+    .master-menu .ui-menuitem-text {
+        padding: 0 1em 0 1em;
+        color: var(--light-gray);
+    }
 
 
 /* ----- Navigation ----- */

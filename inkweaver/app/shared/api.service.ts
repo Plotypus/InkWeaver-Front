@@ -121,7 +121,7 @@ export class ApiService {
                                 }
                                 break;
 
-                            // ---------- User ---------- //
+                            // ----- User ----- //
                             case 'got_user_preferences':
                                 this.data.user = reply;
                                 break;
@@ -209,8 +209,22 @@ export class ApiService {
                             case 'section_deleted':
                                 this.parser.deleteSection(this.data.storyNode[0], JSON.stringify(reply.section_id));
                                 break;
+                            case 'subsection_moved_as_preceding':
+                                break;
+                            case 'subsection_moved_as_inner':
+                                break;
+                            case 'subsection_moved_as_succeeding':
+                                break;
 
-                            // Bookmarks
+                            // Paragraph
+                            case 'paragraph_added':
+                                break;
+                            case 'paragraph_updated':
+                                break;
+                            case 'paragraph_deleted':
+                                break;
+
+                            // Bookmarks and Notes
                             case 'got_story_bookmarks':
                                 this.data.bookmarks = [{ data: { name: 'Bookmarks', bookmark_id: { $oid: null } }, expanded: true, children: [] }];
                                 for (let bookmark of reply.bookmarks) {
@@ -230,6 +244,10 @@ export class ApiService {
                                 index = this.data.bookmarks[0].children.findIndex((bookmark: TreeNode) => JSON.stringify(reply.bookmark_id) === JSON.stringify(bookmark.data.bookmark_id));
                                 this.data.bookmarks[0].children.splice(index, 1);
                                 break;
+                            case 'note_updated':
+                                break;
+                            case 'note_deleted':
+                                break;
 
                             // Links
                             case 'link_created':
@@ -247,7 +265,7 @@ export class ApiService {
                                 this.refreshUserStoriesAndWikis();
                                 break;
                             case 'segment_added':
-                                this.parser.addSegment(this.data.wikiNav[0],reply);
+                                this.parser.addSegment(this.data.wikiNav[0], reply);
                                 //this.refreshWikiHierarchy();
                                 if (this.outgoing['segment' + reply.title]) {
                                     let callback: Function =
@@ -255,10 +273,10 @@ export class ApiService {
                                     callback(reply);
                                     delete this.outgoing['segment' + reply.title];
                                 }
-                                
+
                                 break;
                             case 'page_added':
-                                this.parser.addPage(this.data.wikiNav[0],reply);
+                                this.parser.addPage(this.data.wikiNav[0], reply);
                                 //this.refreshWikiHierarchy();
                                 if (this.outgoing['page' + reply.title]) {
                                     let callback: Function =
@@ -266,7 +284,7 @@ export class ApiService {
                                     callback(reply);
                                     delete this.outgoing['page' + reply.title];
                                 }
-                                
+
                                 break;
                             case 'alias_deleted':
                             case 'alias_updated':
@@ -307,15 +325,15 @@ export class ApiService {
                             case 'got_wiki_segment':
                                 this.data.page = JSON.parse(JSON.stringify(reply).replace(
                                     'template_headings', 'headings'));
-                                if (this.outgoing["segment"+reply.identifier.message_id]) {
+                                if (this.outgoing["segment" + reply.identifier.message_id]) {
                                     let callback: Function =
-                                        this.outgoing["segment"+reply.identifier.message_id].callback;
+                                        this.outgoing["segment" + reply.identifier.message_id].callback;
                                     callback(reply);
-                                    delete this.outgoing["segment"+reply.identifier.message_id];
+                                    delete this.outgoing["segment" + reply.identifier.message_id];
                                 }
                                 break;
                             case 'got_wiki_page':
-                                
+
                                 this.data.page = this.parser.setPageDisplay(
                                     reply, this.data.linkTable);
                                 this.data.tooltip.text = '<b>' + reply.title + '</b>';
@@ -323,11 +341,11 @@ export class ApiService {
                                     this.data.tooltip.text += '<br/><u>' + reply.headings[0].title
                                         + '</u><br/>' + reply.headings[0].text;
                                 }
-                                 if (this.outgoing["page"+reply.identifier.message_id]) {
+                                if (this.outgoing["page" + reply.identifier.message_id]) {
                                     let callback: Function =
-                                        this.outgoing["page"+reply.identifier.message_id].callback;
+                                        this.outgoing["page" + reply.identifier.message_id].callback;
                                     callback(reply);
-                                    delete this.outgoing["page"+reply.identifier.message_id];
+                                    delete this.outgoing["page" + reply.identifier.message_id];
                                 }
                                 break;
 
@@ -407,7 +425,7 @@ export class ApiService {
 
     // ----- WIKI ----- //
     public refreshWikiInfo(callback: Function = () => { }) {
-        this.send({ action: 'get_wiki_information' },callback);
+        this.send({ action: 'get_wiki_information' }, callback);
     }
     public refreshWikiHierarchy() {
         this.send({ action: 'get_wiki_hierarchy' });
@@ -428,15 +446,14 @@ export class ApiService {
 
         // Keep track of outgoing messages
         let key: string = '';
-        if (message.action === 'add_page' ) {
+        if (message.action === 'add_page') {
             key = 'page' + message.title;
 
-        } else if(message.action === 'get_wiki_page'){
-             key = 'page' + message.identifier.message_id;
-        }else if (message.action === 'add_segment') {
+        } else if (message.action === 'get_wiki_page') {
+            key = 'page' + message.identifier.message_id;
+        } else if (message.action === 'add_segment') {
             key = 'segment' + message.title;
-        } else if (message.action === 'get_wiki_segment')
-        {
+        } else if (message.action === 'get_wiki_segment') {
             key = 'segment' + message.identifier.message_id;
         }
         else {
