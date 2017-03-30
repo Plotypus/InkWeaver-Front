@@ -24,12 +24,6 @@ export class StoryComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
-        this.data.menuItems = [
-            { label: 'User', routerLink: ['/user']  },
-            { label: 'About', routerLink: ['/about'] },
-            { label: 'Sign Out', routerLink: ['/login'] },
-        ];
-
         this.items = [
             { label: '', disabled: true, icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
             { label: '', disabled: true, icon: 'fa-book', routerLink: ['/story/wiki'] },

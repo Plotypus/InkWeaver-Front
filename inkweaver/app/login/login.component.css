@@ -10,15 +10,16 @@
         color: var(--dark-blue);
         background: var(--light-gray);
     }
-
-    .login .ui-panel-content {
+    
+    .login .ui-grid {
         background: white;
-        padding: 5% !important;
-        color: var(--light-blue);
+        padding: 0 2em 2em 2em !important;
     }
 
-    .login table {
-        margin-left: 25%;
+    .login .ui-grid-row {
+        background: white;
+        color: var(--light-blue);
+        padding-top: 2em !important;
     }
 
 .login-row {
@@ -28,4 +29,9 @@
 .login-warn {
     text-align: left;
     color: var(--orange);
+}
+
+.login a {
+    cursor: pointer;
+    color: var(--link-blue);
 }

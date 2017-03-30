@@ -10,7 +10,6 @@ import { User } from '../models/user/user.model';
 import { Collaborator } from '../models/user/collaborator.model';
 import { LinkTable } from '../models/link/link-table.model';
 import { AliasTable } from '../models/link/alias-table.model';
-
 import { Link } from '../models/link/link.model';
 import { ID } from '../models/id.model';
 
@@ -39,13 +38,12 @@ export class ApiService {
     public data = {
         inflight: false,
         tooltip: new Tooltip(),
-        menuItems: new Array<MenuItem>(),
 
         user: new User(),
         stories: new Array<StorySummary>(),
         wikis: new Array<WikiSummary>(),
         linkTable: new LinkTable(),
-        aliasTable: new AliasTable();
+        aliasTable: new AliasTable(),
 
         storyDisplay: '',
         story: new Story(),
@@ -415,7 +413,7 @@ export class ApiService {
         this.send({ action: 'get_wiki_hierarchy' });
     }
 
-    public refreshLinkAliasTable(){
+    public refreshLinkAliasTable() {
         this.send({ action: 'get_wiki_alias_list' });
     }
 

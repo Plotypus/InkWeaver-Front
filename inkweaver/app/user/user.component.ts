@@ -59,10 +59,6 @@ export class UserComponent {
 
         this.apiService.refreshUserPreferences();
         this.apiService.refreshUserStoriesAndWikis();
-        this.data.menuItems = [
-            { label: 'About', routerLink: ['/about'] },
-            { label: 'Sign Out', routerLink: ['/login'] },
-        ];
         this.colors = [
             '#cb735c', // red-orange
             '#fdd17c', // yellow
