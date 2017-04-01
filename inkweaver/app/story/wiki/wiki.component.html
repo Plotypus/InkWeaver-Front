@@ -33,7 +33,7 @@
 
         <div class="wiki ui-grid-col-9">
 
-            <div class="loader" *ngIf="data.inflight">
+            <div class="loader" *ngIf="data.loading">
                 <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
             </div>
 
@@ -93,10 +93,10 @@
                         <header *ngSwitchCase='false'>
                             <input type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
                             <span>
-                            <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
-                            <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
+                                <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
+                                <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
                             </span>
-                           
+
                         </header>
 
                     </div>
@@ -132,8 +132,8 @@
                         </p-editor>
 
                         <div *ngSwitchCase='false' (click)="onEdit(i+1)">
-                        <p-editor id="read-only" [(ngModel)]="section.text">
-                        </p-editor>
+                            <p-editor id="read-only" [(ngModel)]="section.text">
+                            </p-editor>
                         </div>
 
                     </div>
@@ -185,14 +185,14 @@
 
 
         <div class="navigation ui-g-3">
-            
-             <!--When a category is selected-->
-           
+
+            <!--When a category is selected-->
+
             <p-overlayPanel #op appendTo="body">
                 <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
             </p-overlayPanel>
 
-             <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category'">
+            <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category'">
                 <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
                 <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
                 <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
@@ -203,7 +203,7 @@
                 <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
                 <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
             </div>
-            
+
             <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
                 <p-column field="data.title">
                     <template let-node="rowData" pTemplate="body">

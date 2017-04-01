@@ -367,7 +367,7 @@ export class WikiComponent {
         }
 
         public onReference(ref: any) {
-            this.apiService.refreshStoryContent(ref.section_id, null, { paragraphID: ref.paragraph_id });
+            this.apiService.refreshStoryContent(ref.section_id, ref.paragraph_id, null);
             this.router.navigate(['/story/edit']);
         }
 

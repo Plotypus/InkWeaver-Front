@@ -12,7 +12,7 @@ import { UserService } from '../../user/user.service';
 import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
-import { ID } from '../../models/id.model'; 
+import { ID } from '../../models/id.model';
 import { Segment } from '../../models/wiki/segment.model';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 
@@ -47,6 +47,10 @@ export class EditComponent {
     private renaming: boolean;
     private newSectionTitle: string;
     private contextMenuItems: MenuItem[];
+    private moveSection: TreeNode;
+    private moveBookmark: TreeNode;
+    private dragNodeID: ID = new ID();
+    private dragBookmarkID: ID = new ID();
 
     // Bookmarks
     private bookmark: TreeNode = { data: {} };
@@ -165,7 +169,7 @@ export class EditComponent {
                             text: '',
                             display: 'block', top: top + 'px', left: bounds.left + 'px'
                         };
-                        this.wikiService.getWikiPage( pageID, undefined, { noflight: true });
+                        this.wikiService.getWikiPage(pageID);
                     };
                     thread.onmouseleave = (event: any) => {
                         this.data.tooltip.display = 'none';
@@ -200,9 +204,10 @@ export class EditComponent {
 
     ngOnDestroy() {
         if (this.data.section.data) {
-            this.data.story.position_context = { section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition };
-            this.userService.setUserStoryPositionContext(this.data.section.data.section_id,
-                this.paragraphPosition);
+            this.data.story.position_context = {
+                section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition
+            };
+            this.userService.setUserStoryPositionContext(this.data.section.data.section_id, this.paragraphPosition);
         }
         if (this.data.prevSection.data) {
             this.save();
@@ -354,7 +359,7 @@ export class EditComponent {
         this.data.section = event.node;
         this.save();
         this.data.prevSection = event.node;
-        this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
+        this.apiService.refreshStoryContent(event.node.data.section_id, null, event.node.data.title);
     }
     public addSection() {
         this.displaySectionCreator = false;
@@ -389,7 +394,7 @@ export class EditComponent {
             if (JSON.stringify(this.data.section.data.section_id) === JSON.stringify(bookmark.section_id)) {
                 this.scrollToParagraph(bookmark.paragraph_id.$oid);
             } else {
-                this.apiService.refreshStoryContent(bookmark.section_id, null, { paragraph_id: bookmark.paragraph_id });
+                this.apiService.refreshStoryContent(bookmark.section_id, bookmark.paragraph_id, null);
             }
         } else {
             this.oldBookmark = this.bookmark;
@@ -482,33 +487,66 @@ export class EditComponent {
     }
 
     public save() {
-        if (!this.data.inflight) {
-            let paragraphs: any[] = this.editorRef.querySelectorAll('p');
-
-            if (paragraphs.length > 0) {
-                let newContentObject: any = this.parserService.parseHtml(paragraphs);
-                this.editService.compare(this.data.contentObject, newContentObject,
-                    this.data.story.story_id, this.data.prevSection.data.section_id);
-            }
+        this.data.story.position_context = {
+            section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
+        };
+        let paragraphs: any[] = this.editorRef.querySelectorAll('p');
+        if (paragraphs.length > 0) {
+            let newContentObject: any = this.parserService.parseHtml(paragraphs);
+            this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
+            this.apiService.refreshStoryContent();
         }
     }
 
     // Drag and drop
-    public onDragStart(event: any, node: TreeNode) {
-        console.log('drag started');
-        console.log(event);
-        console.log(node);
+    public sectionDrag(node) {
+        if (node.parent) {
+            this.moveSection = node;
+        }
     }
 
-    public onDragEnd(event: any, node: TreeNode) {
-        console.log('drag ended');
-        console.log(event);
-        console.log(node);
+    public sectionDragEnter(node) {
+        if (this.moveSection && node.parent) {
+            this.dragNodeID = node.data.section_id;
+        }
     }
 
-    public onDrop(event: any, node: TreeNode) {
-        console.log('dropped');
-        console.log(event);
-        console.log(node);
+    public sectionDrop(node: TreeNode) {
+        if (this.moveSection && node.parent) {
+            let index: number = node.parent.children.indexOf(node);
+            this.editService.moveSection(this.moveSection.data.section_id, node.parent.data.section_id, index);
+        }
+        this.endDrag();
+    }
+
+    public bookmarkDrag(node) {
+        if (node.parent) {
+            this.moveBookmark = node;
+        }
+    }
+
+    public bookmarkDragEnter(node) {
+        if (this.moveBookmark && node.parent) {
+            this.dragBookmarkID = node.data.bookmark_id;
+        }
+    }
+
+    public bookmarkDrop(node: TreeNode) {
+        if (this.moveBookmark && node.parent) {
+            // Bookmark stuff
+        }
+        this.endDrag();
+    }
+
+    public dragLeave() {
+        this.dragNodeID = new ID();
+        this.dragBookmarkID = new ID();
+    }
+
+    public endDrag() {
+        this.moveSection = null;
+        this.dragNodeID = new ID();
+        this.moveBookmark = null;
+        this.dragBookmarkID = new ID();
     }
 }

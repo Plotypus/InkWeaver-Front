@@ -17,3 +17,25 @@ Cannot read property ID of undefined when creating wiki heading (if page was cre
 
 BACKEND BUGS
 Whenever an error happens, you need to restart the server
+
+```ERROR:tornado.application:Exception in callback functools.partial(<function wrap.<locals>.null_wrapper at 0x000001A3A285D950>, <tornado.concurrent.Future object at 0x000001A3A2887048>)
+Traceback (most recent call last):
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\ioloop.py", line 604, in _run_callback
+    ret = callback()
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\stack_context.py", line 275, in null_wrapper
+    return fn(*args, **kwargs)
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\ioloop.py", line 619, in <lambda>
+    self.add_future(ret, lambda f: f.result())
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\concurrent.py", line 237, in result
+    raise_exc_info(self._exc_info)
+  File "<string>", line 3, in raise_exc_info
+  File "C:\Users\Kyle\Anaconda3\pkgs\python-3.6.0-0\lib\site-packages\tornado\gen.py", line 1024, in run
+    yielded = self.gen.send(value)
+  File "<string>", line 6, in _wrap_awaitable
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\routers.py", line 55, in process_tuples
+    await self.handle_message_tuple(message_tuple)
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\routers.py", line 109, in handle_message_tuple
+    self.unicast(response)
+  File "C:\Users\Kyle\Documents\Visual Studio 2015\Projects\loom\loom\routers.py", line 197, in unicast
+    handler = self.uuid_to_handler[uuid]
+KeyError: UUID('e89cd666-8c44-407f-95ad-f98adfe13702')```

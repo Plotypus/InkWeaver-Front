@@ -152,6 +152,12 @@
     border-color: var(--dark-gray);
 }
 
+.section-drag {
+    width: 50%;
+    display: inline-block;
+    border-top: 1px solid var(--light-gray);
+}
+
 .bookmarks .ui-treetable-toggler {
     visibility: hidden !important;
 }

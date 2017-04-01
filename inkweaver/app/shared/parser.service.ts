@@ -54,39 +54,19 @@ export class ParserService {
         return newSection;
     }
 
-    public addSection(story: TreeNode, reply: any) {
-        if (JSON.stringify(reply.parent_id) === JSON.stringify(story.data.section_id)) {
-            story.children.push({
-                parent: story, data: { title: reply.title, section_id: reply.section_id }, children: []
-            });
-        } else {
-            for (let child of story.children) {
-                this.addSection(child, reply);
-            }
-        }
-    }
-
-    public deleteSection(story: TreeNode, section_id: string) {
-        let index: number = story.children.findIndex((child: TreeNode) => {
-            return section_id === JSON.stringify(child.data.section_id);
-        });
-        if (index !== -1) {
-            story.children.splice(index, 1);
-        } else {
-            for (let child of story.children) {
-                this.deleteSection(child, section_id);
-            }
-        }
-    }
-
-    public updateSection(story: TreeNode, sectionID: string, newTitle: string) {
+    public findSection(story: TreeNode, sectionID: string, callback: Function): TreeNode {
         if (sectionID === JSON.stringify(story.data.section_id)) {
-            story.data.title = newTitle;
+            callback(story);
+            return story;
         } else {
             for (let child of story.children) {
-                this.updateSection(child, sectionID, newTitle);
+                let section: TreeNode = this.findSection(child, sectionID, callback);
+                if (section) {
+                    return section;
+                }
             }
         }
+        return null;
     }
 
     // Content
@@ -138,7 +118,7 @@ export class ParserService {
         for (let paragraph of paragraphs) {
             let p: Paragraph = {
                 paragraph_id: new ID(),
-                succeeding_id: new ID(),
+                succeeding_id: null,
                 text: paragraph.innerHTML,
                 links: new LinkTable(),
                 note: null
@@ -184,17 +164,16 @@ export class ParserService {
     }
 
     // Links
-    public parseAlias_List(alias_list: any): any {
+    public parseLinkTable(aliasList: any): any {
         let linkTable: LinkTable = new LinkTable();
         let aliasTable: AliasTable = new AliasTable();
-        for (let alias of alias_list) {
-
+        for (let alias of aliasList) {
             aliasTable[alias.alias_name] = { page_id: alias.page_id };
             for (let link of alias.link_ids) {
                 linkTable[JSON.stringify(link)] = { page_id: alias.page_id, name: alias.alias_name }
             }
         }
-        return [linkTable,aliasTable];
+        return [linkTable, aliasTable];
     }
 
     // ---------------------------------------------- //
@@ -362,8 +341,7 @@ export class ParserService {
         if (page.hasOwnProperty("type") && page.type === 'title')
             return new Array<String>();
         page.expanded = true;
-        if(!page.hasOwnProperty("type"))
-        {
+        if (!page.hasOwnProperty("type")) {
             page.type = "";
         }
         let path = new Array<String>();
@@ -423,11 +401,10 @@ export class ParserService {
             return found;
     }
 
-    public addSegment(wiki: TreeNode, reply:any)
-    {
+    public addSegment(wiki: TreeNode, reply: any) {
         if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.segment_id },type: 'category', label:reply.title , children: []
+                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title, children: []
             });
         } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
             for (let child of wiki.children) {
@@ -437,16 +414,15 @@ export class ParserService {
         }
     }
 
-    public addPage(wiki: TreeNode, reply:any)
-    {
+    public addPage(wiki: TreeNode, reply: any) {
         if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.segment_id },type: 'page', label:reply.title , children: []
+                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'page', label: reply.title, children: []
             });
         } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
             for (let child of wiki.children) {
                 this.addPage(child, reply);
-            
+
             }
         }
     }

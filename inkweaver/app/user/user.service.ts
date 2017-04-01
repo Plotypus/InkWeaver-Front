@@ -8,6 +8,19 @@ import { ID } from '../models/id.model';
 export class UserService {
     constructor(private apiService: ApiService) { }
 
+    // Get Stuff
+    public getUserPreferences() {
+        this.apiService.send({
+            action: 'get_user_preferences'
+        });
+    }
+
+    public getUserStoriesAndWikis() {
+        this.apiService.send({
+            action: 'get_user_stories_and_wikis'
+        });
+    }
+
     // Set User Information
     public setUserName(name: string) {
         this.apiService.send({
@@ -41,7 +54,7 @@ export class UserService {
         this.apiService.send({
             action: 'set_user_story_position_context',
             position_context: { section_id: sectionID, paragraph_id: paragraphID }
-        }, () => { }, { noflight: true });
+        });
     }
 
     public signOut() {
