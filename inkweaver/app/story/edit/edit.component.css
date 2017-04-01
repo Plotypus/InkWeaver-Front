@@ -5,7 +5,7 @@
 }
 
     .editor > div, .ui-editor-container {
-        height: 100% !important;
+        height: 85% !important;
     }
 
 .loading-editor {
@@ -23,7 +23,7 @@
 }
 
 .ui-editor-toolbar {
-    border-radius: 0px;
+    border-radius: 0;
     background: var(--light-gray) !important;
 }
 
@@ -99,12 +99,12 @@
     max-width: 50%;
 }
 
-.tooltip button {
-    float: right;
-    margin-top: 0.5em !important;
-    color: var(--light-blue) !important;
-    background: var(--light-gray) !important;
-}
+    .tooltip button {
+        float: right;
+        margin-top: 0.5em !important;
+        color: var(--light-blue) !important;
+        background: var(--light-gray) !important;
+    }
 
 .suggest {
     position: absolute;
@@ -138,18 +138,24 @@
     padding: 1em 0.5em 1em 0.5em;
 }
 
-.nav-actions div{
-  cursor:pointer;
-}
+    .nav-actions div {
+        cursor: pointer;
+    }
 
-.nav-actions i{
-  cursor:pointer;
-}
+    .nav-actions i {
+        cursor: pointer;
+    }
 
 
 .navigation hr {
     width: 90%;
     border-color: var(--dark-gray);
+}
+
+.section-drag {
+    width: 50%;
+    display: inline-block;
+    border-top: 1px solid var(--light-gray);
 }
 
 .bookmarks .ui-treetable-toggler {

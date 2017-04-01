@@ -34,6 +34,15 @@ export class EditService {
         });
     }
 
+    public moveSection(sectionID: ID, parentID: ID, index: number) {
+        this.apiService.send({
+            action: 'move_subsection_as_inner',
+            section_id: sectionID,
+            to_parent_id: parentID,
+            to_index: index
+        });
+    }
+
     // Paragraphs
     public addParagraph(storyID: ID, sectionID: ID, text: string, succeedingParagraphID: ID) {
         text = text.replace(
@@ -50,7 +59,7 @@ export class EditService {
         if (succeedingParagraphID) {
             p.succeeding_paragraph_id = succeedingParagraphID
         }
-        this.apiService.send(p, () => { }, { noflight: true });
+        this.apiService.send(p);
     }
 
     public editParagraph(storyID: ID, sectionID: ID, text: string, paragraphID: ID) {
@@ -72,7 +81,7 @@ export class EditService {
                 text: text
             },
             paragraph_id: paragraphID
-        }, () => { }, { noflight: true });
+        });
     }
 
     public deleteParagraph(paragraphID: ID, sectionID: ID) {
@@ -80,7 +89,7 @@ export class EditService {
             action: 'delete_paragraph',
             paragraph_id: paragraphID,
             section_id: sectionID
-        }, () => { }, { noflight: true });
+        });
     }
 
     public addBookmark(sectionID: ID, paragraphID: ID, name: string, index: number) {

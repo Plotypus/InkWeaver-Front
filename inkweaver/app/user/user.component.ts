@@ -57,8 +57,8 @@ export class UserComponent {
             this.router.navigate(['/login']);
         }
 
-        this.apiService.refreshUserPreferences();
-        this.apiService.refreshUserStoriesAndWikis();
+        this.userService.getUserPreferences();
+        this.userService.getUserStoriesAndWikis();
         this.colors = [
             '#cb735c', // red-orange
             '#fdd17c', // yellow

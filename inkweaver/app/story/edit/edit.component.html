@@ -61,10 +61,10 @@
 
         <!-- Editor -->
         <div class="editor ui-grid-col-9">
-            <div class="loader" *ngIf="data.inflight">
+            <div class="loader" *ngIf="data.loading">
                 <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
             </div>
-            <div [ngClass]="{'loading-editor': data.inflight}">
+            <div [ngClass]="{'loading-editor': data.loading}">
                 <p-editor [(ngModel)]="data.storyDisplay" (blocked)="displayLinkCreator || displaySectionCreator || displaySectionDeleter || displayBookmarkCreator || displayBookmarkDeleter">
                     <header>
                         <span class="ql-formats">
@@ -130,7 +130,11 @@
             <p-treeTable [value]="data.storyNode" selectionMode="single" [(selection)]="data.section" (onNodeSelect)="selectSection($event)">
                 <p-column field="title">
                     <template let-col let-node="rowData" pTemplate="body">
-                        <span pDraggable="sectiondragdrop" pDroppable="sectiondragdrop" (onDragStart)="onDragStart($event, node)" (onDragEnd)="onDragEnd($event, node)" (onDrop)="onDrop($event, node)" (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation()">
+                        <span [ngClass]="{'section-drag': dragNodeID.$oid === node.data.section_id.$oid}"
+                              pDraggable="sectiondragdrop" pDroppable="sectiondragdrop"
+                              (onDragStart)="sectionDrag(node)" (onDragEnd)="endDrag()"
+                              (onDrop)="sectionDrop(node)" (onDragEnter)="sectionDragEnter(node)" (onDragLeave)="dragLeave()"
+                              (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation()">
                             <span [ngSwitch]="!!renaming && node.data.section_id.$oid === data.section.data.section_id.$oid">
                                 <span *ngSwitchCase="false">{{node.data.title | truncate : 25}}</span>
                                 <span *ngSwitchCase="true" class="edit-title">
@@ -156,7 +160,10 @@
                 <p-treeTable [value]="data.bookmarks" selectionMode="single" [(selection)]="oldBookmark" (onNodeSelect)="selectBookmark($event)">
                     <p-column field="title">
                         <template let-col let-node="rowData" pTemplate="body">
-                            <span pDraggable="bookmarkdragdrop" pDroppable="bookmarkdragdrop" (onDragStart)="onDragStart($event, node)" (onDragEnd)="onDragEnd($event, node)" (onDrop)="onDrop($event, node)">
+                            <span [ngClass]="{'section-drag': dragBookmarkID.$oid === node.data.bookmark_id.$oid}"
+                                  pDraggable="bookmarkdragdrop" pDroppable="bookmarkdragdrop"
+                                  (onDragStart)="bookmarkDrag(node)" (onDragEnd)="endDrag()"
+                                  (onDrop)="bookmarkDrop(node)" (onDragEnter)="bookmarkDragEnter(node)" (onDragLeave)="dragLeave()">
                                 <span [ngSwitch]="!!bookmarkRenaming && node.data.bookmark_id.$oid === bookmark.data.bookmark_id.$oid">
                                     <span *ngSwitchCase="false">
                                         <span *ngIf="!node.parent && node.data.name" class="bookmark-header"><i class="fa fa-bookmark"></i> {{node.data.name | truncate : 25}}</span>
