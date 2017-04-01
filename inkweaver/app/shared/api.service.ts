@@ -65,6 +65,7 @@ export class ApiService {
         wiki: new Wiki(),
         segment: new Segment(),
         page: new Page(),
+        wikiFuctions: new Array<Function>(),
         selectedEntry: {},
     };
 
@@ -435,10 +436,14 @@ export class ApiService {
                                 }
                                 break;
                             case 'template_heading_added':
-                                break;
                             case 'template_heading_updated':
-                                break;
                             case 'template_heading_deleted':
+                                let t_head = this.data.selectedEntry as TreeNode;
+                                if (!myMessage && JSON.stringify(reply.segment_id) === JSON.stringify(t_head.data.id)) {
+                                    let callback: Function = this.data.wikiFuctions[0];
+                                    callback(reply);
+                                }
+                                
                                 break;
                             case 'heading_added':
                                 break;
@@ -572,6 +577,7 @@ export class ApiService {
 
         // Keep track of outgoing messages
         let key: string = '';
+        
         if (message.action === 'add_page') {
             key = 'page' + message.title;
 
@@ -586,6 +592,10 @@ export class ApiService {
             key = 'segment' + message.identifier.message_id;
         else if(message.action === 'delete_page')
             key = 'page' + message.identifier.message_id;
+        else if (message.action.includes("template_heading"))
+        {
+            key = "template_heading" + message.identifier.message_id;
+        }
         else {
             key = message.identifier.message_id;
         }

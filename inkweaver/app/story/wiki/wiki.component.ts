@@ -62,6 +62,8 @@ export class WikiComponent {
         this.data = this.apiService.data;
         this.nav = this.apiService.data.wikiNav;
         this.filter = "";
+        this.data.wikiFuctions.push(this.onTempleteHeadingCallback());
+
 
         if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
             this.parsePage();
@@ -447,6 +449,50 @@ export class WikiComponent {
             }
         }
 
+        public onTempleteHeadingCallback(): Function{
+            return (reply:any) =>
+            {
+                if (reply.event === 'template_heading_added')
+                {
+
+                    let temp = {
+                        'title': reply.title,
+                        'text': "",
+                    };
+
+                    this.wikiPage.headings.push(temp);
+                    temp['active'] = false;
+                    this.wikiPageContent.push(temp);
+
+                    this.onEdit(this.wikiPageContent.length - 1);
+                    this.disabled.push(true);
+                    this.icons.push('fa-pencil');
+
+                }
+                else if (reply.event === 'template_heading_updated')
+                {
+                    
+                    let idx = this.wikiPage.headings.findIndex((ele: any) => ele.title === reply.template_heading_title);
+                    if(reply.update.update_type === 'set_title')
+                    {
+                        this.wikiPage.headings[idx].title = reply.update.title;
+                        this.wikiPageContent[idx + 1].title = reply.update.title;
+                    }
+                    else
+                    {
+                        this.wikiPage.headings[idx].text = reply.update.text;
+                        this.wikiPageContent[idx + 1].text = reply.update.text;
+                    }
+                }
+                else if (reply.event === 'template_heading_deleted') {
+
+                }
+                else
+                {
+
+                }
+            }
+        }
         public onAddCallback() : Function
         {
             return (reply:any) => {
