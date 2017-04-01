@@ -55,29 +55,34 @@ export class StatsComponent {
     {
         
         this.mode = false;
-        this.data.statSegment = event.node;
+        //this.data.statSegment = event.node;
         let label = [];
         for(let l in this.data.statsSections)
             label.push(this.data.statsSections[l].title);
         this.pageFreq = {};
-       
+        let dataset = [];
+
+        for(let ele of this.data.statSegments)
+        {    
+            if(ele.type == 'page')
+            dataset.push({
+                label: ele.data.title,
+                data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
+                fill: true,
+                borderColor: '#4bc0c0'
+            });
+        }
         this.pageFreq = {
             labels: label,
-            datasets:[{
-                    label: event.node.data.title,
-                    data: this.data.statsPageFrequency[JSON.stringify(event.node.data.id)],
-                    fill: true,
-                    borderColor: '#4bc0c0'
-            }]
+            datasets: dataset
         };
         setTimeout( () => {
             this.chart.refresh();
         }, 50);
         
-
-     
     }
 
+    public 
 
 
 }

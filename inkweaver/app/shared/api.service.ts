@@ -54,7 +54,7 @@ export class ApiService {
         bookmarks: new Array<TreeNode>(),
 
         statSection: new Section(),
-        statSegment: new Segment(),
+        statSegments: [],
         stats: new Stats(),
         statsPages: {},
         statsSections: {},
@@ -65,7 +65,7 @@ export class ApiService {
         wiki: new Wiki(),
         segment: new Segment(),
         page: new Page(),
-        selectedEntry: {}
+        selectedEntry: {},
     };
 
     public uuid: string;
@@ -246,6 +246,8 @@ export class ApiService {
                             case 'wiki_deleted':
                                 this.refreshUserStoriesAndWikis();
                                 break;
+                            case 'wiki_updated':
+                                break;
                             case 'segment_added':
                                 this.parser.addSegment(this.data.wikiNav[0],reply);
                                 //this.refreshWikiHierarchy();
@@ -268,15 +270,86 @@ export class ApiService {
                                 }
                                 
                                 break;
+                            case 'segment_deleted':
+                                this.parser.deleteSegment(this.data.wikiNav[0], reply.segment_id);
+                                if (this.outgoing['segment' + reply.identifier.message_id]) {
+                                    let callback: Function =
+                                        this.outgoing['segment' + reply.identifier.message_id].callback;
+                                    callback(reply);
+                                    delete this.outgoing['segment' + reply.identifier.message_id];
+                                }
+                                break;
+                            case 'page_deleted':
+                                this.parser.deletePage(this.data.wikiNav[0], reply.page_id);
+                                if (this.outgoing['page' + reply.identifier.message_id]) {
+                                    let callback: Function =
+                                        this.outgoing['page' + reply.identifier.message_id].callback;
+                                    callback(reply);
+                                    delete this.outgoing['page' + reply.identifier.message_id];
+                                }
+                                break;
+                            case 'segment_updated':
+                                let seg = this.data.selectedEntry as TreeNode;
+                                if(JSON.stringify(reply.segment_id) === JSON.stringify(seg.data.id))
+                                {
+                                    this.data.page.title = reply.update['title'];
+                                    seg.label = reply.update['title'];
+                                    seg.data.title = reply.update['title'];
+                                }
+                                break;
+                            case 'page_updated':
+                                let page = this.data.selectedEntry as TreeNode;
+                                if (JSON.stringify(reply.page_id) === JSON.stringify(page.data.id)) {
+                                    this.data.page.title = reply.update['title'];
+                                    page.label = reply.update['title'];
+                                    page.data.title = reply.update['title'];
+                                }
+                                break;
+                            case 'got_wiki_segment':
+                                this.data.page = JSON.parse(JSON.stringify(reply).replace(
+                                    'template_headings', 'headings'));
+                                if (this.outgoing["segment" + reply.identifier.message_id]) {
+                                    let callback: Function =
+                                        this.outgoing["segment" + reply.identifier.message_id].callback;
+                                    callback(reply);
+                                    delete this.outgoing["segment" + reply.identifier.message_id];
+                                }
+                                break;
+                            case 'got_wiki_page':
+
+                                this.data.page = this.parser.setPageDisplay(
+                                    reply, this.data.linkTable);
+                                this.data.tooltip.text = '<b>' + reply.title + '</b>';
+                                if (reply.headings && reply.headings[0]) {
+                                    this.data.tooltip.text += '<br/><u>' + reply.headings[0].title
+                                        + '</u><br/>' + reply.headings[0].text;
+                                }
+                                if (this.outgoing["page" + reply.identifier.message_id]) {
+                                    let callback: Function =
+                                        this.outgoing["page" + reply.identifier.message_id].callback;
+                                    callback(reply);
+                                    delete this.outgoing["page" + reply.identifier.message_id];
+                                }
+                                break;
+                            case 'template_heading_added':
+                                break;
+                            case 'template_heading_updated':
+                                break;
+                            case 'template_heading_deleted':
+                                break;
+                            case 'heading_added':
+                                break;
+                            case 'heading_updated':
+                                break;
+                            case 'heading_deleted':
+                                break;
+
                             case 'alias_deleted':
                             case 'alias_updated':
                                 this.refreshWikiHierarchy();
                                 this.refreshStoryContent();
                                 break;
-                            case 'segment_deleted':
-                            case 'page_deleted':
-                                this.refreshWikiHierarchy();
-                                break;
+
                             case 'subscribed_to_wiki':
                                 this.subscribedToWiki = true;
                                 this.refreshWikiInfo();
@@ -304,32 +377,7 @@ export class ApiService {
                                 this.data.linkTable = temp[0];
                                 this.data.aliasTable = temp[1];
                                 break;
-                            case 'got_wiki_segment':
-                                this.data.page = JSON.parse(JSON.stringify(reply).replace(
-                                    'template_headings', 'headings'));
-                                if (this.outgoing["segment"+reply.identifier.message_id]) {
-                                    let callback: Function =
-                                        this.outgoing["segment"+reply.identifier.message_id].callback;
-                                    callback(reply);
-                                    delete this.outgoing["segment"+reply.identifier.message_id];
-                                }
-                                break;
-                            case 'got_wiki_page':
-                                
-                                this.data.page = this.parser.setPageDisplay(
-                                    reply, this.data.linkTable);
-                                this.data.tooltip.text = '<b>' + reply.title + '</b>';
-                                if (reply.headings && reply.headings[0]) {
-                                    this.data.tooltip.text += '<br/><u>' + reply.headings[0].title
-                                        + '</u><br/>' + reply.headings[0].text;
-                                }
-                                 if (this.outgoing["page"+reply.identifier.message_id]) {
-                                    let callback: Function =
-                                        this.outgoing["page"+reply.identifier.message_id].callback;
-                                    callback(reply);
-                                    delete this.outgoing["page"+reply.identifier.message_id];
-                                }
-                                break;
+
 
                             // Statistics
                             case 'got_page_frequencies':
@@ -439,6 +487,10 @@ export class ApiService {
         {
             key = 'segment' + message.identifier.message_id;
         }
+        else if(message.action === 'delete_segment')
+            key = 'segment' + message.identifier.message_id;
+        else if(message.action === 'delete_page')
+            key = 'page' + message.identifier.message_id;
         else {
             key = message.identifier.message_id;
         }

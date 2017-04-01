@@ -1,68 +1,46 @@
-﻿<p-dialog modal="true" header="Adding {{addContent}}" [(visible)]="showAddDialog"
+﻿
+
+<p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
           width="450" height="450" responsive="true">
 
-    <p-dropdown [options]="allCategories" [(ngModel)]="defAdd" filter="true" required="true"></p-dropdown>
+    
     <input type="text" pInputText [(ngModel)]="pageName" />
     <footer>
-        <button pButton type="button" label="Adding {{addContent}}" (click)="addToWiki($event)"></button>
+        
+        <button pButton type="button" label="Cancel" (click)="addToWiki(false)"></button>
+        <button pButton type="button" label="Adding {{addContent}}" (click)="addToWiki(true)"></button>
     </footer>
 </p-dialog>
 
-<p-dialog modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
+<p-dialog *ngIf="showAddHeadDialog" modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
           width="450" height="450" responsive="true">
 
-    {{heading}}: <input type="text" pInputText [(ngModel)]="headingName" />
+    {{heading}}: <input type="text" pInputText [(ngModel)]="headingName" (ngModelChange)="onTextChange(headingName)"/>
     Summary: <input type="text" pInputText [(ngModel)]="summary" />
+    <div *ngIf="exist" style='color: red;font-style: italic;'>
+        The following {{heading}}: {{headingName}} all ready exist!
+    </div>
     <footer>
-        <button pButton type="button" label="Create Heading" (click)="createHeading(false)"></button>
-        <button pButton type="button" label="Create Another Heading" (click)="createHeading(true)"></button>
+        <button pButton type="button" label="Create Another Heading" [disabled]="exist" (click)="createHeading(true)"></button>
+        <button pButton type="button" label="Create Heading" [disabled]="exist" (click)="createHeading(false)"></button>
     </footer>
 </p-dialog>
 
-<p-dialog modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
+<p-dialog *ngIf="showDeleteDialog" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
           width="450" height="450" responsive="true">
 
-    <p-dropdown [options]="wiki" [(ngModel)]="defDel" (ngModelChange)="changeSelected($event,defDel)" filter="true" required="true"></p-dropdown>
     <div *ngIf=" defDel && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
-        You are going to be deleting a section all the following pages will be deleted
-
-        <!--
-        <p-listbox [options]="nestedPages" [(ngModel)]="selectedValues" (ngModelChange)="deleteChange($event,selectedValues)" multiple="multiple" checkbox="checkbox" filter="filter">
-        </p-listbox>-->
-        <br>
-        <div class="ui-widget-header ui-corner-all ui-listbox-header ui-helper-clearfix"> 
-            <div class="ui-chkbox ui-widget ">
-            <p-checkbox class="ui-chkbox-box ui-widget ui-corner-all" binary="true:"
-            [(ngModel)]="selectAllVal" (ngModelChange)="deleteChange(true, selectAllVal)">
-                
-            </p-checkbox>
-            </div>
-            <div class="ui-listbox-filter-container">
-            <input class="ui-inputtext ui-widget ui-corner-all" role="textbox" type="text" pInputText [(ngModel)]="filter"/>
-            <i class="fa fa-search"></i>
-            </div>
-        </div>
-        <div class="ui-listbox-item ui-corner-all" *ngFor="let page of (nestedPages| filter:filter )">
-
-            <div class="ui-chkbox ui-widget" *ngIf="page.value.type && page.value.type == 'category'">
-                <p-checkbox  class="ui-chkbox-box ui-widget ui-corner-all" style="font-style: italic" name="group" value={{page.value.data.id|Json}} label={{page.label}}
-                 [(ngModel)]="selectedValues"  (ngModelChange)="deleteChange(false, selectedValues)"></p-checkbox>
-            </div>
-            <div class="ui-chkbox ui-widget" *ngIf=" page.value.type && page.value.type == 'page'">
-                <p-checkbox  class="ui-chkbox-box ui-widget ui-corner-all" name="group" value={{page.value.data.id|Json}} label={{page.label}}
-                 [(ngModel)]="selectedValues"  (ngModelChange)="deleteChange(false , selectedValues)"></p-checkbox>
-                
-            </div>
-        </div>
-
+        You are going to be deleting a section, so {{nestedPages.length}} pages/subsections will be deleted!
         
     </div>
     <div *ngIf=" defDel && defDel.type == 'page'">
+        You are going to be deleting a {{defDel.label}}, so the page will be deleted!
     </div>
     
     <footer>
-        <button pButton type="button" label="Yes" (click)="onDeletePage(true)"></button>
+        
         <button pButton type="button" label="Cancel" (click)="onDeletePage(false)"></button>
+        <button pButton type="button" label="Yes" (click)="onDeletePage(true)"></button>
     </footer>
 </p-dialog>
 
@@ -90,7 +68,7 @@
 
                     </span>
                     <span *ngSwitchCase='false'>
-                        <input type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
+                        <input id="editable" type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
                         <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
                         <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
 
@@ -130,7 +108,7 @@
                         </header>
 
                         <header *ngSwitchCase='false'>
-                            <input type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
+                            <input id="editable"  type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
                             <span>
                             <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
                             <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>

@@ -1,7 +1,7 @@
 ﻿import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FilterPipe } from '../../shared/filter.pipe';
+import { FilterPipe } from './filter.pipe';
 import {JsonPipe} from './json.pipe';
 import {
     MenuModule,

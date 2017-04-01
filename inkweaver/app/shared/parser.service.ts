@@ -423,6 +423,37 @@ export class ParserService {
             return found;
     }
 
+    public deleteSegment(wiki: TreeNode, segment_id: string) {
+        let index: number = wiki.children.findIndex((child: TreeNode) => {
+            return JSON.stringify(segment_id) === JSON.stringify(child.data.id)
+                ;
+        });
+        if (index !== -1) {
+            wiki.children.splice(index, 1);
+        } else {
+            for (let child of wiki.children) {
+                if(child.type == 'category')
+                this.deleteSegment(child, segment_id);
+            }
+        }
+    }
+
+
+    public deletePage(wiki: TreeNode, page_id: string) {
+        let index: number = wiki.children.findIndex((child: TreeNode) => {
+            return JSON.stringify(page_id) === JSON.stringify(child.data.id);
+                
+        });
+        if (index !== -1) {
+            wiki.children.splice(index, 1);
+        } else {
+            for (let child of wiki.children) {
+                if(child.type == 'category')
+                this.deletePage(child, page_id);
+            }
+        }
+    }
+
     public addSegment(wiki: TreeNode, reply:any)
     {
         if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
@@ -441,7 +472,7 @@ export class ParserService {
     {
         if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.segment_id },type: 'page', label:reply.title , children: []
+                parent: wiki, data: { title: reply.title, id: reply.page_id },type: 'page', label:reply.title , children: []
             });
         } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
             for (let child of wiki.children) {
@@ -489,9 +520,9 @@ export class ParserService {
         let arr = this.getTreeArray(tree);
         let dict = {};
        
-        for (let idx in arr) {
+        for (let ele of arr) {
 
-            dict[JSON.stringify(arr[idx].section_id)] = arr[idx];
+            dict[JSON.stringify(ele.data.section_id)] = ele.data;
 
         }
 

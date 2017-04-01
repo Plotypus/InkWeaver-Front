@@ -33,6 +33,16 @@ export class WikiService {
     }
 
     //EDITS
+    public edit_wiki(wiki_id:any,u_type:any,text:any)
+    {
+        this.apiService.send({
+            action :'edit_wiki',
+            wiki_id:wiki_id,
+            update_type: u_type,
+            title: text
+
+        })
+    }
     //update type: set_title;
     public editSegment(segment_id: any, update_type: string, new_text: string) {
         this.apiService.send({

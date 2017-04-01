@@ -20,8 +20,8 @@
         </ng-container>
         <!-- Wiki Stats -->
         <ng-container *ngSwitchCase='false'>
-        <h1>Statistics for {{data.statSegment.data.title}}</h1>
-        <p-chart type="line" [data]="pageFreq"></p-chart>
+            <h1>Statistics for </h1>
+            <p-chart type="line" [data]="pageFreq"></p-chart>
         </ng-container>
         </div>
 
@@ -44,14 +44,15 @@
         </p-tabPanel>
         
         <p-tabPanel header={{data.segment.title}}>
-            <p-treeTable [value]="data.statsPages" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegment" (onNodeSelect)="selectSegment($event)">
-                    <p-column field="data.title">
-                        <template let-node="rowData" pTemplate="body">
-                                {{node.data.title}}
-                        </template>
 
-                    </p-column>
-            </p-treeTable>
+            <p-tree [value]="data.wikiNav" selectionMode="checkbox" [(selection)]=" data.statSegments" (onNodeSelect)="selectSegment($event)"
+            (onNodeUnselect)="selectSegment($event)">
+                
+            </p-tree>
+            <div>
+            Selected Nodes: <span *ngFor="let file of data.statSegments">{{file.label}}</span>
+            </div>
+
         </p-tabPanel>
         </p-tabView>
         </div>
