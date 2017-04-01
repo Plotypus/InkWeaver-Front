@@ -249,7 +249,8 @@ export class ApiService {
                             case 'wiki_updated':
                                 break;
                             case 'segment_added':
-                                this.parser.addSegment(this.data.wikiNav[0],reply);
+                                this.parse
+                                r.addSegment(this.data.wikiNav[0],reply);
                                 //this.refreshWikiHierarchy();
                                 if (this.outgoing['segment' + reply.title]) {
                                     let callback: Function =
@@ -296,11 +297,23 @@ export class ApiService {
                                     seg.label = reply.update['title'];
                                     seg.data.title = reply.update['title'];
                                 }
+                                else
+                                {
+                                    seg = this.parser.findSegment(this.data.wikiNav[0], reply.segment_id);
+                                    seg.label = reply.update['title'];
+                                    seg.data.title = reply.update['title'];
+                                }
                                 break;
                             case 'page_updated':
                                 let page = this.data.selectedEntry as TreeNode;
                                 if (JSON.stringify(reply.page_id) === JSON.stringify(page.data.id)) {
                                     this.data.page.title = reply.update['title'];
+                                    page.label = reply.update['title'];
+                                    page.data.title = reply.update['title'];
+                                }
+                                else
+                                {
+                                    page = this.parser.findSegment(this.data.wikiNav[0], reply.page_id);
                                     page.label = reply.update['title'];
                                     page.data.title = reply.update['title'];
                                 }

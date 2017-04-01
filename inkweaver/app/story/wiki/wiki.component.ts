@@ -225,7 +225,8 @@ export class WikiComponent {
                 
                 let parent = page.parent;
                 while (typeof parent !== 'undefined') {
-                    parent.expanded = true;
+                    if(parent.type === 'category')
+                        parent.expanded = true;
                     parent = parent.parent;
                 }
                 

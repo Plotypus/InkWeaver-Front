@@ -212,9 +212,8 @@ export class ParserService {
         temp.expanded = true;
         nav.push(temp);
         let pageDic = Array<TreeNode>();
-        let path = this.createPath(selected);
         for (let index in json['segments']) {
-            let result = this.jsonToWiki(json['segments'][index], path, pageDic);
+            let result = this.jsonToWiki(json['segments'][index], pageDic);
             let tree: TreeNode;
             tree = result[0];
             tree.parent = temp;
@@ -230,7 +229,7 @@ export class ParserService {
         return [nav, pageDic];
     }
 
-    public jsonToWiki(wikiJson: any, selected: Array<String>, pages: Array<TreeNode>) {
+    public jsonToWiki(wikiJson: any,  pages: Array<TreeNode>) {
         let wiki: TreeNode = {};
 
         let parent: TreeNode = {};
@@ -239,16 +238,12 @@ export class ParserService {
         wiki.data.id = wikiJson["segment_id"];
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
-        if (selected.length !== 0 && (wiki.label === selected[0])) {
-            wiki.expanded = true;
-            selected.shift();
-        }
         for (let field in wikiJson) {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
                 for (let segment in segmentJsons) {
 
-                    let result = this.jsonToWiki(segmentJsons[segment], selected, pages);
+                    let result = this.jsonToWiki(segmentJsons[segment], pages);
                     let subsegment: TreeNode;
                     subsegment = result[0];
                     pages.concat(result[1]);
@@ -356,26 +351,6 @@ export class ParserService {
                 }
             }
         return reply;
-    }
-
-    public createPath(page: any) {
-        if (page.hasOwnProperty("type") && page.type === 'title')
-            return new Array<String>();
-        page.expanded = true;
-        if(!page.hasOwnProperty("type"))
-        {
-            page.type = "";
-        }
-        let path = new Array<String>();
-        path.push(page.label);
-        let parent = page.parent;
-        while (typeof parent !== 'undefined') {
-            path.push(parent.label);
-            parent = parent.parent;
-        }
-        path.pop();
-        return path.reverse();
-
     }
 
     public findSegment(wiki: TreeNode, sid: any, mode: boolean = false) {
