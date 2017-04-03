@@ -1,32 +1,73 @@
-﻿<p-dialog modal="true" header="Adding to {{addTo}}" [(visible)]="showAddDialog"
-          width="450" height="450" responsive="true">
+﻿<p-contextMenu #contextMenu [model]="contextMenuItems"></p-contextMenu>
 
-    <p-dropdown [options]="addOptions" [(ngModel)]="addContent" filter="true" required="true"></p-dropdown>
+
+
+<p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
+          width="450" height="200" responsive="true">
+
+    
     <input type="text" pInputText [(ngModel)]="pageName" />
+        <div *ngIf="!pageName" style='color: red;font-style: italic;'>
+        The {{addContent}} name field is empty!
+    </div>
     <footer>
-        <button pButton type="button" label="Create Content" icon="fa fa-link" iconPos="right" (click)="addToWiki($event)"></button>
+        
+        <button pButton type="button" label="Cancel" (click)="addToWiki(false)"></button>
+        <button pButton type="button" label="Adding {{addContent}}" [disabled]='!pageName'
+        (click)="addToWiki(true)"></button>
     </footer>
 </p-dialog>
 
-<p-dialog modal="true" header="Create Heading for {{addTo}}" [(visible)]="showAddHeadDialog"
-          width="450" height="450" responsive="true">
+<p-dialog *ngIf="showAddHeadDialog" modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
+          width="450" height="200" responsive="true">
 
-    Heading: <input type="text" pInputText [(ngModel)]="pageName" />
-    Summary: <input type="text" pInputText [(ngModel)]="addContent" />
+    {{heading}}: <input type="text" pInputText [(ngModel)]="headingName" (ngModelChange)="onTextChange(headingName)"/>
+    <br>
+    <div *ngIf="exist" style='color: red;font-style: italic;'>
+        The following {{heading}}: {{headingName}} all ready exist!
+        
+    </div>
+    
+    <div *ngIf="!headingName" style='color: red;font-style: italic;'>
+        The {{heading}} field is empty!
+        
+    </div>
+
     <footer>
-        <button pButton type="button" label="Create Heading" (click)="createHeading(false)"></button>
-        <button pButton type="button" label="Create Another Heading" (click)="createHeading(true)"></button>
+        <button pButton type="button" label="Create Another Heading" [disabled]="exist || !headingName" 
+        (click)="createHeading(true)"></button>
+        <button pButton type="button" label="Create Heading" [disabled]="exist || !headingName" 
+        (click)="createHeading(false)"></button>
     </footer>
 </p-dialog>
 
-<p-dialog modal="true" header="Do you want to delete {{toDelete}}" [(visible)]="showDeleteDialog"
-          width="450" height="450" responsive="true">
-    All the content in {{toDelete}} will be gone.
-    <footer>
-        <button pButton type="button" label="Yes" (click)="onDeletePage(true)"></button>
+<p-dialog *ngIf="showDeleteDialog && type == 0" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
+          width="450" height="300" responsive="true">
+    
+    <div *ngIf=" defDel && nestedPages.length && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
+        You are going to be deleting a section, so {{nestedPages.length}} pages/subsections will be deleted!    
+    </div>
+    <div *ngIf=" defDel && defDel.label && defDel.type == 'page'">
+        You are going to be deleting a {{defDel.label}}, so the page will be deleted!
+        
+    </div>
+    
+    
+        <footer>
         <button pButton type="button" label="Cancel" (click)="onDeletePage(false)"></button>
-    </footer>
+        <button pButton type="button" label="Yes" (click)="onDeletePage(true)"></button>
+        </footer>
 </p-dialog>
+
+<p-dialog *ngIf="showDeleteDialog && type == 1" modal="true" header="Do you want to delete {{defDel ? defDel : none}}" [(visible)]="showDeleteDialog"
+          width="450" height="200" responsive="true">
+    
+        <footer>
+        <button pButton type="button" label="Cancel" (click)="onDeleteHeading(false)"></button>
+        <button pButton type="button" label="Yes" (click)="onDeleteHeading(true)"></button>
+        </footer>
+</p-dialog>
+
 
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
@@ -51,7 +92,7 @@
 
                     </span>
                     <span *ngSwitchCase='false'>
-                        <input type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
+                        <input id="editable" type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
                         <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
                         <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
 
@@ -88,10 +129,13 @@
 
                         <header *ngSwitchCase='true'>
                             <input style="cursor:pointer" type="text" pInputText [(ngModel)]="section.title" (click)="onDisable(i+1)" readonly />
+                            <span>
+                                <i class="fa fa-trash-o" (click)="onShow(1,i+1)"></i>
+                            </span>
                         </header>
 
                         <header *ngSwitchCase='false'>
-                            <input type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
+                            <input id="editable"  type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
                             <span>
                                 <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
                                 <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
@@ -101,7 +145,7 @@
 
                     </div>
                     <!--    -->
-                    <div [ngSwitch]='wikiPageContent[i+1].active'>
+                    <div [ngSwitch]=' wikiPageContent[i+1] && wikiPageContent[i+1].active'>
                         <p-editor [(ngModel)]="section.text" *ngSwitchCase='true'>
 
                             <header>
@@ -188,26 +232,33 @@
 
             <!--When a category is selected-->
 
-            <p-overlayPanel #op appendTo="body">
-                <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
-            </p-overlayPanel>
-
-            <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category'">
+            <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category' || data.selectedEntry.type == 'title'">
                 <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
                 <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
                 <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
-                <i class="ui-grid-col-1 fa fa-ellipsis-v" style="float: none" (click)="op.toggle($event)"></i>
+                <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
+                
             </div>
             <!--When a page is selected-->
             <div class="nav-actions" *ngIf="data.selectedEntry.type == 'page'">
                 <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
-                <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
+                <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
             </div>
 
             <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
-                <p-column field="data.title">
+                <p-column field="label">
                     <template let-node="rowData" pTemplate="body">
-                        {{node.data.title}}
+                        <span [ngSwitch]="rename && node.data.id.$oid === data.selectedEntry.data.id.$oid"(contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation">
+                        <span *ngSwitchCase="false">
+                                {{node.label}}
+                            </span>
+                            <span *ngSwitchCase="true">
+                                <input pInputText type="text" [(ngModel)]="newName" (click)="$event.stopPropagation()" />
+                                    <button pButton icon="fa-check" (click)="onRename(node,true); $event.stopPropagation(); "></button>
+                                    <button pButton icon="fa-times" (click)="onRename(node,false); $event.stopPropagation();"></button>
+                            </span>
+                        </span>
+                        
                     </template>
 
                 </p-column>

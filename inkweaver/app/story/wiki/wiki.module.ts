@@ -1,7 +1,8 @@
 ﻿import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FilterPipe } from '../../shared/filter.pipe';
+import { FilterPipe } from './filter.pipe';
+import {JsonPipe} from './json.pipe';
 import {
     MenuModule,
     SharedModule,
@@ -18,7 +19,8 @@ import {
     OverlayPanelModule,
     DataGridModule,
     ListboxModule,
-    CheckboxModule
+    CheckboxModule,
+    ContextMenuModule
     
 } from 'primeng/primeng';
 
@@ -43,11 +45,12 @@ import { WikiComponent } from './wiki.component';
         OverlayPanelModule,
         ConfirmDialogModule,
         ListboxModule,
-        CheckboxModule
+        CheckboxModule,
+        ContextMenuModule
         
     ],
-    providers: [WikiService, FilterPipe],
-    declarations: [WikiComponent, FilterPipe],
+    providers: [WikiService, FilterPipe, JsonPipe],
+    declarations: [WikiComponent, FilterPipe, JsonPipe],
     bootstrap: [WikiComponent]
 })
 export class WikiModule { }

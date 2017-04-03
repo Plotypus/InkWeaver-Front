@@ -26,7 +26,25 @@ export class WikiService {
         }, callback, metadata);
     }
 
+    public getWikiAliasList(){
+        this.apiService.send({
+            action: 'get_wiki_alias_list'
+        });
+    }
+
     //EDITS
+    public editWiki(wiki_id:any,u_type:any,text:any)
+    {
+        this.apiService.send({
+            action :'edit_wiki',
+            wiki_id:wiki_id,
+            update: {
+                update_type: u_type,
+                title: text
+            }
+
+        })
+    }
     //update type: set_title;
     public editSegment(segment_id: any, update_type: string, new_text: string) {
         this.apiService.send({
@@ -147,7 +165,7 @@ export class WikiService {
             "action": "add_heading",
             "title": title,
             "page_id": page_id,
-            "index": 0
+            
         });
     }
 
