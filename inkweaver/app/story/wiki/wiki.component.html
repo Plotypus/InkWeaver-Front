@@ -248,8 +248,15 @@
             <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
                 <p-column field="label">
                     <template let-node="rowData" pTemplate="body">
-                        <span (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation">
-                            {{node.label}}
+                        <span [ngSwitch]="!rename && node.data.id.$oid === data.selectedEntry.data.id.$oid"(contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation">
+                        <span *ngSwitchCase="false">
+                                {{node.label}}
+                            </span>
+                            <span *ngSwitchCase="true">
+                                <input pInputText type="text" [(ngModel)]="newName" (click)="$event.stopPropagation()" />
+                                    <button pButton icon="fa-check" (click)="onRename(node,true)"></button>
+                                    <button pButton icon="fa-times" (click)="onRename(node,false)"></button>
+                            </span>
                         </span>
                         
                     </template>

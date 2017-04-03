@@ -44,6 +44,7 @@ export class WikiComponent {
     private selectedValues = [];
     private selectAllVal: boolean;
     private filter: string;
+    private rename: boolean;
 
     //adding and deleting templetes
     private headingName:any;
@@ -102,7 +103,7 @@ export class WikiComponent {
     public setContextMenu(node:any){
         this.data.selectedEntry = node;
         if(node.type == 'page'){
-            this.contextMenuItems = [{ label: 'Rename', command: () => { this.openSectionRenamer(); } },
+            this.contextMenuItems = [{ label: 'Rename', command: () => { this.rename = true;  } },
 
             { label: 'Delete', command: () => { onShow(0); } }];
         }
