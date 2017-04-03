@@ -27,8 +27,8 @@ export class WikiComponent {
     private icons: any;
     private temp: any;
     private wikiPageContent = [];
-    private showAddHeadDialog: any;
-    private showDeleteDialog: any;
+    private showAddHeadDialog = false;
+    private showDeleteDialog = false;;
     private toDelete: any;
     private nav: any;
     private info: boolean;
@@ -53,6 +53,10 @@ export class WikiComponent {
     private type: any;
     private headID: any;
 
+    //context menus
+    private contextMenuItems: MenuItems[];
+
+
     constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
@@ -66,7 +70,6 @@ export class WikiComponent {
         this.nav = this.apiService.data.wikiNav;
         this.filter = "";
         this.data.wikiFuctions.push(this.onTempleteHeadingCallback());
-        this.data.wikiFuctions.push(this.onHeadingCallback());
 
 
         if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
@@ -92,6 +95,24 @@ export class WikiComponent {
                 
             }
         });
+
+    }
+
+
+    public setContextMenu(node:any){
+        this.data.selectedEntry = node;
+        if(node.type == 'page'){
+            this.contextMenuItems = [{ label: 'Rename', command: () => { this.openSectionRenamer(); } },
+
+            { label: 'Delete', command: () => { onShow(0); } }];
+        }
+        else if(node.type == 'category' || node.type == 'title')
+        {
+            this.contextMenuItems = [{ label: 'Rename', command: () => { this.openSectionRenamer(); } },
+            { label: 'Add Category', command: () => { onAddPage(0); } },
+            { label: 'Add Page', command: () => { onAddPage(0); } },
+            { label: 'Delete', command: () => { onShow(0); } }];
+        }
     }
 
 
@@ -104,7 +125,10 @@ export class WikiComponent {
      public onSelected(page: any) {
 
          //Take care of when the title page is clicked
-         if (this.data.wiki.wiki_title == page.node.data.title) {
+         if(page.node.type == 'filler')
+             return;
+
+         if (page.node.type == 'title') {
              this.wikiPage = null;
              this.apiService.refreshWikiInfo();
 
@@ -112,13 +136,11 @@ export class WikiComponent {
          else if (page.node.type == "category") {
              page.node.expanded = !page.node.expanded;
              //get information for the page.
-
              this.wikiService.getWikiSegment(page.node.data.id, this.onGetCallback());
          }
          else {
 
              this.wikiService.getWikiPage(page.node.data.id, this.onGetCallback());
-
          }
          this.data.selectedEntry = page.node;
 
@@ -268,7 +290,7 @@ export class WikiComponent {
 
             let title = "";
             let text = "";
-           
+
             //saving the previous state
             if (this.disabled[idx]) {
                 this.icons[idx] = 'fa-check';
@@ -282,7 +304,7 @@ export class WikiComponent {
                 }
                 
 
-               // this.wikiPageContent.splice(idx, 1, prev);
+                // this.wikiPageContent.splice(idx, 1, prev);
             }
             else {
                 //need to send the new state to the server
@@ -353,7 +375,7 @@ export class WikiComponent {
         public onSavePage() {
             for (let i = 0; i < this.wikiPage.headings.length; i++) {
                 if (!(this.wikiPageContent[i + 1].text === this.wikiPage.headings[i].text)) {
-                    this.wikiPageContent[i + 1].text = this.wikiPage.heading[i].text;
+                    this.wikiPageContent[i + 1].text = this.wikiPage.headings[i].text;
                     if (this.data.selectedEntry.type == 'category')
                         this.wikiService.editTempleteHeading(this.data.selectedEntry.data.id, this.wikiPage.headings[i].title, 'set_text', this.wikiPage.headings[i].text);
 
@@ -447,7 +469,7 @@ export class WikiComponent {
                 for( let idx in temp)
                 {    
                     ele = temp[idx];
-                    if(ele.type == 'category')
+                    if(ele.type == 'category' || ele.type == 'title')
                     {
                         this.allCategories.push({ label: ele.label, value: ele });
                     }

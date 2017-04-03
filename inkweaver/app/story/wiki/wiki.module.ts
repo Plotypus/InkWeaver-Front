@@ -19,7 +19,8 @@ import {
     OverlayPanelModule,
     DataGridModule,
     ListboxModule,
-    CheckboxModule
+    CheckboxModule,
+    ContextMenuModule
     
 } from 'primeng/primeng';
 
@@ -44,7 +45,8 @@ import { WikiComponent } from './wiki.component';
         OverlayPanelModule,
         ConfirmDialogModule,
         ListboxModule,
-        CheckboxModule
+        CheckboxModule,
+        ContextMenuModule
         
     ],
     providers: [WikiService, FilterPipe, JsonPipe],

@@ -1,4 +1,8 @@
-﻿<p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
+﻿<p-contextMenu #contextMenu [model]="contextMenuItems"></p-contextMenu>
+
+
+
+<p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
           width="450" height="200" responsive="true">
 
     
@@ -40,11 +44,10 @@
 <p-dialog *ngIf="showDeleteDialog && type == 0" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
           width="450" height="300" responsive="true">
     
-    <div *ngIf=" defDel && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
-        You are going to be deleting a section, so {{nestedPages.length}} pages/subsections will be deleted!
-        
+    <div *ngIf=" defDel && nestedPages.length && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
+        You are going to be deleting a section, so {{nestedPages.length}} pages/subsections will be deleted!    
     </div>
-    <div *ngIf=" defDel && defDel.type == 'page'">
+    <div *ngIf=" defDel && defDel.label && defDel.type == 'page'">
         You are going to be deleting a {{defDel.label}}, so the page will be deleted!
         
     </div>
@@ -229,11 +232,11 @@
 
             <!--When a category is selected-->
 
-            <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category'">
+            <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category' || data.selectedEntry.type == 'title'">
                 <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
                 <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
                 <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
-                 <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
+                <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
                 
             </div>
             <!--When a page is selected-->
@@ -243,9 +246,12 @@
             </div>
 
             <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
-                <p-column field="data.title">
+                <p-column field="label">
                     <template let-node="rowData" pTemplate="body">
-                        {{node.data.title}}
+                        <span (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation">
+                            {{node.label}}
+                        </span>
+                        
                     </template>
 
                 </p-column>
