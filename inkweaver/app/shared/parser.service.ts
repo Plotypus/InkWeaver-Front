@@ -54,7 +54,7 @@ export class ParserService {
         return newSection;
     }
 
-    public findSection(story: TreeNode, sectionID: string, callback: Function): TreeNode {
+    public findSection(story: TreeNode, sectionID: string, callback: Function = () => { }): TreeNode {
         if (sectionID === JSON.stringify(story.data.section_id)) {
             callback(story);
             return story;
