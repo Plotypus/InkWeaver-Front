@@ -105,9 +105,10 @@ export class EditComponent {
         this.editor.onTextChange.subscribe((event: any) => {
             if (this.data.story.position_context) {
                 if (this.data.story.position_context.paragraph_id) {
-                    this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid);
+                    if (this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid)) {
+                        this.data.story.position_context = null;
+                    }
                 }
-                this.data.story.position_context = null;
             }
 
             this.suggest.display = 'none';
@@ -203,14 +204,14 @@ export class EditComponent {
     }
 
     ngOnDestroy() {
+        if (this.data.prevSection.data) {
+            this.save();
+        }
         if (this.data.section.data) {
             this.data.story.position_context = {
                 section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition
             };
             this.userService.setUserStoryPositionContext(this.data.section.data.section_id, this.paragraphPosition);
-        }
-        if (this.data.prevSection.data) {
-            this.save();
         }
     }
 
@@ -359,7 +360,7 @@ export class EditComponent {
         this.data.section = event.node;
         this.save();
         this.data.prevSection = event.node;
-        this.apiService.refreshStoryContent(event.node.data.section_id, null, event.node.data.title);
+        this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
     }
     public addSection() {
         this.displaySectionCreator = false;
@@ -394,7 +395,8 @@ export class EditComponent {
             if (JSON.stringify(this.data.section.data.section_id) === JSON.stringify(bookmark.section_id)) {
                 this.scrollToParagraph(bookmark.paragraph_id.$oid);
             } else {
-                this.apiService.refreshStoryContent(bookmark.section_id, bookmark.paragraph_id, null);
+                this.data.story.position_context = { section_id: bookmark.section_id, paragraph_id: bookmark.paragraph_id };
+                this.apiService.refreshStoryContent(bookmark.section_id, null);
             }
         } else {
             this.oldBookmark = this.bookmark;
@@ -443,7 +445,7 @@ export class EditComponent {
         this.contextMenuItems.unshift({ label: 'Add Subsection', command: () => { this.openSectionCreator(); } });
     }
 
-    public scrollToParagraph(paragraphID: string) {
+    public scrollToParagraph(paragraphID: string): boolean {
         let paragraph: any = document.getElementById(paragraphID);
 
         if (paragraph) {
@@ -452,6 +454,9 @@ export class EditComponent {
             paragraph.animate({
                 background: ['lightyellow', 'white'], easing: 'ease'
             }, 3000);
+            return true;
+        } else {
+            return false;
         }
     }
 

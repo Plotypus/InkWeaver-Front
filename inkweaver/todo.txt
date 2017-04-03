@@ -1,15 +1,24 @@
 ﻿TIER 1
-Sign out
-Versioning of story
-Expand menu in top-right
-Drag and drop sections/segments
+Moving segments and pages
+Distinguish categories and pages
+
+Deleting wiki
+Error handling
+Passive linking
+Make text smaller
 Have list of aliases for IntelliSense
-Change events so that they update locally
 
 TIER 2
-Publishing of subsections
-Allow indentation in the editor
-Allow for pressing Enter to create a link during IntelliSense
+PDF viewer
+Versioning of story
+
+Load times
+Inline adding
+Local storage
+Toggle link popup
+Intellisense for wiki
+Toggle visibility of links
+When hovering over a link, show related links
 
 FRONT-END BUGS
 FA icons not always showing up

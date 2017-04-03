@@ -213,11 +213,10 @@ export class ApiService {
 
                                 // Set the section in the navigation panel
                                 this.data.section = this.parser.setSection(
-                                    this.data.storyNode[0], JSON.stringify(metadata.position_context.section_id));
-                                this.data.story.position_context = metadata.position_context;
+                                    this.data.storyNode[0], JSON.stringify(metadata.section_id));
 
                                 // If this is the top-level section, put a summary tag
-                                if (JSON.stringify(metadata.position_context.section_id) === JSON.stringify(this.data.story.section_id)) {
+                                if (JSON.stringify(metadata.section_id) === JSON.stringify(this.data.story.section_id)) {
                                     if (!this.data.storyDisplay) {
                                         this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
                                     }
@@ -461,33 +460,16 @@ export class ApiService {
         this.send({ action: 'get_story_bookmarks' }, () => { }, { load: true });
     }
     public refreshStoryContent(
-        sectionID: ID = this.data.section.data.section_id,
-        paragraphID: ID = null,
-        title: string = this.data.section.data.title) {
-        if (!paragraphID && this.data.story.position_context) {
-            this.data.story.position_context.paragraph_id
-        }
+        sectionID: ID = this.data.section.data.section_id, title: string = this.data.section.data.title) {
         if (!title) {
-            let sectionNode: TreeNode = this.findSection(this.data.storyNode[0], JSON.stringify(sectionID));
+            let sectionNode: TreeNode = this.parser.findSection(this.data.storyNode[0], JSON.stringify(sectionID));
             if (sectionNode) {
                 title = sectionNode.data.title;
             }
         }
         this.data.storyDisplay = '';
         this.send({ action: 'get_section_content', section_id: sectionID }, () => { },
-            { load: true, title: title, position_context: { section_id: sectionID, paragraph_id: paragraphID } });
-    }
-    public findSection(start: TreeNode, sectionID: string): TreeNode {
-        if (JSON.stringify(start.data.section_id) === sectionID) {
-            return start;
-        }
-        for (let section of start.children) {
-            let found = this.findSection(section, sectionID);
-            if (found) {
-                return found;
-            }
-        }
-        return null;
+            { load: true, title: title, section_id: sectionID });
     }
 
     // ----- WIKI ----- //
