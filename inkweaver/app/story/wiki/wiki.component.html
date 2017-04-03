@@ -1,47 +1,68 @@
-﻿
-
-<p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
-          width="450" height="450" responsive="true">
+﻿<p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
+          width="450" height="200" responsive="true">
 
     
     <input type="text" pInputText [(ngModel)]="pageName" />
+        <div *ngIf="!pageName" style='color: red;font-style: italic;'>
+        The {{addContent}} name field is empty!
+    </div>
     <footer>
         
         <button pButton type="button" label="Cancel" (click)="addToWiki(false)"></button>
-        <button pButton type="button" label="Adding {{addContent}}" (click)="addToWiki(true)"></button>
+        <button pButton type="button" label="Adding {{addContent}}" [disabled]='!pageName'
+        (click)="addToWiki(true)"></button>
     </footer>
 </p-dialog>
 
 <p-dialog *ngIf="showAddHeadDialog" modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
-          width="450" height="450" responsive="true">
+          width="450" height="200" responsive="true">
 
     {{heading}}: <input type="text" pInputText [(ngModel)]="headingName" (ngModelChange)="onTextChange(headingName)"/>
-    Summary: <input type="text" pInputText [(ngModel)]="summary" />
+    <br>
     <div *ngIf="exist" style='color: red;font-style: italic;'>
         The following {{heading}}: {{headingName}} all ready exist!
+        
     </div>
+    
+    <div *ngIf="!headingName" style='color: red;font-style: italic;'>
+        The {{heading}} field is empty!
+        
+    </div>
+
     <footer>
-        <button pButton type="button" label="Create Another Heading" [disabled]="exist" (click)="createHeading(true)"></button>
-        <button pButton type="button" label="Create Heading" [disabled]="exist" (click)="createHeading(false)"></button>
+        <button pButton type="button" label="Create Another Heading" [disabled]="exist || !headingName" 
+        (click)="createHeading(true)"></button>
+        <button pButton type="button" label="Create Heading" [disabled]="exist || !headingName" 
+        (click)="createHeading(false)"></button>
     </footer>
 </p-dialog>
 
-<p-dialog *ngIf="showDeleteDialog" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
-          width="450" height="450" responsive="true">
-
+<p-dialog *ngIf="showDeleteDialog && type == 0" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
+          width="450" height="300" responsive="true">
+    
     <div *ngIf=" defDel && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
         You are going to be deleting a section, so {{nestedPages.length}} pages/subsections will be deleted!
         
     </div>
     <div *ngIf=" defDel && defDel.type == 'page'">
         You are going to be deleting a {{defDel.label}}, so the page will be deleted!
+        
     </div>
     
-    <footer>
-        
+    
+        <footer>
         <button pButton type="button" label="Cancel" (click)="onDeletePage(false)"></button>
         <button pButton type="button" label="Yes" (click)="onDeletePage(true)"></button>
-    </footer>
+        </footer>
+</p-dialog>
+
+<p-dialog *ngIf="showDeleteDialog && type == 1" modal="true" header="Do you want to delete {{defDel ? defDel : none}}" [(visible)]="showDeleteDialog"
+          width="450" height="200" responsive="true">
+    
+        <footer>
+        <button pButton type="button" label="Cancel" (click)="onDeleteHeading(false)"></button>
+        <button pButton type="button" label="Yes" (click)="onDeleteHeading(true)"></button>
+        </footer>
 </p-dialog>
 
 
@@ -105,6 +126,9 @@
 
                         <header *ngSwitchCase='true'>
                             <input style="cursor:pointer" type="text" pInputText [(ngModel)]="section.title" (click)="onDisable(i+1)" readonly />
+                            <span>
+                                <i class="fa fa-trash-o" (click)="onShow(1,i+1)"></i>
+                            </span>
                         </header>
 
                         <header *ngSwitchCase='false'>
@@ -118,7 +142,7 @@
 
                     </div>
                     <!--    -->
-                    <div [ngSwitch]='wikiPageContent[i+1].active'>
+                    <div [ngSwitch]=' wikiPageContent[i+1] && wikiPageContent[i+1].active'>
                         <p-editor [(ngModel)]="section.text" *ngSwitchCase='true'>
 
                             <header>
@@ -205,20 +229,17 @@
 
             <!--When a category is selected-->
 
-            <p-overlayPanel #op appendTo="body">
-                <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
-            </p-overlayPanel>
-
             <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category'">
                 <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
                 <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
                 <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
-                <i class="ui-grid-col-1 fa fa-ellipsis-v" style="float: none" (click)="op.toggle($event)"></i>
+                 <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
+                
             </div>
             <!--When a page is selected-->
             <div class="nav-actions" *ngIf="data.selectedEntry.type == 'page'">
                 <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
-                <div class="ui-grid-col-3" (click)="onShow()">Delete</div>
+                <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
             </div>
 
             <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">

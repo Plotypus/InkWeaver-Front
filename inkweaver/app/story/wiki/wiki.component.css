@@ -257,3 +257,7 @@ cursor: default;
 .ui-listbox{
   width: 100%;
 }
+
+p-dialog .ui-dialog-content{
+  height: initial;
+}

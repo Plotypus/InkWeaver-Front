@@ -446,10 +446,14 @@ export class ApiService {
                                 
                                 break;
                             case 'heading_added':
-                                break;
                             case 'heading_updated':
-                                break;
                             case 'heading_deleted':
+                                let head = this.data.selectedEntry as TreeNode;
+                                if (!myMessage && JSON.stringify(reply.page_id) === JSON.stringify(head.data.id))
+                                {
+                                    let callback: Function = this.data.wikiFuctions[0];
+                                    callback(reply);
+                                }
                                 break;
 
                             case 'alias_deleted':
