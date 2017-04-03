@@ -44,7 +44,8 @@ export class WikiComponent {
     private selectedValues = [];
     private selectAllVal: boolean;
     private filter: string;
-    private rename: boolean;
+    private rename: boolean = false;
+    private newName: string;
 
     //adding and deleting templetes
     private headingName:any;
@@ -55,7 +56,7 @@ export class WikiComponent {
     private headID: any;
 
     //context menus
-    private contextMenuItems: MenuItems[];
+    private contextMenuItems: MenuItem[];
 
 
     constructor(
@@ -102,18 +103,42 @@ export class WikiComponent {
 
     public setContextMenu(node:any){
         this.data.selectedEntry = node;
+        this.rename = false;
         if(node.type == 'page'){
-            this.contextMenuItems = [{ label: 'Rename', command: () => { this.rename = true;  } },
+            this.contextMenuItems = [{ label: 'Rename', command: () => { this.rename = true; this.newName = node.label; } },
 
-            { label: 'Delete', command: () => { onShow(0); } }];
+            { label: 'Delete', command: () => { this.onShow(0); } }];
         }
         else if(node.type == 'category' || node.type == 'title')
         {
-            this.contextMenuItems = [{ label: 'Rename', command: () => { this.openSectionRenamer(); } },
-            { label: 'Add Category', command: () => { onAddPage(0); } },
-            { label: 'Add Page', command: () => { onAddPage(0); } },
-            { label: 'Delete', command: () => { onShow(0); } }];
+            this.contextMenuItems = [{ label: 'Rename', command: () => { this.rename = true; this.newName = node.label; } },
+            { label: 'Add Category', command: () => { this.onAddPage(0); } },
+            { label: 'Add Page', command: () => { this.onAddPage(0); } },
+            { label: 'Delete', command: () => { this.onShow(0); } }];
         }
+    }
+
+    public onRename(node:any, mode:any){
+        if(mode)
+        {
+            if(node.type == 'category')
+            {
+                this.wikiService.editSegment(this.data.selectedEntry.data.id, 'set_title', this.newName);
+            }
+            else if(node.type == 'title')
+            {
+                this.wikiService.editWiki(this.data.wiki.wiki_id, 'set_title', this.newName);
+            }
+            else
+            {
+                this.wikiService.editPage(this.data.selectedEntry.data.id, 'set_title', this.newName);
+            }
+        }
+        else
+        {
+            this.newName = "";
+        }
+        this.rename = false;
     }
 
 
@@ -126,6 +151,7 @@ export class WikiComponent {
      public onSelected(page: any) {
 
          //Take care of when the title page is clicked
+         this.rename = false;
          if(page.node.type == 'filler')
              return;
 

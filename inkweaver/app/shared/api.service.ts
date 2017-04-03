@@ -341,6 +341,9 @@ export class ApiService {
                             case 'wiki_deleted':
                                 break;
                             case 'wiki_updated':
+                                let wiki = this.data.selectedEntry as TreeNode;
+                                wiki.label = reply.update.title;
+                                wiki.data.title = reply.update.title;
                                 break;
                             case 'segment_added':
                                 this.parser.addSegment(this.data.wikiNav[0], reply);

@@ -33,13 +33,15 @@ export class WikiService {
     }
 
     //EDITS
-    public edit_wiki(wiki_id:any,u_type:any,text:any)
+    public editWiki(wiki_id:any,u_type:any,text:any)
     {
         this.apiService.send({
             action :'edit_wiki',
             wiki_id:wiki_id,
-            update_type: u_type,
-            title: text
+            update: {
+                update_type: u_type,
+                title: text
+            }
 
         })
     }
