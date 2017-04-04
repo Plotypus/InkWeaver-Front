@@ -619,25 +619,21 @@ export class ApiService {
 
         // Keep track of outgoing messages
         let key: string = '';
-
         if (message.action === 'add_page') {
             key = 'page' + message.title;
-
         } else if (message.action === 'get_wiki_page') {
             key = 'page' + message.identifier.message_id;
         } else if (message.action === 'add_segment') {
             key = 'segment' + message.title;
         } else if (message.action === 'get_wiki_segment') {
             key = 'segment' + message.identifier.message_id;
-        }
-        else if (message.action === 'delete_segment')
+        } else if (message.action === 'delete_segment') {
             key = 'segment' + message.identifier.message_id;
-        else if (message.action === 'delete_page')
+        } else if (message.action === 'delete_page') {
             key = 'page' + message.identifier.message_id;
-        else if (message.action.includes("template_heading")) {
+        } else if (message.action.includes("template_heading")) {
             key = "template_heading" + message.identifier.message_id;
-        }
-        else {
+        } else {
             key = message.identifier.message_id;
         }
 
