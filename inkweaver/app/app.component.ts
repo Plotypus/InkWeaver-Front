@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/primeng';
 
-import { ApiService } from './shared/api.service';
 import { UserService } from './user/user.service';
+import { ApiService } from './shared/api.service';
+import { WebSocketService } from './shared/websocket.service';
 
 @Component({
     selector: 'ink-app',
@@ -16,7 +17,8 @@ export class AppComponent {
     constructor(
         private router: Router,
         private apiService: ApiService,
-        private userService: UserService) { }
+        private userService: UserService,
+        private websocketService: WebSocketService) { }
 
     ngOnInit() {
         this.data = this.apiService.data;
@@ -24,6 +26,7 @@ export class AppComponent {
             {
                 label: 'Sign Out', command: (event) => {
                     this.userService.signOut();
+                    this.websocketService.close();
                     this.router.navigate(['/login']);
                 }
             },

@@ -27,11 +27,7 @@ import { PageSummary } from '../models/wiki/page-summary.model';
 import { Page } from '../models/wiki/page.model';
 import { Heading } from '../models/wiki/heading.model';
 import { Reference } from '../models/wiki/reference.model';
-
-
 import { Stats } from '../models/stats/stats.model';
-const url: string = 'ws://localhost:8080/ws';
-const urlAuth: string = 'ws://inkweaver.plotypus.net:8080/ws';
 
 @Injectable()
 export class ApiService {
@@ -66,11 +62,12 @@ export class ApiService {
         segment: new Segment(),
         page: new Page(),
         wikiFuctions: new Array<Function>(),
+        storyFunction: new Function(),
         selectedEntry: {},
     };
 
     public uuid: string;
-    public authentication: boolean = false;
+    public local: boolean = true;
     public subscribedToWiki: boolean = false;
     public subscribedToStory: boolean = false;
 
@@ -84,9 +81,9 @@ export class ApiService {
         private parser: ParserService) { }
 
     public connect() {
-        let path: string = this.authentication ? urlAuth : url;
+        let url: string = this.local ? 'ws://localhost:8080/ws' : 'wss://inkweaver.plotypus.net:8080/ws';
 
-        this.messages = <Subject<string>>this.socket.connect(path)
+        this.messages = <Subject<string>>this.socket.connect(url)
             .map((res: MessageEvent) => {
                 this.data.loading = false;
                 let response: string = res.data;
@@ -240,6 +237,9 @@ export class ApiService {
                             case 'section_title_updated':
                                 this.parser.findSection(this.data.storyNode[0], JSON.stringify(reply.section_id), (found: TreeNode) => {
                                     found.data.title = reply.new_title;
+                                    if (this.data.section.data && JSON.stringify(this.data.section.data.section_id) === JSON.stringify(found.data.section_id)) {
+                                        this.data.storyDisplay.replace('<h1>.*?</h1>', '<h1>' + reply.new_title + '</h1>');
+                                    }
                                 });
                                 break;
                             case 'section_deleted':
@@ -266,24 +266,69 @@ export class ApiService {
                             // Paragraph
                             case 'paragraph_added':
                                 if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
-                                    let newP: string = '<p id="' + reply.paragraph_id.$oid + '">' + reply.text + '</p>';
-                                    if (!reply.succeeding_paragraph_id) {
-                                        this.data.storyDisplay += newP;
+                                    // Add paragraph to content object
+                                    let p: Paragraph = {
+                                        paragraph_id: reply.paragraph_id, text: reply.text, note: null,
+                                        links: new LinkTable(), succeeding_id: reply.succeeding_paragraph_id
+                                    };
+                                    this.parser.parseParagraph(p, this.data.linkTable);
+                                    this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
+
+                                    let pString: string = this.parser.setParagraph(p);
+                                    if (!p.succeeding_id) {
+                                        // Set previous paragraph's succeeding_id
+                                        let searchIndex: number = this.data.storyDisplay.lastIndexOf('<p id="');
+                                        if (searchIndex > -1) {
+                                            let searchString: string = this.data.storyDisplay.substring(searchIndex);
+                                            let search: RegExpMatchArray = searchString.match(/<p id="([a-z0-9]{24})">/);
+                                            if (search && search.length > 1) {
+                                                this.data.contentObject[JSON.stringify({ $oid: search[1] })].succeeding_id = p.paragraph_id;
+                                            }
+                                        }
+                                        // Add paragraph to display string
+                                        this.data.storyDisplay += pString;
                                     } else {
+                                        // Set previous paragraph's succeeding_id
+                                        let pRegex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?(<p id="' + reply.succeeding_id.$oid + '">.*?</p>)');
+                                        let search: RegExpMatchArray = this.data.storyDisplay.match(pRegex);
+                                        if (search && search.length > 3) {
+                                            this.data.contentObject[JSON.stringify({ $oid: search[2] })].succeeding_id = p.paragraph_id;
+                                        }
+                                        // Add paragraph to display string
                                         this.data.storyDisplay = this.data.storyDisplay.replace(
-                                            new RegExp('<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>'), newP + '$&');
+                                            '<p id="' + reply.succeeding_id.$oid + '">.*?</p>', pString + '$&');
                                     }
                                 }
                                 break;
                             case 'paragraph_updated':
                                 if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                    // Update the content object
+                                    let p: Paragraph = this.data.contentObject[JSON.stringify(reply.paragraph_id)];
+                                    p.text = reply.update.text;
+                                    this.parser.parseParagraph(p, this.data.linkTable);
+                                    this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
+                                    // Update paragraph in display string
+                                    let pString: string = this.parser.setParagraph(p);
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
-                                        new RegExp('<p id="' + reply.paragraph_id.$oid + '">.*?</p>'),
-                                        '<p id="' + reply.paragraph_id.$oid + '">' + reply.update.text + '</p>');
+                                        new RegExp('<p id="' + reply.paragraph_id.$oid + '">.*?</p>'), pString);
                                 }
                                 break;
                             case 'paragraph_deleted':
                                 if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                    delete this.data.contentObject[JSON.stringify(reply.paragraph_id)];
+                                    // Set previous paragraph's succeeding_id to the next id
+                                    let prior: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?<p id="' + reply.paragraph_id.$oid + '">.*?</p>');
+                                    let priorMatch: RegExpMatchArray = this.data.storyDisplay.match(prior);
+                                    if (priorMatch && priorMatch.length > 2) {
+                                        let posteriorID: ID = null;
+                                        let posterior: RegExp = new RegExp('<p id="' + reply.paragraph_id.$oid + '">.*?</p>(<p id="([a-z0-9]{24})" >.*?</p>)?');
+                                        let posteriorMatch: RegExpMatchArray = this.data.storyDisplay.match(posterior);
+                                        if (posteriorMatch && posteriorMatch.length > 2) {
+                                            posteriorID = { $oid: posteriorMatch[2] };
+                                        }
+                                        this.data.contentObject[JSON.stringify({ $oid: priorMatch[2] })].succeeding_id = posteriorID;
+                                    }
+                                    // Add paragraph to display string
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
                                         new RegExp('<p id="' + reply.paragraph_id.$oid + '">.*?</p>'), '');
                                 }
@@ -311,6 +356,9 @@ export class ApiService {
                                 break;
                             case 'note_updated':
                                 if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                    // Update content object
+                                    this.data.contentObject[JSON.stringify(reply.paragraph_id)].note = reply.note;
+                                    // Update story display
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
                                         new RegExp('<p id="' + reply.paragraph_id.$oid + '">(<code>.*?</code>)?(.*?)</p>'),
                                         '<p id="' + reply.paragraph_id.$oid + '"><code>' + reply.note + '</code>$2</p>');
@@ -318,6 +366,9 @@ export class ApiService {
                                 break;
                             case 'note_deleted':
                                 if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                    // Update content object
+                                    this.data.contentObject[JSON.stringify(reply.paragraph_id)].note = null;
+                                    // Update story display
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
                                         new RegExp('<p id="' + reply.paragraph_id.$oid + '"><code>.*?</code>(.*?)</p>'),
                                         '<p id="' + reply.paragraph_id.$oid + '">$1</p>');
@@ -384,14 +435,12 @@ export class ApiService {
                                 break;
                             case 'segment_updated':
                                 let seg = this.data.selectedEntry as TreeNode;
-                                if(JSON.stringify(reply.segment_id) === JSON.stringify(seg.data.id))
-                                {
+                                if (JSON.stringify(reply.segment_id) === JSON.stringify(seg.data.id)) {
                                     this.data.page.title = reply.update['title'];
                                     seg.label = reply.update['title'];
                                     seg.data.title = reply.update['title'];
                                 }
-                                else
-                                {
+                                else {
                                     seg = this.parser.findSegment(this.data.wikiNav[0], reply.segment_id);
                                     seg.label = reply.update['title'];
                                     seg.data.title = reply.update['title'];
@@ -404,8 +453,7 @@ export class ApiService {
                                     page.label = reply.update['title'];
                                     page.data.title = reply.update['title'];
                                 }
-                                else
-                                {
+                                else {
                                     page = this.parser.findSegment(this.data.wikiNav[0], reply.page_id);
                                     page.label = reply.update['title'];
                                     page.data.title = reply.update['title'];
@@ -445,14 +493,13 @@ export class ApiService {
                                     let callback: Function = this.data.wikiFuctions[0];
                                     callback(reply);
                                 }
-                                
+
                                 break;
                             case 'heading_added':
                             case 'heading_updated':
                             case 'heading_deleted':
                                 let head = this.data.selectedEntry as TreeNode;
-                                if (!myMessage && JSON.stringify(reply.page_id) === JSON.stringify(head.data.id))
-                                {
+                                if (!myMessage && JSON.stringify(reply.page_id) === JSON.stringify(head.data.id)) {
                                     let callback: Function = this.data.wikiFuctions[0];
                                     callback(reply);
                                 }
@@ -484,7 +531,13 @@ export class ApiService {
                                     reply.hierarchy, this.data.selectedEntry);
                                 this.data.wikiNav = result[0];
                                 this.data.statsPages = result[1];
+                                if (this.data.storyFunction) {
+                                    let callback: Function = this.data.storyFunction;
+                                    callback(reply);
+                                }
+
                                 break;
+
                             case 'got_wiki_alias_list':
                                 let temp = this.parser.parseLinkTable(reply.alias_list);
                                 this.data.linkTable = temp[0];
@@ -566,7 +619,7 @@ export class ApiService {
 
         // Keep track of outgoing messages
         let key: string = '';
-        
+
         if (message.action === 'add_page') {
             key = 'page' + message.title;
 
@@ -577,12 +630,11 @@ export class ApiService {
         } else if (message.action === 'get_wiki_segment') {
             key = 'segment' + message.identifier.message_id;
         }
-        else if(message.action === 'delete_segment')
+        else if (message.action === 'delete_segment')
             key = 'segment' + message.identifier.message_id;
-        else if(message.action === 'delete_page')
+        else if (message.action === 'delete_page')
             key = 'page' + message.identifier.message_id;
-        else if (message.action.includes("template_heading"))
-        {
+        else if (message.action.includes("template_heading")) {
             key = "template_heading" + message.identifier.message_id;
         }
         else {

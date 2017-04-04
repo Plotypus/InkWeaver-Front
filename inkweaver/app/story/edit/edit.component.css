@@ -1,30 +1,30 @@
-﻿.editor {
-    padding: 0;
-    z-index: 15;
-    position: relative;
+﻿/* Height */
+edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
+.editor, .editor > div {
+    height: 100%;
 }
 
-    .editor > div, .ui-editor-container {
-        height: 85% !important;
-    }
-
-.loading-editor {
-    filter: blur(2px);
-}
-
-.loader {
-    top: 40%;
-    width: 100%;
-    z-index: 10;
-    font-size: 2em;
-    text-align: center;
-    position: absolute;
-    color: var(--dark-blue);
+.ui-editor-container {
+    height: calc(100% - 3em);
 }
 
 .ui-editor-toolbar {
+    height: 3em;
+}
+
+.ui-editor-content {
+    height: calc(100% - 3em);
+}
+
+.stats {
+    height: 3em;
+    padding: 1em !important;
+}
+
+/* Toolbar */
+.ui-editor-toolbar {
     border-radius: 0;
-    background: var(--light-gray) !important;
+    background: var(--light-gray);
 }
 
 .ql-expanded ::before {
@@ -32,43 +32,44 @@
 }
 
 .ql-save .ui-button {
-    margin: 4px;
+    width: 4em !important;
     padding: 0 !important;
-    width: 8% !important;
     float: right !important;
+    margin: 0 0.25em 0 0.25em;
 }
 
-.ql-save .ui-button-text {
-    padding: 0 10px 0 10px !important;
+/* Content */
+.editor {
+    z-index: 10;
+}
+
+.loading-editor {
+    filter: blur(2px);
+}
+
+.loader {
+    top: 50%;
+    left: 33%;
+    z-index: 10;
+    font-size: 2em;
+    text-align: center;
+    position: absolute;
+    color: var(--dark-blue);
 }
 
 .editor .ui-editor-content {
     background: white;
-    height: calc( 100% - 50px );
-}
-
-.ui-editor-content p {
-    padding: 1% 5% 1% 5%;
 }
 
 .ui-editor-content h1 {
-    margin: 2%;
     color: var(--dark-gray);
+    font-size: 1.8em !important;
+    margin: 0.5em 1em 0.5em 1em;
     border-bottom: 1px solid var(--light-gray);
 }
 
-.ui-editor-content h2 {
-    padding: 2%;
-    color: var(--light-blue);
-}
-
-.ui-editor-content h3 {
-    margin: 2% 5% 0 5%;
-    font-weight: normal;
-}
-
-.ui-editor-content ul {
-    margin: 0 5% 0 5%;
+.ui-editor-content p {
+    padding: 1em 3em 1em 3em;
 }
 
 .ql-link {
@@ -89,14 +90,13 @@
 }
 
 .tooltip {
+    max-width: 50%;
+    padding: 0.25em;
     position: absolute;
-    padding: 0.5em;
-    background: floralwhite;
-    font-size: 0.8em;
     border-radius: 2px;
     color: var(--light-blue);
+    background: floralwhite;
     border: 1px solid var(--light-blue);
-    max-width: 50%;
 }
 
     .tooltip button {
@@ -108,9 +108,8 @@
 
 .suggest {
     position: absolute;
-    font-size: 0.8em;
     border-radius: 2px;
-    border: 1px solid var(--dark-blue);
+    border: 1px solid var(--light-blue);
 }
 
     .suggest .ui-listbox {
@@ -121,17 +120,20 @@
         border: none;
     }
 
-.edit-title input {
-    width: 65%;
+    code {
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5em;
+    cursor: pointer;
+    overflow: hidden;
+    display: inline-block;
+    color: floralwhite;
+    border: 1px solid yellow;
+    background: floralwhite !important;
 }
 
-.edit-title button {
-    width: 8%;
-    background: var(--dark-blue) !important;
-}
-
+/* Navigation */
 .nav-actions {
-    cursor: default;
     text-align: center;
     font-style: italic;
     color: var(--dark-gray);
@@ -146,7 +148,6 @@
         cursor: pointer;
     }
 
-
 .navigation hr {
     width: 90%;
     border-color: var(--dark-gray);
@@ -158,6 +159,7 @@
     border-top: 1px solid var(--light-gray);
 }
 
+/* Bookmarks */
 .bookmarks .ui-treetable-toggler {
     visibility: hidden !important;
 }
@@ -169,16 +171,4 @@
 
 .bookmark-header i {
     margin-right: 0.5em;
-}
-
-code {
-    width: 1em;
-    height: 1em;
-    margin-right: 0.5em;
-    cursor: pointer;
-    overflow: hidden;
-    display: inline-block;
-    color: floralwhite;
-    border: 1px solid yellow;
-    background: floralwhite !important;
 }

@@ -46,15 +46,16 @@ export class StoryComponent {
                 }
             });
 
-        this.apiService.messages.subscribe((action: string) => {
-            if (action == "got_wiki_hierarchy")
-            {
-                for(let item of this.items)
-                {
-                    item['disabled'] = false;
-                }
+        this.data.storyFunction = this.disableMenu();
+    }
+
+    public disableMenu(): Function {
+        return (reply: any) => {
+            for (let item of this.items) {
+                item['disabled'] = false;
             }
-        });
+            delete this.data.storyFunction;
+        }
     }
 
     public edit() {

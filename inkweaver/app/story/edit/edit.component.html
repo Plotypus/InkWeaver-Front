@@ -130,7 +130,7 @@
             <p-treeTable [value]="data.storyNode" selectionMode="single" [(selection)]="data.section" (onNodeSelect)="selectSection($event)">
                 <p-column field="title">
                     <template let-col let-node="rowData" pTemplate="body">
-                        <span [ngClass]="{'section-drag': dragNodeID.$oid === node.data.section_id.$oid}"
+                        <span [ngClass]="{'section-drag': dragNodeID.$oid === node.data.section_id.$oid}" class="section-header"
                               pDraggable="sectiondragdrop" pDroppable="sectiondragdrop"
                               (onDragStart)="sectionDrag(node)" (onDragEnd)="endDrag()"
                               (onDrop)="sectionDrop(node)" (onDragEnter)="sectionDragEnter(node)" (onDragLeave)="dragLeave()"
@@ -139,9 +139,9 @@
                                 <span *ngSwitchCase="false">{{node.data.title | truncate : 25}}</span>
                                 <span *ngSwitchCase="true" class="edit-title">
                                     <input pInputText type="text" [(ngModel)]="newSectionTitle" (click)="$event.stopPropagation()" />
-                                    <button pButton icon="fa-check" (click)="renameStory($event)" *ngIf="!node.parent"></button>
-                                    <button pButton icon="fa-check" (click)="renameSection($event)" *ngIf="node.parent"></button>
-                                    <button pButton icon="fa-times" (click)="cancelRenameSection($event)"></button>
+                                    <button class="inline-button" pButton icon="fa-check" (click)="renameStory($event)" *ngIf="!node.parent"></button>
+                                    <button class="inline-button" pButton icon="fa-check" (click)="renameSection($event)" *ngIf="node.parent"></button>
+                                    <button class="inline-button" pButton icon="fa-times" (click)="cancelRenameSection($event)"></button>
                                 </span>
                             </span>
                         </span>
@@ -171,8 +171,8 @@
                                     </span>
                                     <span *ngSwitchCase="true" class="edit-title">
                                         <input pInputText type="text" [(ngModel)]="newBookmark.name" (click)="$event.stopPropagation()" />
-                                        <button pButton icon="fa-check" (click)="renameBookmark($event)"></button>
-                                        <button pButton icon="fa-times" (click)="cancelRenameBookmark($event)"></button>
+                                        <button class="inline-button" pButton icon="fa-check" (click)="renameBookmark($event)"></button>
+                                        <button class="inline-button" pButton icon="fa-times" (click)="cancelRenameBookmark($event)"></button>
                                     </span>
                                 </span>
                             </span>
