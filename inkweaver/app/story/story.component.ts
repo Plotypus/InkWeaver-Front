@@ -25,36 +25,40 @@ export class StoryComponent {
     ngOnInit() {
         this.data = this.apiService.data;
         this.items = [
-            { label: '', disabled: true, icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
-            { label: '', disabled: true, icon: 'fa-book', routerLink: ['/story/wiki'] },
-            { label: '', disabled: true, icon: 'fa-ellipsis-v', routerLink: ['/story/stats'] }
+        { label: '', disabled: true, icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
+        { label: '', disabled: true, icon: 'fa-book', routerLink: ['/story/wiki'] },
+        { label: '', disabled: true, icon: 'fa-ellipsis-v', routerLink: ['/story/stats'] }
         ];
         this.activeItem = this.items[0];
 
         // This changes the navigation bar highlight
         this.router.events
-            .filter((event: Event) => event instanceof NavigationStart)
-            .subscribe((event: Event) => {
-                if (event.url === '/story/edit') {
-                    this.activeItem = this.items[0];
-                }
-                else if (event.url === '/story/wiki') {
-                    this.activeItem = this.items[1];
-                }
-                else if (event.url === '/story/stats') {
-                    this.activeItem = this.items[2];
-                }
-            });
-
-        this.apiService.messages.subscribe((action: string) => {
-            if (action == "got_wiki_hierarchy")
-            {
-                for(let item of this.items)
-                {
-                    item['disabled'] = false;
-                }
+        .filter((event: Event) => event instanceof NavigationStart)
+        .subscribe((event: Event) => {
+            if (event.url === '/story/edit') {
+                this.activeItem = this.items[0];
+            }
+            else if (event.url === '/story/wiki') {
+                this.activeItem = this.items[1];
+            }
+            else if (event.url === '/story/stats') {
+                this.activeItem = this.items[2];
             }
         });
+
+        this.data.storyFunction = this.disableMenu();
+    }
+
+    public disableMenu() : Function{
+        return (reply:any) =>{
+            for (let item of this.items) {
+                item['disabled'] = false;
+            }
+
+            delete this.data.storyFunction;
+
+
+        }
     }
 
     public edit() {
