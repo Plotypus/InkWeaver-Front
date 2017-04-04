@@ -62,6 +62,7 @@ export class ApiService {
         segment: new Segment(),
         page: new Page(),
         wikiFuctions: new Array<Function>(),
+        storyFunction: new Function(),
         selectedEntry: {},
     };
 
@@ -530,7 +531,13 @@ export class ApiService {
                                     reply.hierarchy, this.data.selectedEntry);
                                 this.data.wikiNav = result[0];
                                 this.data.statsPages = result[1];
+                                if (this.data.storyFunction) {
+                                    let callback: Function = this.data.storyFunction;
+                                    callback(reply);
+                                }
+
                                 break;
+                                
                             case 'got_wiki_alias_list':
                                 let temp = this.parser.parseLinkTable(reply.alias_list);
                                 this.data.linkTable = temp[0];
