@@ -1,6 +1,7 @@
 ﻿TIER 1
 Moving segments and pages
 Distinguish categories and pages
+?? Adding notes to an added paragraph ??
 
 Deleting wiki
 Error handling

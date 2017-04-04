@@ -125,7 +125,7 @@ export class EditComponent {
                     if (this.predict) {
                         let valIndex: number = 0;
                         let bounds = this.editor.quill.getBounds(index);
-                        let top: number = bounds.top + 70;
+                        let top: number = bounds.top + 200;
                         this.loopPages(this, this.data.segment, (page: PageSummary) => {
                             if (page.title.startsWith(this.predict)) {
                                 if (this.suggest.display === 'none') {
@@ -165,7 +165,7 @@ export class EditComponent {
                         let index: number = this.editor.quill.getIndex(aBlot);
                         let bounds: any = this.editor.quill.getBounds(index);
 
-                        let top: number = bounds.top + 70;
+                        let top: number = bounds.top + 200;
                         this.data.tooltip = {
                             text: '',
                             display: 'block', top: top + 'px', left: bounds.left + 'px'
@@ -189,7 +189,7 @@ export class EditComponent {
                             let index: number = this.editor.quill.getIndex(cBlot);
                             let bounds: any = this.editor.quill.getBounds(index);
 
-                            let top: number = bounds.top + 70;
+                            let top: number = bounds.top + 200;
                             this.note = {
                                 text: event.target.innerHTML, index: index, length: event.target.innerHTML.length,
                                 display: 'block', top: top + 'px', left: bounds.left + 'px'
@@ -473,7 +473,7 @@ export class EditComponent {
                     idx = this.editor.quill.getIndex(block);
                     this.editor.quill.insertText(idx, ' ', 'code', ' ');
                     let bounds = this.editor.quill.getBounds(idx);
-                    let top: number = bounds.top + 70;
+                    let top: number = bounds.top + 200;
                     this.note = {
                         text: '', index: idx, length: 0,
                         display: 'block', top: top + 'px', left: bounds.left + 'px'
