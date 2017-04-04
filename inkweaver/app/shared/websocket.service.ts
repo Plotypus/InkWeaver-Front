@@ -3,6 +3,7 @@ import { Subject, Observable, Observer } from 'rxjs/Rx';
 
 @Injectable()
 export class WebSocketService {
+    private ws: WebSocket;
     private subject: Subject<MessageEvent>;
 
     constructor() { }
@@ -14,21 +15,26 @@ export class WebSocketService {
         return this.subject;
     }
 
+    public close() {
+        this.ws.close();
+    }
+
     private create(url: string): Subject<MessageEvent> {
-        let ws = new WebSocket(url);
+        let wsService = this;
+        wsService.ws = new WebSocket(url);
 
         let observable = Observable.create((obs: Observer<MessageEvent>) => {
-            ws.onmessage = obs.next.bind(obs);
-            ws.onerror = obs.error.bind(obs);
-            ws.onclose = obs.complete.bind(obs);
+            wsService.ws.onmessage = obs.next.bind(obs);
+            wsService.ws.onerror = obs.error.bind(obs);
+            wsService.ws.onclose = obs.complete.bind(obs);
 
-            return ws.close.bind(ws);
+            return wsService.ws.close.bind(wsService.ws);
         });
 
         let observer = {
             next: (data: Object) => {
-                waitForSocketConnection(ws, function () {
-                    ws.send(JSON.stringify(data));
+                waitForSocketConnection(wsService.ws, function () {
+                    wsService.ws.send(JSON.stringify(data));
                 });
             }
         };

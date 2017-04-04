@@ -15,10 +15,7 @@ Versioning of story
 Load times
 Inline adding
 Local storage
-Toggle link popup
-Intellisense for wiki
 Toggle visibility of links
-When hovering over a link, show related links
 
 FRONT-END BUGS
 FA icons not always showing up
@@ -26,6 +23,7 @@ Cannot read property ID of undefined when creating wiki heading (if page was cre
 
 BACKEND BUGS
 Whenever an error happens, you need to restart the server
+Make paragraph_added reply actually look like a paragraph object?
 
 ```ERROR:tornado.application:Exception in callback functools.partial(<function wrap.<locals>.null_wrapper at 0x000001A3A285D950>, <tornado.concurrent.Future object at 0x000001A3A2887048>)
 Traceback (most recent call last):

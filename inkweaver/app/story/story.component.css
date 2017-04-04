@@ -1,26 +1,44 @@
-﻿story .ui-panel-titlebar {
-    min-height: 100px;
-    position: relative;
-    padding: 0 !important;
-    font-size: 2em;
-    text-align: center;
+﻿/* Story */
+story > p-panel > .ui-panel {
+    height: 100%;
+}
+
+    story > p-panel > .ui-panel > .ui-panel-titlebar {
+        text-align: center;
+        padding: 0 !important;
+        background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue));
+    }
+
+.title {
+    height: 4em;
+    font-size: 1.75em;
     text-transform: uppercase;
 }
 
-story .ui-widget-header {
-    background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue));
+    .title > p {
+        font-size: 0.75em;
+        margin: 1em 0 0 0;
+    }
+
+story > p-panel > .ui-panel > .ui-panel-content-wrapper {
+    height: calc(100% - 6em) !important;
 }
 
-story .ui-panel-titlebar p {
-    font-size: 0.5em;
-    margin: 5px 0 0 0;
+    story > p-panel > .ui-panel > .ui-panel-content-wrapper > .ui-panel-content {
+        height: 100%;
+    }
+
+/* Menu */
+.menu-tabs {
+    height: 100%;
+    font-size: 1.75em;
 }
 
-/* ----- Menu ----- */
 .menu {
     right: 0;
     padding: 0;
-    height: 100%;
+    height: 4em;
+    font-size: 1.75em;
     position: absolute;
 }
 
@@ -28,8 +46,7 @@ story .ui-panel-titlebar p {
         background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue)) !important;
     }
 
-    .menu .ui-tabmenu,
-    .menu .ui-tabmenu-nav {
+    .menu .ui-tabmenu, .menu .ui-tabmenu-nav {
         padding: 0;
         height: 100%;
         border-radius: 0px;
@@ -44,27 +61,21 @@ story .ui-panel-titlebar p {
     }
 
         .menu .ui-tabmenuitem.ui-state-active {
-            z-index: 10;
+            z-index: 5;
             background: var(--light-blue) !important;
             box-shadow: 0 0 10px 2px var(--dark-blue);
         }
 
     .menu .ui-menuitem-link {
         width: 100%;
-        height: 100%;
         padding: 0 !important;
     }
 
     .menu .ui-menuitem-icon {
-        margin-top: 20%;
-        font-size: 1.75em;
+        margin-top: 0.5em;
         color: var(--dark-gray);
     }
 
     .menu .ui-state-active .ui-menuitem-icon {
         color: var(--light-gray);
     }
-
-.placeholder {
-    margin-left: 25px;
-}

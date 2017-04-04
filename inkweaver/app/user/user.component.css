@@ -1,4 +1,8 @@
-﻿user .ui-datagrid-header {
+﻿user > .ui-grid, user > .ui-grid > .ui-grid-row {
+    height: 100%;
+}
+
+user .ui-datagrid-header {
     border-radius: 0;
     color: var(--dark-blue);
     background: var(--light-gray);
@@ -10,8 +14,8 @@ user .ui-paginator {
 
 user .ui-datagrid-content {
     border: none;
-    padding: 10px;
-    border-top: 3px solid var(--dark-blue);
+    padding: 1em;
+    border-top: 4px solid var(--dark-blue);
 }
 
 .story-tile .ui-panel-titlebar,
@@ -45,8 +49,8 @@ user .ui-datagrid-content {
 .story-tile .fa-trash {
     color: var(--dark-gray);
     position: absolute;
-    right: 5px;
-    bottom: 5px;
+    right: 0.5em;
+    bottom: 0.5em;
 }
 
 .subheader {
@@ -59,9 +63,8 @@ user .ui-datagrid-content {
     margin: 5%;
     padding: 5%;
     height: 75%;
-    border-radius: 10px;
+    border-radius:4px;
     background: var(--dark-blue);
-    position: relative;
 }
 
 .user-info-fields input {
@@ -75,7 +78,7 @@ user .ui-datagrid-content {
 
 .user-info-fields textarea {
     width: 100%;
-    min-height: 100px;
+    min-height: 10em;
     border-radius: 4px;
 }
 
@@ -131,7 +134,7 @@ p-dialog .ui-dropdown {
 }
 
 p-dialog .ui-dialog-content {
-    height: 70%;
+    height: 75%;
 }
 
 p-dialog input.ui-dropdown-filter {

@@ -8,16 +8,9 @@
     --tan: #fddc9b;
 }
 
-@font-face {
-    font-family: 'FontAwesome';
-    src: url('node_modules/font-awesome/fonts/fontawesome-webfont.eot?v=4.6.3');
-    src: url('node_modules/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.6.3') format('embedded-opentype'), url('node_modules/font-awesome/fonts/fontawesome-webfont.woff2?v=4.6.3') format('woff2'), url('node_modules/font-awesome/fonts/fontawesome-webfont.woff?v=4.6.3') format('woff'), url('node_modules/font-awesome/fonts/fontawesome-webfont.ttf?v=4.6.3') format('truetype'), url('node_modules/font-awesome/fonts/fontawesome-webfont.svg?v=4.6.3#fontawesomeregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
 html {
     height: 100%;
+    font-size: 0.9em;
     overflow-y: scroll;
 }
 
@@ -28,30 +21,39 @@ body {
     background: var(--dark-blue);
 }
 
-.ui-panel,
-.ui-widget,
-.ui-widget-header {
+/* Top-level panel */
+ink-app > p-panel > .ui-panel > .ui-panel-titlebar {
+    height: 3em;
+}
+
+ink-app > p-panel > .ui-panel > .ui-panel-content-wrapper {
+    height: calc(100% - 3em);
+}
+
+    ink-app > p-panel > .ui-panel,
+    ink-app > p-panel > .ui-panel > .ui-panel-content-wrapper > .ui-panel-content {
+        height: 100%;
+    }
+
+/* General panel */
+.ui-panel, .ui-panel-titlebar,
+.ui-widget, .ui-widget-header {
     border: none;
 }
 
 .ui-panel-titlebar {
-    border: none;
     color: var(--light-gray);
     background: var(--dark-blue);
 }
 
-.ui-panel,
-.ui-panel-content-wrapper,
-.ui-panel-content,
-.ui-grid,
-.ui-grid-row {
+.ui-panel, .ui-panel-content-wrapper, .ui-panel-content,
+.ui-grid, .ui-grid-row {
     padding: 0 !important;
-    height: 100% !important;
     background: var(--dark-blue);
 }
 
+/* Header and main menu */
 .master-header {
-    margin-top: 0.5em;
     display: inline-block;
 }
 
@@ -61,23 +63,31 @@ body {
 }
 
     .master-menu .ui-menubar {
+        padding: 0 !important;
         background: var(--dark-blue);
     }
 
-    .master-menu .ui-menuitem :hover {
-        background: var(--light-blue);
-        border-color: var(--light-blue);
+    .master-menu .ui-menuitem {
+        margin: 0 !important;
+    }
+
+        .master-menu .ui-menuitem :hover {
+            background: var(--light-blue);
+        }
+
+    .master-menu .ui-menuitem-link {
+        border: none;
+        padding: 0 1em 0.25em 1em !important;
     }
 
     .master-menu .ui-menuitem-text {
-        padding: 0 1em 0 1em;
         color: var(--light-gray);
     }
-
 
 /* ----- Navigation ----- */
 .navigation {
     padding: 0;
+    height: 100%;
     position: relative;
     z-index: 15 !important;
     background: var(--light-blue);
@@ -97,44 +107,6 @@ body {
         background: var(--dark-blue) !important;
     }
 
-    .navigation .fa-plus-square-o,
-    .navigation .fa-minus-square-o {
-        float: right;
-        padding-top: 1%;
-        padding-right: 2%;
-    }
-
-/* -------------------- Wiki -------------------- */
-
-.wiki .ui-editor-content {
-    background: white;
-}
-
-.wiki .ui-panel-titlebar {
-    min-height: 1em !important;
-}
-
-.wiki .span .ui-widget input {
-    width: 25%;
-    color: var(--light-gray);
-    background-color: var(--light-blue);
-    border: none;
-}
-
-.wiki .ui-widget input {
-    width: 100%;
-    color: var(--light-gray);
-    background: var(--light-blue) !important;
-    border: none;
-    font-size: .5em;
-    text-align: center;
-}
-
-.wiki .fa {
-    color: white;
-}
-
-.ui-button {
-    border: none !important;
-    background: var(--link-blue) !important;
+.inline-button .ui-button-text {
+    background: var(--dark-blue);
 }

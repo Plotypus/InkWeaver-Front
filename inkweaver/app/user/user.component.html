@@ -94,8 +94,8 @@
                             </span>
                             <span *ngSwitchCase="true">
                                 <input pInputText type="text" [(ngModel)]="data.user.name" />
-                                <button pButton icon="fa-check" (click)="save('name')"></button>
-                                <button pButton icon="fa-times" (click)="cancel('name')"></button>
+                                <button class="inline-button" pButton icon="fa-check" (click)="save('name')"></button>
+                                <button class="inline-button" pButton icon="fa-times" (click)="cancel('name')"></button>
                             </span>
                         </span>
                     </div><br />
@@ -110,8 +110,8 @@
                             </span>
                             <span *ngSwitchCase="true">
                                 <input pInputText type="text" [(ngModel)]="data.user.email" />
-                                <button pButton icon="fa fa-check" (click)="save('email')"></button>
-                                <button pButton icon="fa fa-times" (click)="cancel('email')"></button>
+                                <button class="inline-button" pButton icon="fa fa-check" (click)="save('email')"></button>
+                                <button class="inline-button" pButton icon="fa fa-times" (click)="cancel('email')"></button>
                             </span>
                         </span>
                     </div><br />
@@ -126,8 +126,8 @@
                             </span>
                             <span *ngSwitchCase="true">
                                 <textarea pInputTextarea [(ngModel)]="data.user.bio"></textarea>
-                                <button pButton icon="fa-check" (click)="save('bio')"></button>
-                                <button pButton icon="fa-times" (click)="cancel('bio')"></button>
+                                <button class="inline-button" pButton icon="fa-check" (click)="save('bio')"></button>
+                                <button class="inline-button" pButton icon="fa-times" (click)="cancel('bio')"></button>
                             </span>
                         </span>
                     </div>

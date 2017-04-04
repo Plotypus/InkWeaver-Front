@@ -10,8 +10,7 @@ export class LoginService {
     private options = new RequestOptions({ withCredentials: true });
 
     constructor(private apiService: ApiService, private http: Http) {
-        this.url = apiService.authentication ?
-            'http://inkweaver.plotypus.net:8080/api' : 'http://localhost:8080/api';
+        this.url = apiService.local ? 'http://localhost:8080/api' : 'https://inkweaver.plotypus.net:8080/api';
     }
 
     public login(username: string, password: string): Observable<Response> {
