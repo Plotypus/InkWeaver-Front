@@ -537,7 +537,7 @@ export class ApiService {
                                 }
 
                                 break;
-                                
+
                             case 'got_wiki_alias_list':
                                 let temp = this.parser.parseLinkTable(reply.alias_list);
                                 this.data.linkTable = temp[0];
