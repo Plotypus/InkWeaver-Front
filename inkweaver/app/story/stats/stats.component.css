@@ -3,7 +3,12 @@
     font-style: italic;
     background: #e6e6e6;
     color: var(--light-blue);
-    padding: .5em 1em .5em 1em
+    padding: .5em 1em .5em 1em;
+    height: 100%;
+}
+
+stats > .ui-grid, stats > .ui-grid > .ui-grid-row{
+    height: calc(100%);
 }
 
 .stats .search{
@@ -17,4 +22,8 @@ stats .ui-tabview .ui-tabview-panel{
 
 stats .ui-tabview.ui-widget-content{
 	background: var(--light-blue);
+}
+
+stats .ui-tabview-panel{
+	border:none;
 }
