@@ -40,7 +40,6 @@ export class WikiComponent {
     private nestedPages = [];
     private defAdd: any;
     private defDel: any;
-    private wiki = [];
     private selectedValues = [];
     private selectAllVal: boolean;
     private filter: string;
@@ -425,9 +424,9 @@ export class WikiComponent {
             //this is set stuff up for deleting page or segment
             this.type = id;
             if(this.type == 0){
-                let idx = this.wiki.findIndex(this.selectedEntry());
+                let idx = this.data.wikiFlatten.findIndex(this.selectedEntry());
                 if (idx != -1)
-                    this.defDel = this.wiki[idx].value;
+                    this.defDel = this.data.wikiFlatten[idx].value;
                 this.nestedPages = this.convertLabelValueArray(this.defDel);
             }
             //this will delete templete heading or heading
@@ -501,9 +500,12 @@ export class WikiComponent {
                     {
                         this.allCategories.push({ label: ele.label, value: ele });
                     }
-                    else
+                    else if(ele.type == 'page')
                         this.allPages.push({ label: ele.label, value: ele });
-                    this.wiki.push({ label: ele.label, value: ele });
+
+                    if(ele.type != 'filler')
+                    this.data.wikiFlatten.push({ label: ele.label, value: ele });
+                    
                 }
                 
             }
@@ -577,11 +579,6 @@ export class WikiComponent {
             }
         }
 
-        public onHeadingCallback():Function {
-            return (reply:any)=>{
-
-            }
-        }
         public onAddCallback() : Function
         {
             return (reply:any) => {

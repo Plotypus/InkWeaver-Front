@@ -7,7 +7,9 @@ import {TreeTableModule,
 		DataTableModule,
 		TabViewModule,
         TreeModule,
-        ChartModule
+        ChartModule,
+        DropdownModule,
+        ChipsModule
 } from 'primeng/primeng';
 import {SharedModule} from '../../shared/shared.module';
 
@@ -21,7 +23,9 @@ import {SharedModule} from '../../shared/shared.module';
         TabViewModule,
         ChartModule,
         TreeModule,
-        SharedModule
+        SharedModule,
+        DropdownModule,
+        ChipsModule
             ],
     providers: [StatsService],
     declarations: [StatsComponent],

@@ -1,5 +1,5 @@
 ﻿import { Component, ViewChild } from '@angular/core';
-import { UIChart,TreeNode } from 'primeng/primeng';
+import { UIChart, TreeNode, SelectItem } from 'primeng/primeng';
 import { Router } from '@angular/router';
 
 import { EditService } from '../edit/edit.service';
@@ -21,6 +21,10 @@ export class StatsComponent {
     private mode:any;
     private pageFreq:any;
     private wikiNav = [];
+    private statsOptions: SelectItem[];
+    private selectedOption: any;
+    private chips = [];
+    
     constructor(
         private router: Router,
         private editService: EditService,
@@ -61,7 +65,15 @@ export class StatsComponent {
             label.push(this.data.statsSections[l].title);
         this.pageFreq = {};
         let dataset = [];
+        this.data.wikiFlatten;
+        this.data.statSegments = this.parserService.getTreeArray(event.node);
 
+        this.statsOptions = this.data.wikiFlatten.filter((ele: any) => {
+
+            return this.data.statSegments.indexOf(ele.value) == -1;
+
+        });
+        
         for(let ele of this.data.statSegments)
         {    
             if(ele.type == 'page')
@@ -72,6 +84,7 @@ export class StatsComponent {
                 borderColor: '#4bc0c0'
             });
         }
+
         this.pageFreq = {
             labels: label,
             datasets: dataset
@@ -82,7 +95,34 @@ export class StatsComponent {
         
     }
 
-    public 
+    public onChange(event:any){
+        this.data.statSegments.push(this.selectedOption);
+
+        let label = [];
+        for (let l in this.data.statsSections)
+            label.push(this.data.statsSections[l].title);
+
+        let dataset = [];
+        for (let ele of this.data.statSegments) {
+            if (ele.type == 'page')
+                dataset.push({
+                    label: ele.data.title,
+                    data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
+                    fill: true,
+                    borderColor: '#4bc0c0'
+                });
+        }
+
+        this.pageFreq = {
+            labels: label,
+            datasets: dataset
+        };
+        setTimeout(() => {
+            this.chart.refresh();
+        }, 50);
+
+        this.chips.push(this.selectedOption);
+    }
 
 
 }
