@@ -1,5 +1,9 @@
 ﻿/* -------------------- Wiki -------------------- */
 
+wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row{
+    height: calc(100%);
+}
+
 .wiki .ui-editor-content {
     background: white;
 }
