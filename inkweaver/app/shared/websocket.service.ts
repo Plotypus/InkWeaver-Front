@@ -17,6 +17,7 @@ export class WebSocketService {
 
     public close() {
         this.ws.close();
+        this.subject = null;
     }
 
     private create(url: string): Subject<MessageEvent> {

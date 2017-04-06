@@ -1,7 +1,7 @@
 ﻿<p-panel>
     <header>
         <div class="master-header">Inkweaver by Plotypus</div>
-        <div *ngIf="router.url.startsWith('/user') || router.url.startsWith('/story')" class="master-menu">
+        <div class="master-menu" [ngClass]="{'hide-menu': !router.url.startsWith('/user') && !router.url.startsWith('/story')}">
             <p-menubar [model]="items"></p-menubar>
         </div>
     </header>
