@@ -226,6 +226,7 @@ export class ApiService {
                                         found.parent.children.splice(index, 1);
                                     });
                                 this.parser.findSection(this.data.storyNode[0], JSON.stringify(reply.to_parent_id), (found: TreeNode) => {
+                                    moved.parent = found;
                                     found.children.splice(reply.to_index, 0, moved);
                                 });
                                 break;
