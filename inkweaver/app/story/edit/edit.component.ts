@@ -77,6 +77,9 @@ export class EditComponent {
         if (!this.apiService.messages) {
             this.router.navigate(['/login']);
         }
+        window.onbeforeunload = () => {
+            this.save();
+        }
     }
 
     ngAfterViewInit() {
@@ -202,15 +205,7 @@ export class EditComponent {
     }
 
     ngOnDestroy() {
-        if (this.data.prevSection.data) {
-            this.save();
-        }
-        if (this.data.section.data) {
-            this.data.story.position_context = {
-                section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition
-            };
-            this.userService.setUserStoryPositionContext(this.data.section.data.section_id, this.paragraphPosition);
-        }
+        this.save();
     }
 
     public setHotkey(editComp: EditComponent) {
@@ -493,14 +488,18 @@ export class EditComponent {
     }
 
     public save() {
-        this.data.story.position_context = {
-            section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
-        };
-        let paragraphs: any[] = this.editorRef.querySelectorAll('p');
-        if (paragraphs.length > 0) {
-            let newContentObject: any = this.parserService.parseHtml(paragraphs);
-            this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
-            this.apiService.refreshStoryContent();
+        if (this.data.prevSection.data) {
+            this.data.story.position_context = {
+                section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
+            };
+            this.userService.setUserStoryPositionContext(this.data.prevSection.data.section_id, this.paragraphPosition);
+
+            let paragraphs: any[] = this.editorRef.querySelectorAll('p');
+            if (paragraphs && paragraphs.length > 0) {
+                let newContentObject: any = this.parserService.parseHtml(paragraphs);
+                this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
+                this.apiService.refreshStoryContent();
+            }
         }
     }
 
