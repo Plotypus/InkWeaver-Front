@@ -50,7 +50,6 @@ export class ApiService {
         bookmarks: new Array<TreeNode>(),
 
         statSection: new Section(),
-        statSegments: [],
         stats: new Stats(),
         statsPages: {},
         statsSections: {},
@@ -60,6 +59,7 @@ export class ApiService {
         wikiDisplay: '',
         wiki: new Wiki(),
         segment: new Segment(),
+        wikiFlatten: [],
         page: new Page(),
         wikiFuctions: new Array<Function>(),
         storyFunction: new Function(),

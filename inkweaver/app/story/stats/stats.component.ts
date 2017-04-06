@@ -23,7 +23,9 @@ export class StatsComponent {
     private wikiNav = [];
     private statsOptions: SelectItem[];
     private selectedOption: any;
-    private chips = [];
+    private colors = []; 
+    private statSegments: any;
+    private allOptions: SelectItem[];
     
     constructor(
         private router: Router,
@@ -66,23 +68,35 @@ export class StatsComponent {
         this.pageFreq = {};
         let dataset = [];
         this.data.wikiFlatten;
-        this.data.statSegments = this.parserService.getTreeArray(event.node);
+        this.statSegments = this.parserService.getTreeArray(event.node).filter((ele:any)=>
+            {
+                return ele.type != 'filler'
+            });
 
         this.statsOptions = this.data.wikiFlatten.filter((ele: any) => {
 
-            return this.data.statSegments.indexOf(ele.value) == -1;
+            return this.statSegments.indexOf(ele.value) == -1;
 
         });
+
+        this.allOptions = this.statsOptions;
         
-        for(let ele of this.data.statSegments)
+        for(let ele of this.statSegments)
         {    
-            if(ele.type == 'page')
-            dataset.push({
-                label: ele.data.title,
-                data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
-                fill: true,
-                borderColor: '#4bc0c0'
-            });
+        
+            if (ele.type == 'page') {
+                let color = '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
+                if ('_$visited' in ele.data.id)
+                    delete ele.data.id['_$visited'];
+                dataset.push({
+                    label: ele.data.title,
+                    data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
+                    fill: true,
+                    borderColor: color
+                });
+
+                this.colors.push(color);
+            }
         }
 
         this.pageFreq = {
@@ -96,21 +110,66 @@ export class StatsComponent {
     }
 
     public onChange(event:any){
-        this.data.statSegments.push(this.selectedOption);
+        this.statSegments.push(this.selectedOption);
 
+        this.statsOptions = this.statsOptions.filter((ele:any)=>{
+            return ele.value != this.selectedOption;
+        });
+        this.updateChart();
+
+        
+    }
+
+    public updateDropdown(event:any, items:any){
+
+        //finding what was removed
+        let addback = this.allOptions.filter((ele:any) => {
+            return items.indexOf(ele) == -1;
+        })
+
+        let toadd = addback.filter((ele:any)=>{
+            return this.statsOptions.indexOf(ele) == -1;
+        });
+
+        this.statsOptions = addback;
+        this.colors.shift();
+        this.updateChart();
+
+    }
+
+
+    public updateChart()
+    {
         let label = [];
         for (let l in this.data.statsSections)
             label.push(this.data.statsSections[l].title);
 
         let dataset = [];
-        for (let ele of this.data.statSegments) {
-            if (ele.type == 'page')
+        let cidx = 0;
+        for (let ele of this.statSegments) {
+
+            if (ele.type == 'page') {
+                let color: any;
+                if (cidx < this.colors.length) {
+                    color = this.colors[cidx];
+
+                }
+                else {
+                    color = '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
+                }
+                if ('_$visited' in ele.data.id)
+                    delete ele.data.id['_$visited'];
+
                 dataset.push({
                     label: ele.data.title,
                     data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
                     fill: true,
-                    borderColor: '#4bc0c0'
+                    borderColor: color
                 });
+                if (cidx >= this.colors.length)
+                    this.colors.push(color);
+                cidx++;
+            }
         }
 
         this.pageFreq = {
@@ -120,8 +179,6 @@ export class StatsComponent {
         setTimeout(() => {
             this.chart.refresh();
         }, 50);
-
-        this.chips.push(this.selectedOption);
     }
 
 

@@ -492,6 +492,7 @@ export class WikiComponent {
             let ele: TreeNode
             let temp= [];
             if(this.data.wikiNav){
+                this.data.wikiFlatten = [];
                 temp = this.parserService.getTreeArray(this.data.wikiNav[0]);
                 for( let idx in temp)
                 {    
