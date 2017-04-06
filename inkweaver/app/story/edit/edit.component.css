@@ -16,8 +16,9 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
     height: calc(100% - 3em);
 }
 
-.stats {
+.word-count {
     height: 3em;
+    background: #e6e6e6;
     padding: 1em !important;
 }
 
@@ -120,7 +121,7 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
         border: none;
     }
 
-    code {
+code {
     width: 1em;
     height: 1em;
     margin-right: 0.5em;
