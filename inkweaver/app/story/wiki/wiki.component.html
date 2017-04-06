@@ -1,17 +1,17 @@
-﻿<p-contextMenu #contextMenu [model]="contextMenuItems"></p-contextMenu>
+﻿    <p-contextMenu #contextMenu [model]="contextMenuItems"></p-contextMenu>
 
 
 
-<p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
-          width="450" height="200" responsive="true">
+    <p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
+    width="450" height="200" responsive="true">
 
-    
+
     <input type="text" pInputText [(ngModel)]="pageName" />
-        <div *ngIf="!pageName" style='color: red;font-style: italic;'>
+    <div *ngIf="!pageName" style='color: red;font-style: italic;'>
         The {{addContent}} name field is empty!
     </div>
     <footer>
-        
+
         <button pButton type="button" label="Cancel" (click)="addToWiki(false)"></button>
         <button pButton type="button" label="Adding {{addContent}}" [disabled]='!pageName'
         (click)="addToWiki(true)"></button>
@@ -19,211 +19,217 @@
 </p-dialog>
 
 <p-dialog *ngIf="showAddHeadDialog" modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
-          width="450" height="200" responsive="true">
+width="450" height="200" responsive="true">
 
-    {{heading}}: <input type="text" pInputText [(ngModel)]="headingName" (ngModelChange)="onTextChange(headingName)"/>
-    <br>
-    <div *ngIf="exist" style='color: red;font-style: italic;'>
-        The following {{heading}}: {{headingName}} all ready exist!
-        
-    </div>
-    
-    <div *ngIf="!headingName" style='color: red;font-style: italic;'>
-        The {{heading}} field is empty!
-        
-    </div>
+{{heading}}: <input type="text" pInputText [(ngModel)]="headingName" (ngModelChange)="onTextChange(headingName)"/>
+<br>
+<div *ngIf="exist" style='color: red;font-style: italic;'>
+    The following {{heading}}: {{headingName}} all ready exist!
 
-    <footer>
-        <button pButton type="button" label="Create Another Heading" [disabled]="exist || !headingName" 
-        (click)="createHeading(true)"></button>
-        <button pButton type="button" label="Create Heading" [disabled]="exist || !headingName" 
-        (click)="createHeading(false)"></button>
-    </footer>
+</div>
+
+<div *ngIf="!headingName" style='color: red;font-style: italic;'>
+    The {{heading}} field is empty!
+
+</div>
+
+<footer>
+    <button pButton type="button" label="Create Another Heading" [disabled]="exist || !headingName" 
+    (click)="createHeading(true)"></button>
+    <button pButton type="button" label="Create Heading" [disabled]="exist || !headingName" 
+    (click)="createHeading(false)"></button>
+</footer>
 </p-dialog>
 
 <p-dialog *ngIf="showDeleteDialog && type == 0" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
-          width="450" height="300" responsive="true">
-    
-    <div *ngIf=" defDel && nestedPages.length && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
-        You are going to be deleting a section, so {{nestedPages.length}} pages/subsections will be deleted!    
-    </div>
-    <div *ngIf=" defDel && defDel.label && defDel.type == 'page'">
-        You are going to be deleting a {{defDel.label}}, so the page will be deleted!
-        
-    </div>
-    
-    
-        <footer>
-        <button pButton type="button" label="Cancel" (click)="onDeletePage(false)"></button>
-        <button pButton type="button" label="Yes" (click)="onDeletePage(true)"></button>
-        </footer>
+width="450" height="300" responsive="true">
+
+<div *ngIf=" defDel && nestedPages.length && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
+    You are going to be deleting a section, so {{nestedPages.length}} pages/subsections will be deleted!    
+</div>
+<div *ngIf=" defDel && defDel.label && defDel.type == 'page'">
+    You are going to be deleting a {{defDel.label}}, so the page will be deleted!
+
+</div>
+
+
+<footer>
+    <button pButton type="button" label="Cancel" (click)="onDeletePage(false)"></button>
+    <button pButton type="button" label="Yes" (click)="onDeletePage(true)"></button>
+</footer>
 </p-dialog>
 
 <p-dialog *ngIf="showDeleteDialog && type == 1" modal="true" header="Do you want to delete {{defDel ? defDel : none}}" [(visible)]="showDeleteDialog"
-          width="450" height="200" responsive="true">
-    
-        <footer>
-        <button pButton type="button" label="Cancel" (click)="onDeleteHeading(false)"></button>
-        <button pButton type="button" label="Yes" (click)="onDeleteHeading(true)"></button>
-        </footer>
+width="450" height="200" responsive="true">
+
+<footer>
+    <button pButton type="button" label="Cancel" (click)="onDeleteHeading(false)"></button>
+    <button pButton type="button" label="Yes" (click)="onDeleteHeading(true)"></button>
+</footer>
 </p-dialog>
 
 
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
-
-        <div class="wiki ui-grid-col-9">
-
-            <div class="loader" *ngIf="data.loading">
-                <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+    <div [ngSwitch]='statMode' class="ui-grid-col-9" style='background: white;'>
+            <div *ngSwitchCase='true' class='stats'>
+                <stats [mode]='false'></stats>
             </div>
+            <div *ngSwitchCase='false' class="wiki">
 
 
-            <!--Page-->
-            <ng-container *ngIf="wikiPage">
-                <!--Title -->
-                <div class="header" [ngSwitch]='disabled[0]'>
-                    <span *ngSwitchCase='true'>
-                        <h1 (click)="onDisable(0)">{{wikiPage.title}}</h1>
-                        <span class="icons">
-                            <button pButton type="button" label="Add Heading" (click)="addHeading()"></button>
-                            <button pButton type="button" label="Save" (click)="onSavePage()"></button>
-                        </span>
 
-                    </span>
-                    <span *ngSwitchCase='false'>
-                        <input id="editable" type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
-                        <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
-                        <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
-
-                    </span>
+                <div class="loader" *ngIf="data.loading">
+                    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
                 </div>
 
 
-                <!--Alias-->
-                <ng-container *ngIf="wikiPage.aliases">
-                    <p-dataGrid [value]="wikiPage.aliases" [rows]="3">
-                        <header>Aliases</header>
-                        <template let-alias pTemplate="item" ;>
-
-                            <div style="display: inline-block;" [ngSwitch]='alias.state'>
-                                <span *ngSwitchCase='true'>
-                                    <input style="cursor:pointer" type="text" pInputText [(ngModel)]="alias.name" (click)="editAlias(alias)" readonly />
-                                    <i class="fa fa-trash-o" (click)="deleteAlias(alias)"></i>
-                                </span>
-                                <span *ngSwitchCase='false'>
-                                    <input type="text" pInputText [(ngModel)]="alias.name" />
-                                    <i class="fa {{alias.icon}}" (click)="editAlias(alias)"></i>
-                                    <i *ngIf="!alias.state" class="fa fa-times" (click)="cancelAlias(alias)"></i>
-                                </span>
-
-                            </div>
-
-                        </template>
-                    </p-dataGrid>
-                </ng-container>
-                <!--Taking care of headings -->
-                <div *ngFor="let section of wikiPage.headings; let i = index;">
-
-                    <div class="heading" [ngSwitch]='disabled[i+1]'>
-
-                        <header *ngSwitchCase='true'>
-                            <input style="cursor:pointer" type="text" pInputText [(ngModel)]="section.title" (click)="onDisable(i+1)" readonly />
-                            <span>
-                                <i class="fa fa-trash-o" (click)="onShow(1,i+1)"></i>
-                            </span>
-                        </header>
-
-                        <header *ngSwitchCase='false'>
-                            <input id="editable"  type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
-                            <span>
-                                <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
-                                <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
+                <!--Page-->
+                <ng-container *ngIf="wikiPage">
+                    <!--Title -->
+                    <div class="header" [ngSwitch]='disabled[0]'>
+                        <span *ngSwitchCase='true'>
+                            <h1 (click)="onDisable(0)">{{wikiPage.title}}</h1>
+                            <span class="icons">
+                                <button pButton type="button" label="Add Heading" (click)="addHeading()"></button>
+                                <button pButton type="button" label="Save" (click)="onSavePage()"></button>
                             </span>
 
-                        </header>
+                        </span>
+                        <span *ngSwitchCase='false'>
+                            <input id="editable" type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
+                            <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
+                            <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
 
+                        </span>
                     </div>
-                    <!--    -->
-                    <div [ngSwitch]=' wikiPageContent[i+1] && wikiPageContent[i+1].active'>
-                        <p-editor [(ngModel)]="section.text" *ngSwitchCase='true'>
 
-                            <header>
-                                <span class="ql-formats">
-                                    <select class="ql-size"></select>
-                                    <select class="ql-font"></select>
-                                </span>
-                                <span class="ql-formats">
-                                    <button class="ql-bold"></button>
-                                    <button class="ql-italic"></button>
-                                    <button class="ql-underline"></button>
-                                    <button class="ql-strike"></button>
-                                </span>
-                                <span class="ql-formats">
-                                    <button class="ql-list" value="ordered"></button>
-                                    <button class="ql-list" value="bullet"></button>
-                                    <button class="ql-indent" value="+1"></button>
-                                    <button class="ql-indent" value="-1"></button>
-                                    <select class="ql-align"></select>
-                                </span>
-                                <span class="ql-formats">
-                                    <button class="ql-script" value="sub"></button>
-                                    <button class="ql-script" value="super"></button>
-                                    <button class="ql-clean"></button>
+
+                    <!--Alias-->
+                    <ng-container *ngIf="wikiPage.aliases">
+                        <p-dataGrid [value]="wikiPage.aliases" [rows]="3">
+                            <header>Aliases</header>
+                            <template let-alias pTemplate="item" ;>
+
+                                <div style="display: inline-block;" [ngSwitch]='alias.state'>
+                                    <span *ngSwitchCase='true'>
+                                        <input style="cursor:pointer" type="text" pInputText [(ngModel)]="alias.name" (click)="editAlias(alias)" readonly />
+                                        <i class="fa fa-trash-o" (click)="deleteAlias(alias)"></i>
+                                    </span>
+                                    <span *ngSwitchCase='false'>
+                                        <input type="text" pInputText [(ngModel)]="alias.name" />
+                                        <i class="fa {{alias.icon}}" (click)="editAlias(alias)"></i>
+                                        <i *ngIf="!alias.state" class="fa fa-times" (click)="cancelAlias(alias)"></i>
+                                    </span>
+
+                                </div>
+
+                            </template>
+                        </p-dataGrid>
+                    </ng-container>
+                    <!--Taking care of headings -->
+                    <div *ngFor="let section of wikiPage.headings; let i = index;">
+
+                        <div class="heading" [ngSwitch]='disabled[i+1]'>
+
+                            <header *ngSwitchCase='true'>
+                                <input style="cursor:pointer" type="text" pInputText [(ngModel)]="section.title" (click)="onDisable(i+1)" readonly />
+                                <span>
+                                    <i class="fa fa-trash-o" (click)="onShow(1,i+1)"></i>
                                 </span>
                             </header>
 
-                        </p-editor>
+                            <header *ngSwitchCase='false'>
+                                <input id="editable"  type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
+                                <span>
+                                    <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
+                                    <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
+                                </span>
 
-                        <div *ngSwitchCase='false' (click)="onEdit(i+1)">
-                            <p-editor id="read-only" [(ngModel)]="section.text">
-                            </p-editor>
+                            </header>
+
                         </div>
+                        <!--Wiki Info    -->
+                        <div [ngSwitch]=' wikiPageContent[i+1] && wikiPageContent[i+1].active'>
+                            <p-editor [(ngModel)]="section.text" *ngSwitchCase='true'>
 
+                                <header>
+                                    <span class="ql-formats">
+                                        <select class="ql-size"></select>
+                                        <select class="ql-font"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-list" value="ordered"></button>
+                                        <button class="ql-list" value="bullet"></button>
+                                        <button class="ql-indent" value="+1"></button>
+                                        <button class="ql-indent" value="-1"></button>
+                                        <select class="ql-align"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-script" value="sub"></button>
+                                        <button class="ql-script" value="super"></button>
+                                        <button class="ql-clean"></button>
+                                    </span>
+                                </header>
+
+                            </p-editor>
+
+                            <div *ngSwitchCase='false' (click)="onEdit(i+1)">
+                                <p-editor id="read-only" [(ngModel)]="section.text">
+                                </p-editor>
+                            </div>
+
+                        </div>
                     </div>
-                </div>
-                <!--References-->
-                <ng-container *ngIf="wikiPage.references">
-                    <p-dataList [value]="wikiPage.references">
-                        <header>References</header>
-                        <template let-ref pTemplate="item">
+                    <!--References-->
+                    <ng-container *ngIf="wikiPage.references">
+                        <p-dataList [value]="wikiPage.references">
+                            <header>References</header>
+                            <template let-ref pTemplate="item">
 
-                            <div [innerHTML]="ref.text" (click)="onReference(ref)"></div>
+                                <div [innerHTML]="ref.text" (click)="onReference(ref)"></div>
 
-                        </template>
-                    </p-dataList>
+                            </template>
+                        </p-dataList>
+                    </ng-container>
+
+
                 </ng-container>
+                <div *ngIf="!wikiPage">
 
-
-            </ng-container>
-            <div *ngIf="!wikiPage">
-
-                <p-editor [(ngModel)]="data.wikiDisplay">
-                    <header>
-                        <span class="ql-formats">
-                            <select class="ql-size"></select>
-                            <select class="ql-font"></select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-bold"></button>
-                            <button class="ql-italic"></button>
-                            <button class="ql-underline"></button>
-                            <button class="ql-strike"></button>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-list" value="ordered"></button>
-                            <button class="ql-list" value="bullet"></button>
-                            <button class="ql-indent" value="+1"></button>
-                            <button class="ql-indent" value="-1"></button>
-                            <select class="ql-align"></select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-script" value="sub"></button>
-                            <button class="ql-script" value="super"></button>
-                            <button class="ql-clean"></button>
-                        </span>
-                    </header>
-                </p-editor>
+                    <p-editor [(ngModel)]="data.wikiDisplay">
+                        <header>
+                            <span class="ql-formats">
+                                <select class="ql-size"></select>
+                                <select class="ql-font"></select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-bold"></button>
+                                <button class="ql-italic"></button>
+                                <button class="ql-underline"></button>
+                                <button class="ql-strike"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-list" value="ordered"></button>
+                                <button class="ql-list" value="bullet"></button>
+                                <button class="ql-indent" value="+1"></button>
+                                <button class="ql-indent" value="-1"></button>
+                                <select class="ql-align"></select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-script" value="sub"></button>
+                                <button class="ql-script" value="super"></button>
+                                <button class="ql-clean"></button>
+                            </span>
+                        </header>
+                    </p-editor>
+                </div>
             </div>
         </div>
 
@@ -237,7 +243,7 @@
                 <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
                 <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
                 <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
-                
+
             </div>
             <!--When a page is selected-->
             <div class="nav-actions" *ngIf="data.selectedEntry.type == 'page'">
@@ -249,20 +255,25 @@
                 <p-column field="label">
                     <template let-node="rowData" pTemplate="body">
                         <span [ngSwitch]="rename && node.data.id.$oid === data.selectedEntry.data.id.$oid"(contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation">
-                        <span *ngSwitchCase="false">
+                            <span *ngSwitchCase="false">
                                 {{node.label}}
                             </span>
                             <span *ngSwitchCase="true">
                                 <input pInputText type="text" [(ngModel)]="newName" (click)="$event.stopPropagation()" />
-                                    <button pButton icon="fa-check" (click)="onRename(node,true); $event.stopPropagation(); "></button>
-                                    <button pButton icon="fa-times" (click)="onRename(node,false); $event.stopPropagation();"></button>
+                                <button pButton icon="fa-check" (click)="onRename(node,true); $event.stopPropagation(); "></button>
+                                <button pButton icon="fa-times" (click)="onRename(node,false); $event.stopPropagation();"></button>
                             </span>
                         </span>
-                        
+
                     </template>
 
                 </p-column>
             </p-treeTable>
+            <p-toggleButton [(ngModel)]="statMode" onLabel="Stats On" offLabel="Stats Off">
+                
+            </p-toggleButton>
+            
+
         </div>
     </div>
 </div>

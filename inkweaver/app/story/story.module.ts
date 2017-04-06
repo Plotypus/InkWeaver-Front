@@ -13,6 +13,7 @@ import { WikiModule } from './wiki/wiki.module';
 import { StatsModule } from './stats/stats.module';
 import { StoryComponent } from './story.component';
 import { StoryService } from './story.service';
+//import { StatsComponent } from './stats/stats.component';
 
 
 @NgModule({

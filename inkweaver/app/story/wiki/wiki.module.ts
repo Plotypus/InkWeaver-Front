@@ -20,12 +20,16 @@ import {
     DataGridModule,
     ListboxModule,
     CheckboxModule,
-    ContextMenuModule
+    ContextMenuModule,
+    ToggleButtonModule
+
     
 } from 'primeng/primeng';
 
 import { WikiService } from './wiki.service';
 import { WikiComponent } from './wiki.component';
+import { StatsModule } from '../stats/stats.module';
+
 
 @NgModule({
     imports: [
@@ -46,7 +50,10 @@ import { WikiComponent } from './wiki.component';
         ConfirmDialogModule,
         ListboxModule,
         CheckboxModule,
-        ContextMenuModule
+        ContextMenuModule,
+        StatsModule,
+        ToggleButtonModule
+
         
     ],
     providers: [WikiService, FilterPipe, JsonPipe],

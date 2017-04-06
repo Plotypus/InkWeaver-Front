@@ -1,9 +1,6 @@
-﻿<div class="ui-grid ui-grid-responsive">
-    <div class="ui-grid-row">
+﻿        <!-- Stats -->
 
-        <!-- Stats -->
-
-        <div class="stats ui-grid-col-9" [ngSwitch]='mode'>
+        <div [ngSwitch]='mode'>
 
         <!-- Story Stats -->
         <ng-container *ngSwitchCase='true'>
@@ -35,7 +32,7 @@
         </ng-container>
         </div>
 
-        <!-- Navigation -->
+        <!-- Navigation 
         <div class="navigation ui-grid-col-3">
         <p-tabView>
         <p-tabPanel header={{data.story.story_title}}>
@@ -64,6 +61,4 @@
             </p-treeTable>
         </p-tabPanel>
         </p-tabView>
-        </div>
-    </div>
-</div>
+        </div> -->

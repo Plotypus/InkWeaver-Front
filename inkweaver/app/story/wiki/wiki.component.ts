@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewChildren } from '@angular/core';
+﻿import { Component, OnInit, ViewChildren, ViewChild } from '@angular/core';
 import { TreeNode, Editor, MenuItem } from 'primeng/primeng';
 import { Router } from '@angular/router';
 
@@ -8,13 +8,14 @@ import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 import { FilterPipe } from './filter.pipe';
-
+import { StatsComponent } from '../stats/stats.component';
+import { StatsService} from '../stats/stats.service';
 @Component({
     selector: 'wiki',
-    templateUrl: './app/story/wiki/wiki.component.html'
-})
+    templateUrl: './app/story/wiki/wiki.component.html',
+}) 
 export class WikiComponent {
-
+    @ViewChild(StatsComponent) stats: StatsComponent;
     private data: any;
     private showAddDialog: any;
     
@@ -57,12 +58,15 @@ export class WikiComponent {
     //context menus
     private contextMenuItems: MenuItem[];
 
+    //stats stuff
+    private statMode = false;
 
     constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
         private editService: EditService,
         private parserService:ParserService,
+        private statsService:StatsService,
         private router: Router) {}
 
     ngOnInit() {
@@ -150,26 +154,31 @@ export class WikiComponent {
      public onSelected(page: any) {
 
          //Take care of when the title page is clicked
-         this.rename = false;
-         if(page.node.type == 'filler')
-             return;
-
-         if (page.node.type == 'title') {
-             this.wikiPage = null;
-             this.apiService.refreshWikiInfo();
-
-         }
-         else if (page.node.type == "category") {
-             page.node.expanded = !page.node.expanded;
-             //get information for the page.
-             this.wikiService.getWikiSegment(page.node.data.id, this.onGetCallback());
-         }
-         else {
-
-             this.wikiService.getWikiPage(page.node.data.id, this.onGetCallback());
-         }
          this.data.selectedEntry = page.node;
+         if (!this.statMode) {
 
+
+             this.rename = false;
+             if (page.node.type == 'filler')
+                 return;
+
+             if (page.node.type == 'title') {
+                 this.wikiPage = null;
+                 this.apiService.refreshWikiInfo();
+
+             }
+             else if (page.node.type == "category") {
+                 page.node.expanded = !page.node.expanded;
+                 //get information for the page.
+                 this.wikiService.getWikiSegment(page.node.data.id, this.onGetCallback());
+             }
+             else {
+
+                 this.wikiService.getWikiPage(page.node.data.id, this.onGetCallback());
+             }
+         }
+         else
+             this.stats.showWikiStats();
      }
 
      public parsePage() {
@@ -508,6 +517,7 @@ export class WikiComponent {
                     this.data.wikiFlatten.push({ label: ele.label, value: ele });
                     
                 }
+                this.statsService.get_page_frequency(this.data.story.story_id, this.data.wiki.wiki_id);
                 
             }
         }

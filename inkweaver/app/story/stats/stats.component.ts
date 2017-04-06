@@ -1,4 +1,4 @@
-﻿import { Component, ViewChild } from '@angular/core';
+﻿import { Component, ViewChild, Input } from '@angular/core';
 import { UIChart, TreeNode, SelectItem } from 'primeng/primeng';
 import { Router } from '@angular/router';
 
@@ -13,12 +13,13 @@ import {ParserService} from '../../shared/parser.service';
     selector: 'stats',
     templateUrl: './app/story/stats/stats.component.html'
 })
+
 export class StatsComponent {
     @ViewChild(UIChart) chart: UIChart;
+    @Input() mode: boolean;
     private data: any;
     private wordFreq: any;
     private statData: any;
-    private mode:any;
     private pageFreq:any;
     private wikiNav = [];
     private statsOptions: SelectItem[];
@@ -38,6 +39,7 @@ export class StatsComponent {
 
     ngOnInit(){
         this.data = this.apiService.data;
+        /*
         if(!this.data.statSection.hasOwnProperty('data'))
         {
             this.data.statSection = this.data.storyNode[0];
@@ -46,36 +48,45 @@ export class StatsComponent {
         else
             this.statsService.get_section_statistics(this.data.statSection.data.section_id);
         this.statsService.get_page_frequency(this.data.story.story_id,this.data.wiki.wiki_id);
-        this.mode = true;
+        */
+        //mode true show editor stats
+        if(this.mode)
+        {
+
+        }
+        //wiki stats
+        else{
+            this.showWikiStats();
+        }
     }
 
 
     public selectSection(event: any) {
-        this.mode = true;
+        
         this.data.statSection = event.node;
         this.statsService.get_section_statistics(event.node.data.section_id);
     //we would want to call ask for the stats
     }
 
-    public selectSegment(event:any)
+    public showWikiStats()
     {
         
-        this.mode = false;
+        
         //this.data.statSegment = event.node;
+        let node = this.data.selectedEntry;
         let label = [];
         for(let l in this.data.statsSections)
             label.push(this.data.statsSections[l].title);
         this.pageFreq = {};
         let dataset = [];
-        this.data.wikiFlatten;
-        this.statSegments = this.parserService.getTreeArray(event.node).filter((ele:any)=>
+        this.statSegments = this.parserService.getTreeArray(node).filter((ele:any)=>
             {
-                return ele.type != 'filler'
+            return ele.type != 'filler' && ele.type != 'category';
             });
 
         this.statsOptions = this.data.wikiFlatten.filter((ele: any) => {
 
-            return this.statSegments.indexOf(ele.value) == -1;
+            return this.statSegments.indexOf(ele.value) == -1 && ele.value.type == 'page';
 
         });
 
@@ -132,7 +143,7 @@ export class StatsComponent {
         });
 
         this.statsOptions = addback;
-        this.colors.shift();
+        this.colors.pop();
         this.updateChart();
 
     }
