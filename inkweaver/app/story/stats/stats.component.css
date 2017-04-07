@@ -12,18 +12,42 @@ stats > .ui-grid, stats > .ui-grid > .ui-grid-row{
 }
 
 .stats .search{
-	float: left;
+    float: left;
     padding-bottom: .5em
 }
 
 stats .ui-tabview .ui-tabview-panel{
-	padding:0em !important;
+    padding:0em !important;
 }
 
 stats .ui-tabview.ui-widget-content{
-	background: var(--light-blue);
+    background: var(--light-blue);
 }
 
 stats .ui-tabview-panel{
-	border:none;
+    border:none;
+}
+
+.ui-chips>ul.ui-inputtext {
+    clear: left;
+    cursor: text;
+    list-style-type: none;
+    margin: 0;
+    overflow: auto;
+    padding: 0 .25em;
+    background: transparent;
+    border:none;
+}
+
+.stats .ui-chips-input-token{
+    display:none;
+}
+
+.stats .ui-chips-token{
+    padding:;
+    padding: .25em;
+}
+
+.stats .ui-dropdown{
+    width:25% !important;
 }

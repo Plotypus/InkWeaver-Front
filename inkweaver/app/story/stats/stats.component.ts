@@ -23,7 +23,7 @@ export class StatsComponent {
     private pageFreq:any;
     private wikiNav = [];
     private statsOptions: SelectItem[];
-    private selectedOption: any;
+    private selectedOption: string;
     private colors = []; 
     private statSegments: any;
     private allOptions: SelectItem[];
@@ -90,11 +90,12 @@ export class StatsComponent {
 
         });
 
-        if(this.statSegments.length == 1)
+        if(this.statSegments.length >= 1)
         {
             this.title = this.statSegments[0].label;
         }
-        this.allOptions = this.statsOptions;
+
+        this.allOptions = this.statsOptions.concat(this.statSegments);
         
         for(let ele of this.statSegments)
         {    
