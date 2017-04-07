@@ -16,10 +16,6 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
     height: calc(100% - 3em);
 }
 
-.stats {
-    height: 3em;
-    padding: 1em !important;
-}
 
 /* Toolbar */
 .ui-editor-toolbar {
@@ -171,4 +167,9 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
 
 .bookmark-header i {
     margin-right: 0.5em;
+}
+
+p-togglebutton{
+    float:right;
+    padding: 1em;
 }

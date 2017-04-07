@@ -27,6 +27,7 @@ export class StatsComponent {
     private colors = []; 
     private statSegments: any;
     private allOptions: SelectItem[];
+    private title: any;
     
     constructor(
         private router: Router,
@@ -52,7 +53,7 @@ export class StatsComponent {
         //mode true show editor stats
         if(this.mode)
         {
-
+            this.getSectionStats();
         }
         //wiki stats
         else{
@@ -61,10 +62,9 @@ export class StatsComponent {
     }
 
 
-    public selectSection(event: any) {
+    public getSectionStats() {
         
-        this.data.statSection = event.node;
-        this.statsService.get_section_statistics(event.node.data.section_id);
+        this.statsService.get_section_statistics(this.data.section.data.section_id);
     //we would want to call ask for the stats
     }
 
@@ -90,6 +90,10 @@ export class StatsComponent {
 
         });
 
+        if(this.statSegments.length == 1)
+        {
+            this.title = this.statSegments[0].label;
+        }
         this.allOptions = this.statsOptions;
         
         for(let ele of this.statSegments)

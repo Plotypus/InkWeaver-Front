@@ -4,7 +4,7 @@
 
         <!-- Story Stats -->
         <ng-container *ngSwitchCase='true'>
-           <h1>Statistics for {{data.statSection.data.title}}</h1>
+           <h1>Statistics for {{data.section.data.title}}</h1>
            	<h2> Word Count: {{data.stats.word_count}} </h2>
         	<div class="search">
         	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
@@ -17,7 +17,7 @@
         </ng-container>
         <!-- Wiki Stats -->
         <ng-container *ngSwitchCase='false'>
-            <h1>Statistics for </h1>
+            <h1>Statistics for {{title}}</h1>
             
             <div class="ui-grid-col-2">
             <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 

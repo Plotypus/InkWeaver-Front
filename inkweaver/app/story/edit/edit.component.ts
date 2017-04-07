@@ -16,13 +16,16 @@ import { ID } from '../../models/id.model';
 import { Segment } from '../../models/wiki/segment.model';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 
+import { StatsComponent } from '../stats/stats.component';
+import { StatsService } from '../stats/stats.service';
+
 @Component({
     selector: 'edit',
     templateUrl: './app/story/edit/edit.component.html'
 })
 export class EditComponent {
     @ViewChild(Editor) editor: Editor;
-
+    @ViewChild(StatsComponent) stats: StatsComponent;
     private data: any;
     private editorRef: any;
     private wordCount: number;
@@ -63,7 +66,10 @@ export class EditComponent {
     private note: any = { display: 'none' };
     private noteEditing: boolean = false;
 
-    constructor(
+
+    //Stats
+    private statMode = false;
+     constructor(
         private router: Router,
         private storyService: StoryService,
         private editService: EditService,
@@ -351,16 +357,22 @@ export class EditComponent {
     }
 
     // Section
-    public selectSection(event: any) {
-        this.note.display = 'none';
-        this.data.tooltip.display = 'none';
-        this.suggest.display = 'none';
+    public selectSection(event: any) { 
 
-        this.renaming = false;
         this.data.section = event.node;
-        this.save();
-        this.data.prevSection = event.node;
-        this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
+        if (!this.statMode) {
+            this.note.display = 'none';
+            this.data.tooltip.display = 'none';
+            this.suggest.display = 'none';
+
+            this.renaming = false;
+
+            this.save();
+            this.data.prevSection = event.node;
+            this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
+        }
+        else
+            this.stats.getSectionStats();
     }
     public addSection() {
         this.displaySectionCreator = false;
