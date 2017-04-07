@@ -19,16 +19,16 @@
         <ng-container *ngSwitchCase='false'>
             <h1>Statistics for {{title}}</h1>
             
-            <div class="ui-grid-col-2">
             <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 
-            (ngModelChange)="onChange($event)"></p-dropdown>
+            (ngModelChange)="onChange()" [autoWidth] ='true'></p-dropdown>
+
             <p-chips field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
-                
+             
             </p-chips>
-            </div>
-            <div class="ui-grid-col-7">
-            <p-chart type="line" [data]="pageFreq"></p-chart>
-            </div>
+            
+            
+            <p-chart type="line" [data]="pageFreq" [options]="chartOption"></p-chart>
+            
         </ng-container>
         </div>
 
