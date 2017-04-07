@@ -41,17 +41,6 @@ export class StatsComponent {
 
     ngOnInit(){
         this.data = this.apiService.data;
-        /*
-        if(!this.data.statSection.hasOwnProperty('data'))
-        {
-            this.data.statSection = this.data.storyNode[0];
-            this.statsService.get_section_statistics(this.data.storyNode[0].data.section_id);   
-        }
-        else
-            this.statsService.get_section_statistics(this.data.statSection.data.section_id);
-        this.statsService.get_page_frequency(this.data.story.story_id,this.data.wiki.wiki_id);
-        */
-        //mode true show editor stats
         if(this.mode)
         {
             this.getSectionStats();
@@ -66,17 +55,19 @@ export class StatsComponent {
                         ticks: {
                             stepSize: 1,
                             beginAtZero: true,
-                            min: 0
+                            min: 0,
+                            padding: 0
                         }
                     }],
                     xAxes: [{
-                        ticks:{
+                        ticks: {
                             stepSize: 1,
                             beginAtZero: true,
-                            min: 0
+                            min: 0,
+                            padding: 0,
+                            callback: function(value) { return value.length > 25 ? value.substring(0, 25) + '...' : value; }
                         }
-
-                    }]
+                     }]
                 }
             }
         }
