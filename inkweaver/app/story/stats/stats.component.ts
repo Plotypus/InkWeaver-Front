@@ -28,6 +28,7 @@ export class StatsComponent {
     private statSegments: any;
     private allOptions: SelectItem[];
     private title: any;
+    private chartOption: any;
     
     constructor(
         private router: Router,
@@ -58,6 +59,26 @@ export class StatsComponent {
         //wiki stats
         else{
             this.showWikiStats();
+            this.selectedOption = null;
+            this.chartOption = {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            stepSize: 1,
+                            beginAtZero: true,
+                            min: 0
+                        }
+                    }],
+                    xAxes: [{
+                        ticks:{
+                            stepSize: 1,
+                            beginAtZero: true,
+                            min: 0
+                        }
+
+                    }]
+                }
+            }
         }
     }
 
@@ -81,7 +102,7 @@ export class StatsComponent {
         let dataset = [];
         this.statSegments = this.parserService.getTreeArray(node).filter((ele:any)=>
             {
-            return ele.type != 'filler' && ele.type != 'category';
+            return ele.type != 'filler' && ele.type != 'category' && ele.type !='title';
             });
 
         this.statsOptions = this.data.wikiFlatten.filter((ele: any) => {
@@ -95,8 +116,12 @@ export class StatsComponent {
             this.title = this.statSegments[0].label;
         }
 
-        this.allOptions = this.statsOptions.concat(this.statSegments);
+        this.allOptions = this.data.wikiFlatten.filter((ele:any)=>{
+            return this.statSegments.indexOf(ele.value) != -1
+        });
         
+        this.allOptions = this.allOptions.concat(this.statsOptions);        
+
         for(let ele of this.statSegments)
         {    
         
@@ -125,27 +150,43 @@ export class StatsComponent {
         
     }
 
-    public onChange(event:any){
-        this.statSegments.push(this.selectedOption);
+    public onChange(){
+        let option = this.selectedOption;
+        if (typeof option !== 'undefined') {
+            this.statSegments.push(option);
 
-        this.statsOptions = this.statsOptions.filter((ele:any)=>{
-            return ele.value != this.selectedOption;
-        });
-        this.updateChart();
+
+            this.statsOptions = this.statsOptions.filter((ele: any) => {
+                return ele.value != option;
+            });
+            this.updateChart();
+            this.selectedOption = null;
+        }
+        else
+            this.showWikiStats();
+
 
         
     }
 
     public updateDropdown(event:any, items:any){
 
+        let temp = [];
+        for(let ele of items)
+        {
+            if ('_$visited' in ele.data.id) {
+                delete ele.data.id['_$visited'];
+                delete ele['_$visited'];
+            }
+            temp.push(ele);
+            
+        }
+        items = temp;
+
         //finding what was removed
         let addback = this.allOptions.filter((ele:any) => {
-            return items.indexOf(ele) == -1;
+            return items.indexOf(ele.value) == -1;
         })
-
-        let toadd = addback.filter((ele:any)=>{
-            return this.statsOptions.indexOf(ele) == -1;
-        });
 
         this.statsOptions = addback;
         this.colors.pop();

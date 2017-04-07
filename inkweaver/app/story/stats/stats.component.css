@@ -5,6 +5,7 @@
     color: var(--light-blue);
     padding: .5em 1em .5em 1em;
     height: 100%;
+    overflow: auto;
 }
 
 stats > .ui-grid, stats > .ui-grid > .ui-grid-row{
