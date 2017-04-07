@@ -114,7 +114,6 @@
     <TypeScriptCompile Include="app\models\story\content-object.model.ts" />
     <TypeScriptCompile Include="app\models\story\tooltip.model.ts" />
     <TypeScriptCompile Include="app\models\wiki\reference.model.ts" />
-    <TypeScriptCompile Include="app\shared\filter.pipe.ts" />
     <TypeScriptCompile Include="app\shared\parser.service.ts" />
     <TypeScriptCompile Include="app\shared\truncate.pipe.ts" />
     <TypeScriptCompile Include="app\story\edit\edit.module.ts" />
@@ -162,7 +161,6 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="LICENSE" />
-    <Content Include="Dockerfile" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

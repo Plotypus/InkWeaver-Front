@@ -16,6 +16,11 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
     height: calc(100% - 3em);
 }
 
+.word-count {
+    height: 3em;
+    background: #e6e6e6;
+    padding: 1em !important;
+}
 
 /* Toolbar */
 .ui-editor-toolbar {
@@ -116,7 +121,7 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
         border: none;
     }
 
-    code {
+code {
     width: 1em;
     height: 1em;
     margin-right: 0.5em;

@@ -31,40 +31,7 @@ import { Stats } from '../models/stats/stats.model';
 
 @Injectable()
 export class ApiService {
-    public data = {
-        loading: false,
-        tooltip: new Tooltip(),
-
-        user: new User(),
-        stories: new Array<StorySummary>(),
-        wikis: new Array<WikiSummary>(),
-        linkTable: new LinkTable(),
-        aliasTable: new AliasTable(),
-
-        storyDisplay: '',
-        story: new Story(),
-        prevSection: new Section(),
-        section: new Section(),
-        storyNode: new Array<TreeNode>(),
-        contentObject: new ContentObject(),
-        bookmarks: new Array<TreeNode>(),
-
-        statSection: new Section(),
-        stats: new Stats(),
-        statsPages: {},
-        statsSections: {},
-        statsPageFrequency: {},
-
-        wikiNav: [],
-        wikiDisplay: '',
-        wiki: new Wiki(),
-        segment: new Segment(),
-        wikiFlatten: [],
-        page: new Page(),
-        wikiFuctions: new Array<Function>(),
-        storyFunction: new Function(),
-        selectedEntry: {},
-    };
+    public data: any;
 
     public uuid: string;
     public local: boolean = true;
@@ -78,7 +45,7 @@ export class ApiService {
 
     constructor(
         private socket: WebSocketService,
-        private parser: ParserService) { }
+        private parser: ParserService) { this.resetData(); }
 
     public connect() {
         let url: string = this.local ? 'ws://localhost:8080/ws' : 'wss://inkweaver.plotypus.net:8080/ws';
@@ -146,6 +113,8 @@ export class ApiService {
 
                             // ----- Story ----- //
                             case 'story_created':
+                                reply.title = reply.story_title;
+                                reply.wiki_summary = this.data.newWiki;
                                 this.data.stories.push(reply);
                                 break;
                             case 'story_updated':
@@ -257,6 +226,7 @@ export class ApiService {
                                         found.parent.children.splice(index, 1);
                                     });
                                 this.parser.findSection(this.data.storyNode[0], JSON.stringify(reply.to_parent_id), (found: TreeNode) => {
+                                    moved.parent = found;
                                     found.children.splice(reply.to_index, 0, moved);
                                 });
                                 break;
@@ -387,6 +357,8 @@ export class ApiService {
 
                             // Wiki
                             case 'wiki_created':
+                                reply.title = reply.wiki_title;
+                                this.data.newWiki = reply;
                                 break;
                             case 'wiki_deleted':
                                 break;
@@ -608,6 +580,45 @@ export class ApiService {
         this.send({ action: 'get_wiki_alias_list' }, () => { }, { load: true });
     }
 
+    // Reset the data object
+    public resetData() {
+        this.data = {
+            loading: false,
+            tooltip: new Tooltip(),
+
+            user: new User(),
+            stories: new Array<StorySummary>(),
+            wikis: new Array<WikiSummary>(),
+            newWiki: new WikiSummary(),
+            linkTable: new LinkTable(),
+            aliasTable: new AliasTable(),
+
+            storyDisplay: '',
+            story: new Story(),
+            prevSection: new Section(),
+            section: new Section(),
+            storyNode: new Array<TreeNode>(),
+            contentObject: new ContentObject(),
+            bookmarks: new Array<TreeNode>(),
+
+            statSection: new Section(),
+            statSegments: [],
+            stats: new Stats(),
+            statsPages: {},
+            statsSections: {},
+            statsPageFrequency: {},
+
+            wikiNav: [],
+            wikiDisplay: '',
+            wiki: new Wiki(),
+            segment: new Segment(),
+            page: new Page(),
+            wikiFuctions: new Array<Function>(),
+            storyFunction: new Function(),
+            selectedEntry: {},
+        };
+    }
+
     /**
      * Send a message on the websocket
      * @param message
@@ -619,25 +630,21 @@ export class ApiService {
 
         // Keep track of outgoing messages
         let key: string = '';
-
         if (message.action === 'add_page') {
             key = 'page' + message.title;
-
         } else if (message.action === 'get_wiki_page') {
             key = 'page' + message.identifier.message_id;
         } else if (message.action === 'add_segment') {
             key = 'segment' + message.title;
         } else if (message.action === 'get_wiki_segment') {
             key = 'segment' + message.identifier.message_id;
-        }
-        else if (message.action === 'delete_segment')
+        } else if (message.action === 'delete_segment') {
             key = 'segment' + message.identifier.message_id;
-        else if (message.action === 'delete_page')
+        } else if (message.action === 'delete_page') {
             key = 'page' + message.identifier.message_id;
-        else if (message.action.includes("template_heading")) {
+        } else if (message.action.includes("template_heading")) {
             key = "template_heading" + message.identifier.message_id;
-        }
-        else {
+        } else {
             key = message.identifier.message_id;
         }
 

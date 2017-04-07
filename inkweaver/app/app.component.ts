@@ -27,6 +27,7 @@ export class AppComponent {
                 label: 'Sign Out', command: (event) => {
                     this.userService.signOut();
                     this.websocketService.close();
+                    this.apiService.resetData();
                     this.router.navigate(['/login']);
                 }
             },

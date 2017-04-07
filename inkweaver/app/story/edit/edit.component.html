@@ -64,7 +64,7 @@ width="450" height="450" responsive="true" (keyup.enter)="deleteBookmark()">
             </div>
             <!-- Editor -->
             <div *ngSwitchCase='false' class="editor">
-            
+
                 <div class="loader" *ngIf="data.loading">
                     <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
                 </div>
@@ -120,7 +120,7 @@ width="450" height="450" responsive="true" (keyup.enter)="deleteBookmark()">
                     </div>
 
                     <!-- Word Count -->
-                    <div class="stats">Word Count: {{wordCount}}</div>
+                    <div class="word-count">Word Count: {{wordCount}}</div>
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@ width="450" height="450" responsive="true" (keyup.enter)="deleteBookmark()">
                         <span [ngClass]="{'section-drag': dragNodeID.$oid === node.data.section_id.$oid}" class="section-header"
                         pDraggable="sectiondragdrop" pDroppable="sectiondragdrop"
                         (onDragStart)="sectionDrag(node)" (onDragEnd)="endDrag()"
-                        (onDrop)="sectionDrop(node)" (onDragEnter)="sectionDragEnter(node)" (onDragLeave)="dragLeave()"
+                        (onDrop)="sectionDrop(node)" (onDragEnter)="sectionDragEnter(node)"
                         (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation()">
                         <span [ngSwitch]="!!renaming && node.data.section_id.$oid === data.section.data.section_id.$oid">
                             <span *ngSwitchCase="false">{{node.data.title | truncate : 25}}</span>
@@ -157,34 +157,29 @@ width="450" height="450" responsive="true" (keyup.enter)="deleteBookmark()">
         <hr />
 
         <div class="bookmarks">
-            <div class="nav-actions">
-                <div class="ui-grid-col-3" (click)="openBookmarkRenamer()">Rename</div>
-                <div class="ui-grid-col-6" (click)="openBookmarkCreator()">Add Bookmark</div>
-                <div class="ui-grid-col-3" (click)="displayBookmarkDeleter = true">Delete</div>
+                <div class="nav-actions">
+                    <div class="ui-grid-col-3" (click)="openBookmarkRenamer()">Rename</div>
+                    <div class="ui-grid-col-6" (click)="openBookmarkCreator()">Add Bookmark</div>
+                    <div class="ui-grid-col-3" (click)="displayBookmarkDeleter = true">Delete</div>
+                </div>
+                <p-treeTable [value]="data.bookmarks" selectionMode="single" [(selection)]="oldBookmark" (onNodeSelect)="selectBookmark($event)">
+                    <p-column field="title">
+                        <template let-col let-node="rowData" pTemplate="body">
+                            <span [ngSwitch]="!!bookmarkRenaming && node.data.bookmark_id.$oid === bookmark.data.bookmark_id.$oid">
+                                <span *ngSwitchCase="false">
+                                    <span *ngIf="!node.parent && node.data.name" class="bookmark-header"><i class="fa fa-bookmark"></i> {{node.data.name | truncate : 25}}</span>
+                                    <span *ngIf="node.parent && node.data.name">{{node.data.name | truncate : 25}}</span>
+                                </span>
+                                <span *ngSwitchCase="true" class="edit-title">
+                                    <input pInputText type="text" [(ngModel)]="newBookmark.name" (click)="$event.stopPropagation()" />
+                                    <button class="inline-button" pButton icon="fa-check" (click)="renameBookmark($event)"></button>
+                                    <button class="inline-button" pButton icon="fa-times" (click)="cancelRenameBookmark($event)"></button>
+                                </span>
+                            </span>
+                        </template>
+                    </p-column>
+                </p-treeTable>
             </div>
-            <p-treeTable [value]="data.bookmarks" selectionMode="single" [(selection)]="oldBookmark" (onNodeSelect)="selectBookmark($event)">
-                <p-column field="title">
-                    <template let-col let-node="rowData" pTemplate="body">
-                        <span [ngClass]="{'section-drag': dragBookmarkID.$oid === node.data.bookmark_id.$oid}"
-                        pDraggable="bookmarkdragdrop" pDroppable="bookmarkdragdrop"
-                        (onDragStart)="bookmarkDrag(node)" (onDragEnd)="endDrag()"
-                        (onDrop)="bookmarkDrop(node)" (onDragEnter)="bookmarkDragEnter(node)" (onDragLeave)="dragLeave()">
-                        <span [ngSwitch]="!!bookmarkRenaming && node.data.bookmark_id.$oid === bookmark.data.bookmark_id.$oid">
-                            <span *ngSwitchCase="false">
-                                <span *ngIf="!node.parent && node.data.name" class="bookmark-header"><i class="fa fa-bookmark"></i> {{node.data.name | truncate : 25}}</span>
-                                <span *ngIf="node.parent && node.data.name">{{node.data.name | truncate : 25}}</span>
-                            </span>
-                            <span *ngSwitchCase="true" class="edit-title">
-                                <input pInputText type="text" [(ngModel)]="newBookmark.name" (click)="$event.stopPropagation()" />
-                                <button class="inline-button" pButton icon="fa-check" (click)="renameBookmark($event)"></button>
-                                <button class="inline-button" pButton icon="fa-times" (click)="cancelRenameBookmark($event)"></button>
-                            </span>
-                        </span>
-                    </span>
-                </template>
-            </p-column>
-        </p-treeTable>
+        </div>
     </div>
-</div>
-</div>
 </div>

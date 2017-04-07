@@ -51,9 +51,7 @@ export class EditComponent {
     private newSectionTitle: string;
     private contextMenuItems: MenuItem[];
     private moveSection: TreeNode;
-    private moveBookmark: TreeNode;
     private dragNodeID: ID = new ID();
-    private dragBookmarkID: ID = new ID();
 
     // Bookmarks
     private bookmark: TreeNode = { data: {} };
@@ -84,6 +82,9 @@ export class EditComponent {
 
         if (!this.apiService.messages) {
             this.router.navigate(['/login']);
+        }
+        window.onbeforeunload = () => {
+            this.save();
         }
     }
 
@@ -132,19 +133,19 @@ export class EditComponent {
                         let valIndex: number = 0;
                         let bounds = this.editor.quill.getBounds(index);
                         let top: number = bounds.top + 200;
-                        this.loopPages(this, this.data.segment, (page: PageSummary) => {
-                            if (page.title.startsWith(this.predict)) {
+                        this.loopPages(this, this.data.wikiNav[0], (page: TreeNode) => {
+                            if (page.data.title.startsWith(this.predict)) {
                                 if (this.suggest.display === 'none') {
                                     this.suggest = {
-                                        options: [{ label: page.title, value: { title: page.title, page_id: page.page_id, index: valIndex++ } }],
+                                        options: [{ label: page.data.title, value: { title: page.data.title, page_id: page.data.id, index: valIndex++ } }],
                                         display: 'block', top: top + 'px', left: bounds.left + 'px'
                                     };
                                     this.suggest.value = this.suggest.options[0].value;
                                 } else {
-                                    this.suggest.options.push({ label: page.title, value: { title: page.title, page_id: page.page_id, index: valIndex++ } });
+                                    this.suggest.options.push({ label: page.data.title, value: { title: page.data.title, page_id: page.data.id, index: valIndex++ } });
                                 }
                             }
-                        }, (seg: Segment) => { });
+                        }, (seg: TreeNode) => { });
                         if (this.suggest.display === 'none') {
                             this.predict = '';
                         }
@@ -210,15 +211,7 @@ export class EditComponent {
     }
 
     ngOnDestroy() {
-        if (this.data.prevSection.data) {
-            this.save();
-        }
-        if (this.data.section.data) {
-            this.data.story.position_context = {
-                section_id: this.data.section.data.section_id, paragraph_id: this.paragraphPosition
-            };
-            this.userService.setUserStoryPositionContext(this.data.section.data.section_id, this.paragraphPosition);
-        }
+        this.save();
     }
 
     public setHotkey(editComp: EditComponent) {
@@ -294,13 +287,11 @@ export class EditComponent {
 
             // Set the wiki pages in the dropdown
             editor.newLinkPages = [{ label: 'Create New Page', value: null }];
-            editor.newSegments = [{
-                label: editor.data.segment.title, value: editor.data.segment.segment_id
-            }];
-            editor.loopPages(editor, editor.data.segment, (page: PageSummary) => {
-                editor.newLinkPages.push({ label: page.title, value: page.page_id });
-            }, (seg: Segment) => {
-                editor.newSegments.push({ label: seg.title, value: seg.segment_id });
+            editor.newSegments = [];
+            editor.loopPages(editor, editor.data.wikiNav[0], (page: TreeNode) => {
+                editor.newLinkPages.push({ label: page.data.title, value: page.data.id });
+            }, (seg: TreeNode) => {
+                editor.newSegments.push({ label: seg.data.title, value: seg.data.id });
             });
             editor.newLinkID = editor.newLinkPages[0].value;
             editor.newSegmentID = editor.newSegments[0].value;
@@ -433,14 +424,19 @@ export class EditComponent {
     }
 
     // -------------------- Other -------------------- //
-    public loopPages(editor: EditComponent, segment: Segment,
-        func: (page: PageSummary) => any, sFunc: (s: Segment) => any) {
-        for (let page of segment.pages) {
-            func(page);
-        }
-        for (let seg of segment.segments) {
-            sFunc(seg);
-            editor.loopPages(editor, seg, func, sFunc);
+    public loopPages(editor: EditComponent, segment: TreeNode,
+        func: (page: TreeNode) => any, sFunc: (s: TreeNode) => any) {
+        if (segment.type === 'filler') {
+            // Do nothing
+        } else if (segment.type === 'page') {
+            func(segment);
+        } else {
+            sFunc(segment);
+            if (segment.children) {
+                for (let seg of segment.children) {
+                    editor.loopPages(editor, seg, func, sFunc);
+                }
+            }
         }
     }
 
@@ -504,14 +500,18 @@ export class EditComponent {
     }
 
     public save() {
-        this.data.story.position_context = {
-            section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
-        };
-        let paragraphs: any[] = this.editorRef.querySelectorAll('p');
-        if (paragraphs.length > 0) {
-            let newContentObject: any = this.parserService.parseHtml(paragraphs);
-            this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
-            this.apiService.refreshStoryContent();
+        if (this.data.prevSection.data) {
+            this.data.story.position_context = {
+                section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
+            };
+            this.userService.setUserStoryPositionContext(this.data.prevSection.data.section_id, this.paragraphPosition);
+
+            let paragraphs: any[] = this.editorRef.querySelectorAll('p');
+            if (paragraphs && paragraphs.length > 0) {
+                let newContentObject: any = this.parserService.parseHtml(paragraphs);
+                this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
+                this.apiService.refreshStoryContent();
+            }
         }
     }
 
@@ -536,34 +536,8 @@ export class EditComponent {
         this.endDrag();
     }
 
-    public bookmarkDrag(node) {
-        if (node.parent) {
-            this.moveBookmark = node;
-        }
-    }
-
-    public bookmarkDragEnter(node) {
-        if (this.moveBookmark && node.parent) {
-            this.dragBookmarkID = node.data.bookmark_id;
-        }
-    }
-
-    public bookmarkDrop(node: TreeNode) {
-        if (this.moveBookmark && node.parent) {
-            // Bookmark stuff
-        }
-        this.endDrag();
-    }
-
-    public dragLeave() {
-        this.dragNodeID = new ID();
-        this.dragBookmarkID = new ID();
-    }
-
     public endDrag() {
         this.moveSection = null;
         this.dragNodeID = new ID();
-        this.moveBookmark = null;
-        this.dragBookmarkID = new ID();
     }
 }

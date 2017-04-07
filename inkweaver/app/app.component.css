@@ -57,6 +57,10 @@ ink-app > p-panel > .ui-panel > .ui-panel-content-wrapper {
     display: inline-block;
 }
 
+.hide-menu {
+    display: none;
+}
+
 .master-menu {
     float: right;
     display: inline-block;
