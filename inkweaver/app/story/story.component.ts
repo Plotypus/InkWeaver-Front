@@ -27,7 +27,6 @@ export class StoryComponent {
         this.items = [
             { label: '', disabled: true, icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
             { label: '', disabled: true, icon: 'fa-book', routerLink: ['/story/wiki'] },
-            { label: '', disabled: true, icon: 'fa-ellipsis-v', routerLink: ['/story/stats'] }
         ];
         this.activeItem = this.items[0];
 
@@ -41,9 +40,7 @@ export class StoryComponent {
                 else if (event.url === '/story/wiki') {
                     this.activeItem = this.items[1];
                 }
-                else if (event.url === '/story/stats') {
-                    this.activeItem = this.items[2];
-                }
+                
             });
 
         this.data.storyFunction = this.disableMenu();
