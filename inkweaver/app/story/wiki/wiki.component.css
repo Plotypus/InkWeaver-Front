@@ -292,3 +292,8 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row{
 p-dialog .ui-dialog-content {
     height: initial;
 }
+
+p-togglebutton{
+    float:right;
+    padding: 1em;
+}

@@ -11,12 +11,14 @@ import {
     TreeTableModule,
     ContextMenuModule,
     DragDropModule,
-    ListboxModule
+    ListboxModule,
+    ToggleButtonModule
 } from 'primeng/primeng';
 
 import { EditService } from './edit.service';
 import { EditComponent } from './edit.component';
 import { SharedModule } from '../../shared/shared.module';
+import { StatsModule } from '../stats/stats.module';
 
 @NgModule({
     imports: [
@@ -31,7 +33,9 @@ import { SharedModule } from '../../shared/shared.module';
         TreeTableModule,
         ContextMenuModule,
         DragDropModule,
-        ListboxModule
+        ListboxModule,
+        StatsModule,
+        ToggleButtonModule
     ],
     providers: [EditService],
     declarations: [EditComponent],

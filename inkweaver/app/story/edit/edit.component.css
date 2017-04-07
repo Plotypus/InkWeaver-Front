@@ -173,3 +173,8 @@ code {
 .bookmark-header i {
     margin-right: 0.5em;
 }
+
+p-togglebutton{
+    float:right;
+    padding: 1em;
+}

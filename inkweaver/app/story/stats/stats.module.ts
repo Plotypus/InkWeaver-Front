@@ -6,8 +6,9 @@ import { StatsComponent } from './stats.component';
 import {TreeTableModule,
 		DataTableModule,
 		TabViewModule,
-        TreeModule,
-        ChartModule
+        ChartModule,
+        DropdownModule,
+        ChipsModule
 } from 'primeng/primeng';
 import {SharedModule} from '../../shared/shared.module';
 
@@ -20,11 +21,13 @@ import {SharedModule} from '../../shared/shared.module';
         DataTableModule,
         TabViewModule,
         ChartModule,
-        TreeModule,
-        SharedModule
+        SharedModule,
+        DropdownModule,
+        ChipsModule
             ],
     providers: [StatsService],
     declarations: [StatsComponent],
+    exports:[StatsComponent],
     bootstrap: [StatsComponent]
 })
 export class StatsModule {}

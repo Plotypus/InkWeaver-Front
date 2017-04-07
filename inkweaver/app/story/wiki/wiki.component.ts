@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewChildren } from '@angular/core';
+﻿import { Component, OnInit, ViewChildren, ViewChild } from '@angular/core';
 import { TreeNode, Editor, MenuItem } from 'primeng/primeng';
 import { Router } from '@angular/router';
 
@@ -8,13 +8,14 @@ import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 import { PageSummary } from '../../models/wiki/page-summary.model';
 import { FilterPipe } from './filter.pipe';
-
+import { StatsComponent } from '../stats/stats.component';
+import { StatsService} from '../stats/stats.service';
 @Component({
     selector: 'wiki',
-    templateUrl: './app/story/wiki/wiki.component.html'
-})
+    templateUrl: './app/story/wiki/wiki.component.html',
+}) 
 export class WikiComponent {
-
+    @ViewChild(StatsComponent) stats: StatsComponent;
     private data: any;
     private showAddDialog: any;
     
@@ -40,7 +41,6 @@ export class WikiComponent {
     private nestedPages = [];
     private defAdd: any;
     private defDel: any;
-    private wiki = [];
     private selectedValues = [];
     private selectAllVal: boolean;
     private filter: string;
@@ -58,12 +58,15 @@ export class WikiComponent {
     //context menus
     private contextMenuItems: MenuItem[];
 
+    //stats stuff
+    private statMode = false;
 
     constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
         private editService: EditService,
         private parserService:ParserService,
+        private statsService:StatsService,
         private router: Router) {}
 
     ngOnInit() {
@@ -151,26 +154,31 @@ export class WikiComponent {
      public onSelected(page: any) {
 
          //Take care of when the title page is clicked
-         this.rename = false;
-         if(page.node.type == 'filler')
-             return;
-
-         if (page.node.type == 'title') {
-             this.wikiPage = null;
-             this.apiService.refreshWikiInfo();
-
-         }
-         else if (page.node.type == "category") {
-             page.node.expanded = !page.node.expanded;
-             //get information for the page.
-             this.wikiService.getWikiSegment(page.node.data.id, this.onGetCallback());
-         }
-         else {
-
-             this.wikiService.getWikiPage(page.node.data.id, this.onGetCallback());
-         }
          this.data.selectedEntry = page.node;
+         if (!this.statMode) {
 
+
+             this.rename = false;
+             if (page.node.type == 'filler')
+                 return;
+
+             if (page.node.type == 'title') {
+                 this.wikiPage = null;
+                 this.apiService.refreshWikiInfo();
+
+             }
+             else if (page.node.type == "category") {
+                 page.node.expanded = !page.node.expanded;
+                 //get information for the page.
+                 this.wikiService.getWikiSegment(page.node.data.id, this.onGetCallback());
+             }
+             else {
+
+                 this.wikiService.getWikiPage(page.node.data.id, this.onGetCallback());
+             }
+         }
+         else
+             this.stats.showWikiStats();
      }
 
      public parsePage() {
@@ -425,9 +433,9 @@ export class WikiComponent {
             //this is set stuff up for deleting page or segment
             this.type = id;
             if(this.type == 0){
-                let idx = this.wiki.findIndex(this.selectedEntry());
+                let idx = this.data.wikiFlatten.findIndex(this.selectedEntry());
                 if (idx != -1)
-                    this.defDel = this.wiki[idx].value;
+                    this.defDel = this.data.wikiFlatten[idx].value;
                 this.nestedPages = this.convertLabelValueArray(this.defDel);
             }
             //this will delete templete heading or heading
@@ -493,6 +501,7 @@ export class WikiComponent {
             let ele: TreeNode
             let temp= [];
             if(this.data.wikiNav){
+                this.data.wikiFlatten = [];
                 temp = this.parserService.getTreeArray(this.data.wikiNav[0]);
                 for( let idx in temp)
                 {    
@@ -501,10 +510,14 @@ export class WikiComponent {
                     {
                         this.allCategories.push({ label: ele.label, value: ele });
                     }
-                    else
+                    else if(ele.type == 'page')
                         this.allPages.push({ label: ele.label, value: ele });
-                    this.wiki.push({ label: ele.label, value: ele });
+
+                    if(ele.type != 'filler')
+                    this.data.wikiFlatten.push({ label: ele.label, value: ele });
+                    
                 }
+                this.statsService.get_page_frequency(this.data.story.story_id, this.data.wiki.wiki_id);
                 
             }
         }
@@ -577,11 +590,6 @@ export class WikiComponent {
             }
         }
 
-        public onHeadingCallback():Function {
-            return (reply:any)=>{
-
-            }
-        }
         public onAddCallback() : Function
         {
             return (reply:any) => {

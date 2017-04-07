@@ -1,13 +1,10 @@
-﻿<div class="ui-grid ui-grid-responsive">
-    <div class="ui-grid-row">
+﻿        <!-- Stats -->
 
-        <!-- Stats -->
-
-        <div class="stats ui-grid-col-9" [ngSwitch]='mode'>
+        <div [ngSwitch]='mode'>
 
         <!-- Story Stats -->
         <ng-container *ngSwitchCase='true'>
-           <h1>Statistics for {{data.statSection.data.title}}</h1>
+           <h1>Statistics for {{data.section.data.title}}</h1>
            	<h2> Word Count: {{data.stats.word_count}} </h2>
         	<div class="search">
         	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
@@ -20,12 +17,22 @@
         </ng-container>
         <!-- Wiki Stats -->
         <ng-container *ngSwitchCase='false'>
-            <h1>Statistics for </h1>
+            <h1>Statistics for {{title}}</h1>
+            
+            <div class="ui-grid-col-2">
+            <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 
+            (ngModelChange)="onChange($event)"></p-dropdown>
+            <p-chips field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
+                
+            </p-chips>
+            </div>
+            <div class="ui-grid-col-7">
             <p-chart type="line" [data]="pageFreq"></p-chart>
+            </div>
         </ng-container>
         </div>
 
-        <!-- Navigation -->
+        <!-- Navigation 
         <div class="navigation ui-grid-col-3">
         <p-tabView>
         <p-tabPanel header={{data.story.story_title}}>
@@ -44,17 +51,14 @@
         </p-tabPanel>
         
         <p-tabPanel header={{data.segment.title}}>
+            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegments" (onNodeSelect)="selectSegment($event)">
+                    <p-column field="data.title">
+                        <template let-node="rowData" pTemplate="body">
+                                {{node.data.title}}
+                        </template>
+                    </p-column>
 
-            <p-tree [value]="data.wikiNav" selectionMode="checkbox" [(selection)]=" data.statSegments" (onNodeSelect)="selectSegment($event)"
-            (onNodeUnselect)="selectSegment($event)">
-                
-            </p-tree>
-            <div>
-            Selected Nodes: <span *ngFor="let file of data.statSegments">{{file.label}}</span>
-            </div>
-
+            </p-treeTable>
         </p-tabPanel>
         </p-tabView>
-        </div>
-    </div>
-</div>
+        </div> -->
