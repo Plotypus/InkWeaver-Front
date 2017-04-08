@@ -115,7 +115,7 @@ export class ApiService {
                             case 'story_created':
                                 reply.title = reply.story_title;
                                 reply.wiki_summary = this.data.newWiki;
-                                this.data.stories.push(reply);
+                                this.data.stories.unshift(reply);
                                 break;
                             case 'story_updated':
                                 this.data.story.story_title = reply.update.title;
@@ -194,6 +194,8 @@ export class ApiService {
                                 break;
 
                             // Section
+                            case 'preceding_subsection_added':
+                                break;
                             case 'inner_subsection_added':
                                 this.parser.findSection(this.data.storyNode[0], JSON.stringify(reply.parent_id), (found: TreeNode) => {
                                     let newSection: TreeNode = {
@@ -202,6 +204,8 @@ export class ApiService {
                                     reply.index = reply.index ? reply.index : found.children.length;
                                     found.children.splice(reply.index, 0, newSection);
                                 });
+                                break;
+                            case 'succeeding_subsection_added':
                                 break;
                             case 'section_title_updated':
                                 this.parser.findSection(this.data.storyNode[0], JSON.stringify(reply.section_id), (found: TreeNode) => {
@@ -346,13 +350,31 @@ export class ApiService {
                                 break;
 
                             // Links
-                            case 'link_created':
-                                this.data.linkTable[JSON.stringify(reply.link_id)] = {
-                                    page_id: reply.page_id, name: reply.name
+                            case 'alias_created':
+                                this.data.aliasTable[JSON.stringify(reply.alias_id)] = {
+                                    page_id: reply.page_id, alias_name: reply.alias_name
+                                };
+                                break;
+                            case 'alias_updated':
+                                let alias = this.data.aliasTable[JSON.stringify(reply.alias_id)];
+                                if (alias) {
+                                    alias.alias_name = reply.new_name;
                                 }
+                                break;
+                            case 'alias_deleted':
+                                delete this.data.aliasTable[JSON.stringify(reply.alias_id)];
+                                break;
+                            case 'link_created':
+                                this.data.linkTable[JSON.stringify(reply.link_id)] = reply.alias_id;
                                 break;
                             case 'link_deleted':
                                 delete this.data.linkTable[JSON.stringify(reply.link_id)];
+                                break;
+                            case 'passive_link_created':
+                                break;
+                            case 'passive_link_deleted':
+                                break;
+                            case 'passive_link_approved':
                                 break;
 
                             // Wiki
@@ -475,11 +497,6 @@ export class ApiService {
                                 }
                                 break;
 
-                            case 'alias_deleted':
-                                break;
-                            case 'alias_updated':
-                                break;
-
                             case 'subscribed_to_wiki':
                                 this.subscribedToWiki = true;
                                 this.refreshWikiInfo();
@@ -512,6 +529,7 @@ export class ApiService {
                                 let temp = this.parser.parseLinkTable(reply.alias_list);
                                 this.data.linkTable = temp[0];
                                 this.data.aliasTable = temp[1];
+                                this.data.passiveLinkTable = temp[2];
                                 break;
 
 
@@ -590,6 +608,7 @@ export class ApiService {
             newWiki: new WikiSummary(),
             linkTable: new LinkTable(),
             aliasTable: new AliasTable(),
+            passiveLinkTable: new LinkTable(),
 
             storyDisplay: '',
             story: new Story(),

@@ -191,16 +191,18 @@ export class ParserService {
     public parseLinkTable(aliasList: any): any {
         let linkTable: LinkTable = new LinkTable();
         let aliasTable: AliasTable = new AliasTable();
+        let passiveLinkTable: LinkTable = new LinkTable();
+
         for (let alias of aliasList) {
             aliasTable[JSON.stringify(alias.alias_id)] = alias;
             for (let link of alias.link_ids) {
                 linkTable[JSON.stringify(link)] = alias.alias_id;
             }
             for (let link of alias.passive_link_ids) {
-                linkTable[JSON.stringify(link)] = alias.alias_id;
+                passiveLinkTable[JSON.stringify(link)] = alias.alias_id;
             }
         }
-        return [linkTable, aliasTable];
+        return [linkTable, aliasTable, passiveLinkTable];
     }
 
     // ---------------------------------------------- //
