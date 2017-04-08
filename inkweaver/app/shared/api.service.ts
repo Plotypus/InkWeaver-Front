@@ -243,7 +243,7 @@ export class ApiService {
                                     // Add paragraph to content object
                                     let p: Paragraph = {
                                         paragraph_id: reply.paragraph_id, text: reply.text, note: null,
-                                        links: new LinkTable(), succeeding_id: reply.succeeding_paragraph_id
+                                        links: new AliasTable(), succeeding_id: reply.succeeding_paragraph_id
                                     };
                                     this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;

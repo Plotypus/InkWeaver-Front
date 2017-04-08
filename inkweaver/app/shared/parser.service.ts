@@ -174,9 +174,9 @@ export class ParserService {
                 let pageID: ID = { $oid: ids[1] };
 
                 if (ids[0].startsWith('new')) {
-                    p.links[ids[0]] = { page_id: pageID, name: link.innerHTML };
+                    p.links[ids[0]] = { page_id: pageID, alias_name: link.innerHTML };
                 } else {
-                    p.links[JSON.stringify(linkID)] = { page_id: pageID, name: link.innerHTML };
+                    p.links[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
                 }
             }
         }
@@ -198,8 +198,10 @@ export class ParserService {
             for (let link of alias.link_ids) {
                 linkTable[JSON.stringify(link)] = alias.alias_id;
             }
-            for (let link of alias.passive_link_ids) {
-                passiveLinkTable[JSON.stringify(link)] = alias.alias_id;
+            if (alias.passive_link_ids) {
+                for (let link of alias.passive_link_ids) {
+                    passiveLinkTable[JSON.stringify(link)] = alias.alias_id;
+                }
             }
         }
         return [linkTable, aliasTable, passiveLinkTable];
