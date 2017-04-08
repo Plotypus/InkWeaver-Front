@@ -64,10 +64,9 @@ export class EditComponent {
     private note: any = { display: 'none' };
     private noteEditing: boolean = false;
 
-
     //Stats
     private statMode = false;
-     constructor(
+    constructor(
         private router: Router,
         private storyService: StoryService,
         private editService: EditService,
@@ -348,22 +347,19 @@ export class EditComponent {
     }
 
     // Section
-    public selectSection(event: any) { 
-
+    public selectSection(event: any) {
         this.data.section = event.node;
-        if (!this.statMode) {
-            this.note.display = 'none';
-            this.data.tooltip.display = 'none';
-            this.suggest.display = 'none';
+        this.renaming = false;
+        this.note.display = 'none';
+        this.data.tooltip.display = 'none';
+        this.suggest.display = 'none';
 
-            this.renaming = false;
-
-            this.save();
-            this.data.prevSection = event.node;
-            this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
-        }
-        else
+        this.save();
+        this.data.prevSection = event.node;
+        this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
+        if (this.statMode) {
             this.stats.getSectionStats();
+        }
     }
     public addSection() {
         this.displaySectionCreator = false;
@@ -510,7 +506,7 @@ export class EditComponent {
             if (paragraphs && paragraphs.length > 0) {
                 let newContentObject: any = this.parserService.parseHtml(paragraphs);
                 this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
-                this.apiService.refreshStoryContent();
+                this.apiService.refreshStoryContent(this.data.prevSection.data.section_id, this.data.prevSection.data.title);
             }
         }
     }

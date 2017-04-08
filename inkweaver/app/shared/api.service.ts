@@ -10,7 +10,7 @@ import { User } from '../models/user/user.model';
 import { Collaborator } from '../models/user/collaborator.model';
 import { LinkTable } from '../models/link/link-table.model';
 import { AliasTable } from '../models/link/alias-table.model';
-import { Link } from '../models/link/link.model';
+import { Alias } from '../models/link/alias.model';
 import { ID } from '../models/id.model';
 
 import { StorySummary } from '../models/story/story-summary.model';
@@ -173,7 +173,7 @@ export class ApiService {
                                 break;
                             case 'got_section_content':
                                 // Set the content object
-                                this.data.contentObject = this.parser.parseContent(reply.content, this.data.linkTable);
+                                this.data.contentObject = this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
 
                                 // Set the story display
                                 this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
@@ -241,7 +241,7 @@ export class ApiService {
                                         paragraph_id: reply.paragraph_id, text: reply.text, note: null,
                                         links: new LinkTable(), succeeding_id: reply.succeeding_paragraph_id
                                     };
-                                    this.parser.parseParagraph(p, this.data.linkTable);
+                                    this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
 
                                     let pString: string = this.parser.setParagraph(p);
@@ -275,7 +275,7 @@ export class ApiService {
                                     // Update the content object
                                     let p: Paragraph = this.data.contentObject[JSON.stringify(reply.paragraph_id)];
                                     p.text = reply.update.text;
-                                    this.parser.parseParagraph(p, this.data.linkTable);
+                                    this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
                                     // Update paragraph in display string
                                     let pString: string = this.parser.setParagraph(p);
@@ -442,9 +442,8 @@ export class ApiService {
                                 }
                                 break;
                             case 'got_wiki_page':
-
                                 this.data.page = this.parser.setPageDisplay(
-                                    reply, this.data.linkTable);
+                                    reply, this.data.linkTable, this.data.aliasTable);
                                 this.data.tooltip.text = '<b>' + reply.title + '</b>';
                                 if (reply.headings && reply.headings[0]) {
                                     this.data.tooltip.text += '<br/><u>' + reply.headings[0].title
@@ -465,7 +464,6 @@ export class ApiService {
                                     let callback: Function = this.data.wikiFuctions[0];
                                     callback(reply);
                                 }
-
                                 break;
                             case 'heading_added':
                             case 'heading_updated':

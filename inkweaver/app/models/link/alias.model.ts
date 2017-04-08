@@ -1,6 +1,6 @@
 ﻿import { ID } from '../id.model';
 
-export class Link {
+export class Alias {
     page_id: ID;
-    name: string;
+    alias_name: string;
 }

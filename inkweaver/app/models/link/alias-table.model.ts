@@ -1,3 +1,5 @@
+import { Alias } from './alias.model';
+
 export class AliasTable {
-    [link_id: string]: any;
+    [alias_id: string]: Alias;
 }
