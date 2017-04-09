@@ -53,7 +53,7 @@ story > p-panel > .ui-panel > .ui-panel-content-wrapper {
     }
 
     .menu .ui-tabmenuitem {
-        width: 33%;
+        width: 50%;
         height: 100%;
         border: none;
         margin: 0 !important;
@@ -72,6 +72,7 @@ story > p-panel > .ui-panel > .ui-panel-content-wrapper {
     }
 
     .menu .ui-menuitem-icon {
+        font-size: 1.2em;
         margin-top: 0.5em;
         color: var(--dark-gray);
     }

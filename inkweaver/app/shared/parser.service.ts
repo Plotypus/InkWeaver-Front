@@ -127,7 +127,7 @@ export class ParserService {
                         let linkIDStr: string = JSON.parse(linkID).$oid;
                         let pageIDStr: string = alias.page_id.$oid;
                         paragraph.text = paragraph.text.replace(linkMatch[0],
-                            '<a class="passive" href="' + linkIDStr + '-' + pageIDStr + '" target="_blank">' + alias.alias_name + '</a>');
+                            '<a href="' + linkIDStr + '-' + pageIDStr + '-passive" target="_blank">' + alias.alias_name + '</a>');
                     }
                 }
             }
@@ -135,7 +135,7 @@ export class ParserService {
         }
     }
 
-    public parseHtml(paragraphs: any[]): ContentObject {
+    public parseHtml(paragraphs: any): ContentObject {
         let add: Paragraph[] = [];
         let obj: ContentObject = new ContentObject();
 
@@ -167,16 +167,18 @@ export class ParserService {
                 p.note = code.innerHTML;
             }
 
-            let links: any[] = paragraph.querySelectorAll('a:not([class])');
+            let links: any[] = paragraph.querySelectorAll('a[href]');
             for (let link of links) {
                 let ids: string[] = link.attributes[0].value.split('-');
-                let linkID: ID = { $oid: ids[0] };
-                let pageID: ID = { $oid: ids[1] };
+                if (ids.length < 3) {
+                    let linkID: ID = { $oid: ids[0] };
+                    let pageID: ID = { $oid: ids[1] };
 
-                if (ids[0].startsWith('new')) {
-                    p.links[ids[0]] = { page_id: pageID, alias_name: link.innerHTML };
-                } else {
-                    p.links[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
+                    if (ids[0].startsWith('new')) {
+                        p.links[ids[0]] = { page_id: pageID, alias_name: link.innerHTML };
+                    } else {
+                        p.links[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
+                    }
                 }
             }
         }

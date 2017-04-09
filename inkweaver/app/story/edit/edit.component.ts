@@ -160,6 +160,9 @@ export class EditComponent {
                     let linkID: string = thread.getAttribute('href');
                     let ids: string[] = linkID.split('-');
                     let pageID: ID = { $oid: ids[1] };
+                    if (ids[2]) {
+                        thread.id = 'passive';
+                    }
 
                     thread.onclick = (event: any) => {
                         event.preventDefault();
@@ -347,19 +350,27 @@ export class EditComponent {
     }
 
     // Section
+    public switchStats(event: any) {
+        if (event.checked) {
+            this.save();
+        } else {
+            this.apiService.refreshStoryContent();
+        }
+    }
+
     public selectSection(event: any) {
         this.data.section = event.node;
         this.renaming = false;
         this.note.display = 'none';
         this.data.tooltip.display = 'none';
         this.suggest.display = 'none';
-
-        this.save();
-        this.data.prevSection = event.node;
-        this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
         if (this.statMode) {
             this.stats.getSectionStats();
+        } else {
+            this.save();
+            this.apiService.refreshStoryContent(event.node.data.section_id, event.node.data.title);
         }
+        this.data.prevSection = event.node;
     }
     public addSection() {
         this.displaySectionCreator = false;
@@ -495,18 +506,20 @@ export class EditComponent {
         this.note.display = 'none';
     }
 
-    public save() {
+    public save(refresh: boolean = false) {
         if (this.data.prevSection.data) {
             this.data.story.position_context = {
                 section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
             };
             this.userService.setUserStoryPositionContext(this.data.prevSection.data.section_id, this.paragraphPosition);
 
-            let paragraphs: any[] = this.editorRef.querySelectorAll('p');
+            let paragraphs: any = this.editorRef.querySelectorAll('p');
             if (paragraphs && paragraphs.length > 0) {
                 let newContentObject: any = this.parserService.parseHtml(paragraphs);
                 this.editService.compare(this.data.contentObject, newContentObject, this.data.story.story_id, this.data.prevSection.data.section_id);
-                this.apiService.refreshStoryContent(this.data.prevSection.data.section_id, this.data.prevSection.data.title);
+                if (refresh) {
+                    this.apiService.refreshStoryContent(this.data.prevSection.data.section_id, this.data.prevSection.data.title);
+                }
             }
         }
     }

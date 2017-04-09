@@ -58,13 +58,12 @@
 
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
-        <div [ngSwitch]='statMode' class="ui-grid-col-9">
-            <div *ngSwitchCase='true' class='stats'>
+        <div class="ui-grid-col-9 editor-col">
+            <div *ngIf='statMode' class='stats'>
                 <stats [mode]='true'></stats>
             </div>
             <!-- Editor -->
-            <div *ngSwitchCase='false' class="editor">
-
+            <div [hidden]='statMode' class="editor">
                 <div class="loader" *ngIf="data.loading">
                     <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
                 </div>
@@ -98,7 +97,7 @@
                                 <button class="ql-clean"></button>
                             </span>
                             <span class="ql-save">
-                                <button pButton type="button" label="Save" (click)="save()"></button>
+                                <button pButton type="button" label="Save" (click)="save(true)"></button>
                                 <button pButton type="button" label="Note" (click)="addNote()"></button>
                             </span>
                         </header>
@@ -118,12 +117,17 @@
                     <div class="suggest" [ngStyle]="{'display': suggest.display,'top': suggest.top, 'left': suggest.left}">
                         <p-listbox [options]="suggest.options" [(ngModel)]="suggest.value"></p-listbox>
                     </div>
-
-                    <!-- Word Count -->
-                    <div class="word-count">Word Count: {{wordCount}}</div>
                 </div>
             </div>
+            <!-- Word Count -->
+            <div class="word-count">
+                <span *ngIf="!statMode">Word Count: {{wordCount}}</span>
+                <p-toggleButton onLabel="" offLabel="" onIcon="fa-pencil-square-o" offIcon="fa-bar-chart"
+                                [(ngModel)]="statMode" (onChange)="switchStats($event)"></p-toggleButton>
+            </div>
         </div>
+
+
         <!-- Navigation -->
         <div class="navigation ui-grid-col-3">
             <div class="nav-actions">
@@ -152,7 +156,7 @@
                     </template>
                 </p-column>
             </p-treeTable>
-            <p-toggleButton [(ngModel)]="statMode" onLabel="Statistics On" offLabel="Statistics Off"></p-toggleButton>
+
             <hr />
 
             <div class="bookmarks">

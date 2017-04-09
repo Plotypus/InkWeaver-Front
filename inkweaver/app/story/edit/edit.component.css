@@ -1,12 +1,19 @@
 ﻿/* Height */
-edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
-.editor, .editor > div {
-    height: 100%;
+edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
+    height: 98%;
 }
 
-.ui-editor-container {
+.editor {
     height: calc(100% - 3em);
 }
+
+.editor-col .stats {
+    height: calc(100% - 3em);
+}
+
+    .editor > div, .ui-editor-container {
+        height: 100%;
+    }
 
 .ui-editor-toolbar {
     height: 3em;
@@ -19,7 +26,7 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
 .word-count {
     height: 3em;
     background: #e6e6e6;
-    padding: 1em !important;
+    padding: 0.75em;
 }
 
 /* Toolbar */
@@ -84,6 +91,10 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row,
 .ql-editor a {
     cursor: pointer;
     color: var(--link-blue) !important;
+}
+
+#passive {
+    color: var(--orange) !important;
 }
 
 .ql-tooltip {
@@ -151,8 +162,24 @@ code {
 
 .navigation hr {
     width: 90%;
+    padding-left: 1em;
     border-color: var(--dark-gray);
 }
+
+.editor-col p-togglebutton {
+    padding: 0 !important;
+}
+
+    .editor-col p-togglebutton .ui-button {
+        width: 5em;
+        height: 2em;
+        color: white !important;
+        background: var(--light-blue) !important;
+    }
+
+    .editor-col p-togglebutton .ui-button-icon-left {
+        margin-left: 25%;
+    }
 
 .section-drag {
     width: 50%;
@@ -172,9 +199,4 @@ code {
 
 .bookmark-header i {
     margin-right: 0.5em;
-}
-
-p-togglebutton{
-    float:right;
-    padding: 1em;
 }
