@@ -11,6 +11,7 @@ import { Collaborator } from '../models/user/collaborator.model';
 import { LinkTable } from '../models/link/link-table.model';
 import { AliasTable } from '../models/link/alias-table.model';
 import { Alias } from '../models/link/alias.model';
+import { PassiveLinkTable } from '../models/link/passive-link-table.model';
 import { ID } from '../models/id.model';
 
 import { StorySummary } from '../models/story/story-summary.model';
@@ -376,6 +377,8 @@ export class ApiService {
                                 break;
                             case 'passive_link_approved':
                                 break;
+                            case 'passive_link_rejected':
+                                break;
 
                             // Wiki
                             case 'wiki_created':
@@ -608,7 +611,7 @@ export class ApiService {
             newWiki: new WikiSummary(),
             linkTable: new LinkTable(),
             aliasTable: new AliasTable(),
-            passiveLinkTable: new LinkTable(),
+            passiveLinkTable: new PassiveLinkTable(),
 
             storyDisplay: '',
             story: new Story(),

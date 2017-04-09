@@ -5,6 +5,7 @@ import { ID } from '../models/id.model';
 import { Alias } from '../models/link/alias.model';
 import { AliasTable } from '../models/link/alias-table.model';
 import { LinkTable } from '../models/link/link-table.model';
+import { PassiveLinkTable } from '../models/link/passive-link-table.model';
 import { Section } from '../models/story/section.model';
 import { Paragraph } from '../models/story/paragraph.model';
 import { ContentObject } from '../models/story/content-object.model';
@@ -193,7 +194,7 @@ export class ParserService {
     public parseLinkTable(aliasList: any): any {
         let linkTable: LinkTable = new LinkTable();
         let aliasTable: AliasTable = new AliasTable();
-        let passiveLinkTable: LinkTable = new LinkTable();
+        let passiveLinkTable: PassiveLinkTable = new PassiveLinkTable();
 
         for (let alias of aliasList) {
             aliasTable[JSON.stringify(alias.alias_id)] = alias;
@@ -202,7 +203,11 @@ export class ParserService {
             }
             if (alias.passive_link_ids) {
                 for (let link of alias.passive_link_ids) {
-                    passiveLinkTable[JSON.stringify(link)] = alias.alias_id;
+                    passiveLinkTable[JSON.stringify(link)] = { 
+                                                               alias_id:alias.alias_id,
+                                                               rejected: link.rejected
+                                                              };
+
                 }
             }
         }
