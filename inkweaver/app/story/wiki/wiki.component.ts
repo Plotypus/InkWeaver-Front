@@ -595,12 +595,12 @@ export class WikiComponent {
             return (reply:any) => {
                 if(reply.event === "segment_added")
                 {
-                    this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply.segment_id);
+                    //this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply.segment_id);
                     this.wikiService.getWikiSegment(reply.segment_id,this.onGetCallback());
                 }
                 else if(reply.event ==="page_added")
                 {
-                    this.data.selectedEntry = this.parserService.findPage(this.data.wikiNav[0], reply.page_id);
+                    //this.data.selectedEntry = this.parserService.findPage(this.data.wikiNav[0], reply.page_id);
                     this.wikiService.getWikiPage(reply.page_id,this.onGetCallback());
                 }
                 this.expandPath(this.data.selectedEntry);

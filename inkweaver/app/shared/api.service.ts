@@ -394,6 +394,7 @@ export class ApiService {
                                 break;
                             case 'segment_added':
                                 this.parser.addSegment(this.data.wikiNav[0], reply);
+                                this.data.selectedEntry = this.parser.findSegment(this.data.wikiNav[0], reply.segment_id);
                                 if (this.outgoing['segment' + reply.title]) {
                                     let callback: Function =
                                         this.outgoing['segment' + reply.title].callback;
@@ -404,13 +405,14 @@ export class ApiService {
                                 break;
                             case 'page_added':
                                 this.parser.addPage(this.data.wikiNav[0], reply);
+                                this.data.selectedEntry = this.parser.findPage(this.data.wikiNav[0], reply.page_id);
                                 if (this.outgoing['page' + reply.title]) {
                                     let callback: Function =
                                         this.outgoing['page' + reply.title].callback;
                                     callback(reply);
                                     delete this.outgoing['page' + reply.title];
                                 }
-
+                                
                                 break;
                             case 'segment_deleted':
                                 this.parser.deleteSegment(this.data.wikiNav[0], reply.segment_id);
