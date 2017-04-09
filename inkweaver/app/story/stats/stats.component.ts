@@ -5,9 +5,9 @@ import { Router } from '@angular/router';
 import { EditService } from '../edit/edit.service';
 import { WikiService } from '../wiki/wiki.service';
 import { ApiService } from '../../shared/api.service';
-import {StatsService} from './stats.service';
+import { StatsService } from './stats.service';
 import { PageSummary } from '../../models/wiki/page-summary.model';
-import {ParserService} from '../../shared/parser.service';
+import { ParserService } from '../../shared/parser.service';
 
 @Component({
     selector: 'stats',
@@ -20,16 +20,16 @@ export class StatsComponent {
     private data: any;
     private wordFreq: any;
     private statData: any;
-    private pageFreq:any;
+    private pageFreq: any;
     private wikiNav = [];
     private statsOptions: SelectItem[];
     private selectedOption: string;
-    private colors = []; 
+    private colors = [];
     private statSegments: any;
     private allOptions: SelectItem[];
     private title: any;
     private chartOption: any;
-    
+
     constructor(
         private router: Router,
         private editService: EditService,
@@ -39,14 +39,13 @@ export class StatsComponent {
         private parserService: ParserService
     ) { }
 
-    ngOnInit(){
+    ngOnInit() {
         this.data = this.apiService.data;
-        if(this.mode)
-        {
+        if (this.mode) {
             this.getSectionStats();
         }
         //wiki stats
-        else{
+        else {
             this.showWikiStats();
             this.selectedOption = null;
             this.chartOption = {
@@ -65,9 +64,9 @@ export class StatsComponent {
                             beginAtZero: true,
                             min: 0,
                             padding: 0,
-                            callback: function(value) { return value.length > 25 ? value.substring(0, 25) + '...' : value; }
+                            callback: function (value) { return value.length > 25 ? value.substring(0, 25) + '...' : value; }
                         }
-                     }]
+                    }]
                 }
             }
         }
@@ -75,26 +74,25 @@ export class StatsComponent {
 
 
     public getSectionStats() {
-        
-        this.statsService.get_section_statistics(this.data.section.data.section_id);
-    //we would want to call ask for the stats
+        if (this.data.section.data) {
+            this.statsService.get_section_statistics(this.data.section.data.section_id);
+        }
+        //we would want to call ask for the stats
     }
 
-    public showWikiStats()
-    {
-        
-        
+    public showWikiStats() {
+
+
         //this.data.statSegment = event.node;
         let node = this.data.selectedEntry;
         let label = [];
-        for(let l in this.data.statsSections)
+        for (let l in this.data.statsSections)
             label.push(this.data.statsSections[l].title);
         this.pageFreq = {};
         let dataset = [];
-        this.statSegments = this.parserService.getTreeArray(node).filter((ele:any)=>
-            {
-            return ele.type != 'filler' && ele.type != 'category' && ele.type !='title';
-            });
+        this.statSegments = this.parserService.getTreeArray(node).filter((ele: any) => {
+            return ele.type != 'filler' && ele.type != 'category' && ele.type != 'title';
+        });
 
         this.statsOptions = this.data.wikiFlatten.filter((ele: any) => {
 
@@ -102,20 +100,18 @@ export class StatsComponent {
 
         });
 
-        if(this.statSegments.length >= 1)
-        {
+        if (this.statSegments.length >= 1) {
             this.title = this.statSegments[0].label;
         }
 
-        this.allOptions = this.data.wikiFlatten.filter((ele:any)=>{
+        this.allOptions = this.data.wikiFlatten.filter((ele: any) => {
             return this.statSegments.indexOf(ele.value) != -1
         });
-        
-        this.allOptions = this.allOptions.concat(this.statsOptions);        
 
-        for(let ele of this.statSegments)
-        {    
-        
+        this.allOptions = this.allOptions.concat(this.statsOptions);
+
+        for (let ele of this.statSegments) {
+
             if (ele.type == 'page') {
                 let color = '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
                 if ('_$visited' in ele.data.id)
@@ -135,13 +131,13 @@ export class StatsComponent {
             labels: label,
             datasets: dataset
         };
-        setTimeout( () => {
+        setTimeout(() => {
             this.chart.refresh();
         }, 50);
-        
+
     }
 
-    public onChange(){
+    public onChange() {
         let option = this.selectedOption;
         if (typeof option !== 'undefined') {
             this.statSegments.push(option);
@@ -157,25 +153,24 @@ export class StatsComponent {
             this.showWikiStats();
 
 
-        
+
     }
 
-    public updateDropdown(event:any, items:any){
+    public updateDropdown(event: any, items: any) {
 
         let temp = [];
-        for(let ele of items)
-        {
+        for (let ele of items) {
             if ('_$visited' in ele.data.id) {
                 delete ele.data.id['_$visited'];
                 delete ele['_$visited'];
             }
             temp.push(ele);
-            
+
         }
         items = temp;
 
         //finding what was removed
-        let addback = this.allOptions.filter((ele:any) => {
+        let addback = this.allOptions.filter((ele: any) => {
             return items.indexOf(ele.value) == -1;
         })
 
@@ -186,8 +181,7 @@ export class StatsComponent {
     }
 
 
-    public updateChart()
-    {
+    public updateChart() {
         let label = [];
         for (let l in this.data.statsSections)
             label.push(this.data.statsSections[l].title);

@@ -36,6 +36,8 @@ export class AppComponent {
 
         let Parchment = Quill.import('parchment');
         let ID = new Parchment.Attributor.Attribute('id', 'id');
+        let Class = new Parchment.Attributor.Attribute('class', 'class');
         Parchment.register(ID);
+        Parchment.register(Class);
     }
 }

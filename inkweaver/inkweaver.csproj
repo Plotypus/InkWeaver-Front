@@ -87,7 +87,6 @@
     <Content Include="favicon.ico" />
     <Content Include="systemjs.config.js" />
     <Content Include="package.json" />
-    <Content Include="todo.txt" />
     <Content Include="tsconfig.json" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -106,7 +105,7 @@
     <TypeScriptCompile Include="app\models\id.model.ts" />
     <TypeScriptCompile Include="app\models\link\alias-table.model.ts" />
     <TypeScriptCompile Include="app\models\link\link-table.model.ts" />
-    <TypeScriptCompile Include="app\models\link\link.model.ts" />
+    <TypeScriptCompile Include="app\models\link\alias.model.ts" />
     <TypeScriptCompile Include="app\models\stats\stats.model.ts" />
     <TypeScriptCompile Include="app\models\stats\word-table.model.ts" />
     <TypeScriptCompile Include="app\models\stats\word.model.ts" />
