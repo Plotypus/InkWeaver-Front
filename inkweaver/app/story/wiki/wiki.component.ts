@@ -35,6 +35,7 @@ export class WikiComponent {
     private info: boolean;
 
 
+
     //adding and deleting pages anc categories
     private allCategories = [];
     private allPages = [];
@@ -46,6 +47,7 @@ export class WikiComponent {
     private filter: string;
     private rename: boolean = false;
     private newName: string;
+    private fromLink: boolean = true;
 
     //adding and deleting templetes
     private headingName:any;
@@ -80,6 +82,7 @@ export class WikiComponent {
         if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
             this.parsePage();
         }else
+
         this.data.selectedEntry = this.data.wikiNav[0];
 
         this.updateData();
@@ -98,6 +101,11 @@ export class WikiComponent {
                 this.data.selectedEntry = this.data.wikiNav[0];
                 this.info = false;
                 
+            }
+            else if (action == "got_wiki_page"){
+                if(this.fromLink)
+                    this.parsePage();
+                this.fromLink = true;
             }
         });
 
@@ -284,20 +292,6 @@ export class WikiComponent {
             this.headingName = "";
         }
 
-        public expandPath(page: TreeNode) {
-            if (!(page.hasOwnProperty("type") && page.type === 'title')) {
-
-                let parent = page.parent;
-                while (typeof parent !== 'undefined') {
-                    if(parent.type === 'category')
-                        parent.expanded = true;
-                    parent = parent.parent;
-                }
-                
-                
-            }
-
-        }
 
         public onTextChange(text:string)
         {
@@ -595,15 +589,15 @@ export class WikiComponent {
             return (reply:any) => {
                 if(reply.event === "segment_added")
                 {
-                    this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply.segment_id);
+                    //this.data.selectedEntry = this.parserService.findSegment(this.data.wikiNav[0],reply.segment_id);
                     this.wikiService.getWikiSegment(reply.segment_id,this.onGetCallback());
                 }
                 else if(reply.event ==="page_added")
                 {
-                    this.data.selectedEntry = this.parserService.findPage(this.data.wikiNav[0], reply.page_id);
+                    //this.data.selectedEntry = this.parserService.findPage(this.data.wikiNav[0], reply.page_id);
                     this.wikiService.getWikiPage(reply.page_id,this.onGetCallback());
                 }
-                this.expandPath(this.data.selectedEntry);
+                this.parserService.expandPath(this.data.selectedEntry);
                 this.updateData();
             }
         }
@@ -635,6 +629,8 @@ export class WikiComponent {
                         'active': false
                     });
                 }
+                this.updateData();
+                this.fromLink = false;
             }
         }
 
