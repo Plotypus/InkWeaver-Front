@@ -166,7 +166,7 @@ export class EditComponent {
 
                     thread.onclick = (event: any) => {
                         event.preventDefault();
-                        this.wikiService.getWikiPage(pageID);
+                        this.wikiService.getWikiPage(pageID, ()=> {}, {page_id:pageID});
                         this.router.navigate(['/story/wiki']);
                     };
                     thread.onmouseenter = (event: any) => {

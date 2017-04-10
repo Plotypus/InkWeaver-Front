@@ -386,7 +386,7 @@ export class ParserService {
         return reply;
     }
 
-    public findSegment(wiki: TreeNode, sid: any, mode: boolean = false) {
+    public findSegment(wiki: TreeNode, sid: any, mode: boolean = true) {
         let found: any;
         if ((mode ? JSON.stringify(sid["$oid"]) : JSON.stringify(sid)) ===
             (mode ? JSON.stringify(wiki.data.id["$oid"]) : JSON.stringify(wiki.data.id))) {
@@ -408,7 +408,7 @@ export class ParserService {
             return found;
     }
 
-    public findPage(wiki: TreeNode, pid: any, mode: boolean = false) {
+    public findPage(wiki: TreeNode, pid: any, mode: boolean = true) {
         let found: any;
         if ((mode ? JSON.stringify(pid["$oid"]) : JSON.stringify(pid)) ===
             (mode ? JSON.stringify(wiki.data.id["$oid"]) : JSON.stringify(wiki.data.id))) {
@@ -499,6 +499,18 @@ export class ParserService {
             for (let child of wiki.children) {
                 this.addPage(child, reply);
 
+            }
+        }
+    }
+
+    public expandPath(page: TreeNode) {
+        if (!(page.hasOwnProperty("type") && page.type === 'title')) {
+
+            let parent = page.parent;
+            while (typeof parent !== 'undefined') {
+                if (parent.type === 'category')
+                    parent.expanded = true;
+                parent = parent.parent;
             }
         }
     }

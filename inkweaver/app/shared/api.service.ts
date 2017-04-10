@@ -480,6 +480,14 @@ export class ApiService {
                                     let callback: Function =
                                         this.outgoing["page" + reply.identifier.message_id].callback;
                                     callback(reply);
+                                    
+                                    if (this.outgoing["page" + reply.identifier.message_id].metadata &&
+                                     this.outgoing["page" + reply.identifier.message_id].metadata.hasOwnProperty("page_id")) 
+                                    {
+                                        this.data.selectedEntry = this.parser.findPage(this.data.wikiNav[0], 
+                                            this.outgoing["page" + reply.identifier.message_id].metadata.page_id);
+                                        this.parser.expandPath(this.data.selectedEntry);
+                                    }
                                     delete this.outgoing["page" + reply.identifier.message_id];
                                 }
                                 break;
