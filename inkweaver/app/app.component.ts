@@ -23,6 +23,7 @@ export class AppComponent {
     ngOnInit() {
         this.data = this.apiService.data;
         this.items = [
+            { label: 'User Page', routerLink: ['/user'] },
             {
                 label: 'Sign Out', command: (event) => {
                     this.userService.signOut();
@@ -30,8 +31,7 @@ export class AppComponent {
                     this.apiService.resetData();
                     this.router.navigate(['/login']);
                 }
-            },
-            { label: 'User Page', routerLink: ['/user'] }
+            }
         ];
 
         let Parchment = Quill.import('parchment');

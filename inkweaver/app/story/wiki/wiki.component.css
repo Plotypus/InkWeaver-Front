@@ -1,6 +1,6 @@
 ﻿/* -------------------- Wiki -------------------- */
 
-wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row{
+wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     height: calc(100%);
 }
 
@@ -270,7 +270,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row{
     display: none;
 }
 
-.ui-overlaypanel {
+.wiki .ui-overlaypanel {
     text-align: center;
     font-style: italic;
     color: var(--dark-gray);
@@ -278,22 +278,17 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row{
     cursor: pointer;
 }
 
-.ui-listbox-header .ui-listbox-filter-container {
+.wiki .ui-listbox-header .ui-listbox-filter-container {
     display: inline-block;
     vertical-align: middle;
     position: relative;
     width: 90%;
 }
 
-.ui-listbox {
+.wiki .ui-listbox {
     width: 100%;
 }
 
-p-dialog .ui-dialog-content {
+.wiki p-dialog .ui-dialog-content {
     height: initial;
-}
-
-p-togglebutton{
-    float:right;
-    padding: 1em;
 }

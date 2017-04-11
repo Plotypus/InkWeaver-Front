@@ -13,8 +13,8 @@ import { ApiService } from '../../shared/api.service';
 import { ParserService } from '../../shared/parser.service';
 
 import { ID } from '../../models/id.model';
-import { Segment } from '../../models/wiki/segment.model';
-import { PageSummary } from '../../models/wiki/page-summary.model';
+import { Alias } from '../../models/link/alias.model';
+import { PassiveLink } from '../../models/link/passive-link.model';
 
 import { StatsComponent } from '../stats/stats.component';
 import { StatsService } from '../stats/stats.service';
@@ -45,6 +45,8 @@ export class EditComponent {
     private newLinkPages: any;
     private newSegmentID: ID;
     private newSegments: any;
+    private passiveLinkID: ID;
+    private passiveLinkPage: string;
 
     // Adding/editing sections
     private renaming: boolean;
@@ -160,30 +162,57 @@ export class EditComponent {
                     let linkID: string = thread.getAttribute('href');
                     let ids: string[] = linkID.split('-');
                     let pageID: ID = { $oid: ids[1] };
+
                     if (ids[2]) {
-                        thread.id = 'passive';
-                    }
+                        // Passive link
+                        thread.id = ids[2];
+                        if (ids[2] === 'true') {
+                            thread.onclick = (event: any) => {
+                                event.preventDefault();
+                                this.passiveLinkID = { $oid: ids[0] };
+                                let passiveLink: PassiveLink = this.data.passiveLinkTable[JSON.stringify(this.passiveLinkID)];
+                                if (passiveLink) {
+                                    let alias: Alias = this.data.aliasTable[JSON.stringify(passiveLink.alias_id)];
+                                    if (alias) {
+                                        let aBlot = Quill['find'](event.target);
+                                        let index: number = this.editor.quill.getIndex(aBlot);
+                                        let bounds: any = this.editor.quill.getBounds(index);
+                                        let top: number = bounds.top + 200;
 
-                    thread.onclick = (event: any) => {
-                        event.preventDefault();
-                        this.wikiService.getWikiPage(pageID, ()=> {}, {page_id:pageID});
-                        this.router.navigate(['/story/wiki']);
-                    };
-                    thread.onmouseenter = (event: any) => {
-                        let aBlot = Quill['find'](event.target);
-                        let index: number = this.editor.quill.getIndex(aBlot);
-                        let bounds: any = this.editor.quill.getBounds(index);
-
-                        let top: number = bounds.top + 200;
-                        this.data.tooltip = {
-                            text: '',
-                            display: 'block', top: top + 'px', left: bounds.left + 'px'
+                                        this.data.tooltip = {
+                                            passive: true, display: 'block',
+                                            top: top + 'px', left: bounds.left + 'px'
+                                        };
+                                        this.loopPages(this, this.data.wikiNav[0], (page: TreeNode) => {
+                                            this.data.tooltip.text = 'We suggest linking to ' + page.data.title;
+                                        }, (segment: TreeNode) => { });
+                                    }
+                                }
+                            };
+                        }
+                    } else {
+                        // Active link
+                        thread.onclick = (event: any) => {
+                            event.preventDefault();
+                            this.wikiService.getWikiPage(pageID, () => { }, { page_id: pageID });
+                            this.router.navigate(['/story/wiki']);
                         };
-                        this.wikiService.getWikiPage(pageID);
-                    };
-                    thread.onmouseleave = (event: any) => {
-                        this.data.tooltip.display = 'none';
-                    };
+                        thread.onmouseenter = (event: any) => {
+                            let aBlot = Quill['find'](event.target);
+                            let index: number = this.editor.quill.getIndex(aBlot);
+                            let bounds: any = this.editor.quill.getBounds(index);
+
+                            let top: number = bounds.top + 200;
+                            this.data.tooltip = {
+                                text: '', passive: false,
+                                display: 'block', top: top + 'px', left: bounds.left + 'px'
+                            };
+                            this.wikiService.getWikiPage(pageID);
+                        };
+                        thread.onmouseleave = (event: any) => {
+                            this.data.tooltip.display = 'none';
+                        };
+                    }
                 }
             }
 
@@ -347,6 +376,14 @@ export class EditComponent {
                 this.createLink();
             });
         }
+    }
+    public approvePassive() {
+        this.storyService.approvePassiveLink(this.passiveLinkID);
+        this.data.tooltip.display = 'none';
+    }
+    public rejectPassive() {
+        this.storyService.rejectPassiveLink(this.passiveLinkID);
+        this.data.tooltip.display = 'none';
     }
 
     // Section

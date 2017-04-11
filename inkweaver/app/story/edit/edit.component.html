@@ -103,7 +103,12 @@
                         </header>
                     </p-editor>
 
-                    <div class="tooltip" [innerHTML]="data.tooltip.text" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}"></div>
+                    <div class="tooltip" [innerHTML]="data.tooltip.text" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}">
+                        <div *ngIf="data.tooltip.passive">
+                            <button pButton type="button" label="Approve" (click)="approvePassive()"></button>
+                            <button pButton type="button" label="Reject" (click)="rejectPassive()"></button>
+                        </div>
+                    </div>
                     <div class="tooltip" [ngSwitch]="!!noteEditing" [ngStyle]="{'display': note.display,'top': note.top, 'left': note.left}">
                         <div *ngSwitchCase="false">
                             <div>{{note.text}}</div>

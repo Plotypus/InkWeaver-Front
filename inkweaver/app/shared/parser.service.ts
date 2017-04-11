@@ -5,6 +5,7 @@ import { ID } from '../models/id.model';
 import { Alias } from '../models/link/alias.model';
 import { AliasTable } from '../models/link/alias-table.model';
 import { LinkTable } from '../models/link/link-table.model';
+import { PassiveLink } from '../models/link/passive-link.model';
 import { PassiveLinkTable } from '../models/link/passive-link-table.model';
 import { Section } from '../models/story/section.model';
 import { Paragraph } from '../models/story/paragraph.model';
@@ -91,7 +92,7 @@ export class ParserService {
         return content;
     }
 
-    public parseContent(paragraphs: Paragraph[], aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: LinkTable): ContentObject {
+    public parseContent(paragraphs: Paragraph[], aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: PassiveLinkTable): ContentObject {
         let contentObject: ContentObject = new ContentObject();
 
         for (let paragraph of paragraphs) {
@@ -101,7 +102,7 @@ export class ParserService {
         return contentObject;
     }
 
-    public parseParagraph(paragraph: Paragraph, aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: LinkTable) {
+    public parseParagraph(paragraph: Paragraph, aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: PassiveLinkTable) {
         paragraph.links = new AliasTable();
 
         let text: string = paragraph.text;
@@ -121,14 +122,15 @@ export class ParserService {
                         '<a href="' + linkIDStr + '-' + pageIDStr + '" target="_blank">' + alias.alias_name + '</a>');
                 }
             } else {
-                aliasID = passiveLinkTable[linkID];
-                if (aliasID) {
-                    let alias: Alias = aliasTable[JSON.stringify(aliasID)];
+                let passiveLink: PassiveLink = passiveLinkTable[linkID];
+                if (passiveLink) {
+                    let pending: boolean = passiveLink.pending;
+                    let alias: Alias = aliasTable[JSON.stringify(passiveLink.alias_id)];
                     if (alias) {
                         let linkIDStr: string = JSON.parse(linkID).$oid;
                         let pageIDStr: string = alias.page_id.$oid;
                         paragraph.text = paragraph.text.replace(linkMatch[0],
-                            '<a href="' + linkIDStr + '-' + pageIDStr + '-passive" target="_blank">' + alias.alias_name + '</a>');
+                            '<a href="' + linkIDStr + '-' + pageIDStr + '-' + pending + '" target="_blank">' + alias.alias_name + '</a>');
                     }
                 }
             }
@@ -171,6 +173,7 @@ export class ParserService {
             let links: any[] = paragraph.querySelectorAll('a[href]');
             for (let link of links) {
                 let ids: string[] = link.attributes[0].value.split('-');
+                // Ignore passive links for now
                 if (ids.length < 3) {
                     let linkID: ID = { $oid: ids[0] };
                     let pageID: ID = { $oid: ids[1] };
@@ -198,16 +201,16 @@ export class ParserService {
 
         for (let alias of aliasList) {
             aliasTable[JSON.stringify(alias.alias_id)] = alias;
-            for (let link of alias.link_ids) {
-                linkTable[JSON.stringify(link)] = alias.alias_id;
+            if (alias.link_ids) {
+                for (let link of alias.link_ids) {
+                    linkTable[JSON.stringify(link)] = alias.alias_id;
+                }
             }
             if (alias.passive_link_ids) {
                 for (let link of alias.passive_link_ids) {
-                    passiveLinkTable[JSON.stringify(link)] = { 
-                                                               alias_id:alias.alias_id,
-                                                               rejected: link.rejected
-                                                              };
-
+                    passiveLinkTable[JSON.stringify(link)] = {
+                        alias_id: alias.alias_id, pending: link.pending
+                    };
                 }
             }
         }

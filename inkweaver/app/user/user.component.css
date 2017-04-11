@@ -47,6 +47,7 @@ user .ui-datagrid-content {
 }
 
 .story-tile .fa-trash {
+    font-size: 1.5em;
     color: var(--dark-gray);
     position: absolute;
     right: 0.5em;

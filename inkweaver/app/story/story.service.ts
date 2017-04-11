@@ -20,6 +20,20 @@ export class StoryService {
         });
     }
 
+    public addCollaborator(username: string) {
+        this.apiService.send({
+            action: 'add_collaborator',
+            username: username
+        });
+    }
+
+    public removeCollaborator(userID: ID) {
+        this.apiService.send({
+            action: 'remove_collaborator',
+            user_id: userID
+        });
+    }
+
     public createStory(title: string, wikiID: ID, summary: string) {
         this.apiService.send({
             action: 'create_story',
@@ -64,7 +78,19 @@ export class StoryService {
     public deleteLink(linkID: ID) {
         this.apiService.send({
             action: 'delete_link',
-            link_id: linkID,
+            link_id: linkID
+        });
+    }
+    public approvePassiveLink(passive_link_id: ID) {
+        this.apiService.send({
+            action: 'approve_passive_link',
+            passive_link_id: passive_link_id
+        });
+    }
+    public rejectPassiveLink(passive_link_id: ID) {
+        this.apiService.send({
+            action: 'reject_passive_link',
+            passive_link_id: passive_link_id
         });
     }
 }
