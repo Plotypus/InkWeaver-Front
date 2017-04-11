@@ -6,5 +6,6 @@ export class Paragraph {
     succeeding_id: ID;
     text: string;
     links: AliasTable;
+    passiveLinks: AliasTable;
     note: string;
 }

@@ -3,4 +3,5 @@
     display: string;
     top: string;
     left: string;
+    passive: boolean;
 }

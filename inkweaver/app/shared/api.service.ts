@@ -95,12 +95,12 @@ export class ApiService {
                                 break;
                             case 'got_user_stories_and_wikis':
                                 this.data.stories = reply.stories;
-                                this.data.stories.push({
+                                this.data.stories.unshift({
                                     story_id: null, title: null,
                                     access_level: null, position_context: null, wiki_summary: null
                                 });
                                 this.data.wikis = reply.wikis;
-                                this.data.wikis.push({
+                                this.data.wikis.unshift({
                                     wiki_id: null, title: null,
                                     access_level: null
                                 });
@@ -111,12 +111,21 @@ export class ApiService {
                                 break;
                             case 'user_bio_updated':
                                 break;
+                            case 'collaborator_added':
+                                this.data.collaborators.unshift({ label: reply.name, value: reply.user_id });
+                                break;
+                            case 'collaborator_removed':
+                                let index: number = this.data.collaborators.findIndex((collaborator) => {
+                                    return reply.user_id === collaborator.value;
+                                });
+                                this.data.collaborators.splice(index, 1);
+                                break;
 
                             // ----- Story ----- //
                             case 'story_created':
                                 reply.title = reply.story_title;
                                 reply.wiki_summary = this.data.newWiki;
-                                this.data.stories.unshift(reply);
+                                this.data.stories.push(reply);
                                 break;
                             case 'story_updated':
                                 this.data.story.story_title = reply.update.title;
@@ -148,6 +157,13 @@ export class ApiService {
                                 reply.story_id = this.data.story.story_id;
                                 reply.position_context = this.data.story.position_context;
                                 this.data.story = reply;
+
+                                this.data.collaborators = [{ label: null, value: null }];
+                                for (let user of reply.users) {
+                                    this.data.collaborators.unshift({
+                                        label: user.name, value: user.user_id
+                                    });
+                                }
                                 break;
                             case 'got_story_hierarchy':
                             case 'got_section_hierarchy':
@@ -210,9 +226,11 @@ export class ApiService {
                                 break;
                             case 'section_title_updated':
                                 this.parser.findSection(this.data.storyNode[0], JSON.stringify(reply.section_id), (found: TreeNode) => {
+                                    let old: string = found.data.title;
                                     found.data.title = reply.new_title;
                                     if (this.data.section.data && JSON.stringify(this.data.section.data.section_id) === JSON.stringify(found.data.section_id)) {
-                                        this.data.storyDisplay.replace('<h1>.*?</h1>', '<h1>' + reply.new_title + '</h1>');
+                                        this.data.storyDisplay = this.data.storyDisplay.replace('<h1>' + old + '</h1>',
+                                            '<h1>' + reply.new_title + '</h1>');
                                     }
                                 });
                                 break;
@@ -243,8 +261,9 @@ export class ApiService {
                                 if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
                                     // Add paragraph to content object
                                     let p: Paragraph = {
-                                        paragraph_id: reply.paragraph_id, text: reply.text, note: null,
-                                        links: new AliasTable(), succeeding_id: reply.succeeding_paragraph_id
+                                        paragraph_id: reply.paragraph_id, text: reply.text,
+                                        note: null, succeeding_id: reply.succeeding_paragraph_id,
+                                        links: new AliasTable(), passiveLinks: new AliasTable()
                                     };
                                     this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
@@ -271,12 +290,13 @@ export class ApiService {
                                         }
                                         // Add paragraph to display string
                                         this.data.storyDisplay = this.data.storyDisplay.replace(
-                                            '<p id="' + reply.succeeding_id.$oid + '">.*?</p>', pString + '$&');
+                                            new RegExp('<p id="' + reply.succeeding_id.$oid + '">.*?</p>'),
+                                            pString + '$&');
                                     }
                                 }
                                 break;
                             case 'paragraph_updated':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
                                     // Update the content object
                                     let p: Paragraph = this.data.contentObject[JSON.stringify(reply.paragraph_id)];
                                     p.text = reply.update.text;
@@ -372,12 +392,18 @@ export class ApiService {
                                 delete this.data.linkTable[JSON.stringify(reply.link_id)];
                                 break;
                             case 'passive_link_created':
+                                this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)] = {
+                                    alias_id: reply.alias_id, pending: true
+                                };
                                 break;
                             case 'passive_link_deleted':
-                                break;
-                            case 'passive_link_approved':
+                                delete this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)];
                                 break;
                             case 'passive_link_rejected':
+                                this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)].pending = false;
+                                this.data.storyDisplay = this.data.storyDisplay.replace(
+                                    new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'),
+                                    '<a href="$1-$2-false" target="_blank" id="false">$3</a>');
                                 break;
 
                             // Wiki
@@ -394,6 +420,7 @@ export class ApiService {
                                 break;
                             case 'segment_added':
                                 this.parser.addSegment(this.data.wikiNav[0], reply);
+                                this.data.selectedEntry = this.parser.findSegment(this.data.wikiNav[0], reply.segment_id);
                                 if (this.outgoing['segment' + reply.title]) {
                                     let callback: Function =
                                         this.outgoing['segment' + reply.title].callback;
@@ -404,6 +431,7 @@ export class ApiService {
                                 break;
                             case 'page_added':
                                 this.parser.addPage(this.data.wikiNav[0], reply);
+                                this.data.selectedEntry = this.parser.findPage(this.data.wikiNav[0], reply.page_id);
                                 if (this.outgoing['page' + reply.title]) {
                                     let callback: Function =
                                         this.outgoing['page' + reply.title].callback;
@@ -478,6 +506,13 @@ export class ApiService {
                                     let callback: Function =
                                         this.outgoing["page" + reply.identifier.message_id].callback;
                                     callback(reply);
+
+                                    if (this.outgoing["page" + reply.identifier.message_id].metadata &&
+                                        this.outgoing["page" + reply.identifier.message_id].metadata.hasOwnProperty("page_id")) {
+                                        this.data.selectedEntry = this.parser.findPage(this.data.wikiNav[0],
+                                            this.outgoing["page" + reply.identifier.message_id].metadata.page_id);
+                                        this.parser.expandPath(this.data.selectedEntry);
+                                    }
                                     delete this.outgoing["page" + reply.identifier.message_id];
                                 }
                                 break;
@@ -604,6 +639,7 @@ export class ApiService {
         this.data = {
             loading: false,
             tooltip: new Tooltip(),
+            collaborators: new Array<SelectItem>(),
 
             user: new User(),
             stories: new Array<StorySummary>(),

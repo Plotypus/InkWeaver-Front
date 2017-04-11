@@ -5,6 +5,7 @@ import { ID } from '../models/id.model';
 import { Alias } from '../models/link/alias.model';
 import { AliasTable } from '../models/link/alias-table.model';
 import { LinkTable } from '../models/link/link-table.model';
+import { PassiveLink } from '../models/link/passive-link.model';
 import { PassiveLinkTable } from '../models/link/passive-link-table.model';
 import { Section } from '../models/story/section.model';
 import { Paragraph } from '../models/story/paragraph.model';
@@ -91,7 +92,7 @@ export class ParserService {
         return content;
     }
 
-    public parseContent(paragraphs: Paragraph[], aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: LinkTable): ContentObject {
+    public parseContent(paragraphs: Paragraph[], aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: PassiveLinkTable): ContentObject {
         let contentObject: ContentObject = new ContentObject();
 
         for (let paragraph of paragraphs) {
@@ -101,8 +102,9 @@ export class ParserService {
         return contentObject;
     }
 
-    public parseParagraph(paragraph: Paragraph, aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: LinkTable) {
+    public parseParagraph(paragraph: Paragraph, aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: PassiveLinkTable) {
         paragraph.links = new AliasTable();
+        paragraph.passiveLinks = new AliasTable();
 
         let text: string = paragraph.text;
         let r1: RegExp = /\s+/g;
@@ -121,14 +123,16 @@ export class ParserService {
                         '<a href="' + linkIDStr + '-' + pageIDStr + '" target="_blank">' + alias.alias_name + '</a>');
                 }
             } else {
-                aliasID = passiveLinkTable[linkID];
-                if (aliasID) {
-                    let alias: Alias = aliasTable[JSON.stringify(aliasID)];
+                let passiveLink: PassiveLink = passiveLinkTable[linkID];
+                if (passiveLink) {
+                    let pending: boolean = passiveLink.pending;
+                    let alias: Alias = aliasTable[JSON.stringify(passiveLink.alias_id)];
                     if (alias) {
                         let linkIDStr: string = JSON.parse(linkID).$oid;
                         let pageIDStr: string = alias.page_id.$oid;
+                        paragraph.passiveLinks[linkID] = alias;
                         paragraph.text = paragraph.text.replace(linkMatch[0],
-                            '<a href="' + linkIDStr + '-' + pageIDStr + '-passive" target="_blank">' + alias.alias_name + '</a>');
+                            '<a href="' + linkIDStr + '-' + pageIDStr + '-' + pending + '" target="_blank" id="' + pending + '">' + alias.alias_name + '</a>');
                     }
                 }
             }
@@ -146,6 +150,7 @@ export class ParserService {
                 succeeding_id: null,
                 text: paragraph.innerHTML,
                 links: new AliasTable(),
+                passiveLinks: new AliasTable(),
                 note: null
             };
 
@@ -171,10 +176,12 @@ export class ParserService {
             let links: any[] = paragraph.querySelectorAll('a[href]');
             for (let link of links) {
                 let ids: string[] = link.attributes[0].value.split('-');
-                if (ids.length < 3) {
-                    let linkID: ID = { $oid: ids[0] };
-                    let pageID: ID = { $oid: ids[1] };
+                let linkID: ID = { $oid: ids[0] };
+                let pageID: ID = { $oid: ids[1] };
 
+                if (ids.length > 2) {
+                    p.passiveLinks[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
+                } else {
                     if (ids[0].startsWith('new')) {
                         p.links[ids[0]] = { page_id: pageID, alias_name: link.innerHTML };
                     } else {
@@ -198,16 +205,16 @@ export class ParserService {
 
         for (let alias of aliasList) {
             aliasTable[JSON.stringify(alias.alias_id)] = alias;
-            for (let link of alias.link_ids) {
-                linkTable[JSON.stringify(link)] = alias.alias_id;
+            if (alias.link_ids) {
+                for (let link of alias.link_ids) {
+                    linkTable[JSON.stringify(link)] = alias.alias_id;
+                }
             }
-            if (alias.passive_link_ids) {
-                for (let link of alias.passive_link_ids) {
-                    passiveLinkTable[JSON.stringify(link)] = { 
-                                                               alias_id:alias.alias_id,
-                                                               rejected: link.rejected
-                                                              };
-
+            if (alias.passive_links) {
+                for (let link of alias.passive_links) {
+                    passiveLinkTable[JSON.stringify(link.passive_link_id)] = {
+                        alias_id: alias.alias_id, pending: link.pending
+                    };
                 }
             }
         }
@@ -386,7 +393,7 @@ export class ParserService {
         return reply;
     }
 
-    public findSegment(wiki: TreeNode, sid: any, mode: boolean = false) {
+    public findSegment(wiki: TreeNode, sid: any, mode: boolean = true) {
         let found: any;
         if ((mode ? JSON.stringify(sid["$oid"]) : JSON.stringify(sid)) ===
             (mode ? JSON.stringify(wiki.data.id["$oid"]) : JSON.stringify(wiki.data.id))) {
@@ -408,7 +415,7 @@ export class ParserService {
             return found;
     }
 
-    public findPage(wiki: TreeNode, pid: any, mode: boolean = false) {
+    public findPage(wiki: TreeNode, pid: any, mode: boolean = true) {
         let found: any;
         if ((mode ? JSON.stringify(pid["$oid"]) : JSON.stringify(pid)) ===
             (mode ? JSON.stringify(wiki.data.id["$oid"]) : JSON.stringify(wiki.data.id))) {
@@ -499,6 +506,18 @@ export class ParserService {
             for (let child of wiki.children) {
                 this.addPage(child, reply);
 
+            }
+        }
+    }
+
+    public expandPath(page: TreeNode) {
+        if (!(page.hasOwnProperty("type") && page.type === 'title')) {
+
+            let parent = page.parent;
+            while (typeof parent !== 'undefined') {
+                if (parent.type === 'category')
+                    parent.expanded = true;
+                parent = parent.parent;
             }
         }
     }

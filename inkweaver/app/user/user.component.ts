@@ -139,11 +139,15 @@ export class UserComponent {
 
     // Create a story
     public openStoryCreator() {
+        this.title = '';
+        this.summary = '';
+        this.newWikiTitle = '';
+        this.newWikiSummary = '';
         this.displayStoryCreator = true;
         this.wikis = [{ label: 'Create New Wiki', value: 'newWiki' }];
         for (let wiki of this.data.wikis) {
             if (wiki.title) {
-                this.wikis.push({ label: wiki.title, value: wiki.wiki_id });
+                this.wikis.unshift({ label: wiki.title, value: wiki.wiki_id });
             }
         }
         this.newWiki = this.wikis[0].value;
@@ -155,6 +159,11 @@ export class UserComponent {
                 this.storyService.createStory(this.title, reply.wiki_id, this.summary);
             });
         } else {
+            for (let wiki of this.data.wikis) {
+                if (JSON.stringify(this.newWiki) === JSON.stringify(wiki.wiki_id)) {
+                    this.data.newWiki = wiki;
+                }
+            }
             this.storyService.createStory(this.title, this.newWiki, this.summary);
         }
     }

@@ -68,7 +68,7 @@ export class EditService {
             '{#|' + JSON.stringify(storyID) + '|{"$$oid":"$1"}|$2|#}');
 
         text = text.replace(
-            /<a href="([a-f0-9]{24})-[a-f0-9]{24}" target="_blank">.*?<\/a>/g,
+            /<a href="([a-f0-9]{24})-[a-f0-9]{24}(-(true|false))?" target="_blank"( id="(true|false)")?>.*?<\/a>/g,
             '{"$$oid":"$1"}');
 
         text = text.replace(/<code>(.*?)<\/code>/g, '');
@@ -160,6 +160,11 @@ export class EditService {
                 for (let link in obj1[id].links) {
                     if (!obj2[id].links[link]) {
                         this.storyService.deleteLink(JSON.parse(link));
+                    }
+                }
+                for (let passiveLink in obj1[id].passiveLinks) {
+                    if (!obj2[id].passiveLinks[passiveLink]) {
+                        this.storyService.deletePassiveLink(JSON.parse(passiveLink));
                     }
                 }
                 if (obj1[id].note !== obj2[id].note) {

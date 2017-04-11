@@ -5,6 +5,8 @@ import { MenuItem } from 'primeng/primeng';
 import { ApiService } from '../shared/api.service';
 import { StoryService } from './story.service';
 
+import { ID } from '../models/id.model';
+
 @Component({
     selector: 'story',
     templateUrl: './app/story/story.component.html'
@@ -40,7 +42,7 @@ export class StoryComponent {
                 else if (event.url === '/story/wiki') {
                     this.activeItem = this.items[1];
                 }
-                
+
             });
 
         this.data.storyFunction = this.disableMenu();
@@ -66,5 +68,13 @@ export class StoryComponent {
     public cancel() {
         this.editing = false;
         this.data.story.story_title = this.prevTitle;
+    }
+
+    // Collaborators
+    public removeCollaborator(userID: ID) {
+        this.storyService.removeCollaborator(userID);
+    }
+    public addCollaborator(username: string) {
+        this.storyService.addCollaborator(username);
     }
 }
