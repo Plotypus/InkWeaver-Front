@@ -184,7 +184,9 @@ export class EditComponent {
                                             top: top + 'px', left: bounds.left + 'px'
                                         };
                                         this.loopPages(this, this.data.wikiNav[0], (page: TreeNode) => {
-                                            this.data.tooltip.text = 'We suggest linking to ' + page.data.title;
+                                            if (JSON.stringify(alias.page_id) === JSON.stringify(page.data.id)) {
+                                                this.data.tooltip.text = 'We suggest linking to ' + page.data.title;
+                                            }
                                         }, (segment: TreeNode) => { });
                                     }
                                 }

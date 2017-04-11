@@ -104,6 +104,7 @@ export class ParserService {
 
     public parseParagraph(paragraph: Paragraph, aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: PassiveLinkTable) {
         paragraph.links = new AliasTable();
+        paragraph.passiveLinks = new AliasTable();
 
         let text: string = paragraph.text;
         let r1: RegExp = /\s+/g;
@@ -129,8 +130,9 @@ export class ParserService {
                     if (alias) {
                         let linkIDStr: string = JSON.parse(linkID).$oid;
                         let pageIDStr: string = alias.page_id.$oid;
+                        paragraph.passiveLinks[linkID] = alias;
                         paragraph.text = paragraph.text.replace(linkMatch[0],
-                            '<a href="' + linkIDStr + '-' + pageIDStr + '-' + pending + '" target="_blank">' + alias.alias_name + '</a>');
+                            '<a href="' + linkIDStr + '-' + pageIDStr + '-' + pending + '" target="_blank" id="' + pending + '">' + alias.alias_name + '</a>');
                     }
                 }
             }
@@ -148,6 +150,7 @@ export class ParserService {
                 succeeding_id: null,
                 text: paragraph.innerHTML,
                 links: new AliasTable(),
+                passiveLinks: new AliasTable(),
                 note: null
             };
 
@@ -173,11 +176,12 @@ export class ParserService {
             let links: any[] = paragraph.querySelectorAll('a[href]');
             for (let link of links) {
                 let ids: string[] = link.attributes[0].value.split('-');
-                // Ignore passive links for now
-                if (ids.length < 3) {
-                    let linkID: ID = { $oid: ids[0] };
-                    let pageID: ID = { $oid: ids[1] };
+                let linkID: ID = { $oid: ids[0] };
+                let pageID: ID = { $oid: ids[1] };
 
+                if (ids.length > 2) {
+                    p.passiveLinks[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
+                } else {
                     if (ids[0].startsWith('new')) {
                         p.links[ids[0]] = { page_id: pageID, alias_name: link.innerHTML };
                     } else {
@@ -206,9 +210,9 @@ export class ParserService {
                     linkTable[JSON.stringify(link)] = alias.alias_id;
                 }
             }
-            if (alias.passive_link_ids) {
-                for (let link of alias.passive_link_ids) {
-                    passiveLinkTable[JSON.stringify(link)] = {
+            if (alias.passive_links) {
+                for (let link of alias.passive_links) {
+                    passiveLinkTable[JSON.stringify(link.passive_link_id)] = {
                         alias_id: alias.alias_id, pending: link.pending
                     };
                 }

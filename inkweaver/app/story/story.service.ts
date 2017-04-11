@@ -81,6 +81,12 @@ export class StoryService {
             link_id: linkID
         });
     }
+    public deletePassiveLink(linkID: ID) {
+        this.apiService.send({
+            action: 'delete_passive_link',
+            passive_link_id: linkID
+        });
+    }
     public approvePassiveLink(passive_link_id: ID) {
         this.apiService.send({
             action: 'approve_passive_link',

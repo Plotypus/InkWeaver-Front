@@ -261,8 +261,9 @@ export class ApiService {
                                 if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
                                     // Add paragraph to content object
                                     let p: Paragraph = {
-                                        paragraph_id: reply.paragraph_id, text: reply.text, note: null,
-                                        links: new AliasTable(), succeeding_id: reply.succeeding_paragraph_id
+                                        paragraph_id: reply.paragraph_id, text: reply.text,
+                                        note: null, succeeding_id: reply.succeeding_paragraph_id,
+                                        links: new AliasTable(), passiveLinks: new AliasTable()
                                     };
                                     this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
@@ -400,6 +401,9 @@ export class ApiService {
                                 break;
                             case 'passive_link_rejected':
                                 this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)].pending = false;
+                                this.data.storyDisplay = this.data.storyDisplay.replace(
+                                    new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'),
+                                    '<a href="$1-$2-false" target="_blank" id="false">$3</a>');
                                 break;
 
                             // Wiki

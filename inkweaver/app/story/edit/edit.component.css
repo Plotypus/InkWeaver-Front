@@ -11,9 +11,9 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
     height: calc(100% - 3em);
 }
 
-    .editor > div, .ui-editor-container {
-        height: 100%;
-    }
+.editor > div, .ui-editor-container {
+    height: 100%;
+}
 
 .ui-editor-toolbar {
     height: 3em;
@@ -93,8 +93,14 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
     color: var(--link-blue) !important;
 }
 
-#passive {
+#true {
     color: var(--orange) !important;
+}
+
+#false {
+    cursor: text;
+    text-decoration: none;
+    color: black !important;
 }
 
 .ql-tooltip {
