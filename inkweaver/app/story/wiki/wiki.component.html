@@ -2,7 +2,7 @@
 
 
 
-    <p-dialog *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
+    <p-dialog id="dialog" *ngIf="showAddDialog" modal="true" header="Adding {{addContent}} to {{defAdd.label}}" [(visible)]="showAddDialog"
     width="450" height="200" responsive="true">
 
 
@@ -18,7 +18,7 @@
     </footer>
 </p-dialog>
 
-<p-dialog *ngIf="showAddHeadDialog" modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
+<p-dialog  id="dialog" *ngIf="showAddHeadDialog" modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
 width="450" height="200" responsive="true">
 
 {{heading}}: <input type="text" pInputText [(ngModel)]="headingName" (ngModelChange)="onTextChange(headingName)"/>
@@ -41,7 +41,7 @@ width="450" height="200" responsive="true">
 </footer>
 </p-dialog>
 
-<p-dialog *ngIf="showDeleteDialog && type == 0" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
+<p-dialog  id="dialog" *ngIf="showDeleteDialog && type == 0" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
 width="450" height="300" responsive="true">
 
 <div *ngIf=" defDel && nestedPages.length && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
@@ -59,7 +59,7 @@ width="450" height="300" responsive="true">
 </footer>
 </p-dialog>
 
-<p-dialog *ngIf="showDeleteDialog && type == 1" modal="true" header="Do you want to delete {{defDel ? defDel : none}}" [(visible)]="showDeleteDialog"
+<p-dialog id="dialog" *ngIf="showDeleteDialog && type == 1" modal="true" header="Do you want to delete {{defDel ? defDel : none}}" [(visible)]="showDeleteDialog"
 width="450" height="200" responsive="true">
 
 <footer>
