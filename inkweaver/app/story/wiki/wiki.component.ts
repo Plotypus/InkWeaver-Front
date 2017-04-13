@@ -654,17 +654,30 @@ export class WikiComponent {
         }
 
         public nodeDrop(node){
+
+            if(node.parent && node.parent == this.dragNode)
+            {
+                console.log("moving parent into child");
+                return;
+            }
             if(node.parent)
             {
-                //index of draged to node
+                //remove from current location
+                /*
+                let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                this.dragNode.parent.children.splice(rmidx, 1);
+                //index of draged to node*/
                 let idx = node.parent.children.indexOf(node);
-                node.parent.children.splice(idx, 0, this.dragNode);
-                //remove from existing location
-                idx = this.dragNode.parent.children.indexOf(this.dragNode);
-                this.dragNode.parent.children.splice(idx, 1);
-                this.dragNode.parent = node.parent;
-            } 
+                /*
+                node.parent.children.splice(idx+1, 0, this.dragNode);
+                this.dragNode.parent = node.parent;*/
+                if(this.dragNode.type == 'segment')
+                    this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, idx+1);
+                else
+                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx+1);
+            }
             console.log("dropping " + node.label);
+            
             this.endDrag();
         }
 

@@ -516,6 +516,47 @@ export class ApiService {
                                     delete this.outgoing["page" + reply.identifier.message_id];
                                 }
                                 break;
+                            case 'move_segment':
+                                let sid = reply.segment_id;
+                                let to_pid = reply.to_parent_id;
+                                let to_idx = reply.to_index;
+
+                                let curr_node = this.parser.findSegment(this.data.wikiNav[0], sid);
+                                let parent_node = this.parser.findSegment(this.data.wikiNav[0], to_pid);
+
+                                //remove from current location
+                                let idx = curr_node.parent.children.indexOf(curr_node);
+                                curr_node.parent.children.splice(idx, 1);
+
+                                parent_node.children.splice(idx, 0, curr_node);
+                                curr_node.parent = parent_node;
+                                                      /*
+                                let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                                this.dragNode.parent.children.splice(rmidx, 1);
+                                //index of draged to node
+                                let idx = node.parent.children.indexOf(node);
+                                node.parent.children.splice(idx + 1, 0, this.dragNode);
+                                this.dragNode.parent = node.parent;
+                                if (this.dragNode.type == 'segment')
+                                    this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
+                                else
+                                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
+                               */ break;
+                            case 'page_moved':
+                                let pid = reply.segment_id;
+                                 to_pid = reply.to_parent_id;
+                                 to_idx = reply.to_index;
+
+                                 curr_node = this.parser.findPage(this.data.wikiNav[0], pid);
+                                 parent_node = this.parser.findPage(this.data.wikiNav[0], to_pid);
+
+                                //remove from current location
+                                 idx = curr_node.parent.children.indexOf(curr_node);
+                                curr_node.parent.children.splice(idx, 1);
+
+                                parent_node.children.splice(idx, 0, curr_node);
+                                curr_node.parent = parent_node;
+                                break;
                             case 'template_heading_added':
                             case 'template_heading_updated':
                             case 'template_heading_deleted':

@@ -273,6 +273,7 @@ width="450" height="200" responsive="true">
                         (onDragEnter)="nodeDragEnter(node)" pDroppable="segmentdragdrop" (onDrop)="nodeDrop(node)"
                          [ngClass]="{'nav-drag': dragNodeId && (dragNodeId.$oid === node.data.id.$oid)}" class="nav-header">
                         <span *ngSwitchCase="false">
+
                    
                     <span>
                         <span></span>
@@ -295,6 +296,8 @@ width="450" height="200" responsive="true">
 <p-toggleButton [(ngModel)]="statMode" onLabel="Statistics On" offLabel="Statistics Off">
 
 </p-toggleButton>
+
+
 
 
 </div>
