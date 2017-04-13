@@ -63,6 +63,10 @@ export class WikiComponent {
     //stats stuff
     private statMode = false;
 
+    //drag
+    private dragNode: TreeNode;
+    private dragMode: boolean = false;
+    private dragNodeId: any;
     constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
@@ -629,10 +633,48 @@ export class WikiComponent {
                         'active': false
                     });
                 }
-                this.updateData();
                 this.fromLink = false;
             }
         }
+
+        //On drag stuff
+        public nodeDrag(node){
+            if (node.parent) {
+                this.dragNode = node;
+                this.dragMode = true;
+            }
+            console.log("starting drag")
+        }
+
+        public endDrag(){
+            this.dragNode = null;
+            this.dragMode = false;
+            this.dragNodeId = null;
+            console.log("end drag");
+        }
+
+        public nodeDrop(node){
+            if(node.parent)
+            {
+                //index of draged to node
+                let idx = node.parent.children.indexOf(node);
+                node.parent.children.splice(idx, 0, this.dragNode);
+                //remove from existing location
+                idx = this.dragNode.parent.children.indexOf(this.dragNode);
+                this.dragNode.parent.children.splice(idx, 1);
+                this.dragNode.parent = node.parent;
+            } 
+            console.log("dropping " + node.label);
+            this.endDrag();
+        }
+
+        public nodeDragEnter(node){
+            console.log("entering " + node.label);
+            if (node.type == 'category')
+                node.expanded = true;
+            this.dragNodeId = node.data.id;
+        }
+        
 
         
     }

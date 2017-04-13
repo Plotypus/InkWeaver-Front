@@ -5,6 +5,46 @@ import { ApiService } from '../../shared/api.service';
 @Injectable()
 export class WikiService {
     constructor(private apiService: ApiService) { }
+    //Move calls
+
+    public move_segment(sid:any, to_pid:any, to_idx:any){
+        this.apiService.send({
+            action: 'move_segment',
+            segment_id: sid,
+            to_parent_id:to_pid,
+            to_index:to_idx
+        });
+    }
+
+    public move_template_heading(sid: any, title: any, to_idx:any){
+        this.apiService.send({
+            action: 'move_segment',
+            segment_id: sid,
+            template_heading_title: title,
+            to_index: to_idx
+        });
+    }
+
+    public move_page(pid: any, to_pid: any, to_idx:any){
+        this.apiService.send({
+            action: 'move_page',
+            page_id: pid,
+            to_parent_id: to_pid,
+            to_index: to_idx
+        });
+    }
+
+    public move_heading(sid: any, title: any, to_idx: any) {
+        this.apiService.send({
+            action: 'move_segment',
+            page_id: sid,
+            heading_title: title,
+            to_index: to_idx
+        });
+    }
+
+
+    //GET Calls
 
     public getWikiSegmentHierarchy(segment_id: any, callback: Function = () => { }) {
         this.apiService.send({
