@@ -654,27 +654,72 @@ export class WikiComponent {
         }
 
         public nodeDrop(node){
+            /*
+                Case 1: page -> category
+                Case 2: page -> page
+                Case 3: category -> category (inside)
+                Case 4: category -> around category
+            */
 
-            if(node.parent && node.parent == this.dragNode)
+            if((node.parent && node.parent == this.dragNode)||this.dragNode.type == 'title')
             {
                 console.log("moving parent into child");
                 return;
             }
-            if(node.parent)
+            else if(node.type == 'page' && this.dragNode.type =='page' )
             {
                 //remove from current location
-                /*
+                
                 let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
                 this.dragNode.parent.children.splice(rmidx, 1);
-                //index of draged to node*/
+                //index of draged to node
                 let idx = node.parent.children.indexOf(node);
-                /*
+                
                 node.parent.children.splice(idx+1, 0, this.dragNode);
-                this.dragNode.parent = node.parent;*/
-                if(this.dragNode.type == 'segment')
-                    this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, idx+1);
+                this.dragNode.parent = node.parent;
+                this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx+1);
+            }
+            else if(node.type == 'category' && this.dragNode.type == 'page')
+            {
+               
+                    //remove from current location
+
+                    let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                    this.dragNode.parent.children.splice(rmidx, 1);
+
+                    //adding it to the top
+                    let idx = this.parserService.firstPage(node);
+                    node.children.splice(idx, 0, this.dragNode);
+                    this.dragNode.parent = node;
+                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, 0);
+
+                
+            }
+            else if(node.type == 'category' && this.dragNode.type == 'category')
+            {
+
+                if(node.expanded)
+                {
+                    let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                    this.dragNode.parent.children.splice(rmidx, 1);
+                    //index of draged to node
+                    let idx = node.parent.children.indexOf(node);
+
+                    node.parent.children.splice(idx + 1, 0, this.dragNode);
+                    this.dragNode.parent = node.parent;
+                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
+                }
                 else
-                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx+1);
+                {
+
+                }
+            }
+            else if(node.type == 'title')
+            {
+                if (this.dragNode.type == 'category')
+                    this.wikiService.move_segment(this.dragNode.data.id, node.data.id, 0);
+                else
+                    this.wikiService.move_page(this.dragNode.data.id, node.data.id, node.children.length+1);
             }
             console.log("dropping " + node.label);
             
@@ -683,9 +728,10 @@ export class WikiComponent {
 
         public nodeDragEnter(node){
             console.log("entering " + node.label);
-            if (node.type == 'category')
+            if ( this.dragNode.type == 'page' && node.type == 'category')
                 node.expanded = true;
-            this.dragNodeId = node.data.id;
+            if((this.dragNode.type == "category"  && node.type != "page") || (this.dragNode.type == "page"))
+                this.dragNodeId = node.data.id;
         }
         
 

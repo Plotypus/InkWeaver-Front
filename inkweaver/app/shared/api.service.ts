@@ -528,22 +528,11 @@ export class ApiService {
                                 let idx = curr_node.parent.children.indexOf(curr_node);
                                 curr_node.parent.children.splice(idx, 1);
 
-                                parent_node.children.splice(idx, 0, curr_node);
+                                parent_node.children.splice(to_idx, 0, curr_node);
                                 curr_node.parent = parent_node;
-                                                      /*
-                                let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
-                                this.dragNode.parent.children.splice(rmidx, 1);
-                                //index of draged to node
-                                let idx = node.parent.children.indexOf(node);
-                                node.parent.children.splice(idx + 1, 0, this.dragNode);
-                                this.dragNode.parent = node.parent;
-                                if (this.dragNode.type == 'segment')
-                                    this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
-                                else
-                                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
-                               */ break;
+                                break;
                             case 'page_moved':
-                                let pid = reply.segment_id;
+                                let pid = reply.page_id;
                                  to_pid = reply.to_parent_id;
                                  to_idx = reply.to_index;
 
@@ -554,7 +543,7 @@ export class ApiService {
                                  idx = curr_node.parent.children.indexOf(curr_node);
                                 curr_node.parent.children.splice(idx, 1);
 
-                                parent_node.children.splice(idx, 0, curr_node);
+                                parent_node.children.splice(to_idx, 0, curr_node);
                                 curr_node.parent = parent_node;
                                 break;
                             case 'template_heading_added':

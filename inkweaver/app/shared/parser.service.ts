@@ -247,6 +247,7 @@ export class ParserService {
         for (let index in json['pages']) {
             let result = this.jsonToPage(json['pages'][index]);
             temp.children.push(result);
+            result.parent = temp;
             pageDic.push(result.data);
         }
 
@@ -509,6 +510,22 @@ export class ParserService {
             }
         }
     }
+
+
+    public LastCategory(wiki: TreeNode){
+        let index = this.firstPage(wiki);
+        return index == -1 ? 0 : index;
+    }
+    public firstPage(wiki: TreeNode)
+    {
+        let index: number = wiki.children.findIndex((child: TreeNode) => {
+            return child.type === 'page' ;
+        });
+        if (index == -1)
+            index = 0;
+        return index;
+    }
+
 
     public expandPath(page: TreeNode) {
         if (!(page.hasOwnProperty("type") && page.type === 'title')) {
