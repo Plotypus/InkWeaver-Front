@@ -27,7 +27,8 @@
             // other libraries
             'rxjs': 'npm:rxjs',
             'quill': 'npm:quill',
-            'primeng': 'npm:primeng'
+            'primeng': 'npm:primeng',
+            "jspdf": "node_modules/jspdf/dist/jspdf.min.js"
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {

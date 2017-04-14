@@ -486,7 +486,7 @@ export class ParserService {
             }
             //when adding a new segment
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title, icon : "fa-book";
+                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title, icon : "fa-book",
                 children: [{ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } }]
             });
         }
@@ -505,7 +505,7 @@ export class ParserService {
                 wiki.children = [];
             }
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title, icon : "fa-file-text-o";
+                parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title, icon : "fa-file-text-o",
             });
         } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
             for (let child of wiki.children) {

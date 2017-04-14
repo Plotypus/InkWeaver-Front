@@ -190,23 +190,36 @@ export class ApiService {
                                 break;
                             case 'got_section_content':
                                 // Set the content object
+                                if (this.outgoing["section" + reply.identifier.message_id]) {
+                                    metadata = this.outgoing["section" + reply.identifier.message_id].metadata;
+                                }
                                 this.data.contentObject = this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
+                                if (!metadata.pdf) {
+                                    // Set the story display
+                                    this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
 
-                                // Set the story display
-                                this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
+                                    // Set the section in the navigation panel
+                                    this.data.section = this.parser.setSection(
+                                        this.data.storyNode[0], JSON.stringify(metadata.section_id));
 
-                                // Set the section in the navigation panel
-                                this.data.section = this.parser.setSection(
-                                    this.data.storyNode[0], JSON.stringify(metadata.section_id));
-
-                                // If this is the top-level section, put a summary tag
-                                if (JSON.stringify(metadata.section_id) === JSON.stringify(this.data.story.section_id)) {
-                                    if (!this.data.storyDisplay) {
-                                        this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
+                                    // If this is the top-level section, put a summary tag
+                                    if (JSON.stringify(metadata.section_id) === JSON.stringify(this.data.story.section_id)) {
+                                        if (!this.data.storyDisplay) {
+                                            this.data.storyDisplay = '<p><em>Write a summary here!</em></p>';
+                                        }
+                                        this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay;
+                                    } else {
+                                        this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
                                     }
-                                    this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay;
-                                } else {
-                                    this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
+                                }
+                                else
+                                {
+                                    if (this.outgoing["section" + reply.identifier.message_id]) {
+                                        let callback: Function =
+                                            this.outgoing["section" + reply.identifier.message_id].callback;
+                                        callback(reply);
+                                        delete this.outgoing["section" + reply.identifier.message_id];
+                                    }
                                 }
                                 break;
 
@@ -538,15 +551,15 @@ export class ApiService {
                             case 'page_moved':
                                 if (!myMessage) {
                                     let pid = reply.page_id;
-                                    to_pid = reply.to_parent_id;
-                                    to_idx = reply.to_index;
+                                    let to_pid = reply.to_parent_id;
+                                    let to_idx = reply.to_index;
 
-                                    curr_node = this.parser.findPage(this.data.wikiNav[0], pid);
-                                    parent_node = this.parser.findPage(this.data.wikiNav[0], to_pid);
+                                    let curr_node = this.parser.findPage(this.data.wikiNav[0], pid);
+                                    let parent_node = this.parser.findPage(this.data.wikiNav[0], to_pid);
                                     //console.log("Moving: " + curr_node.label + " into " + parent_node.label + "at index " + to_idx);
 
                                     //remove from current location
-                                    idx = curr_node.parent.children.indexOf(curr_node);
+                                    let idx = curr_node.parent.children.indexOf(curr_node);
                                     curr_node.parent.children.splice(idx, 1);
 
                                     parent_node.children.splice(to_idx, 0, curr_node);
@@ -736,9 +749,10 @@ export class ApiService {
             key = 'segment' + message.identifier.message_id;
         } else if (message.action === 'delete_page') {
             key = 'page' + message.identifier.message_id;
-        } else if (message.action.includes("template_heading")) {
-            key = "template_heading" + message.identifier.message_id;
-        } else {
+        } else if (message.action === 'get_section_content') {
+            key = 'section' + message.identifier.message_id;
+        }
+        else {
             key = message.identifier.message_id;
         }
 
