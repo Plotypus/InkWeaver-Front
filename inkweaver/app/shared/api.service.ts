@@ -192,6 +192,7 @@ export class ApiService {
                                 // Set the content object
                                 if (this.outgoing["section" + reply.identifier.message_id]) {
                                     metadata = this.outgoing["section" + reply.identifier.message_id].metadata;
+                                    
                                 }
                                 this.data.contentObject = this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                 if (!metadata.pdf) {

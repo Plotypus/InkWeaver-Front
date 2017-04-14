@@ -97,22 +97,58 @@ export class StoryComponent {
     public createPDF(){
         
         let allSections = this.parserService.flattenTree(this.data.storyNode[0]);
-        this.secCount = Object.keys(allSections).length;
-        let width:any =  Math.round(parseInt(this.width) * 25);
-        let height:any = Math.round(parseInt(this.height) * 25);
-        let size = [width, height];
-        let doc = new jsPDF('p', 'mm', 'letter');
-        let  specialElementHandlers = {};
+        this.secCount = Object.keys(allSections).length - 1;
+        //let width:any =  Math.round(parseInt(this.width) * 25);
+        //let height:any = Math.round(parseInt(this.height) * 25);
+        //let size = [width, height];
+        let doc = new jsPDF('p', 'pt', [576, 792]);
+        let specialElementHandlers = {
+            '#bypassme': function(element: any, renderer: any) {
+                return true;
+            }
+        };
+        this.count = 0;
         for (let id in allSections){
             let sec:any = allSections[id].section_id;
             this.apiService.send({ action: 'get_section_content', section_id: sec }, (reply: any) => {
-                if (this.secCount == this.count) {
+                if ( this.secCount == this.count) {
+                    let margins = {
+                        top: 72,
+                        bottom: 60,
+                        left: 40,
+                        width: 288
+                    };
+                    // all coords and widths are in jsPDF instance's declared units
+                    // 'inches' in this case
+                    doc.fromHTML(
+                        this.pdfHtml, // HTML string or DOM elem ref.
+                        margins.left, // x coord
+                        margins.top, { // y coord
+                            'width': margins.width, // max width of content on PDF
+                            'elementHandlers': specialElementHandlers
+                        },
+
+                        function(dispose) {
+                            // dispose: object with X, Y of the last line add to the PDF 
+                            //          this allow the insertion of new lines after html
+                            doc.save('Test.pdf');
+                        }, margins
+                    /*
                     doc.fromHTML(this.pdfHtml, 15, 15, {
                         'width': 250,
                         'margin': 1,
                         'pagesplit': true, //This will work for multiple pages
                         'elementHandlers': specialElementHandlers
                     });
+                    /*
+                    doc.fromHTML(
+                        this.pdfHtml, // HTML string or DOM elem ref.
+                        0.5, // x coord
+                        0.5, // y coord
+                        {
+                            'width': 7.5, // max width of content on PDF
+                            'elementHandlers': specialElementHandlers
+                        });*/
                     doc.output('dataurlnewwindow');
                     if (this.name.includes('.pdf'))
                         this.name += ".pdf";
