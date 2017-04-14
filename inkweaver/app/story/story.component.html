@@ -1,4 +1,18 @@
-﻿<p-panel>
+﻿<p-dialog id="dialog" *ngIf="pdf" modal="true" header="Create PDF" [(visible)]="pdf"
+    width="600" height="700" responsive="true">
+    PDF Name  <input type="text" pInputText [(ngModel)]="name" />
+    Page Width (inches) <input type="number" pInputText [(ngModel)]="width" />
+    Page Height (inches) <input type="number" pInputText [(ngModel)]="height" />
+
+    <footer>
+
+        <button pButton type="button" label="Create PDF" (click)="createPDF()"></button>
+        
+    </footer>
+</p-dialog>
+
+
+<p-panel>
     <header>
         <div class="title ui-g-9">
             <!-- Collaborators -->
@@ -24,6 +38,9 @@
                 </div>
             </div>
 
+            <div class="pdf">
+                <button type="button" pButton label="Export PDF" (click)="pdf = !pdf"></button>
+            </div>
             <!-- Title -->
             <span [ngSwitch]="!!editing">
                 <span *ngSwitchCase="false" (click)="edit()">

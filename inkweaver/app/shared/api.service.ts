@@ -517,38 +517,42 @@ export class ApiService {
                                 }
                                 break;
                             case 'move_segment':
-                            /*
-                                let sid = reply.segment_id;
-                                let to_pid = reply.to_parent_id;
-                                let to_idx = reply.to_index;
+                                if (!myMessage) {
+                                    let sid = reply.segment_id;
+                                    let to_pid = reply.to_parent_id;
+                                    let to_idx = reply.to_index;
 
-                                let curr_node = this.parser.findSegment(this.data.wikiNav[0], sid);
-                                let parent_node = this.parser.findSegment(this.data.wikiNav[0], to_pid);
+                                    let curr_node = this.parser.findSegment(this.data.wikiNav[0], sid);
+                                    let parent_node = this.parser.findSegment(this.data.wikiNav[0], to_pid);
+                                   // console.log("Moving: " + curr_node.label + " into " + parent_node.label + "at index " + to_idx);
 
-                                //remove from current location
-                                let idx = curr_node.parent.children.indexOf(curr_node);
-                                curr_node.parent.children.splice(idx, 1);
+                                    //remove from current location
+                                    let idx = curr_node.parent.children.indexOf(curr_node);
+                                    curr_node.parent.children.splice(idx, 1);
 
-                                parent_node.children.splice(to_idx, 0, curr_node);
-                                curr_node.parent = parent_node;
-                                */
+                                    parent_node.children.splice(to_idx, 0, curr_node);
+                                    curr_node.parent = parent_node;
+                                }
+                             
                                 break;
                             case 'page_moved':
-                            /*
-                                let pid = reply.page_id;
-                                 to_pid = reply.to_parent_id;
-                                 to_idx = reply.to_index;
+                                if (!myMessage) {
+                                    let pid = reply.page_id;
+                                    to_pid = reply.to_parent_id;
+                                    to_idx = reply.to_index;
 
-                                 curr_node = this.parser.findPage(this.data.wikiNav[0], pid);
-                                 parent_node = this.parser.findPage(this.data.wikiNav[0], to_pid);
+                                    curr_node = this.parser.findPage(this.data.wikiNav[0], pid);
+                                    parent_node = this.parser.findPage(this.data.wikiNav[0], to_pid);
+                                    //console.log("Moving: " + curr_node.label + " into " + parent_node.label + "at index " + to_idx);
 
-                                //remove from current location
-                                 idx = curr_node.parent.children.indexOf(curr_node);
-                                curr_node.parent.children.splice(idx, 1);
+                                    //remove from current location
+                                    idx = curr_node.parent.children.indexOf(curr_node);
+                                    curr_node.parent.children.splice(idx, 1);
 
-                                parent_node.children.splice(to_idx, 0, curr_node);
-                                curr_node.parent = parent_node;
-                                */
+                                    parent_node.children.splice(to_idx, 0, curr_node);
+                                    curr_node.parent = parent_node;
+                                }
+                            
                                 break;
                             case 'template_heading_added':
                             case 'template_heading_updated':

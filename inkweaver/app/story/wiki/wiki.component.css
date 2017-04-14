@@ -311,3 +311,12 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     display: inline-block;
     border-bottom: 1px solid var(--light-gray);
 }
+
+.row #move{
+  visibility:hidden;
+}
+
+.row:hover #move{
+     visibility:visible;
+
+}

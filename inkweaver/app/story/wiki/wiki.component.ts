@@ -662,11 +662,11 @@ export class WikiComponent {
             */
             if (node != this.dragNode) {
                 if ((node.parent && node.parent == this.dragNode) || this.dragNode.type == 'title') {
-                    console.log("moving parent into child");
+                //    console.log("moving parent into child");
+                    //show error message
                     return;
                 }
                 else if (node.type == 'page' && this.dragNode.type == 'page') {
-                    //remove from current location
 
                     let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
                     this.dragNode.parent.children.splice(rmidx, 1);
@@ -675,6 +675,7 @@ export class WikiComponent {
 
                     node.parent.children.splice(idx + 1, 0, this.dragNode);
                     this.dragNode.parent = node.parent;
+                  //  console.log("Moving: " + this.dragNode.label + " after " + node.label + "at index " + (idx + 1));
                     this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
                 }
                 else if (node.type == 'category' && this.dragNode.type == 'page') {
@@ -688,7 +689,8 @@ export class WikiComponent {
                     let idx = this.parserService.firstPage(node);
                     node.children.splice(idx, 0, this.dragNode);
                     this.dragNode.parent = node;
-                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
+                   // console.log("Moving: " + this.dragNode.label + " into " + node.label + "at index " + (idx));
+                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx);
 
 
                 }
@@ -700,6 +702,8 @@ export class WikiComponent {
                         //index of draged to node
                         node.children.splice(0, 0, this.dragNode);
                         this.dragNode.parent = node.parent;
+//                        console.log("Moving: " + this.dragNode.label + " into " + node.label + "at index " + (idx));
+
                         this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, 0);
                     }
                     else {
@@ -710,24 +714,36 @@ export class WikiComponent {
 
                         node.parent.children.splice(idx + 1, 0, this.dragNode);
                         this.dragNode.parent = node.parent;
+                     //   console.log("Moving: " + this.dragNode.label + " after " + node.label + "at index " + (idx+1));
+
                         this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
                     }
                 }
                 else if (node.type == 'title') {
+                    //need to do move locally
+                    let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                    this.dragNode.parent.children.splice(rmidx, 1);
                     if (this.dragNode.type == 'category')
+                    {
+                        node.children.splice(0, 0, this.dragNode);
                         this.wikiService.move_segment(this.dragNode.data.id, node.data.id, 0);
+                    }
                     else
+                    {
+                        let idx = this.parserService.firstPage(node);
+                        node.children.splice(idx, 0, this.dragNode);
                         this.wikiService.move_page(this.dragNode.data.id, node.data.id, node.children.length + 1);
+                    }
                 }
             }
-            console.log("dropping " + node.label);
+            //console.log("dropping " + node.label);
             
             this.endDrag();
         }
 
         public nodeDragEnter(node){
             if (this.dragNode != node) {
-                console.log("entering " + node.label);
+               // console.log("entering " + node.label);
                 if (this.dragNode.type == 'page' && node.type == 'category')
                     node.expanded = true;
                 if ((this.dragNode.type == "category" && node.type != "page") || (this.dragNode.type == "page"))

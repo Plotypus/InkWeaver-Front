@@ -275,12 +275,15 @@ width="450" height="200" responsive="true">
                         <span *ngSwitchCase="false">
 
                    
-                    <span>
-                        <span></span>
+                    <div class="row" style="display:inline-block; width:100%;">
+                        
                         <i class="fa {{node.icon}}"></i>
+                        <span style="margin-left: .25em;">
                         {{node.label}}
-                        <span></span>
-                    </span>
+                        </span>
+                        <i id="move" style="padding: .5em"class="fa fa-bars"></i>
+                    </div>
+                    
                 </span>
                 <span *ngSwitchCase="true">
                     <input pInputText type="text" [(ngModel)]="newName" (click)="$event.stopPropagation()" />
