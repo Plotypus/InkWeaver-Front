@@ -1,8 +1,15 @@
-﻿<p-dialog id="dialog" *ngIf="pdf" modal="true" header="Create PDF" [(visible)]="pdf"
-    width="600" height="700" responsive="true">
+<p-dialog id="dialog" *ngIf="pdf" modal="true" header="Create PDF" [(visible)]="pdf"
+    width="300" height="400" responsive="true">
     PDF Name  <input type="text" pInputText [(ngModel)]="name" />
-    Page Width (inches) <input type="number" pInputText [(ngModel)]="width" />
-    Page Height (inches) <input type="number" pInputText [(ngModel)]="height" />
+    Page Width (inches) <input type="number" step="0.01" min='6' pInputText [(ngModel)]="width" />
+    Page Height (inches) <input type="number" step="0.01" min='9' pInputText [(ngModel)]="height" />
+    Margins (inches)
+    <div>
+        Top <input type="number" step="0.01" min='0' pInputText [(ngModel)]="m_top" />
+        Left <input type="number" step="0.01" min='0' pInputText [(ngModel)]="m_left" />
+        Bottom <input type="number" step="0.01" min='0' pInputText [(ngModel)]="m_bottom" />
+        Right <input type="number" step="0.01" min='0' pInputText [(ngModel)]="m_right" />
+    </div>
 
     <footer>
 
@@ -11,6 +18,7 @@
     </footer>
 </p-dialog>
 
+<p-growl [value]="msgs"></p-growl>
 
 <p-panel>
     <header>
@@ -39,7 +47,7 @@
             </div>
 
             <div class="pdf">
-                <button type="button" pButton label="Export PDF" (click)="pdf = !pdf"></button>
+                <button type="button" pButton label="Export PDF" (click)="setDefaults()"></button>
             </div>
             <!-- Title -->
             <span [ngSwitch]="!!editing">

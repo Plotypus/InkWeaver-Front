@@ -1,4 +1,4 @@
-﻿import jsPDF = require('jspdf');
+import jsPDF = require('jspdf');
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationStart, Event } from '@angular/router';
 
@@ -7,6 +7,8 @@ import { ApiService } from '../shared/api.service';
 import { ParserService } from '../shared/parser.service';
 
 import { StoryService } from './story.service';
+import { Message } from 'primeng/primeng';
+
 //import jsPDF  from 'jspdf'
 
 import { ID } from '../models/id.model';
@@ -31,7 +33,13 @@ export class StoryComponent {
     private secCount: number;
     private count: number;
     private pdfHtml: any;
+    private sectionNames: any;
+    private m_top: any;
+    private m_bottom: any;
+    private m_right: any;
+    private m_left: any;
 
+    msgs: Message[] = [];
     constructor(
         private router: Router,
         private apiService: ApiService,
@@ -98,71 +106,81 @@ export class StoryComponent {
         
         let allSections = this.parserService.flattenTree(this.data.storyNode[0]);
         this.secCount = Object.keys(allSections).length - 1;
-        //let width:any =  Math.round(parseInt(this.width) * 25);
-        //let height:any = Math.round(parseInt(this.height) * 25);
-        //let size = [width, height];
-        let doc = new jsPDF('p', 'pt', [576, 792]);
+        let width:any =  (parseInt(this.width) * 72);
+        let height:any = (parseInt(this.height) * 72);
+        let margin = {
+            top: (this.m_top *72),
+            left: (this.m_left*72),
+            right: (this.m_right * 72),
+            bottom: (this.m_bottom * 72)
+        };
+
+        let size = [width, height] as any
+        let doc = new jsPDF('p', 'pt', size);
         let specialElementHandlers = {
             '#bypassme': function(element: any, renderer: any) {
                 return true;
             }
         };
         this.count = 0;
+        this.sectionNames = [];
         for (let id in allSections){
             let sec:any = allSections[id].section_id;
-            this.apiService.send({ action: 'get_section_content', section_id: sec }, (reply: any) => {
-                if ( this.secCount == this.count) {
-                    let margins = {
-                        top: 72,
-                        bottom: 60,
-                        left: 40,
-                        width: 288
-                    };
-                    // all coords and widths are in jsPDF instance's declared units
-                    // 'inches' in this case
-                    doc.fromHTML(
-                        this.pdfHtml, // HTML string or DOM elem ref.
-                        margins.left, // x coord
-                        margins.top, { // y coord
-                            'width': margins.width, // max width of content on PDF
-                            'elementHandlers': specialElementHandlers
-                        },
+            this.sectionNames.push(allSections[id].title);
+            this.apiService.send({ action: 'get_section_content', section_id: sec }, 
+                (reply: any) => {
+                    this.pdfHtml = "";
+                    if ( this.secCount == this.count) {
+                    
+                        //doc.output('dataurlnewwindow');
+                        if (this.name.includes('.pdf'))
+                            this.name += ".pdf";
+                        doc.save(this.name);
+                        this.msgs.push({ severity: 'sucess', summary: 'File Downloaded', detail: 'Check your download folder for '+this.name });
+                        this.pdf = false;
+                        }
+                    else {
+                        this.pdfHtml+="<h1>"+this.sectionNames[this.count]+"</h1>"+this.parserService.setContentDisplay(reply.content);
+                        let margins = {
+                            top: margin.top,
+                            bottom: margin.bottom,
+                            left: margin.left,
+                            width: (width - margin.right - margin.left) //how much of the page to take 
+                        };
+                        // all coords and widths are in jsPDF instance's declared units
+                        // 'inches' in this case
+                        doc.fromHTML(
+                            this.pdfHtml, // HTML string or DOM elem ref.
+                            margins.left, // x coord
+                            margins.top, { // y coord
+                                'width': margins.width, // max width of content on PDF
+                                'elementHandlers': specialElementHandlers
+                            },
 
-                        function(dispose) {
-                            // dispose: object with X, Y of the last line add to the PDF 
-                            //          this allow the insertion of new lines after html
-                            doc.save('Test.pdf');
-                        }, margins
-                    /*
-                    doc.fromHTML(this.pdfHtml, 15, 15, {
-                        'width': 250,
-                        'margin': 1,
-                        'pagesplit': true, //This will work for multiple pages
-                        'elementHandlers': specialElementHandlers
-                    });
-                    /*
-                    doc.fromHTML(
-                        this.pdfHtml, // HTML string or DOM elem ref.
-                        0.5, // x coord
-                        0.5, // y coord
-                        {
-                            'width': 7.5, // max width of content on PDF
-                            'elementHandlers': specialElementHandlers
-                        });*/
-                    doc.output('dataurlnewwindow');
-                    if (this.name.includes('.pdf'))
-                        this.name += ".pdf";
-                    doc.save(this.name);
-                }
-                else {
-                    this.pdfHtml+=this.parserService.setContentDisplay(reply.content);
-                    this.count = this.count+1;
-                }
-            },
-                { pdf: true });
+                            function(dispose) {
+                                // dispose: object with X, Y of the last line add to the PDF 
+                                //          this allow the insertion of new lines after html
+                                //doc.save('Test.pdf');
+                            }, margins);
+                        
+
+                        this.count = this.count+1;
+                        if (this.count < this.secCount){
+                            doc.addPage();
+                        }
+                    }
+                },{ pdf: true });
         }
 
         
         
+    }
+
+    public setDefaults(){
+        this.m_left = 1;
+        this.m_bottom = 1;
+        this.m_right = 1;
+        this.m_bottom = 1;
+        this.pdf = true;
     }
 }
