@@ -71,7 +71,7 @@ width="450" height="200" responsive="true">
 
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
-    <div [ngSwitch]='statMode' class="ui-grid-col-9" style='background: white;'>
+        <div [ngSwitch]='statMode' class="ui-grid-col-9" style='background: white;'>
             <div *ngSwitchCase='true' class='stats'>
                 <stats [mode]='false'></stats>
             </div>
@@ -237,43 +237,73 @@ width="450" height="200" responsive="true">
         <div class="navigation ui-g-3">
 
             <!--When a category is selected-->
+            <div [ngSwitch]="dragMode">
+                <div *ngSwitchCase="true" >
+                    <div id="drag">
+                        Drag Mode Activated
+                    </div>
+                </div>
+                <div *ngSwitchCase ='false'>
+                    <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category' || data.selectedEntry.type == 'title'">
+                        <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
+                        <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
+                        <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
+                        <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
 
-            <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category' || data.selectedEntry.type == 'title'">
-                <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
-                <div class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
-                <div class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
-                <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
-
-            </div>
-            <!--When a page is selected-->
-            <div class="nav-actions" *ngIf="data.selectedEntry.type == 'page'">
-                <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
-                <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
+                    </div>
+                    <!--When a page is selected-->
+                    <div class="nav-actions" *ngIf="data.selectedEntry.type == 'page'">
+                        <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
+                        <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
+                    </div>
+                </div>
             </div>
 
             <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.selectedEntry" (onNodeSelect)="onSelected($event)">
                 <p-column field="label">
                     <template let-node="rowData" pTemplate="body">
-                        <span [ngSwitch]="rename && node.data.id.$oid === data.selectedEntry.data.id.$oid"(contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation">
-                            <span *ngSwitchCase="false">
-                                {{node.label}}
-                            </span>
-                            <span *ngSwitchCase="true">
-                                <input pInputText type="text" [(ngModel)]="newName" (click)="$event.stopPropagation()" />
-                                <button pButton icon="fa-check" (click)="onRename(node,true); $event.stopPropagation(); "></button>
-                                <button pButton icon="fa-times" (click)="onRename(node,false); $event.stopPropagation();"></button>
-                            </span>
+                        <!-- Taking care of draging -->
+
+
+
+                        <!-- Takes care of not dragging-->
+                        <span [ngSwitch]="rename && node.data.id.$oid === data.selectedEntry.data.id.$oid"(contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation"
+                        pDraggable="segmentdragdrop"
+                        (onDragStart)="nodeDrag(node)" (onDragEnd)="endDrag()" 
+                        (onDragEnter)="nodeDragEnter(node)" pDroppable="segmentdragdrop" (onDrop)="nodeDrop(node)"
+                         [ngClass]="{'nav-drag': dragNodeId && (dragNodeId.$oid === node.data.id.$oid)}" class="nav-header">
+                        <span *ngSwitchCase="false">
+
+                   
+                    <div class="row" style="display:inline-block; width:100%;">
+                        
+                        <i class="fa {{node.icon}}"></i>
+                        <span style="margin-left: .25em;">
+                        {{node.label}}
                         </span>
+                        <i id="move" style="padding: .5em"class="fa fa-bars"></i>
+                    </div>
+                    
+                </span>
+                <span *ngSwitchCase="true">
+                    <input pInputText type="text" [(ngModel)]="newName" (click)="$event.stopPropagation()" />
+                    <button pButton icon="fa-check" (click)="onRename(node,true); $event.stopPropagation(); "></button>
+                    <button pButton icon="fa-times" (click)="onRename(node,false); $event.stopPropagation();"></button>
+                </span>
 
-                    </template>
+            </span>
 
-                </p-column>
-            </p-treeTable>
-            <p-toggleButton [(ngModel)]="statMode" onLabel="Statistics On" offLabel="Statistics Off">
-                
-            </p-toggleButton>
-            
+        </template>
 
-        </div>
-    </div>
+    </p-column>
+</p-treeTable>
+<p-toggleButton [(ngModel)]="statMode" onLabel="Statistics On" offLabel="Statistics Off">
+
+</p-toggleButton>
+
+
+
+
+</div>
+</div>
 </div>

@@ -42,74 +42,74 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     background: white;
 }
 
-    .wiki .ui-editor-content {
-        color: var(--dark-blue);
-        border: none;
-        /* color: var(--light-gray); */
-    }
+.wiki .ui-editor-content {
+    color: var(--dark-blue);
+    border: none;
+    /* color: var(--light-gray); */
+}
 
-    .wiki .ui-panel-titlebar {
-        min-height: 1em !important;
-    }
+.wiki .ui-panel-titlebar {
+    min-height: 1em !important;
+}
 
 
 
-    .wiki .header {
-        /* border-bottom: .025em solid var(--light-gray); */
-        color: var(--dark-blue);
-        text-align: left;
-        font-family: Arial,Helvetica,sans-serif;
-        /* font-size: x-large; */
-        background: var(--light-gray);
-    }
+.wiki .header {
+    /* border-bottom: .025em solid var(--light-gray); */
+    color: var(--dark-blue);
+    text-align: left;
+    font-family: Arial,Helvetica,sans-serif;
+    /* font-size: x-large; */
+    background: var(--light-gray);
+}
 
-        .wiki .header h1 {
-            background: transparent;
-            border: none;
-            color: var(--dark-blue);
-            padding: .25em .5em;
-            font-size =x-large;
-            margin: 0;
-            font-weight: normal;
-            cursor: pointer;
-            font-size: 2.5em;
-        }
+.wiki .header h1 {
+    background: transparent;
+    border: none;
+    color: var(--dark-blue);
+    padding: .25em .5em;
+    font-size =x-large;
+    margin: 0;
+    font-weight: normal;
+    cursor: pointer;
+    font-size: 2.5em;
+}
 
-        .wiki .header input {
-            background: transparent;
-            border: none;
-            color: var(--dark-blue);
-            padding: .25em .5em;
-            margin: 0;
-            font-weight: normal;
-            cursor: pointer;
-            font-size: 2.5em;
-            width: 90%;
-        }
+.wiki .header input {
+    background: transparent;
+    border: none;
+    color: var(--dark-blue);
+    padding: .25em .5em;
+    margin: 0;
+    font-weight: normal;
+    cursor: pointer;
+    font-size: 2.5em;
+    width: 90%;
+}
 
-        .wiki .header .fa {
-            font-size: 1.5em;
-            padding: .25em;
-        }
+.wiki .header .fa {
+    font-size: 1.5em;
+    padding: .25em;
+}
 
-    .wiki input {
-        width: 90%;
-        background: transparent;
-        color: var(--dark-gray);
-        border: none;
-        /* padding: .5em 1em; */
-        font-size: larger;
-    }
+.wiki input {
+    width: 90%;
+    background: transparent;
+    color: var(--dark-gray);
+    border: none;
+    /* padding: .5em 1em; */
+    font-size: larger;
+}
 
-    .wiki .ui-widget input {
-        width: 80%;
-        color: var(--dark-blue);
-        background: transparent !important;
-        border: none;
-        text-align: center;
-        padding: 0;
-        font-size: medium;
-    }
+.wiki .ui-widget input {
+    width: 80%;
+    color: var(--dark-blue);
+    background: transparent !important;
+    border: none;
+    text-align: center;
+    padding: 0;
+    font-size: medium;
+}
 
 #editable {
     width: 90%;
@@ -152,14 +152,14 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     padding: .25em 1em;
 }
 
-    .wiki .heading header {
-        border-bottom: .025em solid var(--light-gray);
-        color: var(--light-gray);
-        text-align: left;
-        font-family: Arial,Helvetica,sans-serif;
-        font-size: 2em;
-        padding: 0em .5em;
-    }
+.wiki .heading header {
+    border-bottom: .025em solid var(--light-gray);
+    color: var(--light-gray);
+    text-align: left;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 2em;
+    padding: 0em .5em;
+}
 
 .wiki .ui-g {
     display: initial !important;
@@ -177,16 +177,16 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     padding: 0 !important;
 }
 
-    .wiki .ui-datagrid .ui-datagrid-header header {
-        padding: 0em .5em;
-        background: transparent;
-        color: var(--dark-gray);
-        border: none;
-        font-size: 2.5em;
-        text-align: left;
-        border-bottom: .025em solid var(--light-gray);
-        cursor: default;
-    }
+.wiki .ui-datagrid .ui-datagrid-header header {
+    padding: 0em .5em;
+    background: transparent;
+    color: var(--dark-gray);
+    border: none;
+    font-size: 2.5em;
+    text-align: left;
+    border-bottom: .025em solid var(--light-gray);
+    cursor: default;
+}
 
 .wiki .ui-datalist .ui-datalist-data li {
     padding: .25em 0em 0.25em 0em;
@@ -206,22 +206,22 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     padding: 1em;
 }
 
-    .wiki .ui-datalist .ui-datalist-header {
-        /* font-size: 1.2em; */
-        background: white;
-        padding: 0 !important;
-    }
+.wiki .ui-datalist .ui-datalist-header {
+    /* font-size: 1.2em; */
+    background: white;
+    padding: 0 !important;
+}
 
-        .wiki .ui-datalist .ui-datalist-header header {
-            padding: 0em .5em;
-            /* background: transparent; */
-            color: var(--dark-gray);
-            border: none;
-            font-size: 2.5em;
-            text-align: left;
-            border-bottom: .025em solid var(--light-gray);
-            cursor: default;
-        }
+.wiki .ui-datalist .ui-datalist-header header {
+    padding: 0em .5em;
+    /* background: transparent; */
+    color: var(--dark-gray);
+    border: none;
+    font-size: 2.5em;
+    text-align: left;
+    border-bottom: .025em solid var(--light-gray);
+    cursor: default;
+}
 
 .wiki h1 {
     font-size: 1em;
@@ -252,19 +252,19 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     word-wrap: break-word;
 }
 
-    .wiki .text p {
-        padding: 1% 5% 1% 5%;
-        margin: 0;
-    }
+.wiki .text p {
+    padding: 1% 5% 1% 5%;
+    margin: 0;
+}
 
 .wiki .icons {
     float: right;
     padding: 1.25em 1.25em;
 }
 
-    .wiki .icons .fa {
-        font-size: 1.5em;
-    }
+.wiki .icons .fa {
+    font-size: 1.5em;
+}
 
 #read-only .ui-editor-toolbar {
     display: none;
@@ -289,6 +289,34 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     width: 100%;
 }
 
-.wiki p-dialog .ui-dialog-content {
+#dialog .ui-dialog-content {
     height: initial;
+}
+
+#drag{
+
+    text-align: center;
+    font-style: italic;
+    color: var(--dark-gray);
+    padding: 0.5em 1em 0 1em;
+
+}
+
+.draggable{
+    color:var(--orange);
+}
+
+.nav-drag {
+    width: 50%;
+    display: inline-block;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.row #move{
+  visibility:hidden;
+}
+
+.row:hover #move{
+     visibility:visible;
+
 }

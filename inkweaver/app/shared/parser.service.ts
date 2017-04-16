@@ -247,6 +247,7 @@ export class ParserService {
         for (let index in json['pages']) {
             let result = this.jsonToPage(json['pages'][index]);
             temp.children.push(result);
+            result.parent = temp;
             pageDic.push(result.data);
         }
 
@@ -266,6 +267,8 @@ export class ParserService {
         wiki.data.id = wikiJson["segment_id"];
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
+        wiki.icon = "fa-book";
+       
         for (let field in wikiJson) {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
@@ -321,6 +324,8 @@ export class ParserService {
         page.data.title = pageJson['title'];
         page.label = pageJson['title'];
         page.type = "page";
+        page.icon = "fa-file-text-o"
+
 
         return page;
     }
@@ -481,7 +486,7 @@ export class ParserService {
             }
             //when adding a new segment
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title,
+                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title, icon : "fa-book",
                 children: [{ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } }]
             });
         }
@@ -500,7 +505,7 @@ export class ParserService {
                 wiki.children = [];
             }
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title
+                parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title, icon : "fa-file-text-o",
             });
         } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
             for (let child of wiki.children) {
@@ -509,6 +514,22 @@ export class ParserService {
             }
         }
     }
+
+
+    public LastCategory(wiki: TreeNode){
+        let index = this.firstPage(wiki);
+        return index -1;
+    }
+    public firstPage(wiki: TreeNode)
+    {
+        let index: number = wiki.children.findIndex((child: TreeNode) => {
+            return child.type === 'page' ;
+        });
+        if (index == -1)
+            index = wiki.children.length;
+        return index;
+    }
+
 
     public expandPath(page: TreeNode) {
         if (!(page.hasOwnProperty("type") && page.type === 'title')) {
