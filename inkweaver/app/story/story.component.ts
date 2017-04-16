@@ -180,7 +180,7 @@ export class StoryComponent {
         this.m_left = 1;
         this.m_bottom = 1;
         this.m_right = 1;
-        this.m_bottom = 1;
+        this.m_top = 1;
         this.pdf = true;
     }
 }
