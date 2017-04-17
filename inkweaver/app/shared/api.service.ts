@@ -120,14 +120,14 @@ export class ApiService {
                                 break;
                             case 'story_collaborator_removed':
                                 let index: number = this.data.collaborators.findIndex((collaborator) => {
-                                    return reply.user_id === collaborator.value.user_id;
+                                    return collaborator.value && JSON.stringify(reply.user_id) === JSON.stringify(collaborator.value.user_id);
                                 });
                                 if (index > -1) {
                                     this.data.collaborators.splice(index, 1);
                                 }
                                 break;
                             case 'story_collaborator_status_granted':
-                                this.data.stories.push({ story_id: reply.story_id });
+                                this.data.stories.push(reply.story_description);
                                 break;
                             case 'story_collaborator_status_revoked':
                                 let idx: number = this.data.stories.findIndex((story: StorySummary) => {
