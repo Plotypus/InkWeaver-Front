@@ -42,9 +42,9 @@ width="450" height="200" responsive="true">
 </p-dialog>
 
 <p-dialog  id="dialog" *ngIf="showDeleteDialog && type == 0" modal="true" header="Do you want to delete {{defDel ? defDel.label : none}}" [(visible)]="showDeleteDialog"
-width="450" height="300" responsive="true">
+width="450" height="200" responsive="true">
 
-<div *ngIf=" defDel && nestedPages.length && defDel.type == 'category'" class="ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all">
+<div *ngIf=" defDel && nestedPages.length && defDel.type == 'category'">
     You are going to be deleting a section, so {{nestedPages.length}} pages/subsections will be deleted!    
 </div>
 <div *ngIf=" defDel && defDel.label && defDel.type == 'page'">

@@ -304,11 +304,6 @@ export class ParserService {
             // wiki.children = wiki.children.sort(this.sort);
         }
 
-        if (typeof wiki.children !== 'undefined' && wiki.children.length == 0) {
-            wiki.type = "category";
-            wiki.children.push({ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } });
-        }
-
         return [wiki, pages];
     }
 
@@ -449,9 +444,7 @@ export class ParserService {
         });
         if (index !== -1) {
             wiki.children.splice(index, 1);
-            if (wiki.children.length == 0) {
-                wiki.children.push({ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } });
-            }
+            
         } else {
             for (let child of wiki.children) {
                 if (child.type == 'category')
@@ -468,9 +461,7 @@ export class ParserService {
         });
         if (index !== -1) {
             wiki.children.splice(index, 1);
-            if (wiki.children.length == 0) {
-                wiki.children.push({ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } });
-            }
+            
         } else {
             for (let child of wiki.children) {
                 if (child.type == 'category')
@@ -481,14 +472,13 @@ export class ParserService {
 
     public addSegment(wiki: TreeNode, reply: any) {
         if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
-            if (wiki.children[0].type == 'filler') {
-                wiki.children = [];
-            }
+            let idx = this.LastCategory(wiki);
             //when adding a new segment
-            wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title, icon : "fa-book",
-                children: [{ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } }]
-            });
+            let child = {
+                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title, icon: "fa-book",
+                children: []
+            };
+            wiki.children.splice(idx,0,child)
         }
 
         else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
@@ -518,7 +508,7 @@ export class ParserService {
 
     public LastCategory(wiki: TreeNode){
         let index = this.firstPage(wiki);
-        return index -1;
+        return index;
     }
     public firstPage(wiki: TreeNode)
     {
