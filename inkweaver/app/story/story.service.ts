@@ -20,16 +20,18 @@ export class StoryService {
         });
     }
 
-    public addCollaborator(username: string) {
+    public addCollaborator(storyID: ID, username: string) {
         this.apiService.send({
-            action: 'add_collaborator',
+            action: 'add_story_collaborator',
+            story_id: storyID,
             username: username
         });
     }
 
-    public removeCollaborator(userID: ID) {
+    public removeCollaborator(storyID: ID, userID: ID) {
         this.apiService.send({
-            action: 'remove_collaborator',
+            action: 'remove_story_collaborator',
+            story_id: storyID,
             user_id: userID
         });
     }

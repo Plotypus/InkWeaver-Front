@@ -72,9 +72,9 @@ export class StoryComponent {
 
     // Collaborators
     public removeCollaborator(userID: ID) {
-        this.storyService.removeCollaborator(userID);
+        this.storyService.removeCollaborator(this.data.story.story_id, userID);
     }
     public addCollaborator(username: string) {
-        this.storyService.addCollaborator(username);
+        this.storyService.addCollaborator(this.data.story.story_id, username);
     }
 }

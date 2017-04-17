@@ -111,14 +111,31 @@ export class ApiService {
                                 break;
                             case 'user_bio_updated':
                                 break;
-                            case 'collaborator_added':
-                                this.data.collaborators.unshift({ label: reply.name, value: reply.user_id });
-                                break;
-                            case 'collaborator_removed':
-                                let index: number = this.data.collaborators.findIndex((collaborator) => {
-                                    return reply.user_id === collaborator.value;
+                            case 'story_collaborator_added':
+                                this.data.collaborators.push({
+                                    label: reply.user_name, value: {
+                                        name: reply.user_name, user_id: reply.user_id, access_level: 'collaborator'
+                                    }
                                 });
-                                this.data.collaborators.splice(index, 1);
+                                break;
+                            case 'story_collaborator_removed':
+                                let index: number = this.data.collaborators.findIndex((collaborator) => {
+                                    return reply.user_id === collaborator.value.user_id;
+                                });
+                                if (index > -1) {
+                                    this.data.collaborators.splice(index, 1);
+                                }
+                                break;
+                            case 'story_collaborator_status_granted':
+                                this.data.stories.push({ story_id: reply.story_id });
+                                break;
+                            case 'story_collaborator_status_revoked':
+                                let idx: number = this.data.stories.findIndex((story: StorySummary) => {
+                                    return JSON.stringify(reply.story_id) === JSON.stringify(story.story_id);
+                                });
+                                if (idx > -1) {
+                                    this.data.stories.splice(idx, 1);
+                                }
                                 break;
 
                             // ----- Story ----- //
@@ -160,8 +177,8 @@ export class ApiService {
 
                                 this.data.collaborators = [{ label: null, value: null }];
                                 for (let user of reply.users) {
-                                    this.data.collaborators.unshift({
-                                        label: user.name, value: user.user_id
+                                    this.data.collaborators.push({
+                                        label: user.name, value: user
                                     });
                                 }
                                 break;
