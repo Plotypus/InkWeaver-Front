@@ -133,7 +133,7 @@ export class StoryComponent {
                     if ( this.secCount == this.count) {
                     
                         //doc.output('dataurlnewwindow');
-                        if (this.name.includes('.pdf'))
+                        if (!this.name.includes('.pdf'))
                             this.name += ".pdf";
                         doc.save(this.name);
                         this.msgs.push({ severity: 'sucess', summary: 'File Downloaded', detail: 'Check your download folder for '+this.name });
