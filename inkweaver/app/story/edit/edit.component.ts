@@ -134,19 +134,28 @@ export class EditComponent {
                         let valIndex: number = 0;
                         let bounds = this.editor.quill.getBounds(index);
                         let top: number = bounds.top + 200;
-                        this.loopPages(this, this.data.wikiNav[0], (page: TreeNode) => {
-                            if (page.data.title.startsWith(this.predict)) {
+                        for (let aliasID in this.data.aliasTable) {
+                            let alias: Alias = this.data.aliasTable[aliasID];
+                            if (alias.alias_name.startsWith(this.predict)) {
                                 if (this.suggest.display === 'none') {
                                     this.suggest = {
-                                        options: [{ label: page.data.title, value: { title: page.data.title, page_id: page.data.id, index: valIndex++ } }],
+                                        options: [{
+                                            label: alias.alias_name, value: {
+                                                title: alias.alias_name, page_id: alias.page_id, index: valIndex++
+                                            }
+                                        }],
                                         display: 'block', top: top + 'px', left: bounds.left + 'px'
                                     };
                                     this.suggest.value = this.suggest.options[0].value;
                                 } else {
-                                    this.suggest.options.push({ label: page.data.title, value: { title: page.data.title, page_id: page.data.id, index: valIndex++ } });
+                                    this.suggest.options.push({
+                                        label: alias.alias_name, value: {
+                                            title: alias.alias_name, page_id: alias.page_id, index: valIndex++
+                                        }
+                                    });
                                 }
                             }
-                        }, (seg: TreeNode) => { });
+                        }
                         if (this.suggest.display === 'none') {
                             this.predict = '';
                         }
@@ -169,25 +178,29 @@ export class EditComponent {
                         if (ids[2] === 'true') {
                             thread.onclick = (event: any) => {
                                 event.preventDefault();
-                                this.passiveLinkID = { $oid: ids[0] };
-                                let passiveLink: PassiveLink = this.data.passiveLinkTable[JSON.stringify(this.passiveLinkID)];
-                                if (passiveLink) {
-                                    let alias: Alias = this.data.aliasTable[JSON.stringify(passiveLink.alias_id)];
-                                    if (alias) {
-                                        let aBlot = Quill['find'](event.target);
-                                        let index: number = this.editor.quill.getIndex(aBlot);
-                                        let bounds: any = this.editor.quill.getBounds(index);
-                                        let top: number = bounds.top + 200;
+                                if (this.data.tooltip.display === 'block') {
+                                    this.data.tooltip.display = 'none';
+                                } else {
+                                    this.passiveLinkID = { $oid: ids[0] };
+                                    let passiveLink: PassiveLink = this.data.passiveLinkTable[JSON.stringify(this.passiveLinkID)];
+                                    if (passiveLink) {
+                                        let alias: Alias = this.data.aliasTable[JSON.stringify(passiveLink.alias_id)];
+                                        if (alias) {
+                                            let aBlot = Quill['find'](event.target);
+                                            let index: number = this.editor.quill.getIndex(aBlot);
+                                            let bounds: any = this.editor.quill.getBounds(index);
+                                            let top: number = bounds.top + 200;
 
-                                        this.data.tooltip = {
-                                            passive: true, display: 'block',
-                                            top: top + 'px', left: bounds.left + 'px'
-                                        };
-                                        this.loopPages(this, this.data.wikiNav[0], (page: TreeNode) => {
-                                            if (JSON.stringify(alias.page_id) === JSON.stringify(page.data.id)) {
-                                                this.data.tooltip.text = 'We suggest linking to ' + page.data.title;
-                                            }
-                                        }, (segment: TreeNode) => { });
+                                            this.data.tooltip = {
+                                                passive: true, display: 'block',
+                                                top: top + 'px', left: bounds.left + 'px'
+                                            };
+                                            this.loopPages(this, this.data.wikiNav[0], (page: TreeNode) => {
+                                                if (JSON.stringify(alias.page_id) === JSON.stringify(page.data.id)) {
+                                                    this.data.tooltip.text = 'We suggest linking to ' + page.data.title;
+                                                }
+                                            }, (segment: TreeNode) => { });
+                                        }
                                     }
                                 }
                             };

@@ -108,6 +108,7 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
 }
 
 .tooltip {
+    z-index: 20;
     max-width: 50%;
     padding: 0.25em;
     position: absolute;
