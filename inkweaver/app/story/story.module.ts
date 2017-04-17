@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 
 // Third party
 import {
-    PanelModule, TabMenuModule, ButtonModule, ListboxModule
+    PanelModule, TabMenuModule, ButtonModule, ListboxModule, DialogModule,GrowlModule
 } from 'primeng/primeng';
 
 // Modules, services, and components
@@ -29,7 +29,9 @@ import { StoryService } from './story.service';
         EditModule,
         WikiModule,
         StatsModule,
-        ListboxModule
+        ListboxModule,
+        DialogModule,
+        GrowlModule
     ],
     providers: [StoryService],
     declarations: [StoryComponent],

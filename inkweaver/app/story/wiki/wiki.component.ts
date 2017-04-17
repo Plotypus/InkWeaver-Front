@@ -53,7 +53,7 @@ export class WikiComponent {
     private headingName:any;
     private heading: any;
     private exist: boolean;
-    private empty: boolean;
+    private empty: boolean = false; 
     private type: any;
     private headID: any;
 
@@ -63,6 +63,10 @@ export class WikiComponent {
     //stats stuff
     private statMode = false;
 
+    //drag
+    private dragNode: TreeNode;
+    private dragMode: boolean = false;
+    private dragNodeId: any;
     constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
@@ -82,8 +86,10 @@ export class WikiComponent {
         if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
             this.parsePage();
         }else
+        {
 
         this.data.selectedEntry = this.data.wikiNav[0];
+        }
 
         this.updateData();
 
@@ -243,6 +249,7 @@ export class WikiComponent {
         */
         public onAddPage(type:any) {
             this.showAddDialog = true;
+            this.empty = false;
             if (type == 0)
                 this.addContent = "Category";
             else
@@ -261,6 +268,7 @@ export class WikiComponent {
             else
                 this.heading = "Heading"; 
             this.headingName = "";
+            this.empty = false;
             this.showAddHeadDialog = true;
         }
 
@@ -293,12 +301,22 @@ export class WikiComponent {
         }
 
 
-        public onTextChange(text:string)
+        public onTextChange(text:string, mode:boolean)
         {
-            //this.wikiPageContent.filter(heading => heading.title === text);
+            if(!this.empty) 
+            {
+                this.empty = true;
+            }
             this.exist = false;
-            if (this.wikiPageContent.filter(heading => heading.title === text).length != 0)
-                this.exist = true;
+            if (mode) {
+                if (this.wikiPageContent.filter(heading => heading.title === text).length != 0)
+                    this.exist = true;
+            }
+            else
+            {
+                if (this.data.wikiFlatten.filter((ele: any) => ele.label === text).length != 0)
+                    this.exist = true;
+            }
             
         }
 
@@ -629,10 +647,124 @@ export class WikiComponent {
                         'active': false
                     });
                 }
-                this.updateData();
                 this.fromLink = false;
             }
         }
+
+        //On drag stuff
+        public nodeDrag(node){
+            if (node.parent) {
+                this.dragNode = node;
+                this.dragMode = true;
+            }
+            console.log("starting drag")
+        }
+
+        public endDrag(){
+            this.dragNode = null;
+            this.dragMode = false;
+            this.dragNodeId = null;
+            console.log("end drag");
+        }
+
+        public nodeDrop(node){
+            /*
+                Case 1: page -> category
+                Case 2: page -> page
+                Case 3: category -> category (inside)
+                Case 4: category -> around category
+            */
+            if (node != this.dragNode) {
+                if ((node.parent && node.parent == this.dragNode) || this.dragNode.type == 'title') {
+                //    console.log("moving parent into child");
+                    //show error message
+                    return;
+                }
+                else if (node.type == 'page' && this.dragNode.type == 'page') {
+
+                    let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                    this.dragNode.parent.children.splice(rmidx, 1);
+                    //index of draged to node
+                    let idx = node.parent.children.indexOf(node);
+
+                    node.parent.children.splice(idx + 1, 0, this.dragNode);
+                    this.dragNode.parent = node.parent;
+                  //  console.log("Moving: " + this.dragNode.label + " after " + node.label + "at index " + (idx + 1));
+                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
+                }
+                else if (node.type == 'category' && this.dragNode.type == 'page') {
+
+                    //remove from current location
+
+                    let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                    this.dragNode.parent.children.splice(rmidx, 1);
+
+                    //adding it to the top
+                    let idx = this.parserService.firstPage(node);
+                    node.children.splice(idx, 0, this.dragNode);
+                    this.dragNode.parent = node;
+                   // console.log("Moving: " + this.dragNode.label + " into " + node.label + "at index " + (idx));
+                    this.wikiService.move_page(this.dragNode.data.id, this.dragNode.parent.data.id, idx);
+
+
+                }
+                else if (node.type == 'category' && this.dragNode.type == 'category') {
+
+                    if (node.expanded) {
+                        let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                        this.dragNode.parent.children.splice(rmidx, 1);
+                        //index of draged to node
+                        node.children.splice(0, 0, this.dragNode);
+                        this.dragNode.parent = node.parent;
+//                        console.log("Moving: " + this.dragNode.label + " into " + node.label + "at index " + (idx));
+
+                        this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, 0);
+                    }
+                    else {
+                        let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                        this.dragNode.parent.children.splice(rmidx, 1);
+                        //index of draged to node
+                        let idx = node.parent.children.indexOf(node);
+
+                        node.parent.children.splice(idx + 1, 0, this.dragNode);
+                        this.dragNode.parent = node.parent;
+                     //   console.log("Moving: " + this.dragNode.label + " after " + node.label + "at index " + (idx+1));
+
+                        this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, idx + 1);
+                    }
+                }
+                else if (node.type == 'title') {
+                    //need to do move locally
+                    let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
+                    this.dragNode.parent.children.splice(rmidx, 1);
+                    if (this.dragNode.type == 'category')
+                    {
+                        node.children.splice(0, 0, this.dragNode);
+                        this.wikiService.move_segment(this.dragNode.data.id, node.data.id, 0);
+                    }
+                    else
+                    {
+                        let idx = this.parserService.firstPage(node);
+                        node.children.splice(idx, 0, this.dragNode);
+                        this.wikiService.move_page(this.dragNode.data.id, node.data.id, node.children.length + 1);
+                    }
+                }
+            }
+            //console.log("dropping " + node.label);
+            
+            this.endDrag();
+        }
+
+        public nodeDragEnter(node){
+            if (this.dragNode != node) {
+               // console.log("entering " + node.label);
+                if (this.dragNode.type == 'page' && node.type == 'category')
+                    node.expanded = true;
+                if ((this.dragNode.type == "category" && node.type != "page") || (this.dragNode.type == "page"))
+                    this.dragNodeId = node.data.id;
+            }
+        }
+        
 
         
     }
