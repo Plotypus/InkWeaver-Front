@@ -21,7 +21,10 @@ import {
     ListboxModule,
     CheckboxModule,
     ContextMenuModule,
-    ToggleButtonModule
+    ToggleButtonModule,
+    DragDropModule,
+    TreeModule,
+    
 
     
 } from 'primeng/primeng';
@@ -52,7 +55,9 @@ import { StatsModule } from '../stats/stats.module';
         CheckboxModule,
         ContextMenuModule,
         StatsModule,
-        ToggleButtonModule
+        ToggleButtonModule,
+        DragDropModule,
+        TreeModule
 
         
     ],

@@ -131,7 +131,8 @@ export class UserComponent {
         this.data.wiki.wiki_id = story.wiki_summary.wiki_id;
         this.data.story.story_title = story.title;
         this.data.story.position_context = story.position_context;
-
+        this.data.page = null;
+        this.data.selectedEntry = null;
         this.storyService.subscribeToStory(story.story_id);
         this.storyService.subscribeToWiki(story.wiki_summary.wiki_id);
         this.router.navigate(['/story/edit']);

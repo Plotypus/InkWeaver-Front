@@ -247,6 +247,7 @@ export class ParserService {
         for (let index in json['pages']) {
             let result = this.jsonToPage(json['pages'][index]);
             temp.children.push(result);
+            result.parent = temp;
             pageDic.push(result.data);
         }
 
@@ -266,6 +267,8 @@ export class ParserService {
         wiki.data.id = wikiJson["segment_id"];
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
+        wiki.icon = "fa-book";
+       
         for (let field in wikiJson) {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
@@ -301,11 +304,6 @@ export class ParserService {
             // wiki.children = wiki.children.sort(this.sort);
         }
 
-        if (typeof wiki.children !== 'undefined' && wiki.children.length == 0) {
-            wiki.type = "category";
-            wiki.children.push({ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } });
-        }
-
         return [wiki, pages];
     }
 
@@ -321,6 +319,8 @@ export class ParserService {
         page.data.title = pageJson['title'];
         page.label = pageJson['title'];
         page.type = "page";
+        page.icon = "fa-file-text-o"
+
 
         return page;
     }
@@ -346,15 +346,17 @@ export class ParserService {
             let temp = [];
             let count = 0;
             for (let i in reply.aliases) {
-                temp.push({
-                    'index': count,
-                    'state': true,
-                    'name': i,
-                    'icon': 'fa-pencil',
-                    'prev': '',
-                    'id': reply.aliases[i]
-                });
-                count++;
+                if(reply.title !== i ){
+                    temp.push({
+                        'index': count,
+                        'state': true,
+                        'name': i,
+                        'icon': 'fa-pencil',
+                        'prev': '',
+                        'id': reply.aliases[i]
+                    });
+                    count++;
+                }
             }
             reply.aliases = temp;
 
@@ -444,9 +446,7 @@ export class ParserService {
         });
         if (index !== -1) {
             wiki.children.splice(index, 1);
-            if (wiki.children.length == 0) {
-                wiki.children.push({ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } });
-            }
+            
         } else {
             for (let child of wiki.children) {
                 if (child.type == 'category')
@@ -463,9 +463,7 @@ export class ParserService {
         });
         if (index !== -1) {
             wiki.children.splice(index, 1);
-            if (wiki.children.length == 0) {
-                wiki.children.push({ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } });
-            }
+            
         } else {
             for (let child of wiki.children) {
                 if (child.type == 'category')
@@ -476,14 +474,13 @@ export class ParserService {
 
     public addSegment(wiki: TreeNode, reply: any) {
         if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
-            if (wiki.children[0].type == 'filler') {
-                wiki.children = [];
-            }
+            let idx = this.LastCategory(wiki);
             //when adding a new segment
-            wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title,
-                children: [{ label: 'Empty Section', type: "filler", data: { id: 0, title: "Empty Section" } }]
-            });
+            let child = {
+                parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title, icon: "fa-book",
+                children: []
+            };
+            wiki.children.splice(idx,0,child)
         }
 
         else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
@@ -500,7 +497,7 @@ export class ParserService {
                 wiki.children = [];
             }
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title
+                parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title, icon : "fa-file-text-o",
             });
         } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
             for (let child of wiki.children) {
@@ -509,6 +506,22 @@ export class ParserService {
             }
         }
     }
+
+
+    public LastCategory(wiki: TreeNode){
+        let index = this.firstPage(wiki);
+        return index;
+    }
+    public firstPage(wiki: TreeNode)
+    {
+        let index: number = wiki.children.findIndex((child: TreeNode) => {
+            return child.type === 'page' ;
+        });
+        if (index == -1)
+            index = wiki.children.length;
+        return index;
+    }
+
 
     public expandPath(page: TreeNode) {
         if (!(page.hasOwnProperty("type") && page.type === 'title')) {
