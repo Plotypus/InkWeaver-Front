@@ -38,7 +38,6 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
 }
 
 .wiki {
-    overflow: auto;
     background: white;
 }
 
@@ -72,7 +71,8 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     margin: 0;
     font-weight: normal;
     cursor: pointer;
-    font-size: 2.5em;
+    font-size: 1.8em;
+    font-weight: bold;
 }
 
 .wiki .header input {
@@ -83,7 +83,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     margin: 0;
     font-weight: normal;
     cursor: pointer;
-    font-size: 2.5em;
+    font-size: 1.8em;
     width: 90%;
 }
 
@@ -98,7 +98,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     color: var(--dark-gray);
     border: none;
     /* padding: .5em 1em; */
-    font-size: larger;
+    font-size: x-large;
 }
 
 .wiki .ui-widget input {
@@ -182,10 +182,11 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     background: transparent;
     color: var(--dark-gray);
     border: none;
-    font-size: 2.5em;
+    font-size: 1.8em;
     text-align: left;
     border-bottom: .025em solid var(--light-gray);
     cursor: default;
+    font-weight: normal;
 }
 
 .wiki .ui-datalist .ui-datalist-data li {
@@ -217,7 +218,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     /* background: transparent; */
     color: var(--dark-gray);
     border: none;
-    font-size: 2.5em;
+    font-size: 1.8em;
     text-align: left;
     border-bottom: .025em solid var(--light-gray);
     cursor: default;
@@ -259,7 +260,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
 
 .wiki .icons {
     float: right;
-    padding: 1.25em 1.25em;
+    padding: .5em;
 }
 
 .wiki .icons .fa {

@@ -53,7 +53,7 @@ export class WikiComponent {
     private headingName:any;
     private heading: any;
     private exist: boolean;
-    private empty: boolean;
+    private empty: boolean = false; 
     private type: any;
     private headID: any;
 
@@ -86,8 +86,10 @@ export class WikiComponent {
         if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
             this.parsePage();
         }else
+        {
 
         this.data.selectedEntry = this.data.wikiNav[0];
+        }
 
         this.updateData();
 
@@ -247,6 +249,7 @@ export class WikiComponent {
         */
         public onAddPage(type:any) {
             this.showAddDialog = true;
+            this.empty = false;
             if (type == 0)
                 this.addContent = "Category";
             else
@@ -265,6 +268,7 @@ export class WikiComponent {
             else
                 this.heading = "Heading"; 
             this.headingName = "";
+            this.empty = false;
             this.showAddHeadDialog = true;
         }
 
@@ -297,12 +301,22 @@ export class WikiComponent {
         }
 
 
-        public onTextChange(text:string)
+        public onTextChange(text:string, mode:boolean)
         {
-            //this.wikiPageContent.filter(heading => heading.title === text);
+            if(!this.empty) 
+            {
+                this.empty = true;
+            }
             this.exist = false;
-            if (this.wikiPageContent.filter(heading => heading.title === text).length != 0)
-                this.exist = true;
+            if (mode) {
+                if (this.wikiPageContent.filter(heading => heading.title === text).length != 0)
+                    this.exist = true;
+            }
+            else
+            {
+                if (this.data.wikiFlatten.filter((ele: any) => ele.label === text).length != 0)
+                    this.exist = true;
+            }
             
         }
 

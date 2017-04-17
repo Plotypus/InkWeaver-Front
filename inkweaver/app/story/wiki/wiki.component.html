@@ -6,8 +6,13 @@
     width="450" height="200" responsive="true">
 
 
-    <input type="text" pInputText [(ngModel)]="pageName" />
-    <div *ngIf="!pageName" style='color: red;font-style: italic;'>
+    <input type="text" pInputText [(ngModel)]="pageName" (ngModelChange)="onTextChange(pageName,false)"/>
+
+    <div *ngIf="exist" style='color: red;font-style: italic;'>
+    The following {{addContent}}: {{pageName}} all ready exist!
+    </div>
+
+    <div *ngIf="!pageName && empty" style='color: red;font-style: italic;'>
         The {{addContent}} name field is empty!
     </div>
     <footer>
@@ -21,14 +26,14 @@
 <p-dialog  id="dialog" *ngIf="showAddHeadDialog" modal="true" header="Adding {{heading}} to {{data.selectedEntry.label}}" [(visible)]="showAddHeadDialog"
 width="450" height="200" responsive="true">
 
-{{heading}}: <input type="text" pInputText [(ngModel)]="headingName" (ngModelChange)="onTextChange(headingName)"/>
+{{heading}}: <input type="text" pInputText [(ngModel)]="headingName" (ngModelChange)="onTextChange(headingName,true)"/>
 <br>
 <div *ngIf="exist" style='color: red;font-style: italic;'>
     The following {{heading}}: {{headingName}} all ready exist!
 
 </div>
 
-<div *ngIf="!headingName" style='color: red;font-style: italic;'>
+<div *ngIf="!headingName && empty" style='color: red;font-style: italic;'>
     The {{heading}} field is empty!
 
 </div>
@@ -71,7 +76,7 @@ width="450" height="200" responsive="true">
 
 <div class="ui-grid ui-grid-responsive">
     <div class="ui-grid-row">
-        <div [ngSwitch]='statMode' class="ui-grid-col-9" style='background: white;'>
+        <div [ngSwitch]='statMode' class="ui-grid-col-9" style='background: white; overflow: auto;'>
             <div *ngSwitchCase='true' class='stats'>
                 <stats [mode]='false'></stats>
             </div>
@@ -88,20 +93,20 @@ width="450" height="200" responsive="true">
                 <ng-container *ngIf="wikiPage">
                     <!--Title -->
                     <div class="header" [ngSwitch]='disabled[0]'>
-                        <span *ngSwitchCase='true'>
+                        <div *ngSwitchCase='true'>
                             <h1 (click)="onDisable(0)">{{wikiPage.title}}</h1>
-                            <span class="icons">
+                            <div class="icons">
                                 <button pButton type="button" label="Add Heading" (click)="addHeading()"></button>
                                 <button pButton type="button" label="Save" (click)="onSavePage()"></button>
-                            </span>
+                            </div>
 
-                        </span>
-                        <span *ngSwitchCase='false'>
+                        </div>
+                        <div *ngSwitchCase='false'>
                             <input id="editable" type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
                             <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
                             <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
 
-                        </span>
+                        </div>
                     </div>
 
 
@@ -189,7 +194,7 @@ width="450" height="200" responsive="true">
                     </div>
                     <!--References-->
                     <ng-container *ngIf="wikiPage.references">
-                        <p-dataList [value]="wikiPage.references">
+                        <p-dataList [value]="wikiPage.references | filter : ['ref', data.story.story_id]">
                             <header>References</header>
                             <template let-ref pTemplate="item">
 
