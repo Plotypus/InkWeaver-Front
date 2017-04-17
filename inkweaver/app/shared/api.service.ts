@@ -65,7 +65,7 @@ export class ApiService {
                     let callback: Function = () => { };
                     let identifier: any = reply.identifier;
                     if (identifier) {
-                        myMessage = identifier.uuid == this.uuid;
+                        myMessage = identifier.uuid === this.uuid;
                         let message_id: number = identifier.message_id;
                         if (message_id && this.outgoing[message_id]) {
                             callback = this.outgoing[message_id].callback;
@@ -148,16 +148,18 @@ export class ApiService {
                                 this.data.story.story_title = reply.update.title;
                                 this.data.storyNode[0].data.title = reply.update.title;
                                 let updateIdx: number = this.data.stories.findIndex((story: StorySummary) => {
-                                    return JSON.stringify(story.story_id) !== JSON.stringify(reply.story_id)
+                                    return JSON.stringify(story.story_id) === JSON.stringify(reply.story_id)
                                 });
                                 this.data.stories[updateIdx].title = reply.update.title;
                                 break;
-                            case 'story_deleted':
+                            case 'unsubscribed_story_deleted':
                                 let delIdx: number = this.data.stories.findIndex((story: StorySummary) => {
-                                    return JSON.stringify(story.story_id) !== JSON.stringify(reply.story_id)
+                                    return JSON.stringify(story.story_id) === JSON.stringify(reply.story_id)
                                 });
                                 this.data.stories.splice(delIdx, 1);
                                 // TODO: navigate user back to user page if he/she is currently in the deleted story
+                                break;
+                            case 'story_deleted':
                                 break;
 
                             case 'subscribed_to_story':
@@ -206,13 +208,9 @@ export class ApiService {
                                 }
                                 break;
                             case 'got_section_content':
-                                // Set the content object
-                                if (this.outgoing["section" + reply.identifier.message_id]) {
-                                    metadata = this.outgoing["section" + reply.identifier.message_id].metadata;
-                                    
-                                }
-                                this.data.contentObject = this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                 if (!metadata.pdf) {
+                                    this.data.contentObject = this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
+
                                     // Set the story display
                                     this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
 
@@ -228,15 +226,6 @@ export class ApiService {
                                         this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay;
                                     } else {
                                         this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
-                                    }
-                                }
-                                else
-                                {
-                                    if (this.outgoing["section" + reply.identifier.message_id]) {
-                                        let callback: Function =
-                                            this.outgoing["section" + reply.identifier.message_id].callback;
-                                        callback(reply);
-                                        delete this.outgoing["section" + reply.identifier.message_id];
                                     }
                                 }
                                 break;
@@ -289,7 +278,7 @@ export class ApiService {
 
                             // Paragraph
                             case 'paragraph_added':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Add paragraph to content object
                                     let p: Paragraph = {
                                         paragraph_id: reply.paragraph_id, text: reply.text,
@@ -327,7 +316,7 @@ export class ApiService {
                                 }
                                 break;
                             case 'paragraph_updated':
-                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Update the content object
                                     let p: Paragraph = this.data.contentObject[JSON.stringify(reply.paragraph_id)];
                                     p.text = reply.update.text;
@@ -340,7 +329,7 @@ export class ApiService {
                                 }
                                 break;
                             case 'paragraph_deleted':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     delete this.data.contentObject[JSON.stringify(reply.paragraph_id)];
                                     // Set previous paragraph's succeeding_id to the next id
                                     let prior: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?<p id="' + reply.paragraph_id.$oid + '">.*?</p>');
@@ -381,7 +370,7 @@ export class ApiService {
                                 this.data.bookmarks[0].children.splice(index, 1);
                                 break;
                             case 'note_updated':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Update content object
                                     this.data.contentObject[JSON.stringify(reply.paragraph_id)].note = reply.note;
                                     // Update story display
@@ -391,7 +380,7 @@ export class ApiService {
                                 }
                                 break;
                             case 'note_deleted':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Update content object
                                     this.data.contentObject[JSON.stringify(reply.paragraph_id)].note = null;
                                     // Update story display
@@ -555,7 +544,7 @@ export class ApiService {
 
                                     let curr_node = this.parser.findSegment(this.data.wikiNav[0], sid);
                                     let parent_node = this.parser.findSegment(this.data.wikiNav[0], to_pid);
-                                   // console.log("Moving: " + curr_node.label + " into " + parent_node.label + "at index " + to_idx);
+                                    // console.log("Moving: " + curr_node.label + " into " + parent_node.label + "at index " + to_idx);
 
                                     //remove from current location
                                     let idx = curr_node.parent.children.indexOf(curr_node);
@@ -564,7 +553,7 @@ export class ApiService {
                                     parent_node.children.splice(to_idx, 0, curr_node);
                                     curr_node.parent = parent_node;
                                 }
-                             
+
                                 break;
                             case 'page_moved':
                                 if (!myMessage) {
@@ -583,7 +572,7 @@ export class ApiService {
                                     parent_node.children.splice(to_idx, 0, curr_node);
                                     curr_node.parent = parent_node;
                                 }
-                            
+
                                 break;
                             case 'template_heading_added':
                             case 'template_heading_updated':
@@ -767,10 +756,7 @@ export class ApiService {
             key = 'segment' + message.identifier.message_id;
         } else if (message.action === 'delete_page') {
             key = 'page' + message.identifier.message_id;
-        } else if (message.action === 'get_section_content') {
-            key = 'section' + message.identifier.message_id;
-        }
-        else {
+        } else {
             key = message.identifier.message_id;
         }
 
