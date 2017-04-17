@@ -45,6 +45,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     color: var(--dark-blue);
     border: none;
     /* color: var(--light-gray); */
+    /* cursor: pointer; */
 }
 
 .wiki .ui-panel-titlebar {
@@ -266,7 +267,14 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
 .wiki .icons .fa {
     font-size: 1.5em;
 }
+#read-only .ql-editor{
+    cursor:pointer;
+}
 
+#read-only .ql-editor:hover{
+    
+outline: -webkit-focus-ring-color auto 5px;
+}
 #read-only .ui-editor-toolbar {
     display: none;
 }
