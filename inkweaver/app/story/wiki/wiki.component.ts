@@ -648,6 +648,16 @@ export class WikiComponent {
                     });
                 }
                 this.fromLink = false;
+
+                setTimeout(() => {
+                    let wiki_ele = <HTMLScriptElement>document.getElementsByClassName("wiki")[0];
+                    let header_ele = <HTMLScriptElement>document.getElementsByClassName("header")[0];
+                    let page_content_height = wiki_ele.offsetHeight - header_ele.offsetHeight;
+                    let div = <HTMLScriptElement>document.getElementById("page_content");
+                    div.style.height = page_content_height+"px";
+                }, 500);
+                
+                     
             }
         }
 
@@ -737,6 +747,7 @@ export class WikiComponent {
                     //need to do move locally
                     let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
                     this.dragNode.parent.children.splice(rmidx, 1);
+                    this.dragNode.parent = node;
                     if (this.dragNode.type == 'category')
                     {
                         node.children.splice(0, 0, this.dragNode);
