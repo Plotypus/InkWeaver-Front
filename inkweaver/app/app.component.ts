@@ -23,14 +23,20 @@ export class AppComponent {
     ngOnInit() {
         this.data = this.apiService.data;
         this.items = [
-            { label: 'User Page', routerLink: ['/user'] },
             {
-                label: 'Sign Out', command: (event) => {
+                label: 'User Page',
+                routerLink: ['/user'],
+                disabled: !this.router.url.startsWith('/user') && !this.router.url.startsWith('/story')
+            },
+            {
+                label: 'Sign Out',
+                command: (event) => {
                     this.userService.signOut();
                     this.websocketService.close();
                     this.apiService.resetData();
                     this.router.navigate(['/login']);
-                }
+                },
+                disabled: !this.router.url.startsWith('/user') && !this.router.url.startsWith('/story')
             }
         ];
 

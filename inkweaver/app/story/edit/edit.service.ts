@@ -155,7 +155,7 @@ export class EditService {
         // Edit existing paragraphs
         for (let id in obj2) {
             if (id.startsWith('new')) {
-                this.addParagraph(storyID, sectionID, obj2[id].text, obj2[id].succeeding_id);
+                this.addParagraph(storyID, sectionID, obj2[id].text, obj2[id].succeeding_paragraph_id);
             } else {
                 for (let link in obj1[id].links) {
                     if (!obj2[id].links[link]) {
