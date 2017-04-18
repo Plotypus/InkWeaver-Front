@@ -565,6 +565,7 @@ export class EditComponent {
             };
             this.userService.setUserStoryPositionContext(this.data.prevSection.data.section_id, this.paragraphPosition);
 
+            let header: any = this.editorRef.querySelector('h1');
             let paragraphs: any = this.editorRef.querySelectorAll('p');
             if (paragraphs && paragraphs.length > 0) {
                 let newContentObject: any = this.parserService.parseHtml(paragraphs);
@@ -572,6 +573,9 @@ export class EditComponent {
                 if (refresh) {
                     this.apiService.refreshStoryContent(this.data.prevSection.data.section_id, this.data.prevSection.data.title);
                 }
+            }
+            if (header && header.innerHTML !== this.data.prevSection.data.title) {
+                this.editService.editSectionTitle(this.data.prevSection.data.section_id, header.innerHTML);
             }
         }
     }

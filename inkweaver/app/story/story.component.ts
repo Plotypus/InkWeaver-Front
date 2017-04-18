@@ -29,7 +29,10 @@ export class StoryComponent {
     ngOnInit() {
         this.data = this.apiService.data;
         this.items = [
-            { label: '', disabled: true, icon: 'fa-pencil-square-o', routerLink: ['/story/edit'] },
+            {
+                label: '', disabled: true, icon: 'fa-pencil-square-o', routerLink: ['/story/edit'],
+                command: (event: any) => { this.apiService.refreshStoryContent(); }
+            },
             { label: '', disabled: true, icon: 'fa-book', routerLink: ['/story/wiki'] },
         ];
         this.activeItem = this.items[0];

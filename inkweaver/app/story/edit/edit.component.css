@@ -46,6 +46,19 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
     margin: 0 0.25em 0 0.25em;
 }
 
+.ql-save .ui-button:first-child :hover {
+    color: var(--light-gray) !important;
+}
+
+.ql-save .ui-button:nth-child(2) {
+    color: var(--dark-blue);
+    background: floralwhite !important;
+}
+
+.ql-save .ui-button:nth-child(2) :hover {
+    color: var(--dark-gray) !important;
+}
+
 /* Content */
 .editor {
     z-index: 10;
@@ -147,9 +160,11 @@ code {
     overflow: hidden;
     display: inline-block;
     color: floralwhite;
-    border: 1px solid yellow;
+    border: 1px solid var(--dark-gray);
     background: floralwhite !important;
 }
+
+
 
 /* Navigation */
 .nav-actions {

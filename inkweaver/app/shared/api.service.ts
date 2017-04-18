@@ -248,7 +248,7 @@ export class ApiService {
                                 this.parser.findSection(this.data.storyNode[0], JSON.stringify(reply.section_id), (found: TreeNode) => {
                                     let old: string = found.data.title;
                                     found.data.title = reply.new_title;
-                                    if (this.data.section.data && JSON.stringify(this.data.section.data.section_id) === JSON.stringify(found.data.section_id)) {
+                                    if (this.data.storyDisplay && this.data.section.data && JSON.stringify(this.data.section.data.section_id) === JSON.stringify(found.data.section_id)) {
                                         this.data.storyDisplay = this.data.storyDisplay.replace('<h1>' + old + '</h1>',
                                             '<h1>' + reply.new_title + '</h1>');
                                     }
@@ -421,9 +421,11 @@ export class ApiService {
                                 break;
                             case 'passive_link_rejected':
                                 this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)].pending = false;
-                                this.data.storyDisplay = this.data.storyDisplay.replace(
-                                    new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'),
-                                    '<a href="$1-$2-false" target="_blank" id="false">$3</a>');
+                                if (this.data.storyDisplay) {
+                                    this.data.storyDisplay = this.data.storyDisplay.replace(
+                                        new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'),
+                                        '<a href="$1-$2-false" target="_blank" id="false">$3</a>');
+                                }
                                 break;
 
                             // Wiki
