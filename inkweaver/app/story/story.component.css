@@ -86,60 +86,6 @@ p-togglebutton {
     padding: 1em;
 }
 
-.margins {
-    width: 100%;
-    display: inline-block;
-    padding: .25em 0em;
-}
-
-    .margins div {
-        float: left;
-        width: 50%;
-        padding: .25em;
-        /* display:inline-block; */
-    }
-
-        .margins div input {
-            width: 50% !important;
-            float: right;
-        }
-
-.pdfName {
-    width: 100%;
-    display: inline-block;
-    padding: .25em;
-}
-
-    .pdfName input {
-        width: 70% !important;
-    }
-
-.page {
-    width: 100%;
-    display: inline-block;
-}
-
-    .page div {
-        padding: .25em;
-    }
-
-        .page div input {
-            width: 45% !important;
-        }
-
-.pdf {
-    text-align: left;
-    font-size: 0.5em;
-    left: 10em;
-    z-index: 10;
-    position: absolute;
-}
-
-    .pdf button {
-        color: var(--light-blue) !important;
-        background: var(--light-gray) !important;
-    }
-
 .collaborators {
     text-align: left;
     font-size: 0.5em;

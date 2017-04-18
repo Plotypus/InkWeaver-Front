@@ -114,3 +114,45 @@ ink-app > p-panel > .ui-panel > .ui-panel-content-wrapper {
 .inline-button .ui-button-text {
     background: var(--dark-blue);
 }
+
+/* PDF */
+.margins {
+    width: 100%;
+    display: inline-block;
+    padding: .25em 0em;
+}
+
+    .margins div {
+        float: left;
+        width: 50%;
+        padding: .25em;
+        /* display:inline-block; */
+    }
+
+        .margins div input {
+            width: 50% !important;
+            float: right;
+        }
+
+.pdfName {
+    width: 100%;
+    display: inline-block;
+    padding: .25em;
+}
+
+    .pdfName input {
+        width: 70% !important;
+    }
+
+.page {
+    width: 100%;
+    display: inline-block;
+}
+
+    .page div {
+        padding: .25em;
+    }
+
+        .page div input {
+            width: 45% !important;
+        }

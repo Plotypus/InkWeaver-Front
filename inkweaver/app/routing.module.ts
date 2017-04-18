@@ -9,7 +9,7 @@ import { WikiComponent } from './story/wiki/wiki.component';
 import { StatsComponent } from './story/stats/stats.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/login',pathMatch: 'full' },
+    { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'user', component: UserComponent },
     {
