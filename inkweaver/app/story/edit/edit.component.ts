@@ -559,7 +559,7 @@ export class EditComponent {
     }
 
     public save(refresh: boolean = false) {
-        if (this.data.prevSection.data) {
+        if (this.data.storyDisplay && this.data.prevSection.data) {
             this.data.story.position_context = {
                 section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
             };
