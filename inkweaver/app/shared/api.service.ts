@@ -65,7 +65,7 @@ export class ApiService {
                     let callback: Function = () => { };
                     let identifier: any = reply.identifier;
                     if (identifier) {
-                        myMessage = identifier.uuid == this.uuid;
+                        myMessage = identifier.uuid === this.uuid;
                         let message_id: number = identifier.message_id;
                         if (message_id && this.outgoing[message_id]) {
                             callback = this.outgoing[message_id].callback;
@@ -111,14 +111,31 @@ export class ApiService {
                                 break;
                             case 'user_bio_updated':
                                 break;
-                            case 'collaborator_added':
-                                this.data.collaborators.unshift({ label: reply.name, value: reply.user_id });
-                                break;
-                            case 'collaborator_removed':
-                                let index: number = this.data.collaborators.findIndex((collaborator) => {
-                                    return reply.user_id === collaborator.value;
+                            case 'story_collaborator_added':
+                                this.data.collaborators.push({
+                                    label: reply.user_name, value: {
+                                        name: reply.user_name, user_id: reply.user_id, access_level: 'collaborator'
+                                    }
                                 });
-                                this.data.collaborators.splice(index, 1);
+                                break;
+                            case 'story_collaborator_removed':
+                                let index: number = this.data.collaborators.findIndex((collaborator) => {
+                                    return collaborator.value && JSON.stringify(reply.user_id) === JSON.stringify(collaborator.value.user_id);
+                                });
+                                if (index > -1) {
+                                    this.data.collaborators.splice(index, 1);
+                                }
+                                break;
+                            case 'story_collaborator_status_granted':
+                                this.data.stories.push(reply.story_description);
+                                break;
+                            case 'story_collaborator_status_revoked':
+                                let idx: number = this.data.stories.findIndex((story: StorySummary) => {
+                                    return JSON.stringify(reply.story_id) === JSON.stringify(story.story_id);
+                                });
+                                if (idx > -1) {
+                                    this.data.stories.splice(idx, 1);
+                                }
                                 break;
 
                             // ----- Story ----- //
@@ -131,16 +148,18 @@ export class ApiService {
                                 this.data.story.story_title = reply.update.title;
                                 this.data.storyNode[0].data.title = reply.update.title;
                                 let updateIdx: number = this.data.stories.findIndex((story: StorySummary) => {
-                                    return JSON.stringify(story.story_id) !== JSON.stringify(reply.story_id)
+                                    return JSON.stringify(story.story_id) === JSON.stringify(reply.story_id)
                                 });
                                 this.data.stories[updateIdx].title = reply.update.title;
                                 break;
-                            case 'story_deleted':
+                            case 'unsubscribed_story_deleted':
                                 let delIdx: number = this.data.stories.findIndex((story: StorySummary) => {
-                                    return JSON.stringify(story.story_id) !== JSON.stringify(reply.story_id)
+                                    return JSON.stringify(story.story_id) === JSON.stringify(reply.story_id)
                                 });
                                 this.data.stories.splice(delIdx, 1);
                                 // TODO: navigate user back to user page if he/she is currently in the deleted story
+                                break;
+                            case 'story_deleted':
                                 break;
 
                             case 'subscribed_to_story':
@@ -160,8 +179,8 @@ export class ApiService {
 
                                 this.data.collaborators = [{ label: null, value: null }];
                                 for (let user of reply.users) {
-                                    this.data.collaborators.unshift({
-                                        label: user.name, value: user.user_id
+                                    this.data.collaborators.push({
+                                        label: user.name, value: user
                                     });
                                 }
                                 break;
@@ -189,13 +208,9 @@ export class ApiService {
                                 }
                                 break;
                             case 'got_section_content':
-                                // Set the content object
-                                if (this.outgoing["section" + reply.identifier.message_id]) {
-                                    metadata = this.outgoing["section" + reply.identifier.message_id].metadata;
-                                    
-                                }
-                                this.data.contentObject = this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                 if (!metadata.pdf) {
+                                    this.data.contentObject = this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
+
                                     // Set the story display
                                     this.data.storyDisplay = this.parser.setContentDisplay(reply.content);
 
@@ -211,15 +226,6 @@ export class ApiService {
                                         this.data.storyDisplay = '<h1>Summary</h1>' + this.data.storyDisplay;
                                     } else {
                                         this.data.storyDisplay = '<h1>' + metadata.title + '</h1>' + this.data.storyDisplay;
-                                    }
-                                }
-                                else
-                                {
-                                    if (this.outgoing["section" + reply.identifier.message_id]) {
-                                        let callback: Function =
-                                            this.outgoing["section" + reply.identifier.message_id].callback;
-                                        callback(reply);
-                                        delete this.outgoing["section" + reply.identifier.message_id];
                                     }
                                 }
                                 break;
@@ -242,7 +248,7 @@ export class ApiService {
                                 this.parser.findSection(this.data.storyNode[0], JSON.stringify(reply.section_id), (found: TreeNode) => {
                                     let old: string = found.data.title;
                                     found.data.title = reply.new_title;
-                                    if (this.data.section.data && JSON.stringify(this.data.section.data.section_id) === JSON.stringify(found.data.section_id)) {
+                                    if (this.data.storyDisplay && this.data.section.data && JSON.stringify(this.data.section.data.section_id) === JSON.stringify(found.data.section_id)) {
                                         this.data.storyDisplay = this.data.storyDisplay.replace('<h1>' + old + '</h1>',
                                             '<h1>' + reply.new_title + '</h1>');
                                     }
@@ -272,45 +278,45 @@ export class ApiService {
 
                             // Paragraph
                             case 'paragraph_added':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Add paragraph to content object
                                     let p: Paragraph = {
                                         paragraph_id: reply.paragraph_id, text: reply.text,
-                                        note: null, succeeding_id: reply.succeeding_paragraph_id,
+                                        note: null, succeeding_paragraph_id: reply.succeeding_paragraph_id,
                                         links: new AliasTable(), passiveLinks: new AliasTable()
                                     };
                                     this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
 
                                     let pString: string = this.parser.setParagraph(p);
-                                    if (!p.succeeding_id) {
-                                        // Set previous paragraph's succeeding_id
+                                    if (!p.succeeding_paragraph_id) {
+                                        // Set previous paragraph's succeeding_paragraph_id
                                         let searchIndex: number = this.data.storyDisplay.lastIndexOf('<p id="');
                                         if (searchIndex > -1) {
                                             let searchString: string = this.data.storyDisplay.substring(searchIndex);
                                             let search: RegExpMatchArray = searchString.match(/<p id="([a-z0-9]{24})">/);
                                             if (search && search.length > 1) {
-                                                this.data.contentObject[JSON.stringify({ $oid: search[1] })].succeeding_id = p.paragraph_id;
+                                                this.data.contentObject[JSON.stringify({ $oid: search[1] })].succeeding_paragraph_id = p.paragraph_id;
                                             }
                                         }
                                         // Add paragraph to display string
                                         this.data.storyDisplay += pString;
                                     } else {
-                                        // Set previous paragraph's succeeding_id
-                                        let pRegex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?(<p id="' + reply.succeeding_id.$oid + '">.*?</p>)');
+                                        // Set previous paragraph's succeeding_paragraph_id
+                                        let pRegex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?(<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>)');
                                         let search: RegExpMatchArray = this.data.storyDisplay.match(pRegex);
                                         if (search && search.length > 3) {
-                                            this.data.contentObject[JSON.stringify({ $oid: search[2] })].succeeding_id = p.paragraph_id;
+                                            this.data.contentObject[JSON.stringify({ $oid: search[2] })].succeeding_paragraph_id = p.paragraph_id;
                                         }
                                         // Add paragraph to display string
                                         this.data.storyDisplay = this.data.storyDisplay.replace(
-                                            new RegExp('<p id="' + reply.succeeding_id.$oid + '">.*?</p>'),
+                                            new RegExp('<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>'),
                                             pString + '$&');
                                     }
                                 }
                                 break;
                             case 'paragraph_updated':
-                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Update the content object
                                     let p: Paragraph = this.data.contentObject[JSON.stringify(reply.paragraph_id)];
                                     p.text = reply.update.text;
@@ -323,9 +329,9 @@ export class ApiService {
                                 }
                                 break;
                             case 'paragraph_deleted':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     delete this.data.contentObject[JSON.stringify(reply.paragraph_id)];
-                                    // Set previous paragraph's succeeding_id to the next id
+                                    // Set previous paragraph's succeeding_paragraph_id to the next id
                                     let prior: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?<p id="' + reply.paragraph_id.$oid + '">.*?</p>');
                                     let priorMatch: RegExpMatchArray = this.data.storyDisplay.match(prior);
                                     if (priorMatch && priorMatch.length > 2) {
@@ -335,7 +341,7 @@ export class ApiService {
                                         if (posteriorMatch && posteriorMatch.length > 2) {
                                             posteriorID = { $oid: posteriorMatch[2] };
                                         }
-                                        this.data.contentObject[JSON.stringify({ $oid: priorMatch[2] })].succeeding_id = posteriorID;
+                                        this.data.contentObject[JSON.stringify({ $oid: priorMatch[2] })].succeeding_paragraph_id = posteriorID;
                                     }
                                     // Add paragraph to display string
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
@@ -364,7 +370,7 @@ export class ApiService {
                                 this.data.bookmarks[0].children.splice(index, 1);
                                 break;
                             case 'note_updated':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Update content object
                                     this.data.contentObject[JSON.stringify(reply.paragraph_id)].note = reply.note;
                                     // Update story display
@@ -374,7 +380,7 @@ export class ApiService {
                                 }
                                 break;
                             case 'note_deleted':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) == JSON.stringify(this.data.section.data.section_id)) {
+                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Update content object
                                     this.data.contentObject[JSON.stringify(reply.paragraph_id)].note = null;
                                     // Update story display
@@ -415,9 +421,11 @@ export class ApiService {
                                 break;
                             case 'passive_link_rejected':
                                 this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)].pending = false;
-                                this.data.storyDisplay = this.data.storyDisplay.replace(
-                                    new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'),
-                                    '<a href="$1-$2-false" target="_blank" id="false">$3</a>');
+                                if (this.data.storyDisplay) {
+                                    this.data.storyDisplay = this.data.storyDisplay.replace(
+                                        new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'),
+                                        '<a href="$1-$2-false" target="_blank" id="false">$3</a>');
+                                }
                                 break;
 
                             // Wiki
@@ -538,7 +546,7 @@ export class ApiService {
 
                                     let curr_node = this.parser.findSegment(this.data.wikiNav[0], sid);
                                     let parent_node = this.parser.findSegment(this.data.wikiNav[0], to_pid);
-                                   // console.log("Moving: " + curr_node.label + " into " + parent_node.label + "at index " + to_idx);
+                                    // console.log("Moving: " + curr_node.label + " into " + parent_node.label + "at index " + to_idx);
 
                                     //remove from current location
                                     let idx = curr_node.parent.children.indexOf(curr_node);
@@ -547,7 +555,7 @@ export class ApiService {
                                     parent_node.children.splice(to_idx, 0, curr_node);
                                     curr_node.parent = parent_node;
                                 }
-                             
+
                                 break;
                             case 'page_moved':
                                 if (!myMessage) {
@@ -566,7 +574,7 @@ export class ApiService {
                                     parent_node.children.splice(to_idx, 0, curr_node);
                                     curr_node.parent = parent_node;
                                 }
-                            
+
                                 break;
                             case 'template_heading_added':
                             case 'template_heading_updated':
@@ -750,10 +758,7 @@ export class ApiService {
             key = 'segment' + message.identifier.message_id;
         } else if (message.action === 'delete_page') {
             key = 'page' + message.identifier.message_id;
-        } else if (message.action === 'get_section_content') {
-            key = 'section' + message.identifier.message_id;
-        }
-        else {
+        } else {
             key = message.identifier.message_id;
         }
 

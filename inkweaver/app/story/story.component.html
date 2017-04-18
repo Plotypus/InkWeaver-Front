@@ -1,63 +1,6 @@
-<p-dialog id="dialog" *ngIf="pdf" modal="true" header="Create PDF" [(visible)]="pdf"
-    width="300" height="300" responsive="true">
-
-    <div class="pdfName"> PDF Name  <input type="text" pInputText [(ngModel)]="name" /> </div>
-    
-    <div class="page">
-    <div> Page Width (inches)&nbsp;<input type="number" step="0.01" min='6' pInputText [(ngModel)]="width" /> </div>
-    
-    <div> Page Height (inches)&nbsp;<input type="number" step="0.01" min='9' pInputText [(ngModel)]="height" /> </div>
-    
-    </div>
-
-   
-    <span style="padding: .25em;">Margins (inches)</span>
-    
-    <div class="margins">
-       <div>Top&nbsp;<input type="number" step="0.01" min='0' pInputText [(ngModel)]="m_top" /> </div>
-        <div>Left&nbsp;<input type="number" step="0.01" min='0' pInputText [(ngModel)]="m_left" /> </div>
-       <div>Bottom&nbsp;<input type="number" step="0.01" min='0' pInputText [(ngModel)]="m_bottom" /> </div>
-        <div>Right&nbsp;<input type="number" step="0.01" min='0' pInputText [(ngModel)]="m_right" /> </div>
-    </div>
-
-    <footer>
-        <button pButton type="button" label="Create PDF" (click)="createPDF()"></button>
-    </footer>
-</p-dialog>
-
-<p-growl [value]="msgs"></p-growl>
-
 <p-panel>
     <header>
         <div class="title ui-g-9">
-            <!-- Collaborators -->
-            <div id="buttons">
-            <div class="collaborators">
-                <button type="button" pButton label="Collaborators" (click)="collab = !collab"></button>
-                <div *ngIf="collab">
-                    <p-listbox [options]="data.collaborators" [(ngModel)]="collaborator">
-                        <template let-collaborator pTemplate="item">
-                            <div [ngSwitch]="!!collaborator.value">
-                                <div *ngSwitchCase="true">
-                                    {{collaborator.label}}
-                                    <button pButton *ngIf="collaborator.label !== data.user.username"
-                                            icon="fa-times" (click)="removeCollaborator(collaborator.value)"></button>
-                                </div>
-                                <div *ngSwitchCase="false">
-                                    <input type="text" pInputText [(ngModel)]="newUsername" />
-                                    <button pButton icon="fa-check"
-                                            (click)="addCollaborator(newUsername)"></button>
-                                </div>
-                            </div>
-                        </template>
-                    </p-listbox>
-                </div>
-            </div>
-
-            <div class="pdf">
-                <button type="button" pButton label="Export PDF" (click)="setDefaults()"></button>
-            </div>
-            </div>
             <!-- Title -->
             <span [ngSwitch]="!!editing">
                 <span *ngSwitchCase="false" (click)="edit()">

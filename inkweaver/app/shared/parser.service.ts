@@ -145,10 +145,11 @@ export class ParserService {
         let obj: ContentObject = new ContentObject();
 
         for (let paragraph of paragraphs) {
+            let newText: string = paragraph.innerHTML.replace(new RegExp("<code>.*?</code>"), '');
             let p: Paragraph = {
                 paragraph_id: new ID(),
-                succeeding_id: null,
-                text: paragraph.innerHTML,
+                succeeding_paragraph_id: null,
+                text: newText,
                 links: new AliasTable(),
                 passiveLinks: new AliasTable(),
                 note: null
@@ -158,7 +159,7 @@ export class ParserService {
             let oid: ID = { $oid: id };
             if (id && !obj[JSON.stringify(oid)]) {
                 for (let addP of add) {
-                    addP.succeeding_id = oid;
+                    addP.succeeding_paragraph_id = oid;
                     obj['new' + Math.random()] = addP;
                 }
                 add = [];
@@ -268,7 +269,7 @@ export class ParserService {
         wiki.data.title = wikiJson["title"];
         wiki.label = wikiJson["title"];
         wiki.icon = "fa-book";
-       
+
         for (let field in wikiJson) {
             if (field === "segments") {
                 let segmentJsons = wikiJson[field];
@@ -346,7 +347,7 @@ export class ParserService {
             let temp = [];
             let count = 0;
             for (let i in reply.aliases) {
-                if(reply.title !== i ){
+                if (reply.title !== i) {
                     temp.push({
                         'index': count,
                         'state': true,
@@ -446,7 +447,7 @@ export class ParserService {
         });
         if (index !== -1) {
             wiki.children.splice(index, 1);
-            
+
         } else {
             for (let child of wiki.children) {
                 if (child.type == 'category')
@@ -463,7 +464,7 @@ export class ParserService {
         });
         if (index !== -1) {
             wiki.children.splice(index, 1);
-            
+
         } else {
             for (let child of wiki.children) {
                 if (child.type == 'category')
@@ -480,7 +481,7 @@ export class ParserService {
                 parent: wiki, data: { title: reply.title, id: reply.segment_id }, type: 'category', label: reply.title, icon: "fa-book",
                 children: []
             };
-            wiki.children.splice(idx,0,child)
+            wiki.children.splice(idx, 0, child)
         }
 
         else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
@@ -497,7 +498,7 @@ export class ParserService {
                 wiki.children = [];
             }
             wiki.children.push({
-                parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title, icon : "fa-file-text-o",
+                parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title, icon: "fa-file-text-o",
             });
         } else if (wiki.hasOwnProperty("children") && wiki.children.length != 0) {
             for (let child of wiki.children) {
@@ -508,14 +509,13 @@ export class ParserService {
     }
 
 
-    public LastCategory(wiki: TreeNode){
+    public LastCategory(wiki: TreeNode) {
         let index = this.firstPage(wiki);
         return index;
     }
-    public firstPage(wiki: TreeNode)
-    {
+    public firstPage(wiki: TreeNode) {
         let index: number = wiki.children.findIndex((child: TreeNode) => {
-            return child.type === 'page' ;
+            return child.type === 'page';
         });
         if (index == -1)
             index = wiki.children.length;

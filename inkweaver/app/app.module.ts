@@ -2,7 +2,15 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { PanelModule, MenuModule, ButtonModule, MenubarModule } from 'primeng/primeng';
+import {
+    PanelModule,
+    ButtonModule,
+    MenuModule,
+    MenubarModule,
+    DialogModule,
+    GrowlModule,
+    ListboxModule
+} from 'primeng/primeng';
 
 // Modules, services, and components
 import { RoutingModule } from './routing.module';
@@ -16,15 +24,22 @@ import { AppComponent } from './app.component';
     imports: [
         FormsModule,
         BrowserModule,
+
+        // PrimeNG Modules
         PanelModule,
-        MenuModule,
         ButtonModule,
+        MenuModule,
+        MenubarModule,
+        DialogModule,
+        GrowlModule,
+        ListboxModule,
+
+        // Custom Modules
         RoutingModule,
         SharedModule,
         LoginModule,
         UserModule,
-        StoryModule,
-        MenubarModule
+        StoryModule
     ],
     declarations: [AppComponent],
     bootstrap: [AppComponent]
