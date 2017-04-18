@@ -347,17 +347,23 @@ export class ParserService {
             let temp = [];
             let count = 0;
             for (let i in reply.aliases) {
-                if (reply.title !== i) {
                     temp.push({
                         'index': count,
                         'state': true,
                         'name': i,
                         'icon': 'fa-pencil',
                         'prev': '',
-                        'id': reply.aliases[i]
+                        'id': reply.aliases[i],
+                        'main': false
                     });
-                    count++;
+                   
+                
+                if(reply.title == i)
+                {
+                    temp[count].main = true;
                 }
+
+                count++;
             }
             reply.aliases = temp;
 

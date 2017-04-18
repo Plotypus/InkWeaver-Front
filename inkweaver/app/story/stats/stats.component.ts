@@ -120,7 +120,8 @@ export class StatsComponent {
                     label: ele.data.title,
                     data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
                     fill: true,
-                    borderColor: color
+                    borderColor: color,
+                    backgroundColor: color
                 });
 
                 this.colors.push(color);
@@ -206,7 +207,8 @@ export class StatsComponent {
                     label: ele.data.title,
                     data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
                     fill: true,
-                    borderColor: color
+                    borderColor: color,
+                    backgroundColor: color
                 });
                 if (cidx >= this.colors.length)
                     this.colors.push(color);

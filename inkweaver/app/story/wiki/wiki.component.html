@@ -216,7 +216,7 @@ width="450" height="200" responsive="true">
                         </div>
                         <!--References-->
                         <ng-container *ngIf="wikiPage.references">
-                            <p-dataList [value]="wikiPage.references | filter : ['ref', data.story.story_id]">
+                            <p-dataList id="references" [value]="wikiPage.references | filter : ['ref', data.story.story_id]">
                                 <header>References for Current Story</header>
                                 <template let-ref pTemplate="item">
 

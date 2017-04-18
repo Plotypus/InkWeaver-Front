@@ -166,7 +166,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     display: initial !important;
 }
 
-.wiki .ui-widget-content {
+#references .ui-widget-content {
     /* background: var(--dark-blue); */
     text-align: left;
     border: none;
@@ -190,11 +190,11 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     font-weight: normal;
 }
 
-.wiki .ui-datalist .ui-datalist-data li {
+#references .ui-datalist .ui-datalist-data li {
     padding: .25em 0em 0.25em 0em;
 }
 
-.wiki .ui-datalist .ui-datalist-data div {
+#references .ui-datalist .ui-datalist-data div {
     /* background: var(--light-gray); */
     text-align: left;
     padding: .25em 1em .25em 1em;
@@ -203,18 +203,18 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     border: 0.125em solid var(--light-gray);
 }
 
-.wiki .ui-datalist {
+#references .ui-datalist {
     background: white;
     padding: 1em;
 }
 
-.wiki .ui-datalist .ui-datalist-header {
+#references .ui-datalist .ui-datalist-header {
     /* font-size: 1.2em; */
     background: white;
     padding: 0 !important;
 }
 
-.wiki .ui-datalist .ui-datalist-header header {
+#references .ui-datalist .ui-datalist-header header {
     padding: 0em .5em;
     /* background: transparent; */
     color: var(--dark-gray);

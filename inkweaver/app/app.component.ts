@@ -79,6 +79,7 @@ export class AppComponent {
         Parchment.register(Class);
     }
 
+
     // Collaborators
     public removeCollaborator(userID: ID) {
         this.storyService.removeCollaborator(this.data.story.story_id, userID);
@@ -125,6 +126,9 @@ export class AppComponent {
                         this.pdf = false;
                     }
                     else {
+
+                        this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
+
                         this.pdfHtml += "<h1>" + this.sectionNames[this.count] + "</h1>" + this.parser.setContentDisplay(reply.content);
                         let margins = {
                             top: margin.top,
@@ -165,4 +169,5 @@ export class AppComponent {
         this.m_top = 1;
         this.pdf = true;
     }
+
 }
