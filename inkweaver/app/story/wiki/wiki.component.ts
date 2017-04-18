@@ -123,6 +123,35 @@ export class WikiComponent {
 
     }
 
+    ngAfterViewInit()  {
+        this.calcHeight();
+    }  
+
+    public parsePage() {
+        this.wikiPageContent = [];
+        this.wikiPage = this.data.page;
+
+        this.disabled = [true];
+        this.icons = ['fa-pencil'];
+        this.wikiPageContent.push({
+            'title': this.wikiPage.title,
+            'text': ""
+        })
+        this.toDelete = this.wikiPage.title;
+        for (let i = 0; i < this.wikiPage.headings.length; i++) {
+            this.disabled.push(true);
+            this.icons.push('fa-pencil');
+            this.wikiPageContent.push({
+                'title': this.wikiPage.headings[i].title,
+                'text': this.wikiPage.headings[i].text,
+                'active': false
+            });
+        }
+
+        this.calcHeight();
+
+
+    }
 
     public setContextMenu(node:any){
         this.data.selectedEntry = node;
@@ -201,34 +230,6 @@ export class WikiComponent {
              this.stats.showWikiStats();
      }
 
-     public parsePage() {
-         this.wikiPageContent = [];
-         this.wikiPage = this.data.page;
-
-         this.disabled = [true];
-         this.icons = ['fa-pencil'];
-         this.wikiPageContent.push({
-             'title': this.wikiPage.title,
-             'text': ""
-         })
-         this.toDelete = this.wikiPage.title;
-         for (let i = 0; i < this.wikiPage.headings.length; i++) {
-             this.disabled.push(true);
-             this.icons.push('fa-pencil');
-             this.wikiPageContent.push({
-                 'title': this.wikiPage.headings[i].title,
-                 'text': this.wikiPage.headings[i].text,
-                 'active': false
-             });
-         }
-
-         this.calcHeight();
-
-
-     }
-
-
-
     /**
      * All adding methods
      */
@@ -237,6 +238,7 @@ export class WikiComponent {
          //creating the new node to be added to the navigation
 
          this.showAddDialog = false;
+         this.empty = false;
          if (add) {
              if (this.addContent == 'Category') {
 
@@ -281,8 +283,10 @@ export class WikiComponent {
 
         public createHeading(addMore: boolean) {
 
-            if (!addMore)
+            if (!addMore){
                 this.showAddHeadDialog = false;
+                this.empty = false;
+            }
 
             let temp = {};
             if (this.data.selectedEntry.type == 'category') {
@@ -665,11 +669,17 @@ export class WikiComponent {
         public calcHeight(){
             setTimeout(() => {
                 let wiki_ele = <HTMLScriptElement>document.getElementsByClassName("wiki")[0];
+                let header = <HTMLScriptElement>document.getElementsByClassName("ui-editor-toolbar ui-widget-header ui-corner-top ql-toolbar ql-snow")[0];
                 let header_ele = <HTMLScriptElement>document.getElementsByClassName("header")[0];
-                let page_content_height = wiki_ele.offsetHeight - header_ele.offsetHeight;
+                let page_content_height: any;
+                if(header_ele)
+                    page_content_height = wiki_ele.offsetHeight - header_ele.offsetHeight;
+                else
+                    page_content_height = wiki_ele.offsetHeight - header.offsetHeight;
                 let div = <HTMLScriptElement>document.getElementById("page_content");
-                this.height = page_content_height;
-            }, 500);
+                if(div)
+                    div.style.height = page_content_height+"px";
+            }, 10);
         }
 
         //On drag stuff
