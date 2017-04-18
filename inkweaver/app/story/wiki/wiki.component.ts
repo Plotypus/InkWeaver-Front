@@ -67,7 +67,9 @@ export class WikiComponent {
     private dragNode: TreeNode;
     private dragMode: boolean = false;
     private dragNodeId: any;
-    constructor(
+
+    private height: any;
+       constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
         private editService: EditService,
@@ -84,7 +86,11 @@ export class WikiComponent {
 
 
         if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
-            this.parsePage();
+            if (this.data.selectedEntry.type == 'category')
+                this.wikiService.getWikiSegment(this.data.selectedEntry.data.id, this.onGetCallback());
+            else
+                this.wikiService.getWikiPage(this.data.selectedEntry.data.id, this.onGetCallback());
+           // this.parsePage();
         }else
         {
 
@@ -216,6 +222,7 @@ export class WikiComponent {
              });
          }
 
+         this.calcHeight();
 
 
      }
@@ -649,16 +656,20 @@ export class WikiComponent {
                 }
                 this.fromLink = false;
 
-                setTimeout(() => {
-                    let wiki_ele = <HTMLScriptElement>document.getElementsByClassName("wiki")[0];
-                    let header_ele = <HTMLScriptElement>document.getElementsByClassName("header")[0];
-                    let page_content_height = wiki_ele.offsetHeight - header_ele.offsetHeight;
-                    let div = <HTMLScriptElement>document.getElementById("page_content");
-                    div.style.height = page_content_height+"px";
-                }, 500);
+                this.calcHeight();
                 
                      
             }
+        }
+
+        public calcHeight(){
+            setTimeout(() => {
+                let wiki_ele = <HTMLScriptElement>document.getElementsByClassName("wiki")[0];
+                let header_ele = <HTMLScriptElement>document.getElementsByClassName("header")[0];
+                let page_content_height = wiki_ele.offsetHeight - header_ele.offsetHeight;
+                let div = <HTMLScriptElement>document.getElementById("page_content");
+                this.height = page_content_height;
+            }, 500);
         }
 
         //On drag stuff

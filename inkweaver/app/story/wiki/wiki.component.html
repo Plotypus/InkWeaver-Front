@@ -109,7 +109,7 @@ width="450" height="200" responsive="true">
                         </div>
                     </div>
                     <!--Page-->
-                    <div id="page_content" style='display: inline-block; width:100%; overflow: auto;'>
+                    <div id="page_content" [style.height]="height + 'px'" style='display: inline-block; width:100%; overflow: auto;'>
 
                         <!--Alias-->
                         <ng-container *ngIf="wikiPage.aliases">
