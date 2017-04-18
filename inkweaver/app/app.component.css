@@ -57,10 +57,6 @@ ink-app > p-panel > .ui-panel > .ui-panel-content-wrapper {
     display: inline-block;
 }
 
-.hide-menu {
-    display: none !important;
-}
-
 .master-menu {
     float: right;
     display: inline-block;
@@ -114,6 +110,46 @@ ink-app > p-panel > .ui-panel > .ui-panel-content-wrapper {
 .inline-button .ui-button-text {
     background: var(--dark-blue);
 }
+
+/* Main menu */
+.no-story p-menubar div p-menubarsub ul li:nth-child(1),
+.no-story p-menubar div p-menubarsub ul li:nth-child(2),
+.no-story p-menubar div p-menubarsub ul li:nth-child(3) {
+    display: none !important;
+}
+
+.no-user.no-story p-menubar div p-menubarsub ul li:nth-child(4) {
+    display: none !important;
+}
+
+/* Collaborators */
+.collaborators {
+    z-index: 10;
+    position: absolute;
+}
+
+    .collaborators .ui-listbox {
+        width: 100%;
+    }
+
+    .collaborators button {
+        color: var(--light-blue) !important;
+        background: var(--light-gray) !important;
+    }
+
+    .collaborators p-listbox,
+    .collaborators p-listbox .ui-state-highlight,
+    .collaborators p-listbox .ui-state-hover {
+        background: white;
+        color: var(--dark-blue);
+        border: none !important;
+    }
+
+        .collaborators p-listbox button {
+            float: right;
+            background: white !important;
+            color: var(--light-blue) !important;
+        }
 
 /* PDF */
 .margins {

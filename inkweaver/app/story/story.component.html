@@ -1,29 +1,6 @@
 <p-panel>
     <header>
         <div class="title ui-g-9">
-            <!-- Collaborators -->
-            <div class="collaborators">
-                <button type="button" pButton label="Collaborators" (click)="collab = !collab"></button>
-                <div *ngIf="collab">
-                    <p-listbox [options]="data.collaborators" [(ngModel)]="collaboratorModel">
-                        <template let-collaborator pTemplate="item">
-                            <div [ngSwitch]="!!collaborator.value">
-                                <div *ngSwitchCase="true">
-                                    {{collaborator.label}}
-                                    <button pButton *ngIf="collaborator.value.access_level === 'collaborator'"
-                                            icon="fa-times" (click)="removeCollaborator(collaborator.value.user_id)"></button>
-                                </div>
-                                <div *ngSwitchCase="false">
-                                    <input type="text" pInputText [(ngModel)]="newUsername" />
-                                    <button pButton icon="fa-check"
-                                            (click)="addCollaborator(newUsername)"></button>
-                                </div>
-                            </div>
-                        </template>
-                    </p-listbox>
-                </div>
-            </div>
-
             <!-- Title -->
             <span [ngSwitch]="!!editing">
                 <span *ngSwitchCase="false" (click)="edit()">

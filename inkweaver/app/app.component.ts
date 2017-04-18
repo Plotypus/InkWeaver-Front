@@ -3,11 +3,13 @@ import { Router } from '@angular/router';
 import { MenuItem, Message } from 'primeng/primeng';
 
 import { UserService } from './user/user.service';
+import { StoryService } from './story/story.service';
 import { ApiService } from './shared/api.service';
 import { ParserService } from './shared/parser.service';
 import { WebSocketService } from './shared/websocket.service';
 
 import jsPDF = require('jspdf');
+import { ID } from './models/id.model';
 
 @Component({
     selector: 'ink-app',
@@ -16,6 +18,7 @@ import jsPDF = require('jspdf');
 export class AppComponent {
     private data: any;
     private items: MenuItem[];
+    private collab: boolean;
 
     // PDF
     private pdf: boolean;
@@ -37,29 +40,26 @@ export class AppComponent {
         private parser: ParserService,
         private apiService: ApiService,
         private userService: UserService,
+        private storyService: StoryService,
         private websocketService: WebSocketService) { }
 
     ngOnInit() {
         this.data = this.apiService.data;
         this.items = [
             {
-                label: 'Collaborators',
-                command: (event) => {
-
-                },
-                disabled: !this.router.url.startsWith('/story')
-            },
-            {
                 label: 'Export PDF',
                 command: (event) => {
                     this.setDefaults();
-                },
-                disabled: !this.router.url.startsWith('/story')
+                }
             },
             {
-                label: 'User Page',
-                routerLink: ['/user'],
-                disabled: !(this.router.url.startsWith('/user') || this.router.url.startsWith('/story'))
+                label: 'Collaborators',
+                command: (event) => {
+                    this.collab = !this.collab;
+                }
+            },
+            {
+                label: 'User Page', routerLink: ['/user']
             },
             {
                 label: 'Sign Out',
@@ -68,8 +68,7 @@ export class AppComponent {
                     this.websocketService.close();
                     this.apiService.resetData();
                     this.router.navigate(['/login']);
-                },
-                disabled: !(this.router.url.startsWith('/user') || this.router.url.startsWith('/story'))
+                }
             }
         ];
 
@@ -78,6 +77,14 @@ export class AppComponent {
         let Class = new Parchment.Attributor.Attribute('class', 'class');
         Parchment.register(ID);
         Parchment.register(Class);
+    }
+
+    // Collaborators
+    public removeCollaborator(userID: ID) {
+        this.storyService.removeCollaborator(this.data.story.story_id, userID);
+    }
+    public addCollaborator(username: string) {
+        this.storyService.addCollaborator(this.data.story.story_id, username);
     }
 
     // PDF

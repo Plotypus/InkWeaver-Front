@@ -26,8 +26,26 @@
 <p-panel>
     <header>
         <div class="master-header">Inkweaver by Plotypus</div>
-        <div class="master-menu">
+        <div class="master-menu" [ngClass]="{'no-user': !router.url.startsWith('/user'), 'no-story': !router.url.startsWith('/story')}">
             <p-menubar [model]="items"></p-menubar>
+            <div *ngIf="collab" class="collaborators">
+                <p-listbox [options]="data.collaborators" [(ngModel)]="collaboratorModel">
+                    <template let-collaborator pTemplate="item">
+                        <div [ngSwitch]="!!collaborator.value">
+                            <div *ngSwitchCase="true">
+                                {{collaborator.label}}
+                                <button pButton *ngIf="collaborator.value.access_level === 'collaborator'"
+                                        icon="fa-times" (click)="removeCollaborator(collaborator.value.user_id)"></button>
+                            </div>
+                            <div *ngSwitchCase="false">
+                                <input type="text" pInputText [(ngModel)]="newUsername" />
+                                <button pButton
+                                        icon="fa-check" (click)="addCollaborator(newUsername)"></button>
+                            </div>
+                        </div>
+                    </template>
+                </p-listbox>
+            </div>
         </div>
     </header>
     <router-outlet></router-outlet>

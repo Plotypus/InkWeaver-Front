@@ -70,12 +70,4 @@ export class StoryComponent {
         this.editing = false;
         this.data.story.story_title = this.prevTitle;
     }
-
-    // Collaborators
-    public removeCollaborator(userID: ID) {
-        this.storyService.removeCollaborator(this.data.story.story_id, userID);
-    }
-    public addCollaborator(username: string) {
-        this.storyService.addCollaborator(this.data.story.story_id, username);
-    }
 }

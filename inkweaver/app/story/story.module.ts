@@ -7,8 +7,7 @@ import { RouterModule } from '@angular/router';
 import {
     PanelModule,
     TabMenuModule,
-    ButtonModule,
-    ListboxModule
+    ButtonModule
 } from 'primeng/primeng';
 
 // Modules, services, and components
@@ -27,7 +26,6 @@ import { StoryService } from './story.service';
         PanelModule,
         TabMenuModule,
         ButtonModule,
-        ListboxModule,
 
         // Custom Modules
         RouterModule,

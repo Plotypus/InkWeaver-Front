@@ -8,7 +8,8 @@ import {
     MenuModule,
     MenubarModule,
     DialogModule,
-    GrowlModule
+    GrowlModule,
+    ListboxModule
 } from 'primeng/primeng';
 
 // Modules, services, and components
@@ -31,6 +32,7 @@ import { AppComponent } from './app.component';
         MenubarModule,
         DialogModule,
         GrowlModule,
+        ListboxModule,
 
         // Custom Modules
         RoutingModule,
