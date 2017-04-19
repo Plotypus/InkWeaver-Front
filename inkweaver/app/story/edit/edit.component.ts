@@ -260,6 +260,29 @@ export class EditComponent {
         this.save();
     }
 
+    public keyUp(event: any) {
+        if (event.key === 'Enter') {
+            let idx = this.editor.quill.getSelection();
+            if (idx) {
+                let blot = this.editor.quill.getLine(idx.index);
+                if (blot) {
+                    let block = blot[0];
+                    while (block && block.domNode && !block.domNode.id && block.parent) {
+                        block = block.parent;
+                    }
+                    if (block && block.domNode && block.domNode.id) {
+                        block.domNode.id = 'new';
+                    }
+                }
+            }
+            // this.save();
+        } else if (event.key === 'Tab') {
+            if (this.suggest.display === 'block') {
+                event.stopPropagation();
+            }
+        }
+    }
+
     public setHotkey(editComp: EditComponent) {
         setTimeout(function () {
             if (editComp.editor.quill) {
@@ -268,25 +291,21 @@ export class EditComponent {
                     altKey: true
                 }, function () { editComp.openLinkCreator(editComp); });
 
-                delete editComp.editor.quill.keyboard.bindings['9'];
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'tab'
                 }, function (range, context) {
-                    if (editComp.suggest.display === 'block') {
-                        let word: string = context.prefix.slice(context.prefix.lastIndexOf(' ') + 1);
-                        let index: number = range.index - word.length;
+                    let word: string = context.prefix.slice(context.prefix.lastIndexOf(' ') + 1);
+                    let index: number = range.index - word.length;
 
-                        editComp.suggest.display = 'none';
-                        editComp.word = editComp.suggest.value.title;
-                        editComp.newLinkID = editComp.suggest.value.page_id;
-                        editComp.range = { index: index, length: word.length };
-                        editComp.createLink();
-                        editComp.editor.quill.insertText(index + editComp.word.length, ' ', 'link', false);
-                        editComp.editor.quill.setSelection(index + editComp.word.length + 1, 0);
-                    } else {
-                        return true;
-                    }
+                    this.suggest.display = 'none';
+                    this.word = this.suggest.value.title;
+                    this.newLinkID = this.suggest.value.page_id;
+                    this.range = { index: index, length: word.length };
+                    this.createLink();
+                    this.editor.quill.insertText(index + this.word.length, ' ', 'link', false);
+                    this.editor.quill.setSelection(index + this.word.length + 1, 0);
                 });
+
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'up'
                 }, function (range, context) {
@@ -299,6 +318,7 @@ export class EditComponent {
                         return true;
                     }
                 });
+
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'down'
                 }, function (range, context) {
@@ -574,7 +594,7 @@ export class EditComponent {
                     this.apiService.refreshStoryContent(this.data.prevSection.data.section_id, this.data.prevSection.data.title);
                 }
             }
-            if (header && header.innerHTML !== this.data.prevSection.data.title) {
+            if (header && header.innerHTML !== this.data.prevSection.data.title && JSON.stringify(this.data.prevSection.data.section_id) !== JSON.stringify(this.data.story.section_id)) {
                 this.editService.editSectionTitle(this.data.prevSection.data.section_id, header.innerHTML);
             }
         }

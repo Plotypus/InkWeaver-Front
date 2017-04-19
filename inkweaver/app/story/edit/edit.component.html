@@ -67,7 +67,7 @@
                 <div class="loader" *ngIf="data.loading">
                     <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
                 </div>
-                <div [ngClass]="{'loading-editor': data.loading}">
+                <div [ngClass]="{'loading-editor': data.loading}" (keyup)="keyUp($event)">
                     <p-editor [(ngModel)]="data.storyDisplay" (blocked)="displayLinkCreator || displaySectionCreator || displaySectionDeleter || displayBookmarkCreator || displayBookmarkDeleter">
                         <header>
                             <span class="ql-formats">
@@ -97,7 +97,7 @@
                                 <button class="ql-clean"></button>
                             </span>
                             <span class="ql-save">
-                                <button pButton type="button" label="Save" (click)="save(true)"></button>
+                                <button pButton type="button" label="Save" (click)="save()"></button>
                                 <button pButton type="button" label="Note" (click)="addNote()"></button>
                             </span>
                         </header>

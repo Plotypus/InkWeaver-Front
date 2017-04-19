@@ -3,12 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import {
-    PanelModule,
-    ButtonModule,
-    MenuModule,
-    MenubarModule,
     DialogModule,
+    ButtonModule,
     GrowlModule,
+    MenubarModule,
+    PanelModule,
     ListboxModule
 } from 'primeng/primeng';
 
@@ -26,12 +25,11 @@ import { AppComponent } from './app.component';
         BrowserModule,
 
         // PrimeNG Modules
-        PanelModule,
-        ButtonModule,
-        MenuModule,
-        MenubarModule,
         DialogModule,
+        ButtonModule,
         GrowlModule,
+        PanelModule,
+        MenubarModule,
         ListboxModule,
 
         // Custom Modules

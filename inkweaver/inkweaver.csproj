@@ -162,6 +162,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="LICENSE" />
+    <Content Include="typings.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -141,6 +141,7 @@ export class ParserService {
     }
 
     public parseHtml(paragraphs: any): ContentObject {
+        let addCount: number = 0;
         let add: Paragraph[] = [];
         let obj: ContentObject = new ContentObject();
 
@@ -156,44 +157,47 @@ export class ParserService {
             };
 
             let id: string = paragraph.id;
-            let oid: ID = { $oid: id };
-            if (id && !obj[JSON.stringify(oid)]) {
-                for (let addP of add) {
-                    addP.succeeding_paragraph_id = oid;
-                    obj['new' + Math.random()] = addP;
-                }
-                add = [];
-                p.paragraph_id = oid;
-                obj[JSON.stringify(oid)] = p;
-            } else {
-                add.push(p);
-            }
-
-            let code: any = paragraph.querySelector('code');
-            if (code) {
-                p.note = code.innerHTML;
-            }
-
-            let links: any[] = paragraph.querySelectorAll('a[href]');
-            for (let link of links) {
-                let ids: string[] = link.attributes[0].value.split('-');
-                let linkID: ID = { $oid: ids[0] };
-                let pageID: ID = { $oid: ids[1] };
-
-                if (ids.length > 2) {
-                    p.passiveLinks[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
+            if (id !== 'added') {
+                let oid: ID = { $oid: id };
+                if (id && id !== 'new' && !obj[JSON.stringify(oid)]) {
+                    for (let addP of add) {
+                        addP.succeeding_paragraph_id = oid;
+                        obj['new' + addCount++] = addP;
+                    }
+                    add = [];
+                    p.paragraph_id = oid;
+                    obj[JSON.stringify(oid)] = p;
                 } else {
-                    if (ids[0].startsWith('new')) {
-                        p.links[ids[0]] = { page_id: pageID, alias_name: link.innerHTML };
+                    paragraph.id = 'added';
+                    add.push(p);
+                }
+
+                let code: any = paragraph.querySelector('code');
+                if (code) {
+                    p.note = code.innerHTML;
+                }
+
+                let links: any[] = paragraph.querySelectorAll('a[href]');
+                for (let link of links) {
+                    let ids: string[] = link.attributes[0].value.split('-');
+                    let linkID: ID = { $oid: ids[0] };
+                    let pageID: ID = { $oid: ids[1] };
+
+                    if (ids.length > 2) {
+                        p.passiveLinks[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
                     } else {
-                        p.links[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
+                        if (ids[0].startsWith('new')) {
+                            p.links[ids[0]] = { page_id: pageID, alias_name: link.innerHTML };
+                        } else {
+                            p.links[JSON.stringify(linkID)] = { page_id: pageID, alias_name: link.innerHTML };
+                        }
                     }
                 }
             }
         }
 
         add.forEach((p: Paragraph) => {
-            obj['new' + Math.random()] = p;
+            obj['new' + addCount++] = p;
         });
         return obj;
     }

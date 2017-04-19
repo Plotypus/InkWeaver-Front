@@ -1,2 +1,5 @@
-# ProjectX
-Cross-platform fiction writing platform
+# Clone the repository
+
+cd Inkweaver-Front/inkweaver
+npm install
+npm start

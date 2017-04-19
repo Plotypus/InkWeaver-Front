@@ -278,7 +278,7 @@ export class ApiService {
 
                             // Paragraph
                             case 'paragraph_added':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
+                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Add paragraph to content object
                                     let p: Paragraph = {
                                         paragraph_id: reply.paragraph_id, text: reply.text,
@@ -288,30 +288,50 @@ export class ApiService {
                                     this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
 
+                                    // Add/update the paragraph in the display
                                     let pString: string = this.parser.setParagraph(p);
-                                    if (!p.succeeding_paragraph_id) {
-                                        // Set previous paragraph's succeeding_paragraph_id
-                                        let searchIndex: number = this.data.storyDisplay.lastIndexOf('<p id="');
-                                        if (searchIndex > -1) {
-                                            let searchString: string = this.data.storyDisplay.substring(searchIndex);
-                                            let search: RegExpMatchArray = searchString.match(/<p id="([a-z0-9]{24})">/);
-                                            if (search && search.length > 1) {
-                                                this.data.contentObject[JSON.stringify({ $oid: search[1] })].succeeding_paragraph_id = p.paragraph_id;
+                                    if (myMessage) {
+                                        let regex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?<p id="added">');
+                                        let match: RegExpExecArray = regex.exec(this.data.storyDisplay);
+                                        if (match && match.length > 2) {
+                                            let key: string = JSON.stringify({ $oid: match[2] });
+                                            if (this.data.contentObject[key]) {
+                                                this.data.contentObject[key].succeeding_paragraph_id = p.paragraph_id;
                                             }
                                         }
-                                        // Add paragraph to display string
-                                        this.data.storyDisplay += pString;
+                                        regex = new RegExp('<p id="added">.*?</p>');
+                                        this.data.storyDisplay = this.data.storyDisplay.replace(regex, pString);
                                     } else {
-                                        // Set previous paragraph's succeeding_paragraph_id
-                                        let pRegex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?(<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>)');
-                                        let search: RegExpMatchArray = this.data.storyDisplay.match(pRegex);
-                                        if (search && search.length > 3) {
-                                            this.data.contentObject[JSON.stringify({ $oid: search[2] })].succeeding_paragraph_id = p.paragraph_id;
+                                        if (!p.succeeding_paragraph_id) {
+                                            // Set previous paragraph's succeeding_paragraph_id
+                                            let regex = new RegExp('<p id="([a-z0-9]{24})">.*?</p>(<p( id="new")?>.*?</p>)*$');
+                                            let match: RegExpExecArray = regex.exec(this.data.storyDisplay);
+                                            if (match && match.length > 1) {
+                                                let key: string = JSON.stringify({ $oid: match[1] });
+                                                if (this.data.contentObject[key]) {
+                                                    this.data.contentObject[key].succeeding_paragraph_id = p.paragraph_id;
+                                                    regex = new RegExp('<p id="' + match[1] + '">.*?</p>');
+                                                    this.data.storyDisplay = this.data.storyDisplay.replace(regex, '$&' + pString);
+                                                } else {
+                                                    this.data.storyDisplay = pString + this.data.storyDisplay;
+                                                }
+                                            } else {
+                                                this.data.storyDisplay = pString + this.data.storyDisplay;
+                                            }
+                                        } else {
+                                            // Set previous paragraph's succeeding_paragraph_id
+                                            let regex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?(?:<p(?: id="new")?>.*?</p>)*<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>');
+                                            let match: RegExpExecArray = regex.exec(this.data.storyDisplay);
+                                            if (match && match.length > 2) {
+                                                let key: string = JSON.stringify({ $oid: match[2] });
+                                                if (this.data.contentObject[key]) {
+                                                    this.data.contentObject[key].succeeding_paragraph_id = p.paragraph_id;
+                                                }
+                                            }
+                                            // Add paragraph to display string
+                                            regex = new RegExp('<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>');
+                                            this.data.storyDisplay = this.data.storyDisplay.replace(regex, pString + '$&');
                                         }
-                                        // Add paragraph to display string
-                                        this.data.storyDisplay = this.data.storyDisplay.replace(
-                                            new RegExp('<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>'),
-                                            pString + '$&');
                                     }
                                 }
                                 break;
@@ -321,6 +341,7 @@ export class ApiService {
                                     let p: Paragraph = this.data.contentObject[JSON.stringify(reply.paragraph_id)];
                                     p.text = reply.update.text;
                                     this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
+                                    // Unnecessary?
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
                                     // Update paragraph in display string
                                     let pString: string = this.parser.setParagraph(p);
@@ -329,19 +350,22 @@ export class ApiService {
                                 }
                                 break;
                             case 'paragraph_deleted':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
+                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     delete this.data.contentObject[JSON.stringify(reply.paragraph_id)];
                                     // Set previous paragraph's succeeding_paragraph_id to the next id
                                     let prior: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?<p id="' + reply.paragraph_id.$oid + '">.*?</p>');
-                                    let priorMatch: RegExpMatchArray = this.data.storyDisplay.match(prior);
+                                    let priorMatch: RegExpExecArray = prior.exec(this.data.storyDisplay);
                                     if (priorMatch && priorMatch.length > 2) {
                                         let posteriorID: ID = null;
                                         let posterior: RegExp = new RegExp('<p id="' + reply.paragraph_id.$oid + '">.*?</p>(<p id="([a-z0-9]{24})" >.*?</p>)?');
-                                        let posteriorMatch: RegExpMatchArray = this.data.storyDisplay.match(posterior);
+                                        let posteriorMatch: RegExpExecArray = posterior.exec(this.data.storyDisplay);
                                         if (posteriorMatch && posteriorMatch.length > 2) {
                                             posteriorID = { $oid: posteriorMatch[2] };
                                         }
-                                        this.data.contentObject[JSON.stringify({ $oid: priorMatch[2] })].succeeding_paragraph_id = posteriorID;
+                                        let key: string = JSON.stringify({ $oid: priorMatch[2] });
+                                        if (this.data.contentObject[key]) {
+                                            this.data.contentObject[key].succeeding_paragraph_id = posteriorID;
+                                        }
                                     }
                                     // Add paragraph to display string
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
@@ -370,23 +394,27 @@ export class ApiService {
                                 this.data.bookmarks[0].children.splice(index, 1);
                                 break;
                             case 'note_updated':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
+                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Update content object
                                     this.data.contentObject[JSON.stringify(reply.paragraph_id)].note = reply.note;
-                                    // Update story display
-                                    this.data.storyDisplay = this.data.storyDisplay.replace(
-                                        new RegExp('<p id="' + reply.paragraph_id.$oid + '">(<code>.*?</code>)?(.*?)</p>'),
-                                        '<p id="' + reply.paragraph_id.$oid + '"><code>' + reply.note + '</code>$2</p>');
+                                    if (!myMessage) {
+                                        // Update story display
+                                        this.data.storyDisplay = this.data.storyDisplay.replace(
+                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '">(<code>.*?</code>)?(.*?)</p>'),
+                                            '<p id="' + reply.paragraph_id.$oid + '"><code>' + reply.note + '</code>$2</p>');
+                                    }
                                 }
                                 break;
                             case 'note_deleted':
-                                if (!myMessage && this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
+                                if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     // Update content object
                                     this.data.contentObject[JSON.stringify(reply.paragraph_id)].note = null;
-                                    // Update story display
-                                    this.data.storyDisplay = this.data.storyDisplay.replace(
-                                        new RegExp('<p id="' + reply.paragraph_id.$oid + '"><code>.*?</code>(.*?)</p>'),
-                                        '<p id="' + reply.paragraph_id.$oid + '">$1</p>');
+                                    if (!myMessage) {
+                                        // Update story display
+                                        this.data.storyDisplay = this.data.storyDisplay.replace(
+                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '"><code>.*?</code>(.*?)</p>'),
+                                            '<p id="' + reply.paragraph_id.$oid + '">$1</p>');
+                                    }
                                 }
                                 break;
 
