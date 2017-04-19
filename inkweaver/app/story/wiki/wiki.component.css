@@ -1,7 +1,7 @@
 ﻿/* -------------------- Wiki -------------------- */
 
 wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
-    height: calc(100%);
+    height: calc(98%);
 }
 
 .wiki .ui-editor-content {
@@ -28,6 +28,9 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     text-align: center;
 }
 
+.wiki-col .stats{
+    height: 100%;
+}
 .wiki .fa {
     color: white;
 }
@@ -39,6 +42,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
 
 .wiki {
     background: white;
+    height: calc(100% - 3em);
 }
 
 .wiki .ui-editor-content {

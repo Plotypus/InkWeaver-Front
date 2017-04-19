@@ -796,6 +796,16 @@ export class WikiComponent {
                     this.dragNodeId = node.data.id;
             }
         }
+
+        public onStats(){
+            if(!this.statMode)
+            {
+                if (this.data.selectedEntry.type == 'category')
+                    this.wikiService.getWikiSegment(this.data.selectedEntry.data.id, this.onGetCallback());
+                else
+                    this.wikiService.getWikiPage(this.data.selectedEntry.data.id, this.onGetCallback());
+            }
+        }
         
 
         
