@@ -96,7 +96,7 @@ width="450" height="200" responsive="true">
                         <div *ngSwitchCase='true'>
                             <h1 (click)="onDisable(0)">{{wikiPage.title}}</h1>
                             <div class="icons">
-                                <button pButton type="button" label="Add Heading" (click)="addHeading()"></button>
+                                <button pButton type="button" label="Add {{heading}}" (click)="addHeading()"></button>
                                 <button pButton type="button" label="Save" (click)="onSavePage()"></button>
                             </div>
 

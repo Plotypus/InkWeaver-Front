@@ -220,14 +220,18 @@ export class WikiComponent {
                  page.node.expanded = !page.node.expanded;
                  //get information for the page.
                  this.wikiService.getWikiSegment(page.node.data.id, this.onGetCallback());
+                 this.heading = "Templete Heading";
              }
              else {
 
                  this.wikiService.getWikiPage(page.node.data.id, this.onGetCallback());
+                 this.heading = "Heading"; 
              }
          }
          else
              this.stats.showWikiStats();
+        
+             
      }
 
     /**
@@ -272,10 +276,6 @@ export class WikiComponent {
 
         public addHeading() {
 
-            if (this.data.selectedEntry.type == 'category')
-                this.heading = "Templete Heading";
-            else
-                this.heading = "Heading"; 
             this.headingName = "";
             this.empty = false;
             this.showAddHeadDialog = true;

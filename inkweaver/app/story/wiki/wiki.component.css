@@ -207,6 +207,15 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     border: 0.125em solid var(--light-gray);
 }
 
+#references .ui-datalist .ui-datalist-data div:hover {
+    background: var(--light-gray);
+    text-align: left;
+    padding: .25em 1em .25em 1em;
+    border-radius: 25px;
+    cursor: pointer;
+    border: 0.125em solid var(--dark-blue);
+}
+
 #references .ui-datalist {
     background: white;
     padding: 1em;
