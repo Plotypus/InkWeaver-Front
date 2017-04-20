@@ -92,7 +92,7 @@ export class AppComponent {
     // PDF
     public createPDF() {
         let allSections = this.parser.flattenTree(this.data.storyNode[0]);
-        this.secCount = Object.keys(allSections).length - 1;
+        this.secCount = Object.keys(allSections).length;
         let width: any = (parseInt(this.width) * 72);
         let height: any = (parseInt(this.height) * 72);
         let margin = {
@@ -117,16 +117,9 @@ export class AppComponent {
             this.apiService.send({ action: 'get_section_content', section_id: sec },
                 (reply: any) => {
                     this.pdfHtml = "";
-                    if (this.secCount == this.count) {
+                   
+                    
 
-                        //doc.output('dataurlnewwindow');
-                        if (this.name.includes('.pdf'))
-                            this.name += ".pdf";
-                        doc.save(this.name);
-                        this.msgs.push({ severity: 'sucess', summary: 'File Downloaded', detail: 'Check your download folder for ' + this.name });
-                        this.pdf = false;
-                    }
-                    else {
                         this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
 
                         this.pdfHtml += "<h1>" + this.sectionNames[this.count] + "</h1>" + this.parser.setContentDisplay(reply.content);
@@ -156,7 +149,16 @@ export class AppComponent {
                         if (this.count < this.secCount) {
                             doc.addPage();
                         }
-                    }
+                        if (this.secCount == this.count) {
+
+                            //doc.output('dataurlnewwindow');
+                            if (this.name.includes('.pdf'))
+                                this.name += ".pdf";
+                            doc.save(this.name);
+                            this.msgs.push({ severity: 'sucess', summary: 'File Downloaded', detail: 'Check your download folder for ' + this.name });
+                            this.pdf = false;
+                        }
+                    
                 }, { pdf: true });
         }
     }
@@ -167,6 +169,9 @@ export class AppComponent {
         this.m_right = 1;
         this.m_top = 1;
         this.pdf = true;
+        this.width = 8;
+        this.height = 11;
+
     }
 
 }
