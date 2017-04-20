@@ -29,6 +29,10 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
     padding: 0.75em;
 }
 
+.ui-grid-col-9 {
+    z-index: 10;
+}
+
 /* Toolbar */
 .ui-editor-toolbar {
     border-radius: 0;

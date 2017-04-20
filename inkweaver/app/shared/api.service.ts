@@ -179,6 +179,9 @@ export class ApiService {
 
                                 this.data.collaborators = [{ label: null, value: null }];
                                 for (let user of reply.users) {
+                                    if (user.access_level === 'owner') {
+                                        this.data.author = user.name;
+                                    }
                                     this.data.collaborators.push({
                                         label: user.name, value: user
                                     });
@@ -396,7 +399,7 @@ export class ApiService {
                                     if (!myMessage) {
                                         // Update story display
                                         this.data.storyDisplay = this.data.storyDisplay.replace(
-                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '">(<code>(?!.*?</code>).*?</code>)?(.*?)</p>'),
+                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '">(<code>.*?</code>)?(.*?)</p>'),
                                             '<p id="' + reply.paragraph_id.$oid + '"><code>' + reply.note + '</code>$2</p>');
                                     }
                                 }
@@ -408,7 +411,7 @@ export class ApiService {
                                     if (!myMessage) {
                                         // Update story display
                                         this.data.storyDisplay = this.data.storyDisplay.replace(
-                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '"><code>(?!.*?</code>).*?</code>(.*?)</p>'),
+                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '"><code>.*?</code>(.*?)</p>'),
                                             '<p id="' + reply.paragraph_id.$oid + '">$1</p>');
                                     }
                                 }
@@ -447,7 +450,7 @@ export class ApiService {
                                 this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)].pending = false;
                                 if (this.data.storyDisplay) {
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
-                                        new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">((?!.*?</a>).*?)</a>'),
+                                        new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'),
                                         '<a href="$1-$2-false" target="_blank" id="false">$3</a>');
                                 }
                                 break;
@@ -725,6 +728,7 @@ export class ApiService {
             tooltip: new Tooltip(),
             collaborators: new Array<SelectItem>(),
 
+            author: '',
             user: new User(),
             stories: new Array<StorySummary>(),
             wikis: new Array<WikiSummary>(),
