@@ -67,7 +67,9 @@ export class WikiComponent {
     private dragNode: TreeNode;
     private dragMode: boolean = false;
     private dragNodeId: any;
-    constructor(
+
+    private height: any;
+       constructor(
         private wikiService: WikiService,
         private apiService: ApiService,
         private editService: EditService,
@@ -84,7 +86,11 @@ export class WikiComponent {
 
 
         if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
-            this.parsePage();
+            if (this.data.selectedEntry.type == 'category')
+                this.wikiService.getWikiSegment(this.data.selectedEntry.data.id, this.onGetCallback());
+            else
+                this.wikiService.getWikiPage(this.data.selectedEntry.data.id, this.onGetCallback());
+           // this.parsePage();
         }else
         {
 
@@ -117,6 +123,35 @@ export class WikiComponent {
 
     }
 
+    ngAfterViewInit()  {
+        this.calcHeight();
+    }  
+
+    public parsePage() {
+        this.wikiPageContent = [];
+        this.wikiPage = this.data.page;
+
+        this.disabled = [true];
+        this.icons = ['fa-pencil'];
+        this.wikiPageContent.push({
+            'title': this.wikiPage.title,
+            'text': ""
+        })
+        this.toDelete = this.wikiPage.title;
+        for (let i = 0; i < this.wikiPage.headings.length; i++) {
+            this.disabled.push(true);
+            this.icons.push('fa-pencil');
+            this.wikiPageContent.push({
+                'title': this.wikiPage.headings[i].title,
+                'text': this.wikiPage.headings[i].text,
+                'active': false
+            });
+        }
+
+        this.calcHeight();
+
+
+    }
 
     public setContextMenu(node:any){
         this.data.selectedEntry = node;
@@ -173,9 +208,7 @@ export class WikiComponent {
 
 
              this.rename = false;
-             if (page.node.type == 'filler')
-                 return;
-
+             
              if (page.node.type == 'title') {
                  this.wikiPage = null;
                  this.apiService.refreshWikiInfo();
@@ -185,42 +218,19 @@ export class WikiComponent {
                  page.node.expanded = !page.node.expanded;
                  //get information for the page.
                  this.wikiService.getWikiSegment(page.node.data.id, this.onGetCallback());
+                 this.heading = "Templete Heading";
              }
              else {
 
                  this.wikiService.getWikiPage(page.node.data.id, this.onGetCallback());
+                 this.heading = "Heading"; 
              }
          }
          else
              this.stats.showWikiStats();
+        
+             
      }
-
-     public parsePage() {
-         this.wikiPageContent = [];
-         this.wikiPage = this.data.page;
-
-         this.disabled = [true];
-         this.icons = ['fa-pencil'];
-         this.wikiPageContent.push({
-             'title': this.wikiPage.title,
-             'text': ""
-         })
-         this.toDelete = this.wikiPage.title;
-         for (let i = 0; i < this.wikiPage.headings.length; i++) {
-             this.disabled.push(true);
-             this.icons.push('fa-pencil');
-             this.wikiPageContent.push({
-                 'title': this.wikiPage.headings[i].title,
-                 'text': this.wikiPage.headings[i].text,
-                 'active': false
-             });
-         }
-
-
-
-     }
-
-
 
     /**
      * All adding methods
@@ -230,6 +240,7 @@ export class WikiComponent {
          //creating the new node to be added to the navigation
 
          this.showAddDialog = false;
+         this.empty = false;
          if (add) {
              if (this.addContent == 'Category') {
 
@@ -263,10 +274,6 @@ export class WikiComponent {
 
         public addHeading() {
 
-            if (this.data.selectedEntry.type == 'category')
-                this.heading = "Templete Heading";
-            else
-                this.heading = "Heading"; 
             this.headingName = "";
             this.empty = false;
             this.showAddHeadDialog = true;
@@ -274,8 +281,10 @@ export class WikiComponent {
 
         public createHeading(addMore: boolean) {
 
-            if (!addMore)
+            if (!addMore){
                 this.showAddHeadDialog = false;
+                this.empty = false;
+            }
 
             let temp = {};
             if (this.data.selectedEntry.type == 'category') {
@@ -525,7 +534,6 @@ export class WikiComponent {
                     else if(ele.type == 'page')
                         this.allPages.push({ label: ele.label, value: ele });
 
-                    if(ele.type != 'filler')
                     this.data.wikiFlatten.push({ label: ele.label, value: ele });
                     
                 }
@@ -620,11 +628,13 @@ export class WikiComponent {
             }
         }
 
-        public onDeleteCallback() : Function {
-            return (reply:any) =>{
+        public onDeleteCallback() : Function 
+        {
+            return (reply:any) => {
                 this.updateData();
             }
         }
+
         public onGetCallback() : Function 
         {
             return (reply:any) => {
@@ -648,7 +658,27 @@ export class WikiComponent {
                     });
                 }
                 this.fromLink = false;
+
+                this.calcHeight();
+                
+                     
             }
+        }
+
+        public calcHeight(){
+            setTimeout(() => {
+                let wiki_ele = <HTMLScriptElement>document.getElementsByClassName("wiki")[0];
+                let header = <HTMLScriptElement>document.getElementsByClassName("ui-editor-toolbar ui-widget-header ui-corner-top ql-toolbar ql-snow")[0];
+                let header_ele = <HTMLScriptElement>document.getElementsByClassName("header")[0];
+                let page_content_height: any;
+                if(header_ele)
+                    page_content_height = wiki_ele.offsetHeight - header_ele.offsetHeight;
+                else
+                    page_content_height = wiki_ele.offsetHeight - header.offsetHeight;
+                let div = <HTMLScriptElement>document.getElementById("page_content");
+                if(div)
+                    div.style.height = page_content_height+"px";
+            }, 10);
         }
 
         //On drag stuff
@@ -737,6 +767,7 @@ export class WikiComponent {
                     //need to do move locally
                     let rmidx = this.dragNode.parent.children.indexOf(this.dragNode);
                     this.dragNode.parent.children.splice(rmidx, 1);
+                    this.dragNode.parent = node;
                     if (this.dragNode.type == 'category')
                     {
                         node.children.splice(0, 0, this.dragNode);
@@ -762,6 +793,16 @@ export class WikiComponent {
                     node.expanded = true;
                 if ((this.dragNode.type == "category" && node.type != "page") || (this.dragNode.type == "page"))
                     this.dragNodeId = node.data.id;
+            }
+        }
+
+        public onStats(){
+            if(!this.statMode)
+            {
+                if (this.data.selectedEntry.type == 'category')
+                    this.wikiService.getWikiSegment(this.data.selectedEntry.data.id, this.onGetCallback());
+                else
+                    this.wikiService.getWikiPage(this.data.selectedEntry.data.id, this.onGetCallback());
             }
         }
         
