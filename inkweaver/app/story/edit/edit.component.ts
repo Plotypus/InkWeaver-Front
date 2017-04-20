@@ -123,7 +123,8 @@ export class EditComponent {
                         if (blot) {
                             let idx = this.editor.quill.getIndex(blot);
                             if (idx) {
-                                this.editor.quill.setSelection(idx + node.innerText.length, 0);
+                                let offset: number = node.innerText === '\n' ? 0 : node.innerText.length;
+                                this.editor.quill.setSelection(idx + offset, 0);
                                 this.data.story.position_context = null;
                             }
                         }
