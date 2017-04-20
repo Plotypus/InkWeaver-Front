@@ -215,7 +215,7 @@ export class WikiService {
 
             "action": "delete_segment",
             "segment_id": sid
-        });
+        },callback);
     }
 
     public deletePage(pid: any, callback: Function = () => { }) {
@@ -223,7 +223,7 @@ export class WikiService {
 
             "action": "delete_page",
             "page_id": pid
-        });
+        },callback);
     }
 
     public deleteHeading(pid: any, title: any) {

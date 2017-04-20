@@ -519,9 +519,7 @@ export class EditComponent {
     // -------------------- Other -------------------- //
     public loopPages(editor: EditComponent, segment: TreeNode,
         func: (page: TreeNode) => any, sFunc: (s: TreeNode) => any) {
-        if (segment.type === 'filler') {
-            // Do nothing
-        } else if (segment.type === 'page') {
+        if (segment.type === 'page') {
             func(segment);
         } else {
             sFunc(segment);
