@@ -116,8 +116,8 @@ export class EditComponent {
                     if (this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid)) {
                         this.data.story.position_context = null;
                     }
-                } else if (this.data.story.position_context.keep_cursor_on_paragraph) {
-                    let node = document.getElementById(this.data.story.position_context.keep_cursor_on_paragraph);
+                } else if (this.data.story.position_context.cursor) {
+                    let node = document.getElementById(this.data.story.position_context.cursor);
                     if (node) {
                         let blot = Quill.find(node);
                         if (blot) {
@@ -553,7 +553,7 @@ export class EditComponent {
             window.scrollBy(0, -10000);
             paragraph.animate({
                 background: ['lightyellow', 'white'], easing: 'ease'
-            }, 3000);
+            }, 5000);
             return true;
         } else {
             return false;

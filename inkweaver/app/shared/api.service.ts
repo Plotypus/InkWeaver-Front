@@ -290,8 +290,9 @@ export class ApiService {
 
                                     // Add/update the paragraph in the display
                                     let pString: string = this.parser.setParagraph(p);
+                                    this.data.story.position_context = { 'cursor': p.paragraph_id.$oid };
                                     if (myMessage) {
-                                        let regex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?<p id="added">');
+                                        let regex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">[^<(?=/p>)]*?</p>)?<p id="added">');
                                         let match: RegExpExecArray = regex.exec(this.data.storyDisplay);
                                         if (match && match.length > 2) {
                                             let key: string = JSON.stringify({ $oid: match[2] });
@@ -299,19 +300,18 @@ export class ApiService {
                                                 this.data.contentObject[key].succeeding_paragraph_id = p.paragraph_id;
                                             }
                                         }
-                                        regex = new RegExp('<p id="added">(.*?)</p>');
-                                        this.data.story.position_context = { 'keep_cursor_on_paragraph': p.paragraph_id.$oid };
+                                        regex = new RegExp('<p id="added">([^<(?=/p>)]*?)</p>');
                                         this.data.storyDisplay = this.data.storyDisplay.replace(regex, '<p id=' + p.paragraph_id.$oid + '>$1</p>');
                                     } else {
                                         if (!p.succeeding_paragraph_id) {
                                             // Set previous paragraph's succeeding_paragraph_id
-                                            let regex = new RegExp('<p id="([a-z0-9]{24})">.*?</p>(<p( id="new")?>.*?</p>)*$');
+                                            let regex = new RegExp('<p id="([a-z0-9]{24})">[^<(?=/p>)]*?</p>(<p( id="new")?>[^<(?=/p>)]*?</p>)*$');
                                             let match: RegExpExecArray = regex.exec(this.data.storyDisplay);
                                             if (match && match.length > 1) {
                                                 let key: string = JSON.stringify({ $oid: match[1] });
                                                 if (this.data.contentObject[key]) {
                                                     this.data.contentObject[key].succeeding_paragraph_id = p.paragraph_id;
-                                                    regex = new RegExp('<p id="' + match[1] + '">.*?</p>');
+                                                    regex = new RegExp('<p id="' + match[1] + '">[^<(?=/p>)]*?</p>');
                                                     this.data.storyDisplay = this.data.storyDisplay.replace(regex, '$&' + pString);
                                                 } else {
                                                     this.data.storyDisplay = pString + this.data.storyDisplay;
@@ -321,7 +321,7 @@ export class ApiService {
                                             }
                                         } else {
                                             // Set previous paragraph's succeeding_paragraph_id
-                                            let regex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?(?:<p(?: id="new")?>.*?</p>)*<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>');
+                                            let regex: RegExp = new RegExp('(<p id="([a-z0-9]{24})">[^<(?=/p>)]*?</p>)?(?:<p(?: id="new")?>[^<(?=/p>)]*?</p>)*<p id="' + reply.succeeding_paragraph_id.$oid + '">[^<(?=/p>)]*?</p>');
                                             let match: RegExpExecArray = regex.exec(this.data.storyDisplay);
                                             if (match && match.length > 2) {
                                                 let key: string = JSON.stringify({ $oid: match[2] });
@@ -330,7 +330,7 @@ export class ApiService {
                                                 }
                                             }
                                             // Add paragraph to display string
-                                            regex = new RegExp('<p id="' + reply.succeeding_paragraph_id.$oid + '">.*?</p>');
+                                            regex = new RegExp('<p id="' + p.succeeding_paragraph_id.$oid + '">[^<(?=/p>)]*?</p>');
                                             this.data.storyDisplay = this.data.storyDisplay.replace(regex, pString + '$&');
                                         }
                                     }
@@ -346,19 +346,21 @@ export class ApiService {
                                     this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
                                     // Update paragraph in display string
                                     let pString: string = this.parser.setParagraph(p);
+                                    this.data.story.position_context = { 'cursor': p.paragraph_id.$oid };
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
-                                        new RegExp('<p id="' + reply.paragraph_id.$oid + '">.*?</p>'), pString);
+                                        new RegExp('<p id="' + p.paragraph_id.$oid + '">[^<(?=/p>)]*?</p>'), pString);
                                 }
                                 break;
                             case 'paragraph_deleted':
                                 if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
                                     delete this.data.contentObject[JSON.stringify(reply.paragraph_id)];
+
                                     // Set previous paragraph's succeeding_paragraph_id to the next id
-                                    let prior: RegExp = new RegExp('(<p id="([a-z0-9]{24})">.*?</p>)?<p id="' + reply.paragraph_id.$oid + '">.*?</p>');
+                                    let prior: RegExp = new RegExp('(<p id="([a-z0-9]{24})">[^<(?=/p>)]*?</p>)?<p id="' + reply.paragraph_id.$oid + '">[^<(?=/p>)]*?</p>');
                                     let priorMatch: RegExpExecArray = prior.exec(this.data.storyDisplay);
                                     if (priorMatch && priorMatch.length > 2) {
                                         let posteriorID: ID = null;
-                                        let posterior: RegExp = new RegExp('<p id="' + reply.paragraph_id.$oid + '">.*?</p>(<p id="([a-z0-9]{24})" >.*?</p>)?');
+                                        let posterior: RegExp = new RegExp('<p id="' + reply.paragraph_id.$oid + '">[^<(?=/p>)]*?</p>(<p id="([a-z0-9]{24})" >[^<(?=/p>)]*?</p>)?');
                                         let posteriorMatch: RegExpExecArray = posterior.exec(this.data.storyDisplay);
                                         if (posteriorMatch && posteriorMatch.length > 2) {
                                             posteriorID = { $oid: posteriorMatch[2] };
@@ -367,10 +369,12 @@ export class ApiService {
                                         if (this.data.contentObject[key]) {
                                             this.data.contentObject[key].succeeding_paragraph_id = posteriorID;
                                         }
+                                        this.data.story.position_context = { 'cursor': priorMatch[2] };
                                     }
+
                                     // Add paragraph to display string
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
-                                        new RegExp('<p id="' + reply.paragraph_id.$oid + '">.*?</p>'), '');
+                                        new RegExp('<p id="' + reply.paragraph_id.$oid + '">[^<(?=/p>)]*?</p>'), '');
                                 }
                                 break;
 
@@ -401,7 +405,7 @@ export class ApiService {
                                     if (!myMessage) {
                                         // Update story display
                                         this.data.storyDisplay = this.data.storyDisplay.replace(
-                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '">(<code>.*?</code>)?(.*?)</p>'),
+                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '">(<code>(?!.*?</code>).*?</code>)?([^<(?=/p>)]*?)</p>'),
                                             '<p id="' + reply.paragraph_id.$oid + '"><code>' + reply.note + '</code>$2</p>');
                                     }
                                 }
@@ -413,7 +417,7 @@ export class ApiService {
                                     if (!myMessage) {
                                         // Update story display
                                         this.data.storyDisplay = this.data.storyDisplay.replace(
-                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '"><code>.*?</code>(.*?)</p>'),
+                                            new RegExp('<p id="' + reply.paragraph_id.$oid + '"><code>(?!.*?</code>).*?</code>([^<(?=/p>)]*?)</p>'),
                                             '<p id="' + reply.paragraph_id.$oid + '">$1</p>');
                                     }
                                 }
@@ -452,7 +456,7 @@ export class ApiService {
                                 this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)].pending = false;
                                 if (this.data.storyDisplay) {
                                     this.data.storyDisplay = this.data.storyDisplay.replace(
-                                        new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'),
+                                        new RegExp('<a href="(' + reply.passive_link_id.$oid + ')-([a-f0-9]{24})-true" target="_blank" id="true">((?!.*?</a>).*?)</a>'),
                                         '<a href="$1-$2-false" target="_blank" id="false">$3</a>');
                                 }
                                 break;

@@ -67,6 +67,7 @@ export class AppComponent {
                     this.userService.signOut();
                     this.websocketService.close();
                     this.apiService.resetData();
+                    this.data = this.apiService.data;
                     this.router.navigate(['/login']);
                 }
             }

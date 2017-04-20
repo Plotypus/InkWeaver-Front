@@ -146,7 +146,7 @@ export class ParserService {
         let obj: ContentObject = new ContentObject();
 
         for (let paragraph of paragraphs) {
-            let newText: string = paragraph.innerHTML.replace(new RegExp("<code>.*?</code>"), '');
+            let newText: string = paragraph.innerHTML.replace(new RegExp("<code>(?!.*?</code>).*?</code>"), '');
             let p: Paragraph = {
                 paragraph_id: new ID(),
                 succeeding_paragraph_id: null,
