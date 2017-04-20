@@ -119,7 +119,7 @@ export class EditComponent {
                 } else if (this.data.story.position_context.cursor) {
                     let node = document.getElementById(this.data.story.position_context.cursor);
                     if (node) {
-                        let blot = Quill.find(node);
+                        let blot = Quill['find'](node);
                         if (blot) {
                             let idx = this.editor.quill.getIndex(blot);
                             if (idx) {

@@ -127,7 +127,6 @@ export class AppComponent {
                         this.pdf = false;
                     }
                     else {
-
                         this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
 
                         this.pdfHtml += "<h1>" + this.sectionNames[this.count] + "</h1>" + this.parser.setContentDisplay(reply.content);
@@ -152,7 +151,6 @@ export class AppComponent {
                                 //          this allow the insertion of new lines after html
                                 // doc.save('Test.pdf');
                             }, margins);
-
 
                         this.count = this.count + 1;
                         if (this.count < this.secCount) {
