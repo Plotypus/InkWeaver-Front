@@ -242,6 +242,9 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     cursor: default;
 }
 
+#aliases .ui-datalist-content{
+        border: none;
+}
 .wiki h1 {
     font-size: 1em;
     color: var(--orange);

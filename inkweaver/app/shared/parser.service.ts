@@ -252,10 +252,6 @@ export class ParserService {
             pageDic.push(result.data);
         }
 
-        if (temp.children.length == 0) {
-            temp.children.push({ label: 'Empty Section', type: "filler" });
-        }
-
         return [nav, pageDic];
     }
 
@@ -281,11 +277,7 @@ export class ParserService {
                     pages.concat(result[1]);
                     subsegment.type = "category";
                     subsegment.parent = wiki;
-                    /*
-                    if(subsegment.children.length == 0)
-                    {
-                        subsegment.children.push({label:'Empty Section', type: "filler"});
-                    }*/
+                    
                     wiki.children.push(subsegment);
                 }
             }

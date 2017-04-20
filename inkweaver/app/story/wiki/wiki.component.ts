@@ -534,7 +534,6 @@ export class WikiComponent {
                     else if(ele.type == 'page')
                         this.allPages.push({ label: ele.label, value: ele });
 
-                    if(ele.type != 'filler')
                     this.data.wikiFlatten.push({ label: ele.label, value: ele });
                     
                 }

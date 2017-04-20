@@ -116,8 +116,11 @@ width="450" height="200" responsive="true">
                             <p-dataList id="aliases" [value]="wikiPage.aliases">
                                 <header>Aliases</header>
                                 <template let-alias pTemplate="item" ;>
-
-                                    <div [ngSwitch]='alias.state'>
+                                    <ng-container [ngSwitch] ='alias.main'>
+                                    <div *ngSwitchCase='true' >
+                                        <input style="cursor:not-allowed" type="text" pInputText [(ngModel)]="alias.name" readonly />
+                                    </div>
+                                    <div *ngSwitchCase='false' [ngSwitch]='alias.state'>
                                         <span *ngSwitchCase='true'>
                                             <input style="cursor:pointer" type="text" pInputText [(ngModel)]="alias.name" (click)="editAlias(alias)" readonly />
                                             <i class="fa fa-trash-o" (click)="deleteAlias(alias)"></i>
@@ -129,6 +132,7 @@ width="450" height="200" responsive="true">
                                         </span>
 
                                     </div>
+                                    </ng-container>
 
                                 </template>
                             </p-dataList>

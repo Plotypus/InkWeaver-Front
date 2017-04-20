@@ -91,7 +91,7 @@ export class StatsComponent {
         this.pageFreq = {};
         let dataset = [];
         this.statSegments = this.parserService.getTreeArray(node).filter((ele: any) => {
-            return ele.type != 'filler' && ele.type != 'category' && ele.type != 'title';
+            return ele.type != 'category' && ele.type != 'title';
         });
 
         this.statsOptions = this.data.wikiFlatten.filter((ele: any) => {
