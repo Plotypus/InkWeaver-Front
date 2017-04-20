@@ -113,7 +113,7 @@ width="450" height="200" responsive="true">
 
                         <!--Alias-->
                         <ng-container *ngIf="wikiPage.aliases">
-                            <p-dataList [value]="wikiPage.aliases">
+                            <p-dataList id="aliases" [value]="wikiPage.aliases">
                                 <header>Aliases</header>
                                 <template let-alias pTemplate="item" ;>
 

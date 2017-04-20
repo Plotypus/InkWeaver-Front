@@ -208,9 +208,7 @@ export class WikiComponent {
 
 
              this.rename = false;
-             if (page.node.type == 'filler')
-                 return;
-
+             
              if (page.node.type == 'title') {
                  this.wikiPage = null;
                  this.apiService.refreshWikiInfo();
@@ -631,11 +629,13 @@ export class WikiComponent {
             }
         }
 
-        public onDeleteCallback() : Function {
-            return (reply:any) =>{
+        public onDeleteCallback() : Function 
+        {
+            return (reply:any) => {
                 this.updateData();
             }
         }
+
         public onGetCallback() : Function 
         {
             return (reply:any) => {

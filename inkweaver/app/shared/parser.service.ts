@@ -506,9 +506,7 @@ public addSegment(wiki: TreeNode, reply: any) {
 
 public addPage(wiki: TreeNode, reply: any) {
     if (JSON.stringify(reply.parent_id) === JSON.stringify(wiki.data.id)) {
-        if (wiki.children[0].type == 'filler') {
-            wiki.children = [];
-        }
+        
         wiki.children.push({
             parent: wiki, data: { title: reply.title, id: reply.page_id }, type: 'page', label: reply.title, icon: "fa-file-text-o",
         });
