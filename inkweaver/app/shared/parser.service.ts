@@ -341,7 +341,7 @@ export class ParserService {
         return html;
     }
 
-    public setPageDisplay(reply: any, linktable: LinkTable, aliasTable: AliasTable) {
+    public setPageDisplay(reply: any, linktable: LinkTable, aliasTable: AliasTable, passiveLinkTable: PassiveLinkTable) {
         // getting the alias
         if (reply.aliases) {
             let temp = [];
@@ -367,12 +367,12 @@ export class ParserService {
             reply.aliases = temp;
 
         }
-        return this.parseReferences(reply, linktable, aliasTable);
+        return this.parseReferences(reply, linktable, aliasTable, passiveLinkTable);
 
 
     }
 
-    public parseReferences(reply: any, linktable: LinkTable, aliasTable: AliasTable) {
+    public parseReferences(reply: any, linktable: LinkTable, aliasTable: AliasTable, passiveLinkTable: PassiveLinkTable) {
         let refArray = [];
         if (reply.references)
             for (let ref of reply.references) {
@@ -394,6 +394,21 @@ export class ParserService {
                                 } else {
                                     ref.text = ref.text.replace(linkMatch[0],
                                         '<h2>' + alias.alias_name + '</h2>');
+                                }
+                            }
+                        } else {
+                            let pLink: any = passiveLinkTable[linkID];
+                            let aliasID: ID = pLink.alias_id;
+                            if (aliasID) {
+                                let alias: Alias = aliasTable[JSON.stringify(aliasID)];
+                                if (alias) {
+                                    if (pLink.pending) {
+                                        ref.text = ref.text.replace(linkMatch[0],
+                                            '<h3>' + alias.alias_name + '</h3>');
+                                    } else {
+                                        ref.text = ref.text.replace(linkMatch[0],
+                                            alias.alias_name);
+                                    }
                                 }
                             }
                         }

@@ -89,8 +89,12 @@ export class WikiComponent {
             
                 if (this.data.selectedEntry.type == 'category')
                     this.wikiService.getWikiSegment(this.data.selectedEntry.data.id, this.onGetCallback());
-                else
+                else if(this.data.selectedEntry.type == 'page')
                     this.wikiService.getWikiPage(this.data.selectedEntry.data.id, this.onGetCallback());
+                else{
+                    this.wikiPage = null;
+                    this.apiService.refreshWikiInfo();
+                }
             
            // this.parsePage();
         }else

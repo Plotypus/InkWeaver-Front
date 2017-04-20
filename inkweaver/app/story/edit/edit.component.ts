@@ -222,8 +222,8 @@ export class EditComponent {
                         // Active link
                         thread.onclick = (event: any) => {
                             event.preventDefault();
-                            this.wikiService.getWikiPage(pageID, () => { }, { page_id: pageID });
-                            this.router.navigate(['/story/wiki']);
+                            this.wikiService.getWikiPage(pageID, () => { this.router.navigate(['story/wiki']) }, { page_id: pageID });
+                            //this.router.navigate(['/story/wiki']);
                         };
                         thread.onmouseenter = (event: any) => {
                             let aBlot = Quill['find'](event.target);

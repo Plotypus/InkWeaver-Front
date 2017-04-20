@@ -261,6 +261,14 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     margin: .5em 0;
 }
 
+.wiki h3 {
+    font-size: 1em;
+    color: var(--orange);
+    display: inline-block;
+    font-weight: bold;
+    margin: .5em 0;
+}
+
 .wiki .text {
     box-sizing: border-box;
     cursor: text;
