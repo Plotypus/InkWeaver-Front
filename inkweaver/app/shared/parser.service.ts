@@ -398,7 +398,8 @@ export class ParserService {
                             }
                         } else {
                             let pLink: any = passiveLinkTable[linkID];
-                            let aliasID: ID = pLink.alias_id;
+                            if(pLink.alias_id)
+                                aliasID = pLink.alias_id;
                             if (aliasID) {
                                 let alias: Alias = aliasTable[JSON.stringify(aliasID)];
                                 if (alias) {
