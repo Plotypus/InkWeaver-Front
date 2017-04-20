@@ -85,11 +85,13 @@ export class WikiComponent {
         this.data.wikiFuctions.push(this.onTempleteHeadingCallback());
 
 
-        if ( this.data.page != null && this.data.page.hasOwnProperty("title")) {
-            if (this.data.selectedEntry.type == 'category')
-                this.wikiService.getWikiSegment(this.data.selectedEntry.data.id, this.onGetCallback());
-            else
-                this.wikiService.getWikiPage(this.data.selectedEntry.data.id, this.onGetCallback());
+        if (this.data.selectedEntry && (this.data.page != null && this.data.page.hasOwnProperty("title"))) {
+            
+                if (this.data.selectedEntry.type == 'category')
+                    this.wikiService.getWikiSegment(this.data.selectedEntry.data.id, this.onGetCallback());
+                else
+                    this.wikiService.getWikiPage(this.data.selectedEntry.data.id, this.onGetCallback());
+            
            // this.parsePage();
         }else
         {
