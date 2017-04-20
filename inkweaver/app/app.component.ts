@@ -169,7 +169,7 @@ export class AppComponent {
         this.m_right = 1;
         this.m_top = 1;
         this.pdf = true;
-        this.width = 8;
+        this.width = 8.5;
         this.height = 11;
 
     }
