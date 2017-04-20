@@ -299,8 +299,9 @@ export class ApiService {
                                                 this.data.contentObject[key].succeeding_paragraph_id = p.paragraph_id;
                                             }
                                         }
-                                        regex = new RegExp('<p id="added">.*?</p>');
-                                        this.data.storyDisplay = this.data.storyDisplay.replace(regex, pString);
+                                        regex = new RegExp('<p id="added">(.*?)</p>');
+                                        this.data.story.position_context = { 'keep_cursor_on_paragraph': p.paragraph_id.$oid };
+                                        this.data.storyDisplay = this.data.storyDisplay.replace(regex, '<p id=' + p.paragraph_id.$oid + '>$1</p>');
                                     } else {
                                         if (!p.succeeding_paragraph_id) {
                                             // Set previous paragraph's succeeding_paragraph_id

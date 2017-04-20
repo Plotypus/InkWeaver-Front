@@ -116,6 +116,18 @@ export class EditComponent {
                     if (this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid)) {
                         this.data.story.position_context = null;
                     }
+                } else if (this.data.story.position_context.keep_cursor_on_paragraph) {
+                    let node = document.getElementById(this.data.story.position_context.keep_cursor_on_paragraph);
+                    if (node) {
+                        let blot = Quill.find(node);
+                        if (blot) {
+                            let idx = this.editor.quill.getIndex(blot);
+                            if (idx) {
+                                this.editor.quill.setSelection(idx + node.innerText.length, 0);
+                                this.data.story.position_context = null;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -275,17 +287,15 @@ export class EditComponent {
                     }
                 }
             }
-            // this.save();
-        } else if (event.key === 'Tab') {
-            if (this.suggest.display === 'block') {
-                event.stopPropagation();
-            }
+            this.save(false, false);
         }
     }
 
     public setHotkey(editComp: EditComponent) {
         setTimeout(function () {
             if (editComp.editor.quill) {
+                delete editComp.editor.quill.keyboard.bindings['9'];
+
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'L',
                     altKey: true
@@ -294,16 +304,20 @@ export class EditComponent {
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'tab'
                 }, function (range, context) {
-                    let word: string = context.prefix.slice(context.prefix.lastIndexOf(' ') + 1);
-                    let index: number = range.index - word.length;
+                    if (editComp.suggest.display === 'block') {
+                        let word: string = context.prefix.slice(context.prefix.lastIndexOf(' ') + 1);
+                        let index: number = range.index - word.length;
 
-                    this.suggest.display = 'none';
-                    this.word = this.suggest.value.title;
-                    this.newLinkID = this.suggest.value.page_id;
-                    this.range = { index: index, length: word.length };
-                    this.createLink();
-                    this.editor.quill.insertText(index + this.word.length, ' ', 'link', false);
-                    this.editor.quill.setSelection(index + this.word.length + 1, 0);
+                        editComp.suggest.display = 'none';
+                        editComp.word = editComp.suggest.value.title;
+                        editComp.newLinkID = editComp.suggest.value.page_id;
+                        editComp.range = { index: index, length: word.length };
+                        editComp.createLink();
+                        editComp.editor.quill.insertText(index + editComp.word.length, ' ', 'link', false);
+                        editComp.editor.quill.setSelection(index + editComp.word.length + 1, 0);
+                    } else {
+                        return true;
+                    }
                 });
 
                 editComp.editor.quill.keyboard.addBinding({
@@ -578,12 +592,14 @@ export class EditComponent {
         this.note.display = 'none';
     }
 
-    public save(refresh: boolean = false) {
+    public save(refresh: boolean = false, setPosition: boolean = true) {
         if (this.data.storyDisplay && this.data.prevSection.data) {
-            this.data.story.position_context = {
-                section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
-            };
-            this.userService.setUserStoryPositionContext(this.data.prevSection.data.section_id, this.paragraphPosition);
+            if (setPosition) {
+                this.data.story.position_context = {
+                    section_id: this.data.prevSection.data.section_id, paragraph_id: this.paragraphPosition
+                };
+                this.userService.setUserStoryPositionContext(this.data.prevSection.data.section_id, this.paragraphPosition);
+            }
 
             let header: any = this.editorRef.querySelector('h1');
             let paragraphs: any = this.editorRef.querySelectorAll('p');
