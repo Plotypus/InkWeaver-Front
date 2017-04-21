@@ -316,7 +316,11 @@ export class ApiService {
                                     this.data.story.position_context = { 'cursor': p.paragraph_id.$oid };
                                     if (myMessage) {
                                         let regex: RegExp = new RegExp('<p id="added">(.*?)</p>');
-                                        this.data.storyDisplay = this.data.storyDisplay.replace(regex, '<p id="' + p.paragraph_id.$oid + '">$1</p>');
+                                        if (metadata.nocontent) {
+                                            this.data.storyDisplay = this.data.storyDisplay.replace(regex, '<p id="' + p.paragraph_id.$oid + '">$1</p>');
+                                        } else {
+                                            this.data.storyDisplay = this.data.storyDisplay.replace(regex, pString);
+                                        }
                                     } else {
                                         if (preKey.$oid) {
                                             let regex: RegExp = new RegExp('<p id="' + preKey.$oid + '">.*?</p>');

@@ -30,7 +30,7 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
 }
 
 .ui-grid-col-9 {
-    z-index: 10;
+    z-index: 20;
 }
 
 /* Toolbar */
@@ -126,7 +126,7 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
 
 .tooltip {
     z-index: 20;
-    max-width: 50%;
+    max-width: 25%;
     padding: 0.25em;
     position: absolute;
     border-radius: 2px;

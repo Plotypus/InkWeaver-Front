@@ -59,7 +59,7 @@ export class EditService {
         if (succeedingParagraphID) {
             p.succeeding_paragraph_id = succeedingParagraphID
         }
-        this.apiService.send(p);
+        this.apiService.send(p, () => { }, { 'nocontent': text === '<br>' });
     }
 
     public editParagraph(storyID: ID, sectionID: ID, text: string, paragraphID: ID) {
