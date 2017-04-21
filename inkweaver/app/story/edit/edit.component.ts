@@ -137,12 +137,18 @@ export class EditComponent {
                 let index: number = event.delta.ops[0].retain;
                 let insert: string = event.delta.ops[1].insert;
                 let deleted: number = event.delta.ops[1].delete;
+
                 if (index && (insert || deleted)) {
-                    if (insert) {
+                    if (this.predict && insert) {
                         this.predict += insert;
                     } else if (this.predict && deleted) {
                         this.predict = this.predict.substring(0, this.predict.length - deleted);
+                    } else {
+                        let text: string = this.editor.quill.getText(0, index + 1);
+                        this.predict = text.slice(text.lastIndexOf('\n') + 1);
+                        this.predict = this.predict.slice(this.predict.lastIndexOf(' ') + 1);
                     }
+
                     if (this.predict) {
                         let valIndex: number = 0;
                         let bounds = this.editor.quill.getBounds(index);
