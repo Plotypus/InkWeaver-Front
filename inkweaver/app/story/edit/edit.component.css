@@ -50,18 +50,18 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
     margin: 0 0.25em 0 0.25em;
 }
 
-.ql-save .ui-button:first-child :hover {
-    color: var(--light-gray) !important;
-}
+    .ql-save .ui-button:first-child :hover {
+        color: var(--light-gray) !important;
+    }
 
-.ql-save .ui-button:nth-child(2) {
-    color: var(--dark-blue);
-    background: floralwhite !important;
-}
+    .ql-save .ui-button:nth-child(2) {
+        color: var(--dark-blue);
+        background: floralwhite !important;
+    }
 
-.ql-save .ui-button:nth-child(2) :hover {
-    color: var(--dark-gray) !important;
-}
+        .ql-save .ui-button:nth-child(2) :hover {
+            color: var(--dark-gray) !important;
+        }
 
 /* Content */
 .editor {
@@ -190,6 +190,7 @@ code {
     width: 90%;
     padding-left: 1em;
     border-color: var(--dark-gray);
+    background: var(--light-blue);
 }
 
 .editor-col p-togglebutton {
@@ -214,14 +215,18 @@ code {
 }
 
 /* Bookmarks */
-.bookmarks .ui-treetable-toggler {
-    visibility: hidden !important;
+.bookmarks {
+    background: var(--light-blue);
 }
 
-.bookmarks .bookmark-header {
-    left: -1em;
-    position: relative;
-}
+    .bookmarks .ui-treetable-toggler {
+        visibility: hidden !important;
+    }
+
+    .bookmarks .bookmark-header {
+        left: -1em;
+        position: relative;
+    }
 
 .bookmark-header i {
     margin-right: 0.5em;
