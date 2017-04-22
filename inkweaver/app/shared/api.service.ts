@@ -34,11 +34,13 @@ import { Stats } from '../models/stats/stats.model';
 export class ApiService {
     public data: any;
 
+    // User specific
     public uuid: string;
     public local: boolean = true;
     public subscribedToWiki: boolean = false;
     public subscribedToStory: boolean = false;
 
+    // Messages
     public queued: any[] = [];
     public outgoing: Object = {};
     public message_id: number = 0;
@@ -78,8 +80,10 @@ export class ApiService {
                         }
                     }
 
+                    // Do stuff based on the received event
                     if (reply.event) {
                         switch (reply.event) {
+                            // Server is ready, send queued messages
                             case 'acknowledged':
                                 this.uuid = reply.uuid;
                                 for (let queue of this.queued) {
@@ -150,6 +154,8 @@ export class ApiService {
                                 let updateIdx: number = this.data.stories.findIndex((story: StorySummary) => {
                                     return JSON.stringify(story.story_id) === JSON.stringify(reply.story_id)
                                 });
+
+                                // Update the user stories
                                 this.data.stories[updateIdx].title = reply.update.title;
                                 break;
                             case 'unsubscribed_story_deleted':
@@ -177,6 +183,7 @@ export class ApiService {
                                 reply.position_context = this.data.story.position_context;
                                 this.data.story = reply;
 
+                                // Update the collaborators of the story
                                 this.data.collaborators = [{ label: null, value: null }];
                                 for (let user of reply.users) {
                                     if (user.access_level === 'owner') {
@@ -212,6 +219,14 @@ export class ApiService {
                                 break;
                             case 'got_section_content':
                                 if (!metadata.pdf) {
+                                    /* The contentObject is a "Hash Map/Linked List" structure which keeps
+                                     * track of the paragraphs.  The paragraphs are indexed by their ID, but
+                                     * also keep track of the previous and succeeding IDs.  This allows for
+                                     * constant-time access, as well as simplicity in inserting/deleting
+                                     * ordered paragraphs when receiving "paragraph_added", "paragraph_updated"
+                                     * and "paragraph_deleted" events.  It also makes it easier to know what
+                                     * to put for the "succeeding_paragraph_id field" of "add_paragraph" */
+
                                     [this.data.contentObject, this.data.lastID] = this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
 
                                     // Set the story display
@@ -340,8 +355,6 @@ export class ApiService {
                                     let p: Paragraph = this.data.contentObject[JSON.stringify(reply.paragraph_id)];
                                     p.text = reply.update.text;
                                     this.parser.parseParagraph(p, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
-                                    // Unnecessary?
-                                    this.data.contentObject[JSON.stringify(p.paragraph_id)] = p;
 
                                     // Update paragraph in display string
                                     let pString: string = this.parser.setParagraph(p);
@@ -732,6 +745,7 @@ export class ApiService {
             tooltip: new Tooltip(),
             collaborators: new Array<SelectItem>(),
 
+            // User
             author: '',
             user: new User(),
             stories: new Array<StorySummary>(),
@@ -741,6 +755,7 @@ export class ApiService {
             aliasTable: new AliasTable(),
             passiveLinkTable: new PassiveLinkTable(),
 
+            // Story
             storyDisplay: '',
             story: new Story(),
             prevSection: new Section(),
@@ -750,6 +765,7 @@ export class ApiService {
             lastID: new ID(),
             bookmarks: new Array<TreeNode>(),
 
+            // Stats
             statSection: new Section(),
             statSegments: [],
             stats: new Stats(),
@@ -757,6 +773,7 @@ export class ApiService {
             statsSections: {},
             statsPageFrequency: {},
 
+            // Wiki
             wikiNav: [],
             wikiDisplay: '',
             wiki: new Wiki(),

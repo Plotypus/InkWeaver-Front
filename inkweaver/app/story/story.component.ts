@@ -17,6 +17,7 @@ export class StoryComponent {
     private items: MenuItem[];
     private activeItem: MenuItem;
 
+    // Editing the title
     private editing: boolean;
     private prevTitle: string;
 
@@ -28,6 +29,8 @@ export class StoryComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+
+        // Edit and Notebook tabs
         this.items = [
             {
                 label: '', disabled: true, icon: 'fa-pencil-square-o', routerLink: ['/story/edit'],
@@ -52,6 +55,7 @@ export class StoryComponent {
         this.data.storyFunction = this.disableMenu();
     }
 
+    // Menu should be disabled until wiki is established
     public disableMenu(): Function {
         return (reply: any) => {
             for (let item of this.items) {
@@ -61,6 +65,7 @@ export class StoryComponent {
         }
     }
 
+    // Editing the story title
     public edit() {
         this.editing = true;
         this.prevTitle = this.data.story.story_title;

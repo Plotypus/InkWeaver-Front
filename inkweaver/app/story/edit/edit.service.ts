@@ -2,6 +2,7 @@
 import { TreeNode } from 'primeng/primeng';
 
 import { ID } from '../../models/id.model';
+import { Alias } from '../../models/link/alias.model';
 import { StoryService } from '../story.service';
 import { ApiService } from '../../shared/api.service';
 import { ContentObject } from '../../models/story/content-object.model';
@@ -45,12 +46,6 @@ export class EditService {
 
     // Paragraphs
     public addParagraph(storyID: ID, sectionID: ID, text: string, succeedingParagraphID: ID) {
-        text = text.replace(
-            /<a href="new.+?-([a-f0-9]{24})" target="_blank">(.*?)<\/a>/g,
-            '{#|' + JSON.stringify(storyID) + '|{"$$oid":"$1"}|$2|#}');
-
-        text = text.replace(/<code>(.*?)<\/code>/g, '');
-
         let p: any = {
             action: 'add_paragraph',
             section_id: sectionID,
@@ -63,16 +58,6 @@ export class EditService {
     }
 
     public editParagraph(storyID: ID, sectionID: ID, text: string, paragraphID: ID) {
-        text = text.replace(
-            /<a href="new.+?-([a-f0-9]{24})" target="_blank">(.*?)<\/a>/g,
-            '{#|' + JSON.stringify(storyID) + '|{"$$oid":"$1"}|$2|#}');
-
-        text = text.replace(
-            /<a href="([a-f0-9]{24})-[a-f0-9]{24}(-(true|false))?" target="_blank"( id="(true|false)")?>.*?<\/a>/g,
-            '{"$$oid":"$1"}');
-
-        text = text.replace(/<code>(.*?)<\/code>/g, '');
-
         this.apiService.send({
             action: 'edit_paragraph',
             section_id: sectionID,
@@ -142,39 +127,81 @@ export class EditService {
      * @param sectionID
      */
     public compare(obj1: ContentObject, obj2: ContentObject, storyID: ID, sectionID: ID) {
+        let deleted: any = {};
+
         // Delete paragraphs that no longer exist
         for (let id in obj1) {
             if (!obj2[id]) {
                 this.deleteParagraph(JSON.parse(id), sectionID);
                 for (let link in obj1[id].links) {
+                    let aliasID: ID = this.apiService.data.linkTable[link];
+                    let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
+                    deleted[link] = '{#|' + JSON.stringify(storyID) + '|' + JSON.stringify(alias.page_id) + '|' + alias.alias_name + '|#}';
                     this.storyService.deleteLink(JSON.parse(link));
+                }
+                for (let passive in obj1[id].passiveLinks) {
+                    let aliasID: ID = this.apiService.data.passiveLinkTable[passive].alias_id;
+                    let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
+                    deleted[passive] = alias.alias_name;
+                    // this.storyService.deletePassiveLink(JSON.parse(passive));
                 }
             }
         }
 
-        // Edit existing paragraphs
+        // Delete links and passive links
         for (let id in obj2) {
-            if (id.startsWith('new')) {
-                this.addParagraph(storyID, sectionID, obj2[id].text, obj2[id].succeeding_paragraph_id);
-            } else {
+            if (!id.startsWith('new')) {
                 for (let link in obj1[id].links) {
                     if (!obj2[id].links[link]) {
+                        let aliasID: ID = this.apiService.data.linkTable[link];
+                        let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
+                        deleted[link] = '{#|' + JSON.stringify(storyID) + '|' + JSON.stringify(alias.page_id) + '|' + alias.alias_name + '|#}';
                         this.storyService.deleteLink(JSON.parse(link));
                     }
                 }
-                for (let passiveLink in obj1[id].passiveLinks) {
-                    if (!obj2[id].passiveLinks[passiveLink]) {
-                        this.storyService.deletePassiveLink(JSON.parse(passiveLink));
+                for (let passive in obj1[id].passiveLinks) {
+                    if (!obj2[id].passiveLinks[passive]) {
+                        let aliasID: ID = this.apiService.data.passiveLinkTable[passive].alias_id;
+                        let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
+                        deleted[passive] = alias.alias_name;
+                        // this.storyService.deletePassiveLink(JSON.parse(passive));
                     }
                 }
-                if (obj1[id].note !== obj2[id].note) {
+            }
+        }
+
+        for (let id in obj2) {
+            let edit: boolean = obj1[id] && obj1[id].text !== obj2[id].text;
+
+            // Encode links in an acceptable format
+            obj2[id].text = obj2[id].text.replace(
+                /<a href="new.+?-([a-f0-9]{24})" target="_blank">(.*?)<\/a>/g,
+                '{#|' + JSON.stringify(storyID) + '|{"$$oid":"$1"}|$2|#}');
+            obj2[id].text = obj2[id].text.replace(
+                /<a href="([a-f0-9]{24})-[a-f0-9]{24}(-(true|false))?" target="_blank"( id="(true|false)")?>.*?<\/a>/g,
+                '{"$$oid":"$1"}');
+
+            // Remove notes
+            obj2[id].text = obj2[id].text.replace(/<code>.*?<\/code>/g, '');
+
+            // If links were incorrectly deleted, put them back
+            for (let dLink in deleted) {
+                obj2[id].text = obj2[id].text.replace(dLink, deleted[dLink]);
+            }
+
+            if (id.startsWith('new')) {
+                // Add new paragraphs
+                this.addParagraph(storyID, sectionID, obj2[id].text, obj2[id].succeeding_paragraph_id);
+            } else {
+                // Edit existing paragraphs
+                if (obj1[id] && obj1[id].note !== obj2[id].note) {
                     if (obj2[id].note) {
                         this.setNote(sectionID, JSON.parse(id), obj2[id].note);
                     } else {
                         this.deleteNote(sectionID, JSON.parse(id));
                     }
                 }
-                if (obj1[id].text !== obj2[id].text) {
+                if (edit) {
                     this.editParagraph(storyID, sectionID, obj2[id].text, JSON.parse(id));
                 }
             }

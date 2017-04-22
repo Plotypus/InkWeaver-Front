@@ -19,6 +19,8 @@ import { UserComponent } from './user.component';
     imports: [
         FormsModule,
         CommonModule,
+
+        // PrimeNG
         PanelModule,
         DialogModule,
         ButtonModule,

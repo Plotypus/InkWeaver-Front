@@ -8,6 +8,7 @@ import { EditComponent } from './story/edit/edit.component';
 import { WikiComponent } from './story/wiki/wiki.component';
 import { StatsComponent } from './story/stats/stats.component';
 
+// All routes of the app
 const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },

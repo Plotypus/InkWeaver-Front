@@ -97,14 +97,21 @@ export class ParserService {
 
         let prev: ID = null;
         for (let paragraph of paragraphs) {
-            paragraph.preceding_paragraph_id = prev;
-            prev = paragraph.paragraph_id;
+            // Parse the current paragraph
             this.parseParagraph(paragraph, aliasTable, linkTable, passiveLinkTable);
             contentObject[JSON.stringify(paragraph.paragraph_id)] = paragraph;
+            if (contentObject[JSON.stringify(prev)]) {
+                contentObject[JSON.stringify(prev)].succeeding_paragraph_id = paragraph.paragraph_id;
+            }
+
+            // Update the previous ID
+            paragraph.preceding_paragraph_id = prev;
+            prev = paragraph.paragraph_id;
         }
         return [contentObject, prev];
     }
 
+    // Parse the links/notes of a paragraph
     public parseParagraph(paragraph: Paragraph, aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: PassiveLinkTable) {
         paragraph.links = new AliasTable();
         paragraph.passiveLinks = new AliasTable();
@@ -143,6 +150,7 @@ export class ParserService {
         }
     }
 
+    // Parse the HTML of the editor into a paragraph content object
     public parseHtml(paragraphs: any): ContentObject {
         let addCount: number = 0;
         let add: Paragraph[] = [];
@@ -398,7 +406,7 @@ export class ParserService {
                             }
                         } else {
                             let pLink: any = passiveLinkTable[linkID];
-                            if( pLink && pLink.alias_id)
+                            if (pLink && pLink.alias_id)
                                 aliasID = pLink.alias_id;
                             if (aliasID) {
                                 let alias: Alias = aliasTable[JSON.stringify(aliasID)];

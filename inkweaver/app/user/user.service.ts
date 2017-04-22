@@ -50,6 +50,7 @@ export class UserService {
         });
     }
 
+    // Set position context
     public setUserStoryPositionContext(sectionID: ID, paragraphID: ID) {
         this.apiService.send({
             action: 'set_user_story_position_context',
@@ -57,6 +58,7 @@ export class UserService {
         });
     }
 
+    // Sign out
     public signOut() {
         this.apiService.send({
             action: 'sign_out'
