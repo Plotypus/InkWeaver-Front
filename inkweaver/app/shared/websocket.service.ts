@@ -8,6 +8,7 @@ export class WebSocketService {
 
     constructor() { }
 
+    // Connect to a URL
     public connect(url: string): Subject<MessageEvent> {
         if (!this.subject) {
             this.subject = this.create(url);
@@ -20,6 +21,7 @@ export class WebSocketService {
         this.subject = null;
     }
 
+    // Create a new websocket
     private create(url: string): Subject<MessageEvent> {
         let wsService = this;
         wsService.ws = new WebSocket(url);
@@ -32,6 +34,7 @@ export class WebSocketService {
             return wsService.ws.close.bind(wsService.ws);
         });
 
+        // Sending messages
         let observer = {
             next: (data: Object) => {
                 waitForSocketConnection(wsService.ws, function () {
@@ -40,6 +43,7 @@ export class WebSocketService {
             }
         };
 
+        // Wait for the connection before sending
         function waitForSocketConnection(ws: any, callback: any) {
             setTimeout(function () {
                 if (ws.readyState === 1) {

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Response } from '@angular/http';
 import { Message } from 'primeng/primeng';
 
+// Custom services
 import { LoginService } from './login.service';
 import { UserService } from '../user/user.service';
 import { ApiService } from '../shared/api.service';
@@ -30,6 +31,7 @@ export class LoginComponent {
         private parserService: ParserService) { }
 
     ngOnInit() {
+        // Unsubscribe if currently subscribed to a story
         this.data = this.apiService.data;
         if (this.apiService.subscribedToStory) {
             this.storyService.unsubscribeFromStory(this.data.story.story_id);
@@ -41,6 +43,7 @@ export class LoginComponent {
 
     public signIn() {
         if (this.signup) {
+            // Register a new user
             this.loginService.register(this.login.username, this.login.password,
                 this.login.email, this.login.name, this.login.bio)
                 .subscribe((response: Response) => {
@@ -55,6 +58,7 @@ export class LoginComponent {
                     }
                 })
         } else {
+            // Log in
             this.loginService.login(this.login.username, this.login.password)
                 .subscribe((response: Response) => {
                     this.apiService.connect();

@@ -45,6 +45,8 @@ export class AppComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+
+        // Top menubar
         this.items = [
             {
                 label: 'Export PDF',
@@ -73,6 +75,7 @@ export class AppComponent {
             }
         ];
 
+        // Allow ID field in paragraph tags
         let Parchment = Quill.import('parchment');
         let ID = new Parchment.Attributor.Attribute('id', 'id');
         let Class = new Parchment.Attributor.Attribute('class', 'class');
@@ -117,52 +120,50 @@ export class AppComponent {
             this.apiService.send({ action: 'get_section_content', section_id: sec },
                 (reply: any) => {
                     this.pdfHtml = "";
-                   
-                    
+                    this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
 
-                        this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
+                    this.pdfHtml += "<h1>" + this.sectionNames[this.count] + "</h1>" + this.parser.setContentDisplay(reply.content);
+                    let margins = {
+                        top: margin.top,
+                        bottom: margin.bottom,
+                        left: margin.left,
+                        width: (width - margin.right - margin.left) //how much of the page to take 
+                    };
+                    // all coords and widths are in jsPDF instance's declared units
+                    // 'inches' in this case
+                    doc.fromHTML(
+                        this.pdfHtml, // HTML string or DOM elem ref.
+                        margins.left, // x coord
+                        margins.top, { // y coord
+                            'width': margins.width, // max width of content on PDF
+                            'elementHandlers': specialElementHandlers
+                        },
 
-                        this.pdfHtml += "<h1>" + this.sectionNames[this.count] + "</h1>" + this.parser.setContentDisplay(reply.content);
-                        let margins = {
-                            top: margin.top,
-                            bottom: margin.bottom,
-                            left: margin.left,
-                            width: (width - margin.right - margin.left) //how much of the page to take 
-                        };
-                        // all coords and widths are in jsPDF instance's declared units
-                        // 'inches' in this case
-                        doc.fromHTML(
-                            this.pdfHtml, // HTML string or DOM elem ref.
-                            margins.left, // x coord
-                            margins.top, { // y coord
-                                'width': margins.width, // max width of content on PDF
-                                'elementHandlers': specialElementHandlers
-                            },
+                        function (dispose) {
+                            // dispose: object with X, Y of the last line add to the PDF 
+                            //          this allow the insertion of new lines after html
+                            // doc.save('Test.pdf');
+                        }, margins);
 
-                            function (dispose) {
-                                // dispose: object with X, Y of the last line add to the PDF 
-                                //          this allow the insertion of new lines after html
-                                // doc.save('Test.pdf');
-                            }, margins);
+                    this.count = this.count + 1;
+                    if (this.count < this.secCount) {
+                        doc.addPage();
+                    }
+                    if (this.secCount == this.count) {
 
-                        this.count = this.count + 1;
-                        if (this.count < this.secCount) {
-                            doc.addPage();
-                        }
-                        if (this.secCount == this.count) {
+                        //doc.output('dataurlnewwindow');
+                        if (this.name.includes('.pdf'))
+                            this.name += ".pdf";
+                        doc.save(this.name);
+                        this.msgs.push({ severity: 'sucess', summary: 'File Downloaded', detail: 'Check your download folder for ' + this.name });
+                        this.pdf = false;
+                    }
 
-                            //doc.output('dataurlnewwindow');
-                            if (this.name.includes('.pdf'))
-                                this.name += ".pdf";
-                            doc.save(this.name);
-                            this.msgs.push({ severity: 'sucess', summary: 'File Downloaded', detail: 'Check your download folder for ' + this.name });
-                            this.pdf = false;
-                        }
-                    
                 }, { pdf: true });
         }
     }
 
+    // Set the default values for the PDF export
     public setDefaults() {
         this.m_left = 1;
         this.m_bottom = 1;
@@ -171,7 +172,5 @@ export class AppComponent {
         this.pdf = true;
         this.width = 8.5;
         this.height = 11;
-
     }
-
 }

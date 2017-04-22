@@ -16,6 +16,8 @@ import { LoginComponent } from './login.component';
         FormsModule,
         CommonModule,
         HttpModule,
+
+        // PrimeNG
         PanelModule,
         ButtonModule,
         GrowlModule

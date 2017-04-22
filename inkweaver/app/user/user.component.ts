@@ -18,6 +18,8 @@ import { StorySummary } from '../models/story/story-summary.model';
 })
 export class UserComponent {
     private data: any;
+
+    // User
     private nameActive: boolean;
     private emailActive: boolean;
     private bioActive: boolean;
@@ -25,11 +27,13 @@ export class UserComponent {
     private prevEmail: string;
     private prevBio: string;
 
+    // Wiki
     private wikis: SelectItem[];
     private newWiki: any;
     private newWikiTitle: string;
     private newWikiSummary: string;
 
+    // Story
     private title: string;
     private summary: string;
     private colors: string[];
@@ -46,6 +50,7 @@ export class UserComponent {
 
     ngOnInit() {
         this.data = this.apiService.data;
+        // Unsubscribe if subscribed
         if (this.apiService.subscribedToStory) {
             this.storyService.unsubscribeFromStory(this.data.story.story_id);
         }
@@ -53,6 +58,7 @@ export class UserComponent {
             this.storyService.unsubscribeFromWiki(this.data.story.wiki_id);
         }
 
+        // Go back to the login page if not initialized
         if (!this.apiService.messages) {
             this.router.navigate(['/login']);
         }
@@ -88,6 +94,7 @@ export class UserComponent {
                 break;
         }
     }
+    // Cancel user editing
     public cancel(field: string) {
         switch (field) {
             case 'name':
@@ -104,6 +111,7 @@ export class UserComponent {
                 break;
         }
     }
+    // Save user editing
     public save(field: string) {
         switch (field) {
             case 'name':

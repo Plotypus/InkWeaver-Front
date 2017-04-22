@@ -110,7 +110,9 @@ export class EditComponent {
             }
         });
 
+        // Called on any change in the editor
         this.editor.onTextChange.subscribe((event: any) => {
+            // Set the position in the editor if there is a position context
             if (this.data.story.position_context) {
                 if (this.data.story.position_context.paragraph_id) {
                     if (this.scrollToParagraph(this.data.story.position_context.paragraph_id.$oid)) {
@@ -139,6 +141,7 @@ export class EditComponent {
                 let deleted: number = event.delta.ops[1].delete;
 
                 if (index && (insert || deleted)) {
+                    // Update the current state of the prediction
                     if (this.predict && insert) {
                         this.predict += insert;
                     } else if (this.predict && deleted) {
@@ -153,8 +156,12 @@ export class EditComponent {
                         let valIndex: number = 0;
                         let bounds = this.editor.quill.getBounds(index);
                         let top: number = bounds.top + 200;
+
+                        // Loop through the aliases (TODO: implement a TRIE to improve)
                         for (let aliasID in this.data.aliasTable) {
                             let alias: Alias = this.data.aliasTable[aliasID];
+
+                            // Look for aliases that start with the prediction string
                             if (alias.alias_name.startsWith(this.predict)) {
                                 if (this.suggest.display === 'none') {
                                     this.suggest = {
@@ -184,6 +191,7 @@ export class EditComponent {
                 }
             }
 
+            // Set the click event of each link
             let threads: any[] = this.editorRef.querySelectorAll('a[href]');
             for (let thread of threads) {
                 if (!thread.onclick) {
@@ -231,6 +239,8 @@ export class EditComponent {
                             this.wikiService.getWikiPage(pageID, () => { this.router.navigate(['story/wiki']) }, { page_id: pageID });
                             //this.router.navigate(['/story/wiki']);
                         };
+
+                        // Hover tooltip for links
                         thread.onmouseenter = (event: any) => {
                             let aBlot = Quill['find'](event.target);
                             let index: number = this.editor.quill.getIndex(aBlot);
@@ -250,6 +260,7 @@ export class EditComponent {
                 }
             }
 
+            // Add click events for the notes
             let notes: any[] = this.editorRef.querySelectorAll('code');
             for (let note of notes) {
                 if (!note.onclick) {
@@ -280,6 +291,7 @@ export class EditComponent {
     }
 
     public keyUp(event: any) {
+        // Save on every enter
         if (event.key === 'Enter') {
             let idx = this.editor.quill.getSelection();
             if (idx) {
@@ -303,11 +315,13 @@ export class EditComponent {
             if (editComp.editor.quill) {
                 delete editComp.editor.quill.keyboard.bindings['9'];
 
+                // Shortcut for linking
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'L',
                     altKey: true
                 }, function () { editComp.openLinkCreator(editComp); });
 
+                // Tab for autocomplete
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'tab'
                 }, function (range, context) {
@@ -327,6 +341,7 @@ export class EditComponent {
                     }
                 });
 
+                // If IntelliSense is active, move around possible suggestions
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'up'
                 }, function (range, context) {
@@ -339,7 +354,6 @@ export class EditComponent {
                         return true;
                     }
                 });
-
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'down'
                 }, function (range, context) {
@@ -433,6 +447,8 @@ export class EditComponent {
             });
         }
     }
+
+    // Passive links
     public approvePassive() {
         this.storyService.approvePassiveLink(this.passiveLinkID);
         this.data.tooltip.display = 'none';
@@ -538,6 +554,7 @@ export class EditComponent {
         }
     }
 
+    // Set the context menu for right-clicking on menu items
     public setContextMenu(node: TreeNode) {
         this.selectSection({ node: node });
         if (node.parent) {
@@ -597,6 +614,7 @@ export class EditComponent {
         this.note.display = 'none';
     }
 
+    // Save the current state of the editor
     public save(refresh: boolean = false, setPosition: boolean = true) {
         if (this.data.storyDisplay && this.data.prevSection.data) {
             if (setPosition) {
@@ -606,6 +624,7 @@ export class EditComponent {
                 this.userService.setUserStoryPositionContext(this.data.prevSection.data.section_id, this.paragraphPosition);
             }
 
+            // Get all of the paragraphs, parse them into a paragraph content object
             let header: any = this.editorRef.querySelector('h1');
             let paragraphs: any = this.editorRef.querySelectorAll('p');
             if (paragraphs && paragraphs.length > 0) {
@@ -615,6 +634,8 @@ export class EditComponent {
                     this.apiService.refreshStoryContent(this.data.prevSection.data.section_id, this.data.prevSection.data.title);
                 }
             }
+
+            // Change the header if necessary
             if (header && header.innerHTML !== this.data.prevSection.data.title && JSON.stringify(this.data.prevSection.data.section_id) !== JSON.stringify(this.data.story.section_id)) {
                 this.editService.editSectionTitle(this.data.prevSection.data.section_id, header.innerHTML);
             }
