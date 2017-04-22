@@ -95,6 +95,7 @@ export class AppComponent {
     // PDF
     public createPDF() {
         let allSections = this.parser.flattenTree(this.data.storyNode[0]);
+        //setting the size of the pdf width margins
         this.secCount = Object.keys(allSections).length;
         let width: any = (parseInt(this.width) * 72);
         let height: any = (parseInt(this.height) * 72);
@@ -117,6 +118,7 @@ export class AppComponent {
         for (let id in allSections) {
             let sec: any = allSections[id].section_id;
             this.sectionNames.push(allSections[id].title);
+            //getting all the chapters of the stories
             this.apiService.send({ action: 'get_section_content', section_id: sec },
                 (reply: any) => {
                     this.pdfHtml = "";

@@ -79,12 +79,13 @@ export class WikiComponent {
 
     ngOnInit() {
 
+        //getting shared data for website
         this.data = this.apiService.data;
         this.nav = this.apiService.data.wikiNav;
         this.filter = "";
         this.data.wikiFuctions.push(this.onTempleteHeadingCallback());
 
-
+        //check if wiki was loaded before and loads the correct content
         if (this.data.selectedEntry && (this.data.page != null && this.data.page.hasOwnProperty("title"))) {
             
                 if (this.data.selectedEntry.type == 'category')
@@ -96,7 +97,6 @@ export class WikiComponent {
                     this.apiService.refreshWikiInfo();
                 }
             
-           // this.parsePage();
         }else
         {
 
@@ -133,6 +133,7 @@ export class WikiComponent {
         this.calcHeight();
     }  
 
+    //parses wiki page
     public parsePage() {
         this.wikiPageContent = [];
         this.wikiPage = this.data.page;
@@ -159,6 +160,7 @@ export class WikiComponent {
 
     }
 
+    //setting up the context menu for navigation bar based on the type of element clicked    
     public setContextMenu(node:any){
         this.data.selectedEntry = node;
         this.rename = false;
@@ -176,6 +178,7 @@ export class WikiComponent {
         }
     }
 
+    //renames elements on the nav bar
     public onRename(node:any, mode:any){
         if(mode)
         {
@@ -242,6 +245,7 @@ export class WikiComponent {
      * All adding methods
      */
 
+
      public addToWiki(add:boolean) {
          //creating the new node to be added to the navigation
 
@@ -261,7 +265,7 @@ export class WikiComponent {
          }
      }
 
-    /*
+        /*
         Will toogle value of button variable to indicate whether something needs to be added or not
         */
         public onAddPage(type:any) {
@@ -278,6 +282,7 @@ export class WikiComponent {
         }
 
 
+        //shows the add heading prompt
         public addHeading() {
 
             this.headingName = "";
@@ -285,6 +290,7 @@ export class WikiComponent {
             this.showAddHeadDialog = true;
         }
 
+        //adds the heading and send message to server
         public createHeading(addMore: boolean) {
 
             if (!addMore){
@@ -316,6 +322,7 @@ export class WikiComponent {
         }
 
 
+        //take care of text change for input boxes in the add prompts
         public onTextChange(text:string, mode:boolean)
         {
             if(!this.empty) 
@@ -337,6 +344,7 @@ export class WikiComponent {
 
         //-----------------------------Editing stuff---------------------------------------------
 
+        //updates the heading content
         public onEdit(idx: any) {
             for (let i = 1; i < this.wikiPageContent.length; i++) {
                 this.wikiPageContent[i].active = false;
@@ -348,6 +356,7 @@ export class WikiComponent {
             this.onSavePage();
         }
 
+        //takes care of how to update heading titles
         public onDisable(idx: any) {
 
             let title = "";
@@ -366,7 +375,6 @@ export class WikiComponent {
                 }
                 
 
-                // this.wikiPageContent.splice(idx, 1, prev);
             }
             else {
                 //need to send the new state to the server
@@ -400,6 +408,8 @@ export class WikiComponent {
             this.disabled[idx] = !this.disabled[idx];
         }
 
+
+        //reset the heading title to previous value
         public onCancel(idx: any) {
             if (idx == 0) {
                 this.wikiPage.title = this.wikiPageContent[0].title;
@@ -409,6 +419,7 @@ export class WikiComponent {
             }
             this.disabled[idx] = !this.disabled[idx];
         }
+
 
         public editAlias(alias: any) {
             //enable the textbox
@@ -434,6 +445,7 @@ export class WikiComponent {
 
         //----------------------------------Save Methods--------------------------------------------------
 
+        //saves the wiki page content
         public onSavePage() {
             for (let i = 0; i < this.wikiPage.headings.length; i++) {
                 if (!(this.wikiPageContent[i + 1].text === this.wikiPage.headings[i].text)) {
@@ -476,6 +488,7 @@ export class WikiComponent {
 
         }
 
+        //deletes a page and send message
         public onDeletePage(page: any) {
             this.showDeleteDialog = false;
             if (!page)
@@ -490,11 +503,14 @@ export class WikiComponent {
         }
 
 
+        //delete alias
+
         public deleteAlias(alias: any) {
             this.wikiService.deleteAlias(alias.id);
         }
 
 
+        //deletes the heading
         public onDeleteHeading(del:any) {
             this.showDeleteDialog = false;
             if(del)
@@ -517,12 +533,15 @@ export class WikiComponent {
 
         }
 
+        //navigates to editor for specific reference
         public onReference(ref: any) {
             this.data.story.position_context = { section_id: ref.section_id, paragraph_id: ref.paragraph_id };
             this.apiService.refreshStoryContent(ref.section_id, null);
             this.router.navigate(['/story/edit']);
         }
 
+
+        //updates the data for wiki
         public updateData(){
 
             let ele: TreeNode
@@ -548,6 +567,7 @@ export class WikiComponent {
             }
         }
 
+        //Converts out nav bar into an array of MenuItems
         public convertLabelValueArray(node:TreeNode){
             if (node) {
                 let result = [];
@@ -560,12 +580,14 @@ export class WikiComponent {
             return [];
         }
 
+        //check if we have a selected entry
         public selectedEntry() {
             return (option: any) => {
                 return this.data.selectedEntry.label === option.label;
             }
         }
 
+        //call back for how to handle templete header events 
         public onTempleteHeadingCallback(): Function{
             return (reply:any) =>
             {
@@ -616,6 +638,7 @@ export class WikiComponent {
             }
         }
 
+        //handles add events
         public onAddCallback() : Function
         {
             return (reply:any) => {
@@ -634,6 +657,7 @@ export class WikiComponent {
             }
         }
 
+        //handles the delete events
         public onDeleteCallback() : Function 
         {
             return (reply:any) => {
@@ -641,6 +665,7 @@ export class WikiComponent {
             }
         }
 
+        //handles the get events
         public onGetCallback() : Function 
         {
             return (reply:any) => {
@@ -671,6 +696,7 @@ export class WikiComponent {
             }
         }
 
+        //calculates the height of the wiki page
         public calcHeight(){
             setTimeout(() => {
                 let wiki_ele = <HTMLScriptElement>document.getElementsByClassName("wiki")[0];
@@ -805,6 +831,8 @@ export class WikiComponent {
             }
         }
 
+
+        //takes care of the stats overlay
         public onStats(){
             if(!this.statMode)
             {
