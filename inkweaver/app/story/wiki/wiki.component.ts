@@ -680,7 +680,10 @@ export class WikiComponent {
                 if(header_ele)
                     page_content_height = wiki_ele.offsetHeight - header_ele.offsetHeight;
                 else
+                {
+                    if(header)
                     page_content_height = wiki_ele.offsetHeight - header.offsetHeight;
+                }
                 let div = <HTMLScriptElement>document.getElementById("page_content");
                 if(div)
                     div.style.height = page_content_height+"px";

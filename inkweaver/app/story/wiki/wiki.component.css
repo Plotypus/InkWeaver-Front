@@ -250,7 +250,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     color: var(--link-blue);
     display: inline-block;
     font-weight: bold;
-    margin: .5em 0;
+    margin: 0;
 }
 
 .wiki h2 {
@@ -258,7 +258,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     color: var(--dark-blue);
     display: inline-block;
     font-weight: bold;
-    margin: .5em 0;
+    margin: 0;
 }
 
 .wiki h3 {
@@ -266,7 +266,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     color: var(--orange);
     display: inline-block;
     font-weight: bold;
-    margin: .5em 0;
+    margin:  0;
 }
 
 .wiki .text {
