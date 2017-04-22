@@ -15,6 +15,8 @@ import { ParserService } from '../../shared/parser.service';
 })
 
 export class StatsComponent {
+
+    //set up the class variables
     @ViewChild(UIChart) chart: UIChart;
     @Input() mode: boolean;
     private data: any;
@@ -40,7 +42,12 @@ export class StatsComponent {
     ) { }
 
     ngOnInit() {
+
+        //get data
         this.data = this.apiService.data;
+
+        //figures out where stats overlay is being called from
+        //editor stats
         if (this.mode) {
             this.getSectionStats();
         }
@@ -73,19 +80,21 @@ export class StatsComponent {
     }
 
 
+    //gets the editor stats
     public getSectionStats() {
         if (this.data.section.data) {
             this.statsService.get_section_statistics(this.data.section.data.section_id);
         }
-        //we would want to call ask for the stats
     }
 
+    //shows the notebook stats
     public showWikiStats() {
 
 
-        //this.data.statSegment = event.node;
+        //getting the selected node
         let node = this.data.selectedEntry;
         let label = [];
+        //figuring out our x axis values
         for (let l in this.data.statsSections)
             label.push(this.data.statsSections[l].title);
         this.pageFreq = {};
@@ -110,6 +119,7 @@ export class StatsComponent {
 
         this.allOptions = this.allOptions.concat(this.statsOptions);
 
+        // building our y axis 
         for (let ele of this.statSegments) {
 
             if (ele.type == 'page') {
@@ -138,6 +148,7 @@ export class StatsComponent {
 
     }
 
+    //takes care of the changes to drop box to choose different characters to be shown
     public onChange() {
         let option = this.selectedOption;
         if (typeof option !== 'undefined') {
@@ -157,6 +168,7 @@ export class StatsComponent {
 
     }
 
+    //adds characters back to dropdown
     public updateDropdown(event: any, items: any) {
 
         let temp = [];
@@ -182,6 +194,7 @@ export class StatsComponent {
     }
 
 
+    //updates the graph
     public updateChart() {
         let label = [];
         for (let l in this.data.statsSections)
