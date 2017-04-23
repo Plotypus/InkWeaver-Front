@@ -216,10 +216,12 @@ export class StatsComponent {
 
     public updateDomain(type:any){
         //let domain = this.union(this.domain1,this.domain2);
-        this.domain1 = this.union(this.domain1,this.domain2)
+        this.domain1 = this.union(this.domain1,this.domain2);
         this.domain1.splice(this.domain2Sel,1);
-        this.domain2 = this.union(this.domain1,this.domain2)
-        this.domain2.splice(this.domain1Sel,1);
+        this.domain2 = this.union(this.domain1,this.domain2);
+        this.domain2.splice(0,this.domain1Sel+1);
+        //this.domain2.splice(this.domain1Sel,1);
+        
 
         this.updateChart();
     }
