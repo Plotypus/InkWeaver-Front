@@ -10,7 +10,7 @@
         	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
         	    <input #gb type="text" pInputText size="50" placeholder="Global Filter">
         	</div>
-            <p-dataTable [value]="data.stats.word_frequency" [rows]="10" [paginator]="true" [globalFilter]="gb" #dt>
+            <p-dataTable [value]="data.stats.word_frequency" [rows]="10" [paginator]="true" [globalFilter]="gb" [rowsPerPageOptions]="[5,10,20]" sortField="word" sortOrder="1" #dt>
                 <p-column field="word" header="Word" [sortable]="true"></p-column>
                 <p-column field="count" header="Word Frequency" [sortable]="true"></p-column>
             </p-dataTable>

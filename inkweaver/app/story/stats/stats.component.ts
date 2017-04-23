@@ -31,7 +31,7 @@ export class StatsComponent {
     private allOptions: SelectItem[];
     private title: any;
     private chartOption: any;
-
+    private rows = [];
     constructor(
         private router: Router,
         private editService: EditService,
