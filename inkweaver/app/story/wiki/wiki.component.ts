@@ -105,27 +105,6 @@ export class WikiComponent {
 
         this.updateData();
 
-        this.apiService.messages.subscribe((action: string) => {
-
-            if (action == "alias_deleted") {
-                this.wikiService.getWikiPage(this.data.selectedEntry.data.id,this.onGetCallback());
-            }
-            else if (action == "got_wiki_information")
-            {
-                this.info = true;
-            }
-            else if (action == "got_wiki_hierarchy" && this.info)
-            {
-                this.data.selectedEntry = this.data.wikiNav[0];
-                this.info = false;
-                
-            }
-            else if (action == "got_wiki_page"){
-                if(this.fromLink)
-                    this.parsePage();
-                this.fromLink = true;
-            }
-        });
 
     }
 
