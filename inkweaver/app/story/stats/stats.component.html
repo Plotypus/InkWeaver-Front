@@ -19,14 +19,21 @@
         <ng-container *ngSwitchCase='false'>
             <h1>Statistics for {{title}}</h1>
             
+            What Pages to Graph?
             <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 
             (ngModelChange)="onChange()" [autoWidth] ='true'></p-dropdown>
 
             <p-chips field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
              
             </p-chips>
+            <br>
             
-            
+            Chose the domain of Graph?
+            <p-dropdown [options]="domain1" [(ngModel)]="domain1Sel" 
+            (ngModelChange)="updateDomain(1)" [autoWidth] ='true'></p-dropdown>
+            <p-dropdown [options]="domain2" [(ngModel)]="domain2Sel" 
+            (ngModelChange)="updateDomain(2)" [autoWidth] ='true'></p-dropdown>
+
             <p-chart type="bar" [data]="pageFreq" [options]="chartOption"></p-chart>
             
         </ng-container>

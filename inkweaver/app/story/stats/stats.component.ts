@@ -32,6 +32,12 @@ export class StatsComponent {
     private title: any;
     private chartOption: any;
     private rows = [];
+
+    private domain1 = [];
+    private domain2 = [];
+    private domain1Sel: any;
+    private domain2Sel:any;
+
     constructor(
         private router: Router,
         private editService: EditService,
@@ -94,9 +100,23 @@ export class StatsComponent {
         //getting the selected node
         let node = this.data.selectedEntry;
         let label = [];
+        this.domain1 = [];
+        this.domain2 = [];
         //figuring out our x axis values
-        for (let l in this.data.statsSections)
+        //this.values = [0,Object.keys(this.data.statsSections).length];
+        let idx = 0;
+        for (let l in this.data.statsSections){
             label.push(this.data.statsSections[l].title);
+            this.domain1.push({label: this.data.statsSections[l].title, value: idx});
+            this.domain2.push({label: this.data.statsSections[l].title, value: idx});
+            idx++;
+        }
+        this.domain1Sel = this.domain1[0].value;
+        this.domain2Sel = this.domain2[label.length-1].value;
+        this.domain1.splice(label.length-1,1);
+        this.domain2.splice(0,1);
+            
+        
         this.pageFreq = {};
         let dataset = [];
         this.statSegments = this.parserService.getTreeArray(node).filter((ele: any) => {
@@ -126,9 +146,10 @@ export class StatsComponent {
                 let color = '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
                 if ('_$visited' in ele.data.id)
                     delete ele.data.id['_$visited'];
+                let data = this.data.statsPageFrequency[JSON.stringify(ele.data.id)].slice(0);
                 dataset.push({
                     label: ele.data.title,
-                    data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
+                    data: data.splice(this.domain1Sel,this.domain2Sel),
                     fill: true,
                     borderColor: color,
                     backgroundColor: color
@@ -193,12 +214,38 @@ export class StatsComponent {
 
     }
 
+    public updateDomain(type:any){
+        //let domain = this.union(this.domain1,this.domain2);
+        this.domain1 = this.union(this.domain1,this.domain2)
+        this.domain1.splice(this.domain2Sel,1);
+        this.domain2 = this.union(this.domain1,this.domain2)
+        this.domain2.splice(this.domain1Sel,1);
+
+        this.updateChart();
+    }
+
+    public union(x:Array<any>,y:Array<any>){
+        
+  var obj = {};
+  for (var i = x.length-1; i >= 0; -- i)
+     obj[x[i].value] = x[i];
+  for (var i = y.length-1; i >= 0; -- i)
+     obj[y[i].value] = y[i];
+  var res = []
+  for (var k in obj) {
+    if (obj.hasOwnProperty(k))  // <-- optional
+      res.push(obj[k]);
+  }
+  return res;
+}
+    
 
     //updates the graph
     public updateChart() {
         let label = [];
         for (let l in this.data.statsSections)
             label.push(this.data.statsSections[l].title);
+            label = label.splice(this.domain1Sel,(this.domain2Sel-this.domain1Sel)+1);
 
         let dataset = [];
         let cidx = 0;
@@ -215,10 +262,11 @@ export class StatsComponent {
                 }
                 if ('_$visited' in ele.data.id)
                     delete ele.data.id['_$visited'];
+                let data = this.data.statsPageFrequency[JSON.stringify(ele.data.id)].slice(0);
 
                 dataset.push({
                     label: ele.data.title,
-                    data: this.data.statsPageFrequency[JSON.stringify(ele.data.id)],
+                    data: data.splice(this.domain1Sel,(this.domain2Sel-this.domain1Sel)+1),
                     fill: true,
                     borderColor: color,
                     backgroundColor: color
