@@ -24,6 +24,7 @@ import {
     ToggleButtonModule,
     DragDropModule,
     TreeModule,
+    TooltipModule
     
 
     
@@ -57,6 +58,7 @@ import { StatsModule } from '../stats/stats.module';
         StatsModule,
         ToggleButtonModule,
         DragDropModule,
+        TooltipModule,
         TreeModule
 
         

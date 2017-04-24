@@ -10,7 +10,7 @@
         	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
         	    <input #gb type="text" pInputText size="50" placeholder="Global Filter">
         	</div>
-            <p-dataTable [value]="data.stats.word_frequency" [rows]="10" [paginator]="true" [globalFilter]="gb" #dt>
+            <p-dataTable [value]="data.stats.word_frequency" [rows]="10" [paginator]="true" [globalFilter]="gb" [rowsPerPageOptions]="[5,10,20]" sortField="count" sortOrder="1" #dt>
                 <p-column field="word" header="Word" [sortable]="true"></p-column>
                 <p-column field="count" header="Word Frequency" [sortable]="true"></p-column>
             </p-dataTable>
@@ -19,14 +19,21 @@
         <ng-container *ngSwitchCase='false'>
             <h1>Statistics for {{title}}</h1>
             
+            What Pages to Graph?
             <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 
             (ngModelChange)="onChange()" [autoWidth] ='true'></p-dropdown>
 
             <p-chips field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
              
             </p-chips>
+            <br>
             
-            
+            Chose the domain of Graph?
+            <p-dropdown [options]="domain1" [(ngModel)]="domain1Sel" 
+            (ngModelChange)="updateDomain(1)" [autoWidth] ='true'></p-dropdown>
+            <p-dropdown [options]="domain2" [(ngModel)]="domain2Sel" 
+            (ngModelChange)="updateDomain(2)" [autoWidth] ='true'></p-dropdown>
+
             <p-chart type="bar" [data]="pageFreq" [options]="chartOption"></p-chart>
             
         </ng-container>

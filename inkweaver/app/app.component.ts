@@ -122,9 +122,9 @@ export class AppComponent {
             this.apiService.send({ action: 'get_section_content', section_id: sec },
                 (reply: any) => {
                     this.pdfHtml = "";
-                    this.parser.parseContent(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
+                    this.parser.parseContentPDF(reply.content, this.data.aliasTable, this.data.linkTable, this.data.passiveLinkTable);
 
-                    this.pdfHtml += "<h1>" + this.sectionNames[this.count] + "</h1>" + this.parser.setContentDisplay(reply.content);
+                    this.pdfHtml += "<h1>" + this.sectionNames[this.count] + "</h1>" + this.parser.setContentDisplayPDF(reply.content);
                     let margins = {
                         top: margin.top,
                         bottom: margin.bottom,

@@ -182,6 +182,13 @@ code {
         cursor: pointer;
     }
 
+    .nav-actions div:hover {
+        cursor: pointer;
+        background:var(--dark-blue);
+        border-radius:3px
+    }
+
+
     .nav-actions i {
         cursor: pointer;
     }

@@ -650,4 +650,66 @@ export class ParserService {
 
         return result;
     }
+
+
+    public parseContentPDF(paragraphs: Paragraph[], aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: PassiveLinkTable): any {
+        let contentObject: ContentObject = new ContentObject();
+
+        let prev: ID = null;
+        for (let paragraph of paragraphs) {
+            // Parse the current paragraph
+            this.parseParagraphPDF(paragraph, aliasTable, linkTable, passiveLinkTable);
+        }
+        return paragraphs;
+    }
+
+    // Parse the links/notes of a paragraph
+    public parseParagraphPDF(paragraph: Paragraph, aliasTable: AliasTable, linkTable: LinkTable, passiveLinkTable: PassiveLinkTable) {
+        paragraph.links = new AliasTable();
+        paragraph.passiveLinks = new AliasTable();
+
+        let text: string = paragraph.text;
+        let r1: RegExp = /\s+/g;
+        let r2: RegExp = /{"\$oid":\s*"[a-z0-9]{24}"}/g;
+        let linkMatch: RegExpMatchArray = r2.exec(text);
+        while (linkMatch) {
+            let linkID: string = linkMatch[0].replace(r1, '');
+            let aliasID: ID = linkTable[linkID];
+            if (aliasID) {
+                let alias: Alias = aliasTable[JSON.stringify(aliasID)];
+                if (alias) {
+                    let linkIDStr: string = JSON.parse(linkID).$oid;
+                    let pageIDStr: string = alias.page_id.$oid;
+                    paragraph.links[linkID] = alias;
+                    paragraph.text = paragraph.text.replace(linkMatch[0],
+                         alias.alias_name);
+                }
+            } else {
+                let passiveLink: PassiveLink = passiveLinkTable[linkID];
+                if (passiveLink) {
+                    let pending: boolean = passiveLink.pending;
+                    let alias: Alias = aliasTable[JSON.stringify(passiveLink.alias_id)];
+                    if (alias) {
+                        let linkIDStr: string = JSON.parse(linkID).$oid;
+                        let pageIDStr: string = alias.page_id.$oid;
+                        paragraph.passiveLinks[linkID] = alias;
+                        paragraph.text = paragraph.text.replace(linkMatch[0],
+                             alias.alias_name);
+                    }
+                }
+            }
+            linkMatch = r2.exec(text);
+        }
+    }
+
+    public setContentDisplayPDF(paragraphs: Paragraph[]): string {
+        let content: string = '';
+        for (let paragraph of paragraphs) {
+            if (paragraph.paragraph_id) 
+            content += "<p>"+paragraph.text+"</p>";
+        }
+        return content;
+    }
+
+    
 }
