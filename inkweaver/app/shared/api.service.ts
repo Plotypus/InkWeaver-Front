@@ -439,59 +439,63 @@ export class ApiService {
                                 this.data.aliasTable[JSON.stringify(reply.alias_id)] = {
                                     page_id: reply.page_id, alias_name: reply.alias_name
                                 };
-                                if(this.data.selectedEntry)
-                                if(JSON.stringify(this.data.selectedEntry.data.id["$oid"]) == JSON.stringify(reply.page_id["$oid"])){
-                                     if(this.data.page){
-                                    this.data.page.aliases.push({
-                                        
-                                        'index': this.data.page.aliases.length,
-                                        'state': true,
-                                        'name': reply.alias_name,
-                                        'icon': 'fa-pencil',
-                                        'prev': '',
-                                        'id': reply.alias_id,
-                                        'main': false
-                
-                                    });
-                                     }
-                                }
-                                
+                                if (this.data.selectedEntry)
+                                    if (JSON.stringify(this.data.selectedEntry.data.id["$oid"]) == JSON.stringify(reply.page_id["$oid"])) {
+                                        if (this.data.page) {
+                                            this.data.page.aliases.push({
+
+                                                'index': this.data.page.aliases.length,
+                                                'state': true,
+                                                'name': reply.alias_name,
+                                                'icon': 'fa-pencil',
+                                                'prev': '',
+                                                'id': reply.alias_id,
+                                                'main': false
+
+                                            });
+                                        }
+                                    }
+
                                 break;
                             case 'alias_updated':
                                 let alias = this.data.aliasTable[JSON.stringify(reply.alias_id)];
                                 if (alias) {
                                     alias.alias_name = reply.new_name;
                                     let pid = alias.page_id;
-                                    if(this.data.selectedEntry)
-                                    if(JSON.stringify(this.data.selectedEntry.data.id["$oid"]) == JSON.stringify(pid["$oid"])){
-                                        //need to find index fo updated alias
-                                        if(this.data.page){
-                                        let idx = this.data.page.aliases.findIndex((ele:any) => {return JSON.stringify(ele.id) === JSON.stringify(reply.alias_id)});
-                                        this.data.page.aliases[idx].name = reply.new_name;
+                                    if (this.data.selectedEntry)
+                                        if (JSON.stringify(this.data.selectedEntry.data.id["$oid"]) == JSON.stringify(pid["$oid"])) {
+                                            //need to find index fo updated alias
+                                            if (this.data.page) {
+                                                let idx = this.data.page.aliases.findIndex((ele: any) => { return JSON.stringify(ele.id) === JSON.stringify(reply.alias_id) });
+                                                this.data.page.aliases[idx].name = reply.new_name;
+                                            }
                                         }
-                                    }
                                 }
                                 break;
                             case 'alias_deleted':
-                                let ali= this.data.aliasTable[JSON.stringify(reply.alias_id)];
+                                let ali = this.data.aliasTable[JSON.stringify(reply.alias_id)];
                                 if (ali) {
                                     let pid = ali.page_id;
-                                    if(this.data.selectedEntry)
-                                    if(JSON.stringify(this.data.selectedEntry.data.id["$oid"]) == JSON.stringify(pid["$oid"])){
-                                        //need to find index fo updated alias
-                                         if(this.data.page){
-                                        let idx = this.data.page.aliases.findIndex((ele:any) => {return JSON.stringify(ele.id) === JSON.stringify(reply.alias_id)});
-                                        this.data.page.aliases.splice(idx,1);
-                                         }
-                                    }
+                                    if (this.data.selectedEntry)
+                                        if (JSON.stringify(this.data.selectedEntry.data.id["$oid"]) == JSON.stringify(pid["$oid"])) {
+                                            //need to find index fo updated alias
+                                            if (this.data.page) {
+                                                let idx = this.data.page.aliases.findIndex((ele: any) => { return JSON.stringify(ele.id) === JSON.stringify(reply.alias_id) });
+                                                this.data.page.aliases.splice(idx, 1);
+                                            }
+                                        }
                                 }
                                 delete this.data.aliasTable[JSON.stringify(reply.alias_id)];
                                 break;
                             case 'link_created':
-                                this.data.linkTable[JSON.stringify(reply.link_id)] = reply.alias_id;
+                                this.data.linkTable[JSON.stringify(reply.link_id)] = {
+                                    deleted: false, alias_id: reply.alias_id
+                                };
                                 break;
                             case 'link_deleted':
-                                delete this.data.linkTable[JSON.stringify(reply.link_id)];
+                                if (this.data.linkTable[JSON.stringify(reply.link_id)]) {
+                                    this.data.linkTable[JSON.stringify(reply.link_id)].deleted = true;
+                                }
                                 break;
                             case 'passive_link_created':
                                 this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)] = {

@@ -2,6 +2,7 @@
 import { TreeNode } from 'primeng/primeng';
 
 import { ID } from '../../models/id.model';
+import { Link } from '../../models/link/link.model';
 import { Alias } from '../../models/link/alias.model';
 import { StoryService } from '../story.service';
 import { ApiService } from '../../shared/api.service';
@@ -134,7 +135,7 @@ export class EditService {
             if (!obj2[id]) {
                 this.deleteParagraph(JSON.parse(id), sectionID);
                 for (let link in obj1[id].links) {
-                    let aliasID: ID = this.apiService.data.linkTable[link];
+                    let aliasID: ID = this.apiService.data.linkTable[link].alias_id;
                     let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
                     deleted[link] = '{#|' + JSON.stringify(storyID) + '|' + JSON.stringify(alias.page_id) + '|' + alias.alias_name + '|#}';
                     this.storyService.deleteLink(JSON.parse(link));
@@ -153,7 +154,7 @@ export class EditService {
             if (!id.startsWith('new')) {
                 for (let link in obj1[id].links) {
                     if (!obj2[id].links[link]) {
-                        let aliasID: ID = this.apiService.data.linkTable[link];
+                        let aliasID: ID = this.apiService.data.linkTable[link].alias_id;
                         let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
                         deleted[link] = '{#|' + JSON.stringify(storyID) + '|' + JSON.stringify(alias.page_id) + '|' + alias.alias_name + '|#}';
                         this.storyService.deleteLink(JSON.parse(link));

@@ -1,5 +1,5 @@
-﻿import { ID } from '../id.model';
+﻿import { Link } from './link.model';
 
 export class LinkTable {
-    [link_id: string]: ID;
+    [link_id: string]: Link;
 }

@@ -106,6 +106,7 @@
     <TypeScriptCompile Include="app\models\link\alias-table.model.ts" />
     <TypeScriptCompile Include="app\models\link\link-table.model.ts" />
     <TypeScriptCompile Include="app\models\link\alias.model.ts" />
+    <TypeScriptCompile Include="app\models\link\link.model.ts" />
     <TypeScriptCompile Include="app\models\link\passive-link-table.model.ts" />
     <TypeScriptCompile Include="app\models\link\passive-link.model.ts" />
     <TypeScriptCompile Include="app\models\stats\stats.model.ts" />
