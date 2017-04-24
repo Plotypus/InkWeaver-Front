@@ -38,6 +38,9 @@ export class StatsComponent {
     private domain1Sel: any;
     private domain2Sel:any;
 
+    private excludeWord = [];
+
+
     constructor(
         private router: Router,
         private editService: EditService,
@@ -55,7 +58,9 @@ export class StatsComponent {
         //figures out where stats overlay is being called from
         //editor stats
         if (this.mode) {
+
             this.getSectionStats();
+
         }
         //wiki stats
         else {
@@ -89,10 +94,18 @@ export class StatsComponent {
     //gets the editor stats
     public getSectionStats() {
         if (this.data.section.data) {
-            this.statsService.get_section_statistics(this.data.section.data.section_id);
+            this.statsService.get_section_statistics(this.data.section.data.section_id,
+             (reply:any) => {this.wordFreq = this.data.stats.word_frequency.slice(0);
+            });
         }
     }
 
+    public updateWordTable(){
+        this.wordFreq = this.data.stats.word_frequency.slice(0);
+        this.wordFreq = this.wordFreq.filter((ele:any) => {
+            return this.excludeWord.indexOf(ele.word) == -1;
+        });
+    }
     //shows the notebook stats
     public showWikiStats() {
 

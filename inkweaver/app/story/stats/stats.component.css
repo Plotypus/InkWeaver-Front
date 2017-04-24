@@ -40,15 +40,22 @@ stats .ui-tabview-panel{
     border:none;
 }
 
-.stats .ui-chips-input-token{
+.stats #pageStats .ui-chips-input-token{
     display:none;
 }
 
 .stats .ui-chips-token{
-    padding:;
+   
     padding: .25em;
 }
 
 .stats .ui-dropdown{
     width:25% !important;
+}
+
+
+#wordFreq .ui-chips {
+    max-width: 300px;
+    max-height: 300px;
+    overflow: auto;
 }

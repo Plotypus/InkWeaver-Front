@@ -12,11 +12,11 @@ export class StatsService {
         });
     }
 
-    public get_section_statistics(sid: any) {
+    public get_section_statistics(sid: any, callback: Function = () => { }) {
         this.parser.send({
             action: 'get_section_statistics',
             section_id: sid
-        });
+        },callback);
     }
 
     public get_paragraph_statistics(sid: any, pid: any) {
