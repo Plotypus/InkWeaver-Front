@@ -136,9 +136,15 @@
         <!-- Navigation -->
         <div class="navigation ui-grid-col-3">
             <div class="nav-actions">
-                <div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>
-                <div class="ui-grid-col-6" (click)="openSectionCreator()">Add Subsection</div>
-                <div class="ui-grid-col-3" (click)="displaySectionDeleter = true">Delete</div>
+                <div class="ui-grid-col-3" (click)="openSectionRenamer()">
+                    <span>Rename</span>
+                </div>
+                <div class="ui-grid-col-6" (click)="openSectionCreator()">
+                    <span>Add Subsection</span>
+                </div>
+                <div class="ui-grid-col-3" (click)="displaySectionDeleter = true">
+                    <span>Delete</span>
+                </div>
             </div>
             <p-treeTable [value]="data.storyNode" selectionMode="single" [(selection)]="data.section" (onNodeSelect)="selectSection($event)">
                 <p-column field="title">
@@ -166,9 +172,15 @@
 
             <div class="bookmarks">
                 <div class="nav-actions">
-                    <div class="ui-grid-col-3" (click)="openBookmarkRenamer()">Rename</div>
-                    <div class="ui-grid-col-6" (click)="openBookmarkCreator()">Add Bookmark</div>
-                    <div class="ui-grid-col-3" (click)="displayBookmarkDeleter = true">Delete</div>
+                    <div class="ui-grid-col-3" (click)="openBookmarkRenamer()">
+                        <span>Rename</span>
+                    </div>
+                    <div class="ui-grid-col-6" (click)="openBookmarkCreator()">
+                        <span>Add Bookmark</span>
+                    </div>
+                    <div class="ui-grid-col-3" (click)="displayBookmarkDeleter = true">
+                        <span>Delete</span>
+                    </div>
                 </div>
                 <p-treeTable [value]="data.bookmarks" selectionMode="single" [(selection)]="oldBookmark" (onNodeSelect)="selectBookmark($event)">
                     <p-column field="title">

@@ -30,6 +30,7 @@ export class EditComponent {
     private editorRef: any;
     private wordCount: number;
     private paragraphPosition: ID;
+    private saveNeeded: boolean;
 
     // Dialogs
     private displayLinkCreator: boolean;
@@ -112,6 +113,10 @@ export class EditComponent {
 
         // Called on any change in the editor
         this.editor.onTextChange.subscribe((event: any) => {
+            if (event.delta.ops[1] && event.delta.ops[1].delete) {
+                this.saveNeeded = true;
+            }
+
             // Set the position in the editor if there is a position context
             if (this.data.story.position_context) {
                 if (this.data.story.position_context.paragraph_id) {
@@ -450,10 +455,18 @@ export class EditComponent {
 
     // Passive links
     public approvePassive() {
+        if (this.saveNeeded) {
+            this.save(false, false);
+            this.saveNeeded = false;
+        }
         this.storyService.approvePassiveLink(this.passiveLinkID);
         this.data.tooltip.display = 'none';
     }
     public rejectPassive() {
+        if (this.saveNeeded) {
+            this.save(false, false);
+            this.saveNeeded = false;
+        }
         this.storyService.rejectPassiveLink(this.passiveLinkID);
         this.data.tooltip.display = 'none';
     }

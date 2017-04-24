@@ -5,6 +5,7 @@ import { ID } from '../models/id.model';
 import { Alias } from '../models/link/alias.model';
 import { AliasTable } from '../models/link/alias-table.model';
 import { LinkTable } from '../models/link/link-table.model';
+import { Link } from '../models/link/link.model';
 import { PassiveLink } from '../models/link/passive-link.model';
 import { PassiveLinkTable } from '../models/link/passive-link-table.model';
 import { Section } from '../models/story/section.model';
@@ -122,12 +123,18 @@ export class ParserService {
         let linkMatch: RegExpMatchArray = r2.exec(text);
         while (linkMatch) {
             let linkID: string = linkMatch[0].replace(r1, '');
-            let aliasID: ID = linkTable[linkID];
-            if (aliasID) {
+            let link: Link = linkTable[linkID];
+            if (link) {
+                let aliasID: ID = link.alias_id;
                 let alias: Alias = aliasTable[JSON.stringify(aliasID)];
                 if (alias) {
                     let linkIDStr: string = JSON.parse(linkID).$oid;
                     let pageIDStr: string = alias.page_id.$oid;
+                    if (link.deleted) {
+                        let randomID: number = Math.random();
+                        linkID = 'new' + randomID;
+                        linkIDStr = 'new' + randomID;
+                    }
                     paragraph.links[linkID] = alias;
                     paragraph.text = paragraph.text.replace(linkMatch[0],
                         '<a href="' + linkIDStr + '-' + pageIDStr + '" target="_blank">' + alias.alias_name + '</a>');
@@ -138,11 +145,15 @@ export class ParserService {
                     let pending: boolean = passiveLink.pending;
                     let alias: Alias = aliasTable[JSON.stringify(passiveLink.alias_id)];
                     if (alias) {
-                        let linkIDStr: string = JSON.parse(linkID).$oid;
-                        let pageIDStr: string = alias.page_id.$oid;
-                        paragraph.passiveLinks[linkID] = alias;
-                        paragraph.text = paragraph.text.replace(linkMatch[0],
-                            '<a href="' + linkIDStr + '-' + pageIDStr + '-' + pending + '" target="_blank" id="' + pending + '">' + alias.alias_name + '</a>');
+                        if (passiveLink.deleted) {
+                            paragraph.text = paragraph.text.replace(linkMatch[0], alias.alias_name);
+                        } else {
+                            let linkIDStr: string = JSON.parse(linkID).$oid;
+                            let pageIDStr: string = alias.page_id.$oid;
+                            paragraph.passiveLinks[linkID] = alias;
+                            paragraph.text = paragraph.text.replace(linkMatch[0],
+                                '<a href="' + linkIDStr + '-' + pageIDStr + '-' + pending + '" target="_blank" id="' + pending + '">' + alias.alias_name + '</a>');
+                        }
                     }
                 }
             }
@@ -224,13 +235,15 @@ export class ParserService {
             aliasTable[JSON.stringify(alias.alias_id)] = alias;
             if (alias.link_ids) {
                 for (let link of alias.link_ids) {
-                    linkTable[JSON.stringify(link)] = alias.alias_id;
+                    linkTable[JSON.stringify(link)] = {
+                        deleted: false, alias_id: alias.alias_id
+                    };
                 }
             }
             if (alias.passive_links) {
                 for (let link of alias.passive_links) {
                     passiveLinkTable[JSON.stringify(link.passive_link_id)] = {
-                        alias_id: alias.alias_id, pending: link.pending
+                        alias_id: alias.alias_id, pending: link.pending, deleted: false
                     };
                 }
             }
@@ -392,16 +405,20 @@ export class ParserService {
                     let linkMatch: RegExpMatchArray = r2.exec(text);
                     while (linkMatch) {
                         let linkID: string = linkMatch[0].replace(r1, '');
-                        let aliasID: ID = linktable[linkID];
-                        if (aliasID) {
-                            let alias: Alias = aliasTable[JSON.stringify(aliasID)];
-                            if (alias) {
-                                if (id === linkID) {
-                                    ref.text = ref.text.replace(linkMatch[0],
-                                        '<h1>' + alias.alias_name + '</h1>');
-                                } else {
-                                    ref.text = ref.text.replace(linkMatch[0],
-                                        '<h2>' + alias.alias_name + '</h2>');
+                        let aliasID: ID = new ID();
+                        let link: Link = linktable[linkID];
+                        if (link) {
+                            aliasID = link.alias_id;
+                            if (aliasID) {
+                                let alias: Alias = aliasTable[JSON.stringify(aliasID)];
+                                if (alias) {
+                                    if (id === linkID) {
+                                        ref.text = ref.text.replace(linkMatch[0],
+                                            '<h1>' + alias.alias_name + '</h1>');
+                                    } else {
+                                        ref.text = ref.text.replace(linkMatch[0],
+                                            '<h2>' + alias.alias_name + '</h2>');
+                                    }
                                 }
                             }
                         } else {
@@ -674,15 +691,20 @@ export class ParserService {
         let linkMatch: RegExpMatchArray = r2.exec(text);
         while (linkMatch) {
             let linkID: string = linkMatch[0].replace(r1, '');
-            let aliasID: ID = linkTable[linkID];
-            if (aliasID) {
-                let alias: Alias = aliasTable[JSON.stringify(aliasID)];
-                if (alias) {
-                    let linkIDStr: string = JSON.parse(linkID).$oid;
-                    let pageIDStr: string = alias.page_id.$oid;
-                    paragraph.links[linkID] = alias;
-                    paragraph.text = paragraph.text.replace(linkMatch[0],
-                         alias.alias_name);
+
+            let aliasID: ID = new ID();
+            let link: Link = linkTable[linkID];
+            if (link) {
+                aliasID = link.alias_id;
+                if (aliasID) {
+                    let alias: Alias = aliasTable[JSON.stringify(aliasID)];
+                    if (alias) {
+                        let linkIDStr: string = JSON.parse(linkID).$oid;
+                        let pageIDStr: string = alias.page_id.$oid;
+                        paragraph.links[linkID] = alias;
+                        paragraph.text = paragraph.text.replace(linkMatch[0],
+                            alias.alias_name);
+                    }
                 }
             } else {
                 let passiveLink: PassiveLink = passiveLinkTable[linkID];
@@ -694,7 +716,7 @@ export class ParserService {
                         let pageIDStr: string = alias.page_id.$oid;
                         paragraph.passiveLinks[linkID] = alias;
                         paragraph.text = paragraph.text.replace(linkMatch[0],
-                             alias.alias_name);
+                            alias.alias_name);
                     }
                 }
             }
@@ -705,11 +727,11 @@ export class ParserService {
     public setContentDisplayPDF(paragraphs: Paragraph[]): string {
         let content: string = '';
         for (let paragraph of paragraphs) {
-            if (paragraph.paragraph_id) 
-            content += "<p>"+paragraph.text+"</p>";
+            if (paragraph.paragraph_id)
+                content += "<p>" + paragraph.text + "</p>";
         }
         return content;
     }
 
-    
+
 }
