@@ -145,11 +145,15 @@ export class ParserService {
                     let pending: boolean = passiveLink.pending;
                     let alias: Alias = aliasTable[JSON.stringify(passiveLink.alias_id)];
                     if (alias) {
-                        let linkIDStr: string = JSON.parse(linkID).$oid;
-                        let pageIDStr: string = alias.page_id.$oid;
-                        paragraph.passiveLinks[linkID] = alias;
-                        paragraph.text = paragraph.text.replace(linkMatch[0],
-                            '<a href="' + linkIDStr + '-' + pageIDStr + '-' + pending + '" target="_blank" id="' + pending + '">' + alias.alias_name + '</a>');
+                        if (passiveLink.deleted) {
+                            paragraph.text = paragraph.text.replace(linkMatch[0], alias.alias_name);
+                        } else {
+                            let linkIDStr: string = JSON.parse(linkID).$oid;
+                            let pageIDStr: string = alias.page_id.$oid;
+                            paragraph.passiveLinks[linkID] = alias;
+                            paragraph.text = paragraph.text.replace(linkMatch[0],
+                                '<a href="' + linkIDStr + '-' + pageIDStr + '-' + pending + '" target="_blank" id="' + pending + '">' + alias.alias_name + '</a>');
+                        }
                     }
                 }
             }
@@ -239,7 +243,7 @@ export class ParserService {
             if (alias.passive_links) {
                 for (let link of alias.passive_links) {
                     passiveLinkTable[JSON.stringify(link.passive_link_id)] = {
-                        alias_id: alias.alias_id, pending: link.pending
+                        alias_id: alias.alias_id, pending: link.pending, deleted: false
                     };
                 }
             }

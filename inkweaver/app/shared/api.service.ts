@@ -499,11 +499,13 @@ export class ApiService {
                                 break;
                             case 'passive_link_created':
                                 this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)] = {
-                                    alias_id: reply.alias_id, pending: true
+                                    alias_id: reply.alias_id, pending: true, deleted: false
                                 };
                                 break;
                             case 'passive_link_deleted':
-                                delete this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)];
+                                if (this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)]) {
+                                    this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)].deleted = true;
+                                }
                                 break;
                             case 'passive_link_rejected':
                                 this.data.passiveLinkTable[JSON.stringify(reply.passive_link_id)].pending = false;
