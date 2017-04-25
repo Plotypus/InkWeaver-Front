@@ -441,7 +441,7 @@ export class ApiService {
                                 };
                                 if (this.data.selectedEntry)
                                     if (JSON.stringify(this.data.selectedEntry.data.id["$oid"]) == JSON.stringify(reply.page_id["$oid"])) {
-                                        if (this.data.page) {
+                                        if (this.data.page && this.data.page.aliases) {
                                             this.data.page.aliases.push({
 
                                                 'index': this.data.page.aliases.length,
