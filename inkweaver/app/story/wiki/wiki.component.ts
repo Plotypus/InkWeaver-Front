@@ -67,6 +67,7 @@ export class WikiComponent {
     private dragNode: TreeNode;
     private dragMode: boolean = false;
     private dragNodeId: any;
+    private mode_title:any;
 
     private height: any;
        constructor(
@@ -704,6 +705,7 @@ export class WikiComponent {
             if (node.parent) {
                 this.dragNode = node;
                 this.dragMode = true;
+                this.mode_title = "Drag Mode Activated";
             }
             console.log("starting drag")
         }
@@ -763,7 +765,7 @@ export class WikiComponent {
                         this.dragNode.parent.children.splice(rmidx, 1);
                         //index of draged to node
                         node.children.splice(0, 0, this.dragNode);
-                        this.dragNode.parent = node.parent;
+                        this.dragNode.parent = node;
 //                        console.log("Moving: " + this.dragNode.label + " into " + node.label + "at index " + (idx));
 
                         this.wikiService.move_segment(this.dragNode.data.id, this.dragNode.parent.data.id, 0);
@@ -819,11 +821,14 @@ export class WikiComponent {
         public onStats(){
             if(!this.statMode)
             {
+                
                 if (this.data.selectedEntry.type == 'category')
                     this.wikiService.getWikiSegment(this.data.selectedEntry.data.id, this.onGetCallback());
                 else
                     this.wikiService.getWikiPage(this.data.selectedEntry.data.id, this.onGetCallback());
             }
+            else
+                this.mode_title = "Stats Mode Activated";
         }
         
 

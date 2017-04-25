@@ -267,10 +267,10 @@ width="450" height="200" responsive="true">
         <div class="navigation ui-g-3">
 
             <!--When a category is selected-->
-            <div [ngSwitch]="dragMode">
+            <div [ngSwitch]="dragMode || statMode">
                 <div *ngSwitchCase="true" >
                     <div id="drag">
-                        Drag Mode Activated
+                        {{mode_title}}
                     </div>
                 </div>
                 <div *ngSwitchCase ='false'>
