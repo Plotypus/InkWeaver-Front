@@ -153,7 +153,7 @@ export class UserComponent {
         this.newWikiTitle = '';
         this.newWikiSummary = '';
         this.displayStoryCreator = true;
-        this.wikis = [{ label: 'Create New Wiki', value: 'newWiki' }];
+        this.wikis = [{ label: 'Create New Notebook', value: 'newWiki' }];
         for (let wiki of this.data.wikis) {
             if (wiki.title) {
                 this.wikis.unshift({ label: wiki.title, value: wiki.wiki_id });
