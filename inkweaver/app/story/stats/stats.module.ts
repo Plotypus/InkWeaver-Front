@@ -9,7 +9,11 @@ import {TreeTableModule,
         ChartModule,
         DropdownModule,
         ChipsModule,
-        SliderModule
+        MultiSelectModule,
+        OverlayPanelModule,
+                ButtonModule
+
+        
 } from 'primeng/primeng';
 import {SharedModule} from '../../shared/shared.module';
 
@@ -25,7 +29,11 @@ import {SharedModule} from '../../shared/shared.module';
         SharedModule,
         DropdownModule,
         ChipsModule,
-        SliderModule
+        MultiSelectModule,
+        OverlayPanelModule,
+                ButtonModule
+
+        
             ],
     providers: [StatsService],
     declarations: [StatsComponent],

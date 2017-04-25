@@ -441,7 +441,7 @@ export class ApiService {
                                 };
                                 if (this.data.selectedEntry)
                                     if (JSON.stringify(this.data.selectedEntry.data.id["$oid"]) == JSON.stringify(reply.page_id["$oid"])) {
-                                        if (this.data.page) {
+                                        if (this.data.page && this.data.page.aliases) {
                                             this.data.page.aliases.push({
 
                                                 'index': this.data.page.aliases.length,
@@ -730,6 +730,14 @@ export class ApiService {
                                 this.data.stats.word_count = reply.statistics.word_count;
                                 this.data.stats.word_frequency = this.parser.parseWordFrequency(
                                     reply.statistics.word_frequency);
+                                    
+                                if (this.outgoing["stats" + reply.identifier.message_id]) {
+                                    let callback: Function =
+                                        this.outgoing["stats" + reply.identifier.message_id].callback;
+                                    callback(reply);
+                                    delete this.outgoing["stats" + reply.identifier.message_id];
+
+                                }
                                 break;
                             case 'got_page_frequencies':
                                 this.data.statsPageFrequency = this.parser.parsePageFrequency(reply.pages,
@@ -852,6 +860,9 @@ export class ApiService {
             key = 'segment' + message.identifier.message_id;
         } else if (message.action === 'delete_page') {
             key = 'page' + message.identifier.message_id;
+        }
+        else if (message.action === "get_section_statistics") {
+            key = 'stats' + message.identifier.message_id;
         } else {
             key = message.identifier.message_id;
         }

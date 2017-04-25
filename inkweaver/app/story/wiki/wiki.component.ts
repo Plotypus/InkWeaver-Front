@@ -215,7 +215,11 @@ export class WikiComponent {
              }
          }
          else
+         {  
+             if(page.node.type == "category")
+                page.node.expanded = !page.node.expanded;
              this.stats.showWikiStats();
+         }
         
              
      }

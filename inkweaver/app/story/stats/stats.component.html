@@ -8,64 +8,53 @@
            	<h2> Word Count: {{data.stats.word_count}} </h2>
         	<div class="search">
         	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-        	    <input #gb type="text" pInputText size="50" placeholder="Global Filter">
+        	    <input #gb type="text" pInputText size="50" placeholder="Filter">
         	</div>
-            <p-dataTable [value]="data.stats.word_frequency" [rows]="10" [paginator]="true" [globalFilter]="gb" [rowsPerPageOptions]="[5,10,20]" sortField="count" sortOrder="1" #dt>
-                <p-column field="word" header="Word" [sortable]="true"></p-column>
-                <p-column field="count" header="Word Frequency" [sortable]="true"></p-column>
+            <p-dataTable [value]="wordFreq" [rows]="10" [paginator]="true" [globalFilter]="gb" [rowsPerPageOptions]="[5,10,20]" #dt>
+                <p-column field="word" header="Word" [sortable]="true" [filter]="true" >
+                    <template pTemplate="filter" let-col>
+                        <button pButton style="float:right;" type="button" label="Exclude Words" (click)="op2.show($event)"></button>
+                        
+                    </template>               
+                </p-column>
+                <p-column field="count" header="Frequency" [sortable]="true" >
+                   
+                </p-column>
             </p-dataTable>
+
+            <p-overlayPanel #op2 [showCloseIcon]="true" [dismissable]="true">
+                <p-chips id="wordFreq" [(ngModel)]="excludeWord" (onAdd)="updateWordTable()" (onRemove)="updateWordTable()"></p-chips>
+            </p-overlayPanel>
         </ng-container>
         <!-- Wiki Stats -->
         <ng-container *ngSwitchCase='false'>
-            <h1>Statistics for {{title}}</h1>
-            
-            What Pages to Graph?
+            <h1>Statistics for {{data.selectedEntry.data.title}}</h1>
+            <div>
+            <div style="width:48%;float:left;">
+            <header>Add page to graph</header>
             <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 
-            (ngModelChange)="onChange()" [autoWidth] ='true'></p-dropdown>
-
-            <p-chips field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
+            (ngModelChange)="onChange()" ></p-dropdown>
+             <header>Graphed Pages</header>
+            <p-chips id="pageStats" field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
              
             </p-chips>
-            <br>
+            </div>
+            <div style="width:50%; float:right;">
+            <header> Chose what sections to graph</header>
             
-            Chose the domain of Graph?
             <p-dropdown [options]="domain1" [(ngModel)]="domain1Sel" 
-            (ngModelChange)="updateDomain(1)" [autoWidth] ='true'></p-dropdown>
+            (ngModelChange)="updateDomain(1)"></p-dropdown>
+            <header>Between</header>
             <p-dropdown [options]="domain2" [(ngModel)]="domain2Sel" 
-            (ngModelChange)="updateDomain(2)" [autoWidth] ='true'></p-dropdown>
+            (ngModelChange)="updateDomain(2)"></p-dropdown>
+            </div>
+            </div>
 
+            <br>
+            <div>
+            
             <p-chart type="bar" [data]="pageFreq" [options]="chartOption"></p-chart>
+            </div>
             
         </ng-container>
         </div>
-        <!--
-         Navigation
-        <div class="navigation ui-grid-col-3">
-        <p-tabView>
-        <p-tabPanel header={{data.story.story_title}}>
-            <p-treeTable [value]="data.storyNode"
-                         selectionMode="single"
-                         [(selection)]="data.statSection"
-                         (onNodeSelect)="selectSection($event)">
-                <p-column field="title">
-                    <template let-col let-node="rowData" pTemplate="body">
-                        <span>
-                            {{node.data.title | truncate : 25}}
-                        </span>
-                    </template>
-                </p-column>
-            </p-treeTable>
-        </p-tabPanel>
-        
-        <p-tabPanel header={{data.segment.title}}>
-            <p-treeTable [value]="data.wikiNav" styleClass="treetable-no-header" selectionMode="single" [(selection)]="data.statSegments" (onNodeSelect)="selectSegment($event)">
-                    <p-column field="data.title">
-                        <template let-node="rowData" pTemplate="body">
-                                {{node.data.title}}
-                        </template>
-                    </p-column>
-
-            </p-treeTable>
-        </p-tabPanel>
-        </p-tabView>
-        </div> -->
