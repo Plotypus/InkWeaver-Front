@@ -180,7 +180,7 @@ export class StatsComponent {
             labels: label,
             datasets: dataset
         };
-        this.chartOption['title'].text = "Page Interaction with "+ this.data.selectedEntry.data.title;
+        this.chartOption['title'].text = "Page Frequency for "+ this.data.selectedEntry.data.title;
         setTimeout(() => {
             this.chart.refresh();
         }, 50);
