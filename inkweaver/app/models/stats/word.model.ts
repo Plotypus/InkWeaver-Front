@@ -1,4 +1,4 @@
 ﻿export class Word{
 	word: string;
-	count: Number;
+	count: number;
 }

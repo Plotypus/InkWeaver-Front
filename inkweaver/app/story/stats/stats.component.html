@@ -29,25 +29,25 @@
         <!-- Wiki Stats -->
         <ng-container *ngSwitchCase='false'>
             <h1>Statistics for {{data.selectedEntry.data.title}}</h1>
+            
             <div>
-            <div style="width:48%;float:left;">
-            <header>Add page to graph</header>
+            <h3 style="padding: 1em 0em 0em 0em">Add another page</h3>
             <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 
             (ngModelChange)="onChange()" ></p-dropdown>
-             <header>Graphed Pages</header>
+             <h3>Graphed Pages</h3>
             <p-chips id="pageStats" field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
              
             </p-chips>
             </div>
-            <div style="width:50%; float:right;">
-            <header> Chose what sections to graph</header>
+            
+            <div style="width:100%; padding:1em 0em 0em 0em">
+            <h3 style="display:inline-block" >Graph from</h3>
             
             <p-dropdown [options]="domain1" [(ngModel)]="domain1Sel" 
             (ngModelChange)="updateDomain(1)"></p-dropdown>
-            <header>Between</header>
+            <h3 style="display:inline-block">to</h3>
             <p-dropdown [options]="domain2" [(ngModel)]="domain2Sel" 
             (ngModelChange)="updateDomain(2)"></p-dropdown>
-            </div>
             </div>
 
             <br>
@@ -55,6 +55,7 @@
             
             <p-chart type="bar" [data]="pageFreq" [options]="chartOption"></p-chart>
             </div>
+            
             
         </ng-container>
         </div>
