@@ -614,7 +614,15 @@ export class ParserService {
                 count: reply[words]
             });
         }
+        wordFreq.sort((a:Word,b:Word) => {
+            let diff:number = b.count - a.count;
+            if(diff === 0)
+            {
+               return a.word.localeCompare(b.word);
+            }else
 
+            return diff;
+        });
         return wordFreq;
     }
 

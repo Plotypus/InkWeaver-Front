@@ -276,8 +276,8 @@ width="450" height="200" responsive="true">
                 <div *ngSwitchCase ='false'>
                     <div class="nav-actions" *ngIf="data.selectedEntry.type == 'category' || data.selectedEntry.type == 'title'">
                         <!--<div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>-->
-                        <div pTooltip="Adds a section to the notebook that contains pages and sections to {{data.selectedEntry.data.title}}" tooltipPosition="bottom" class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
-                        <div pTooltip="Adds a page to {{data.selectedEntry.data.title}}" tooltipPosition="bottom" class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
+                        <div pTooltip="Adds a category to the notebook under {{data.selectedEntry.data.title}}" tooltipPosition="bottom" class="ui-grid-col-4" (click)="onAddPage(0)">Add Category</div>
+                        <div pTooltip="Adds a page to the notebook under {{data.selectedEntry.data.title}}" tooltipPosition="bottom" class="ui-grid-col-3" (click)="onAddPage(1)">Add Page</div>
                         <div class="ui-grid-col-3" (click)="onShow(0)">Delete</div>
 
                     </div>
