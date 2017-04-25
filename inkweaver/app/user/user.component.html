@@ -12,15 +12,15 @@
                 <td><textarea pInputTextarea [(ngModel)]="summary"></textarea></td>
             </tr>
             <tr>
-                <td><label>Wiki</label></td>
+                <td><label>Notebook</label></td>
                 <td><p-dropdown [options]="wikis" [(ngModel)]="newWiki"></p-dropdown></td>
             </tr>
             <tr *ngIf="newWiki == 'newWiki'">
-                <td><label>New Wiki Title</label></td>
+                <td><label>Notebook Title</label></td>
                 <td><input pInputText type="text" [(ngModel)]="newWikiTitle" /></td>
             </tr>
             <tr *ngIf="newWiki == 'newWiki'">
-                <td><label>New Wiki Summary</label></td>
+                <td><label>Notebook Summary</label></td>
                 <td><textarea pInputTextarea [(ngModel)]="newWikiSummary"></textarea></td>
             </tr>
             <tr></tr>
@@ -67,7 +67,7 @@
                             <p-panel styleClass="new-story-tile" (click)="openStoryCreator()">
                                 <header>
                                     Create Story
-                                    <div class="subheader">Using a New or Existing Wiki</div>
+                                    <div class="subheader">Using a New or Existing Notebook</div>
                                 </header>
                                 <div><i class="fa fa-plus-square-o"></i></div>
                             </p-panel>

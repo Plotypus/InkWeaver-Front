@@ -183,14 +183,8 @@ code {
     }
 
     .nav-actions div:hover {
-        cursor: pointer;
+        border-radius: 3px;
         background:var(--dark-blue);
-        border-radius:3px
-    }
-
-
-    .nav-actions i {
-        cursor: pointer;
     }
 
 .navigation hr {
