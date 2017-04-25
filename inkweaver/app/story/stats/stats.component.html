@@ -17,7 +17,7 @@
                         
                     </template>               
                 </p-column>
-                <p-column field="count" header="Word Frequency" [sortable]="true" >
+                <p-column field="count" header="Frequency" [sortable]="true" >
                    
                 </p-column>
             </p-dataTable>
@@ -28,24 +28,33 @@
         </ng-container>
         <!-- Wiki Stats -->
         <ng-container *ngSwitchCase='false'>
-            <h1>Statistics for {{title}}</h1>
-            
-            What Pages to Graph?
+            <h1>Statistics for {{data.selectedEntry.data.title}}</h1>
+            <div>
+            <div style="width:48%;float:left;">
+            <header>Add page to graph</header>
             <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 
-            (ngModelChange)="onChange()" [autoWidth] ='true'></p-dropdown>
-
+            (ngModelChange)="onChange()" ></p-dropdown>
+             <header>Graphed Pages</header>
             <p-chips id="pageStats" field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
              
             </p-chips>
-            <br>
+            </div>
+            <div style="width:50%; float:right;">
+            <header> Chose what sections to graph</header>
             
-            Chose the domain of Graph?
             <p-dropdown [options]="domain1" [(ngModel)]="domain1Sel" 
-            (ngModelChange)="updateDomain(1)" [autoWidth] ='true'></p-dropdown>
+            (ngModelChange)="updateDomain(1)"></p-dropdown>
+            <header>Between</header>
             <p-dropdown [options]="domain2" [(ngModel)]="domain2Sel" 
-            (ngModelChange)="updateDomain(2)" [autoWidth] ='true'></p-dropdown>
+            (ngModelChange)="updateDomain(2)"></p-dropdown>
+            </div>
+            </div>
 
+            <br>
+            <div>
+            
             <p-chart type="bar" [data]="pageFreq" [options]="chartOption"></p-chart>
+            </div>
             
         </ng-container>
         </div>

@@ -35,13 +35,18 @@ stats .ui-tabview-panel{
     list-style-type: none;
     margin: 0;
     overflow: auto;
-    padding: 0 .25em;
+    padding: 0px .5em;
     background: transparent;
     border:none;
+
 }
 
 .stats #pageStats .ui-chips-input-token{
     display:none;
+}
+
+#pageStats .ui-chips>ul.ui-inputtext{
+    max-height: 15em;
 }
 
 .stats .ui-chips-token{

@@ -64,8 +64,6 @@ export class StatsComponent {
         }
         //wiki stats
         else {
-            this.showWikiStats();
-            this.selectedOption = null;
             this.chartOption = {
                 scales: {
                     yAxes: [{
@@ -85,8 +83,18 @@ export class StatsComponent {
                             callback: function (value) { return value.length > 25 ? value.substring(0, 25) + '...' : value; }
                         }
                     }]
-                }
+                },
+                title: {
+                        display: true,
+                        text: 'Custom Chart Title',
+                        fullWidth:true,
+                        fontSize: 30,
+                        fontColor: "#252E3B"
+                    }
             }
+            this.showWikiStats();
+            this.selectedOption = null;
+            
         }
     }
 
@@ -142,10 +150,6 @@ export class StatsComponent {
 
         });
 
-        if (this.statSegments.length >= 1) {
-            this.title = this.statSegments[0].label;
-        }
-
         this.allOptions = this.data.wikiFlatten.filter((ele: any) => {
             return this.statSegments.indexOf(ele.value) != -1
         });
@@ -176,6 +180,7 @@ export class StatsComponent {
             labels: label,
             datasets: dataset
         };
+        this.chartOption['title'].text = "Page Interaction with "+ this.data.selectedEntry.data.title;
         setTimeout(() => {
             this.chart.refresh();
         }, 50);
