@@ -552,6 +552,7 @@ export class ApiService {
 
                                 break;
                             case 'segment_deleted':
+                            if (!myMessage) 
                                 this.parser.deleteSegment(this.data.wikiNav[0], reply.segment_id);
                                 if (this.outgoing['segment' + reply.identifier.message_id]) {
                                     let callback: Function =
@@ -561,6 +562,7 @@ export class ApiService {
                                 }
                                 break;
                             case 'page_deleted':
+                            if (!myMessage) 
                                 this.parser.deletePage(this.data.wikiNav[0], reply.page_id);
                                 if (this.outgoing['page' + reply.identifier.message_id]) {
                                     let callback: Function =

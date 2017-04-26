@@ -505,10 +505,15 @@ export class WikiComponent {
             this.showDeleteDialog = false;
             if (!page)
                 return;
-            if (this.data.selectedEntry.type === 'category')
+            if (this.data.selectedEntry.type === 'category'){
+                this.parserService.deleteSegment(this.data.wikiNav[0], this.data.selectedEntry.data.id);
                 this.wikiService.deleteSegment(this.data.selectedEntry.data.id, this.onDeleteCallback());
+            }
             else
+            {
+                this.parserService.deletePage(this.data.wikiNav[0], this.data.selectedEntry.data.id);
                 this.wikiService.deletePage(this.data.selectedEntry.data.id, this.onDeleteCallback());
+            }
             this.wikiPage = null;
             this.data.page = null;
             this.data.selectedEntry = this.data.wikiNav[0];
@@ -752,7 +757,7 @@ export class WikiComponent {
                 Case 3: category -> category (inside)
                 Case 4: category -> around category
             */
-            if (node != this.dragNode) {
+            if ( this.dragNode && (node != this.dragNode)) {
                 if ((node.parent && node.parent == this.dragNode) || this.dragNode.type == 'title') {
                 //    console.log("moving parent into child");
                     //show error message
@@ -835,7 +840,7 @@ export class WikiComponent {
         }
 
         public nodeDragEnter(node){
-            if (this.dragNode != node) {
+            if ( this.dragNode && (this.dragNode != node)) {
                // console.log("entering " + node.label);
                 if (this.dragNode.type == 'page' && node.type == 'category')
                     node.expanded = true;
