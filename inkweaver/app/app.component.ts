@@ -51,6 +51,7 @@ export class AppComponent {
             {
                 label: 'Export PDF',
                 command: (event) => {
+                    this.collab = false;
                     this.setDefaults();
                 }
             },
@@ -61,11 +62,14 @@ export class AppComponent {
                 }
             },
             {
-                label: 'User Page', routerLink: ['/user']
+                label: 'User Page', command: (event) => {
+                    this.collab = false;
+                }, routerLink: ['/user']
             },
             {
                 label: 'Sign Out',
                 command: (event) => {
+                    this.collab = false;
                     this.userService.signOut();
                     this.websocketService.close();
                     this.apiService.resetData();

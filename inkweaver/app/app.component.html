@@ -31,7 +31,7 @@
             <div *ngIf="collab" class="collaborators">
                 <p-listbox [options]="data.collaborators" [(ngModel)]="collaboratorModel">
                     <template let-collaborator pTemplate="item">
-                        <div [ngSwitch]="!!collaborator.value">
+                        <div [ngSwitch]="!!collaborator.value" (keyup.enter)="addCollaborator(newUsername)">
                             <div *ngSwitchCase="true">
                                 {{collaborator.label}}
                                 <button pButton *ngIf="collaborator.value.access_level === 'collaborator'"

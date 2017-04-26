@@ -48,6 +48,7 @@ export class EditComponent {
     private newSegments: any;
     private passiveLinkID: ID;
     private passiveLinkPage: string;
+    private insertIndex: number;
 
     // Adding/editing sections
     private renaming: boolean;
@@ -155,6 +156,7 @@ export class EditComponent {
                         let text: string = this.editor.quill.getText(0, index + 1);
                         this.predict = text.slice(text.lastIndexOf('\n') + 1);
                         this.predict = this.predict.slice(this.predict.lastIndexOf(' ') + 1);
+                        this.insertIndex = index - (this.predict.length - 1);
                     }
 
                     if (this.predict) {
@@ -241,8 +243,10 @@ export class EditComponent {
                         // Active link
                         thread.onclick = (event: any) => {
                             event.preventDefault();
-                            this.wikiService.getWikiPage(pageID, () => { this.router.navigate(['story/wiki']) }, { page_id: pageID });
-                            //this.router.navigate(['/story/wiki']);
+                            this.wikiService.getWikiPage(pageID, () => {
+                                this.router.navigate(['story/wiki']);
+                            }, { page_id: pageID, load: true });
+                            // this.router.navigate(['/story/wiki']);
                         };
 
                         // Hover tooltip for links
@@ -316,57 +320,72 @@ export class EditComponent {
     }
 
     public setHotkey(editComp: EditComponent) {
-        setTimeout(function () {
+        setTimeout(() => {
             if (editComp.editor.quill) {
-                delete editComp.editor.quill.keyboard.bindings['9'];
+                editComp.editor.quill.keyboard.bindings['9'].unshift({
+                    handler: (range, context) => {
+                        if (editComp.suggest.display === 'block') {
+                            editComp.suggest.display = 'none';
+                            editComp.word = editComp.suggest.value.title;
+                            editComp.newLinkID = editComp.suggest.value.page_id;
+                            editComp.range = { index: editComp.insertIndex, length: editComp.predict.length };
+                            editComp.createLink();
+                            editComp.editor.quill.insertText(editComp.insertIndex + editComp.word.length, ' ', 'link', false);
+                            editComp.editor.quill.setSelection(editComp.insertIndex + editComp.word.length + 1, 0);
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }, key: 9
+                });
+                editComp.editor.quill.keyboard.bindings['13'].unshift({
+                    handler: (range, context) => {
+                        if (editComp.suggest.display === 'block') {
+                            editComp.suggest.display = 'none';
+                            editComp.word = editComp.suggest.value.title;
+                            editComp.newLinkID = editComp.suggest.value.page_id;
+                            editComp.range = { index: editComp.insertIndex, length: editComp.predict.length };
+                            editComp.createLink();
+                            editComp.editor.quill.insertText(editComp.insertIndex + editComp.word.length, ' ', 'link', false);
+                            editComp.editor.quill.setSelection(editComp.insertIndex + editComp.word.length + 1, 0);
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }, key: 13
+                });
 
                 // Shortcut for linking
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'L',
                     altKey: true
-                }, function () { editComp.openLinkCreator(editComp); });
-
-                // Tab for autocomplete
-                editComp.editor.quill.keyboard.addBinding({
-                    key: 'tab'
-                }, function (range, context) {
-                    if (editComp.suggest.display === 'block') {
-                        let word: string = context.prefix.slice(context.prefix.lastIndexOf(' ') + 1);
-                        let index: number = range.index - word.length;
-
-                        editComp.suggest.display = 'none';
-                        editComp.word = editComp.suggest.value.title;
-                        editComp.newLinkID = editComp.suggest.value.page_id;
-                        editComp.range = { index: index, length: word.length };
-                        editComp.createLink();
-                        editComp.editor.quill.insertText(index + editComp.word.length, ' ', 'link', false);
-                        editComp.editor.quill.setSelection(index + editComp.word.length + 1, 0);
-                    } else {
-                        return true;
-                    }
+                }, (range, context) => {
+                    editComp.openLinkCreator(editComp);
                 });
 
                 // If IntelliSense is active, move around possible suggestions
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'up'
-                }, function (range, context) {
+                }, (range, context) => {
                     if (editComp.suggest.display === 'block') {
                         let index: number = editComp.suggest.value.index;
                         if (index > 0) {
                             editComp.suggest.value = editComp.suggest.options[--index].value;
                         }
+                        return false;
                     } else {
                         return true;
                     }
                 });
                 editComp.editor.quill.keyboard.addBinding({
                     key: 'down'
-                }, function (range, context) {
+                }, (range, context) => {
                     if (editComp.suggest.display === 'block') {
                         let index: number = editComp.suggest.value.index;
                         if (index < editComp.suggest.options.length - 1) {
                             editComp.suggest.value = editComp.suggest.options[++index].value;
                         }
+                        return false;
                     } else {
                         return true;
                     }

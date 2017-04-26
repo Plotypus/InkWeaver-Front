@@ -235,6 +235,7 @@ export class ApiService {
                                     // Set the section in the navigation panel
                                     this.data.section = this.parser.setSection(
                                         this.data.storyNode[0], JSON.stringify(metadata.section_id));
+                                    this.data.prevSection = this.data.section;
 
                                     // If this is the top-level section, put a summary tag
                                     if (JSON.stringify(metadata.section_id) === JSON.stringify(this.data.story.section_id)) {
@@ -402,12 +403,12 @@ export class ApiService {
                                 this.data.bookmarks[0].children.splice(reply.index, 0, { data: reply, parent: this.data.bookmarks[0] });
                                 break;
                             case 'bookmark_updated':
-                                index = this.data.bookmarks[0].children.findIndex((bookmark: TreeNode) => JSON.stringify(reply.bookmark_id) === JSON.stringify(bookmark.data.bookmark_id));
-                                this.data.bookmarks[0].children[index].data.name = reply.update.name;
+                                let upd_i: number = this.data.bookmarks[0].children.findIndex((bookmark: TreeNode) => JSON.stringify(reply.bookmark_id) === JSON.stringify(bookmark.data.bookmark_id));
+                                this.data.bookmarks[0].children[upd_i].data.name = reply.update.name;
                                 break;
                             case 'bookmark_deleted':
-                                index = this.data.bookmarks[0].children.findIndex((bookmark: TreeNode) => JSON.stringify(reply.bookmark_id) === JSON.stringify(bookmark.data.bookmark_id));
-                                this.data.bookmarks[0].children.splice(index, 1);
+                                let del_i: number = this.data.bookmarks[0].children.findIndex((bookmark: TreeNode) => JSON.stringify(reply.bookmark_id) === JSON.stringify(bookmark.data.bookmark_id));
+                                this.data.bookmarks[0].children.splice(del_i, 1);
                                 break;
                             case 'note_updated':
                                 if (this.data.storyDisplay && this.data.section.data && JSON.stringify(reply.section_id) === JSON.stringify(this.data.section.data.section_id)) {
@@ -730,7 +731,7 @@ export class ApiService {
                                 this.data.stats.word_count = reply.statistics.word_count;
                                 this.data.stats.word_frequency = this.parser.parseWordFrequency(
                                     reply.statistics.word_frequency);
-                                    
+
                                 if (this.outgoing["stats" + reply.identifier.message_id]) {
                                     let callback: Function =
                                         this.outgoing["stats" + reply.identifier.message_id].callback;

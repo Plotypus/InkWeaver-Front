@@ -182,10 +182,10 @@ code {
         cursor: pointer;
     }
 
-    .nav-actions div:hover {
-        border-radius: 3px;
-        background:var(--dark-blue);
-    }
+        .nav-actions div:hover {
+            border-radius: 3px;
+            background: var(--dark-blue);
+        }
 
 .navigation hr {
     width: 90%;
