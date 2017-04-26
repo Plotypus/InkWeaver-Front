@@ -3,6 +3,7 @@ import { TreeNode } from 'primeng/primeng';
 
 import { ID } from '../../models/id.model';
 import { Link } from '../../models/link/link.model';
+import { PassiveLink } from '../../models/link/passive-link.model';
 import { Alias } from '../../models/link/alias.model';
 import { StoryService } from '../story.service';
 import { ApiService } from '../../shared/api.service';
@@ -135,15 +136,21 @@ export class EditService {
             if (!obj2[id]) {
                 this.deleteParagraph(JSON.parse(id), sectionID);
                 for (let link in obj1[id].links) {
-                    let aliasID: ID = this.apiService.data.linkTable[link].alias_id;
-                    let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
-                    deleted[link] = '{#|' + JSON.stringify(storyID) + '|' + JSON.stringify(alias.page_id) + '|' + alias.alias_name + '|#}';
-                    this.storyService.deleteLink(JSON.parse(link));
+                    let linkObj: Link = this.apiService.data.linkTable[link];
+                    if (linkObj) {
+                        let aliasID: ID = linkObj.alias_id;
+                        let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
+                        deleted[link] = '{#|' + JSON.stringify(storyID) + '|' + JSON.stringify(alias.page_id) + '|' + alias.alias_name + '|#}';
+                        this.storyService.deleteLink(JSON.parse(link));
+                    }
                 }
                 for (let passive in obj1[id].passiveLinks) {
-                    let aliasID: ID = this.apiService.data.passiveLinkTable[passive].alias_id;
-                    let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
-                    deleted[passive] = alias.alias_name;
+                    let linkObj: PassiveLink = this.apiService.data.passiveLinkTable[passive];
+                    if (linkObj) {
+                        let aliasID: ID = linkObj.alias_id;
+                        let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
+                        deleted[passive] = alias.alias_name;
+                    }
                     // this.storyService.deletePassiveLink(JSON.parse(passive));
                 }
             }
@@ -154,17 +161,23 @@ export class EditService {
             if (!id.startsWith('new')) {
                 for (let link in obj1[id].links) {
                     if (!obj2[id].links[link]) {
-                        let aliasID: ID = this.apiService.data.linkTable[link].alias_id;
-                        let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
-                        deleted[link] = '{#|' + JSON.stringify(storyID) + '|' + JSON.stringify(alias.page_id) + '|' + alias.alias_name + '|#}';
-                        this.storyService.deleteLink(JSON.parse(link));
+                        let linkObj: Link = this.apiService.data.linkTable[link];
+                        if (linkObj) {
+                            let aliasID: ID = linkObj.alias_id;
+                            let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
+                            deleted[link] = '{#|' + JSON.stringify(storyID) + '|' + JSON.stringify(alias.page_id) + '|' + alias.alias_name + '|#}';
+                            this.storyService.deleteLink(JSON.parse(link));
+                        }
                     }
                 }
                 for (let passive in obj1[id].passiveLinks) {
                     if (!obj2[id].passiveLinks[passive]) {
-                        let aliasID: ID = this.apiService.data.passiveLinkTable[passive].alias_id;
-                        let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
-                        deleted[passive] = alias.alias_name;
+                        let linkObj: PassiveLink = this.apiService.data.passiveLinkTable[passive];
+                        if (linkObj) {
+                            let aliasID: ID = linkObj.alias_id;
+                            let alias: Alias = this.apiService.data.aliasTable[JSON.stringify(aliasID)];
+                            deleted[passive] = alias.alias_name;
+                        }
                         // this.storyService.deletePassiveLink(JSON.parse(passive));
                     }
                 }
