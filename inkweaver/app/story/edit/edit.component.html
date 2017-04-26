@@ -115,7 +115,7 @@
                             <button pButton type="button" label="Edit" (click)="noteEditing = true"></button>
                         </div>
                         <div *ngSwitchCase="true">
-                            <div><textarea pInputTextarea [(ngModel)]="note.text"></textarea></div>
+                            <div><textarea pInputTextarea [(ngModel)]="note.text" autofocus></textarea></div>
                             <button pButton type="button" label="Save" (click)="saveNote()"></button>
                         </div>
                     </div>

@@ -301,7 +301,7 @@ export class EditComponent {
 
     public keyUp(event: any) {
         // Save on every enter
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && this.suggest.display !== 'block' && !this.noteEditing) {
             let idx = this.editor.quill.getSelection();
             if (idx) {
                 let blot = this.editor.quill.getLine(idx.index);
@@ -348,6 +348,8 @@ export class EditComponent {
                             editComp.createLink();
                             editComp.editor.quill.insertText(editComp.insertIndex + editComp.word.length, ' ', 'link', false);
                             editComp.editor.quill.setSelection(editComp.insertIndex + editComp.word.length + 1, 0);
+                            return false;
+                        } else if (editComp.noteEditing) {
                             return false;
                         } else {
                             return true;
@@ -644,6 +646,7 @@ export class EditComponent {
         this.editor.quill.deleteText(this.note.index, this.note.length);
         this.editor.quill.insertText(this.note.index, this.note.text, 'code', ' ');
         this.note.display = 'none';
+        this.save(false, false);
     }
 
     // Save the current state of the editor

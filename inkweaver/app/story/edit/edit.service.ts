@@ -158,7 +158,7 @@ export class EditService {
 
         // Delete links and passive links
         for (let id in obj2) {
-            if (!id.startsWith('new')) {
+            if (!id.startsWith('new') && obj1[id]) {
                 for (let link in obj1[id].links) {
                     if (!obj2[id].links[link]) {
                         let linkObj: Link = this.apiService.data.linkTable[link];
