@@ -6,7 +6,7 @@
     width="450" height="200" responsive="true">
 
 
-    <input type="text" pInputText [(ngModel)]="pageName" (ngModelChange)="onTextChange(pageName,false)"/>
+    <input type="text" pInputText [(ngModel)]="pageName" (ngModelChange)="onTextChange(pageName,false)" autofocus/>
 
     <div *ngIf="exist" style='color: red;font-style: italic;'>
         The following {{addContent}}: {{pageName}} all ready exist!
@@ -93,6 +93,7 @@ width="450" height="200" responsive="true">
                     <!--Page-->
                     <!--Title -->
                     <div class="header" style="width: 100%;" [ngSwitch]='disabled[0]'>
+                        
                         <div *ngSwitchCase='true'>
                             <h1 (click)="onDisable(0)">{{wikiPage.title}}</h1>
                             <div class="icons">
@@ -102,11 +103,12 @@ width="450" height="200" responsive="true">
 
                         </div>
                         <div *ngSwitchCase='false'>
-                            <input id="editable" type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" />
+                            <input id="editable" type="text" pInputText [(ngModel)]="wikiPage.title" [disabled]="disabled[0]" autofocus  (keyup.enter)="onDisable(0)" />
                             <i class="fa {{icons[0]}}" (click)="onDisable(0)"></i>
                             <i *ngIf="!disabled[0]" class="fa fa-times" (click)="onCancel(0)"></i>
 
                         </div>
+                        
                     </div>
                     <!--Page-->
                     <div id="page_content" style=' width:100%; overflow: auto;'>
@@ -171,7 +173,7 @@ width="450" height="200" responsive="true">
                                 </header>
 
                                 <header *ngSwitchCase='false'>
-                                    <input id="editable"  type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" />
+                                    <input id="editable"  type="text" pInputText [(ngModel)]="section.title" [disabled]="disabled[i+1]" (keyup.enter)="onDisable(i+1)" />
                                     <span>
                                         <i class="fa {{icons[i+1]}}" (click)="onDisable(i+1)"></i>
                                         <i *ngIf="!disabled[i+1]" class="fa fa-times" (click)="onCancel(i+1)"></i>
@@ -182,7 +184,7 @@ width="450" height="200" responsive="true">
                             </div>
                             <!--Wiki Info    -->
                             <div [ngSwitch]=' wikiPageContent[i+1] && wikiPageContent[i+1].active'>
-                                <p-editor [(ngModel)]="section.text" *ngSwitchCase='true'>
+                                <p-editor id="activeEditor" [(ngModel)]="section.text" *ngSwitchCase='true'>
 
                                     <header>
                                         <span class="ql-formats">
@@ -297,7 +299,7 @@ width="450" height="200" responsive="true">
 
 
                         <!-- Takes care of not dragging-->
-                        <span [ngSwitch]="rename && node.data.id.$oid === data.selectedEntry.data.id.$oid"(contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation"
+                        <span [ngSwitch]="rename && node.data.id.$oid === renameNode.data.id.$oid"(contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation"
                         pDraggable="segmentdragdrop"
                         (onDragStart)="nodeDrag(node)" (onDragEnd)="endDrag()" 
                         (onDragEnter)="nodeDragEnter(node)" pDroppable="segmentdragdrop" (onDrop)="nodeDrop(node)"
@@ -316,7 +318,7 @@ width="450" height="200" responsive="true">
 
                         </span>
                         <span *ngSwitchCase="true">
-                            <input pInputText type="text" [(ngModel)]="newName" (click)="$event.stopPropagation()" />
+                            <input id="newName" pInputText type="text" [(ngModel)]="newName" (click)="$event.stopPropagation()" (keyup.enter)="onRename(node,true)" />
                             <button pButton icon="fa-check" (click)="onRename(node,true); $event.stopPropagation(); "></button>
                             <button pButton icon="fa-times" (click)="onRename(node,false); $event.stopPropagation();"></button>
                         </span>

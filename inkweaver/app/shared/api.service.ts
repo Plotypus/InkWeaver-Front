@@ -570,7 +570,7 @@ export class ApiService {
                                 break;
                             case 'segment_updated':
                                 let seg = this.data.selectedEntry as TreeNode;
-                                if (JSON.stringify(reply.segment_id) === JSON.stringify(seg.data.id)) {
+                                if ((JSON.stringify(reply.segment_id) === JSON.stringify(seg.data.id))) {
                                     this.data.page.title = reply.update['title'];
                                     seg.label = reply.update['title'];
                                     seg.data.title = reply.update['title'];
@@ -834,6 +834,7 @@ export class ApiService {
             wikiFuctions: new Array<Function>(),
             storyFunction: new Function(),
             selectedEntry: {},
+            fromContext: Boolean
         };
     }
 

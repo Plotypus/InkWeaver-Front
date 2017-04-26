@@ -121,7 +121,7 @@ wiki > .ui-grid, wiki > .ui-grid > .ui-grid-row {
     background: transparent;
     /* color: var(--dark-gray); */
     border: none;
-    /* padding: .5em 1em; */
+    /* padding: .5em 1em; 
     outline: -webkit-focus-ring-color auto 5px;
     /* font-size: larger; */
 }

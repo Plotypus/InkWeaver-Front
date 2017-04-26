@@ -59,6 +59,8 @@ export class WikiComponent {
 
     //context menus
     private contextMenuItems: MenuItem[];
+    private renameNode: TreeNode;
+
 
     //stats stuff
     private statMode = false;
@@ -142,16 +144,33 @@ export class WikiComponent {
 
     //setting up the context menu for navigation bar based on the type of element clicked    
     public setContextMenu(node:any){
-        this.data.selectedEntry = node;
+        this.renameNode = node;
         this.rename = false;
         if(node.type == 'page'){
-            this.contextMenuItems = [{ label: 'Rename', command: () => { this.rename = true; this.newName = node.label; } },
+            this.contextMenuItems = [{ label: 'Rename', 
+            command: () => { this.rename = true; this.newName = node.label;
+            window.setTimeout(function () { 
+                let input = <HTMLScriptElement>document.getElementById("newName");
+                if(input)
+                {
+                        document.getElementById('newName').focus(); 
+                }
+            }, 0);
+            
+        } },
 
             { label: 'Delete', command: () => { this.onShow(0); } }];
         }
         else if(node.type == 'category' || node.type == 'title')
         {
-            this.contextMenuItems = [{ label: 'Rename', command: () => { this.rename = true; this.newName = node.label; } },
+            this.contextMenuItems = [{ label: 'Rename', command: () => { this.rename = true; this.newName = node.label; window.setTimeout(function () { 
+                let input = <HTMLScriptElement>document.getElementById("newName");
+                if(input)
+                {
+                        document.getElementById('newName').focus(); 
+                }
+            }, 0);
+              } },
             { label: 'Add Category', command: () => { this.onAddPage(0); } },
             { label: 'Add Page', command: () => { this.onAddPage(0); } },
             { label: 'Delete', command: () => { this.onShow(0); } }];
@@ -164,7 +183,7 @@ export class WikiComponent {
         {
             if(node.type == 'category')
             {
-                this.wikiService.editSegment(this.data.selectedEntry.data.id, 'set_title', this.newName);
+                this.wikiService.editSegment(node.data.id, 'set_title', this.newName);
             }
             else if(node.type == 'title')
             {
@@ -172,8 +191,9 @@ export class WikiComponent {
             }
             else
             {
-                this.wikiService.editPage(this.data.selectedEntry.data.id, 'set_title', this.newName);
+                this.wikiService.editPage(node.data.id, 'set_title', this.newName);
             }
+
         }
         else
         {
@@ -345,7 +365,15 @@ export class WikiComponent {
 
             let title = "";
             let text = "";
-
+            
+            window.setTimeout(function () { 
+            let input = <HTMLScriptElement>document.getElementById("editable");
+            if(input)
+            {
+                    document.getElementById('editable').focus(); 
+            }
+                }, 0); 
+            
             //saving the previous state
             if (this.disabled[idx]) {
                 this.icons[idx] = 'fa-check';
