@@ -11,7 +11,6 @@
 html {
     height: 100%;
     font-size: 0.9em;
-    overflow-y: scroll;
 }
 
 body {
@@ -91,6 +90,7 @@ ink-app > p-panel > .ui-panel > .ui-panel-content-wrapper {
     position: relative;
     z-index: 15 !important;
     background: var(--light-blue);
+    overflow-y: auto;
 }
 
     .navigation table,

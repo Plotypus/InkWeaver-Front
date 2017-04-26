@@ -21,7 +21,7 @@ story > p-panel > .ui-panel {
     }
 
 story > p-panel > .ui-panel > .ui-panel-content-wrapper {
-    height: calc(100% - 6em) !important;
+    height: calc(100% - 7em) !important;
 }
 
     story > p-panel > .ui-panel > .ui-panel-content-wrapper > .ui-panel-content {

@@ -1,6 +1,6 @@
 ﻿/* Height */
 edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
-    height: 98%;
+    height: 100%;
 }
 
 .editor {
@@ -186,6 +186,14 @@ code {
             border-radius: 3px;
             background: var(--dark-blue);
         }
+
+p-treetable {
+    height: 50% !important;
+}
+
+.bookmarks {
+    height: 50% !important;
+}
 
 .navigation hr {
     width: 90%;
