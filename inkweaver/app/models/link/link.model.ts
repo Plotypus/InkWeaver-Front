@@ -1,4 +1,4 @@
-﻿import { ID } from '../ID.model';
+﻿import { ID } from '../id.model';
 
 export class Link {
     deleted: boolean;
