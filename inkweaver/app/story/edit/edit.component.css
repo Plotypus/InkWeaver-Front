@@ -80,6 +80,7 @@ edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
     text-align: center;
     position: absolute;
     color: var(--dark-blue);
+    height: 50% !important;
 }
 
 .editor .ui-editor-content {
