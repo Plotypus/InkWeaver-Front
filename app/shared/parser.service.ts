@@ -91,7 +91,7 @@ export class ParserService {
   public setParagraph(paragraph: Paragraph): string {
     let content = "";
     if (paragraph.paragraph_id) {
-      content += "<p id=\"" + paragraph.paragraph_id.$oid + "\">";
+      content += '<p id="' + paragraph.paragraph_id.$oid + '">';
       if (paragraph.note) {
         content += "<code>" + paragraph.note + "</code>";
       }
@@ -156,11 +156,11 @@ export class ParserService {
           paragraph.links[linkID] = alias;
           paragraph.text = paragraph.text.replace(
             linkMatch[0],
-            "<a href=\"" +
+            '<a href="' +
               linkIDStr +
               "-" +
               pageIDStr +
-              "\" target=\"_blank\">" +
+              '" target="_blank">' +
               alias.alias_name +
               "</a>"
           );
@@ -182,15 +182,15 @@ export class ParserService {
               paragraph.passiveLinks[linkID] = alias;
               paragraph.text = paragraph.text.replace(
                 linkMatch[0],
-                "<a href=\"" +
+                '<a href="' +
                   linkIDStr +
                   "-" +
                   pageIDStr +
                   "-" +
                   pending +
-                  "\" target=\"_blank\" id=\"" +
+                  '" target="_blank" id="' +
                   pending +
-                  "\">" +
+                  '">' +
                   alias.alias_name +
                   "</a>"
               );

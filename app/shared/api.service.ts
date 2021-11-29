@@ -432,11 +432,11 @@ export class ApiService {
                     cursor: p.paragraph_id.$oid,
                   };
                   if (myMessage) {
-                    const regex: RegExp = new RegExp("<p id=\"added\">(.*?)</p>");
+                    const regex: RegExp = new RegExp('<p id="added">(.*?)</p>');
                     if (metadata.nocontent) {
                       this.data.storyDisplay = this.data.storyDisplay.replace(
                         regex,
-                        "<p id=\"" + p.paragraph_id.$oid + "\">$1</p>"
+                        '<p id="' + p.paragraph_id.$oid + '">$1</p>'
                       );
                     } else {
                       this.data.storyDisplay = this.data.storyDisplay.replace(
@@ -447,7 +447,7 @@ export class ApiService {
                   } else {
                     if (preKey.$oid) {
                       const regex: RegExp = new RegExp(
-                        "<p id=\"" + preKey.$oid + "\">.*?</p>"
+                        '<p id="' + preKey.$oid + '">.*?</p>'
                       );
                       this.data.storyDisplay = this.data.storyDisplay.replace(
                         regex,
@@ -455,7 +455,7 @@ export class ApiService {
                       );
                     } else if (postKey.$oid) {
                       const regex: RegExp = new RegExp(
-                        "<p id=\"" + postKey.$oid + "\">.*?</p>"
+                        '<p id="' + postKey.$oid + '">.*?</p>'
                       );
                       this.data.storyDisplay = this.data.storyDisplay.replace(
                         regex,
@@ -491,7 +491,7 @@ export class ApiService {
                     cursor: p.paragraph_id.$oid,
                   };
                   const regex: RegExp = new RegExp(
-                    "<p id=\"" + p.paragraph_id.$oid + "\">.*?</p>"
+                    '<p id="' + p.paragraph_id.$oid + '">.*?</p>'
                   );
                   this.data.storyDisplay = this.data.storyDisplay.replace(
                     regex,
@@ -540,7 +540,7 @@ export class ApiService {
                   // Remove paragraph from the display
                   if (!myMessage) {
                     const regex: RegExp = new RegExp(
-                      "<p id=\"" + reply.paragraph_id.$oid + "\">.*?</p>"
+                      '<p id="' + reply.paragraph_id.$oid + '">.*?</p>'
                     );
                     this.data.storyDisplay = this.data.storyDisplay.replace(
                       regex,
@@ -608,13 +608,13 @@ export class ApiService {
                     // Update story display
                     this.data.storyDisplay = this.data.storyDisplay.replace(
                       new RegExp(
-                        "<p id=\"" +
+                        '<p id="' +
                           reply.paragraph_id.$oid +
-                          "\">(<code>.*?</code>)?(.*?)</p>"
+                          '">(<code>.*?</code>)?(.*?)</p>'
                       ),
-                      "<p id=\"" +
+                      '<p id="' +
                         reply.paragraph_id.$oid +
-                        "\"><code>" +
+                        '"><code>' +
                         reply.note +
                         "</code>$2</p>"
                     );
@@ -636,11 +636,11 @@ export class ApiService {
                     // Update story display
                     this.data.storyDisplay = this.data.storyDisplay.replace(
                       new RegExp(
-                        "<p id=\"" +
+                        '<p id="' +
                           reply.paragraph_id.$oid +
-                          "\"><code>.*?</code>(.*?)</p>"
+                          '"><code>.*?</code>(.*?)</p>'
                       ),
-                      "<p id=\"" + reply.paragraph_id.$oid + "\">$1</p>"
+                      '<p id="' + reply.paragraph_id.$oid + '">$1</p>'
                     );
                   }
                 }
@@ -763,11 +763,11 @@ export class ApiService {
                 if (this.data.storyDisplay) {
                   this.data.storyDisplay = this.data.storyDisplay.replace(
                     new RegExp(
-                      "<a href=\"(" +
+                      '<a href="(' +
                         reply.passive_link_id.$oid +
-                        ")-([a-f0-9]{24})-true\" target=\"_blank\" id=\"true\">(.*?)</a>"
+                        ')-([a-f0-9]{24})-true" target="_blank" id="true">(.*?)</a>'
                     ),
-                    "<a href=\"$1-$2-false\" target=\"_blank\" id=\"false\">$3</a>"
+                    '<a href="$1-$2-false" target="_blank" id="false">$3</a>'
                   );
                 }
                 break;

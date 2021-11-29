@@ -16,6 +16,7 @@ declare var Quill: any;
 @Component({
   selector: "inkweaver",
   templateUrl: "./app/app.component.html",
+  styleUrls: ["./app/app.component.css"],
 })
 export class AppComponent implements OnInit {
   private data: any;

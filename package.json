@@ -20,7 +20,6 @@
     "@angular/platform-browser-dynamic": "^2.4.0",
     "@angular/router": "^3.4.0",
     "@angular/upgrade": "~2.4.0",
-    "@ngtools/webpack": "~1.2.13",
     "core-js": "^2.4.1",
     "primeng": "~1.1.4",
     "reflect-metadata": "~0.1.8",

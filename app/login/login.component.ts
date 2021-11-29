@@ -13,6 +13,7 @@ import { StoryService } from "../story/story.service";
 @Component({
   selector: "login",
   templateUrl: "./app/login/login.component.html",
+  styleUrls: ["./app/login/login.component.css"],
 })
 export class LoginComponent implements OnInit {
   private data: any;

@@ -12,6 +12,7 @@ import { StorySummary } from "../models/story/story-summary.model";
 @Component({
   selector: "user",
   templateUrl: "./app/user/user.component.html",
+  styleUrls: ["./app/user/user.component.css"],
 })
 export class UserComponent implements OnInit {
   private data: any;

@@ -11,6 +11,7 @@ import { StatsService } from "../stats/stats.service";
 @Component({
   selector: "wiki",
   templateUrl: "./app/story/wiki/wiki.component.html",
+  styleUrls: ["./app/story/wiki/wiki.component.css"],
 })
 export class WikiComponent implements OnInit, AfterViewInit {
   @ViewChild(StatsComponent) stats: StatsComponent;

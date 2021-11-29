@@ -26,6 +26,7 @@ declare var Quill: any;
 @Component({
   selector: "edit",
   templateUrl: "./app/story/edit/edit.component.html",
+  styleUrls: ["./app/story/edit/edit.component.css"],
 })
 export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(Editor) editor: Editor;

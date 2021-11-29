@@ -11,6 +11,7 @@ import { ParserService } from "../../shared/parser.service";
 @Component({
   selector: "stats",
   templateUrl: "./app/story/stats/stats.component.html",
+  styleUrls: ["./app/story/stats/stats.component.css"],
 })
 export class StatsComponent implements OnInit {
   // set up the class variables

@@ -238,11 +238,11 @@ export class EditService {
         // Encode links in an acceptable format
         obj2[id].text = obj2[id].text.replace(
           /<a href="new.+?-([a-f0-9]{24})" target="_blank">(.*?)<\/a>/g,
-          "{#|" + JSON.stringify(storyID) + "|{\"$$oid\":\"$1\"}|$2|#}"
+          "{#|" + JSON.stringify(storyID) + '|{"$$oid":"$1"}|$2|#}'
         );
         obj2[id].text = obj2[id].text.replace(
           /<a href="([a-f0-9]{24})-[a-f0-9]{24}(-(true|false))?" target="_blank"( id="(true|false)")?>.*?<\/a>/g,
-          "{\"$$oid\":\"$1\"}"
+          '{"$$oid":"$1"}'
         );
 
         // Remove notes
