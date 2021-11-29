@@ -1,9 +1,39 @@
-﻿import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { FilterPipe } from './filter.pipe';
-import {JsonPipe} from './json.pipe';
+﻿import { NgModule } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { FilterPipe } from "./filter.pipe";
+import { JsonPipe } from "./json.pipe";
 import {
+  MenuModule,
+  SharedModule,
+  EditorModule,
+  TreeTableModule,
+  ButtonModule,
+  DialogModule,
+  DropdownModule,
+  ConfirmDialogModule,
+  PanelModule,
+  DataListModule,
+  InputTextareaModule,
+  OverlayPanelModule,
+  DataGridModule,
+  ListboxModule,
+  CheckboxModule,
+  ContextMenuModule,
+  ToggleButtonModule,
+  DragDropModule,
+  TreeModule,
+  TooltipModule,
+} from "primeng/primeng";
+
+import { WikiService } from "./wiki.service";
+import { WikiComponent } from "./wiki.component";
+import { StatsModule } from "../stats/stats.module";
+
+@NgModule({
+  imports: [
+    FormsModule,
+    CommonModule,
     MenuModule,
     SharedModule,
     EditorModule,
@@ -11,60 +41,23 @@ import {
     ButtonModule,
     DialogModule,
     DropdownModule,
-    InputTextModule,
-    ConfirmDialogModule,
+    DataGridModule,
     PanelModule,
     DataListModule,
     InputTextareaModule,
     OverlayPanelModule,
-    DataGridModule,
+    ConfirmDialogModule,
     ListboxModule,
     CheckboxModule,
     ContextMenuModule,
+    StatsModule,
     ToggleButtonModule,
     DragDropModule,
+    TooltipModule,
     TreeModule,
-    TooltipModule
-    
-
-    
-} from 'primeng/primeng';
-
-import { WikiService } from './wiki.service';
-import { WikiComponent } from './wiki.component';
-import { StatsModule } from '../stats/stats.module';
-
-
-@NgModule({
-    imports: [
-        FormsModule,
-        CommonModule,
-        MenuModule,
-        SharedModule,
-        EditorModule,
-        TreeTableModule,
-        ButtonModule,
-        DialogModule,
-        DropdownModule,
-        DataGridModule,
-        PanelModule,
-        DataListModule,
-        InputTextareaModule,
-        OverlayPanelModule,
-        ConfirmDialogModule,
-        ListboxModule,
-        CheckboxModule,
-        ContextMenuModule,
-        StatsModule,
-        ToggleButtonModule,
-        DragDropModule,
-        TooltipModule,
-        TreeModule
-
-        
-    ],
-    providers: [WikiService, FilterPipe, JsonPipe],
-    declarations: [WikiComponent, FilterPipe, JsonPipe],
-    bootstrap: [WikiComponent]
+  ],
+  providers: [WikiService, FilterPipe, JsonPipe],
+  declarations: [WikiComponent, FilterPipe, JsonPipe],
+  bootstrap: [WikiComponent],
 })
-export class WikiModule { }
+export class WikiModule {}

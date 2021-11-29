@@ -1,24 +1,34 @@
 <p-panel>
-    <header>
-        <div class="title ui-g-9">
-            <!-- Title -->
-            <span [ngSwitch]="!!editing">
-                <span *ngSwitchCase="false" (click)="edit()">
-                    {{data.story.story_title}}
-                </span>
-                <span *ngSwitchCase="true">
-                    <input pInputText type="text" [(ngModel)]="data.story.story_title" />
-                    <button class="inline-button" pButton icon="fa fa-check" (click)="save()"></button>
-                    <button class="inline-button" pButton icon="fa fa-times" (click)="cancel()"></button>
-                </span>
-            </span>
-            <p>By: {{data.author}}</p>
-        </div>
-        <div class="menu ui-g-3">
-            <div class="menu-tabs">
-                <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
-            </div>
-        </div>
-    </header>
-    <router-outlet></router-outlet>
+  <header>
+    <div class="title ui-g-9">
+      <!-- Title -->
+      <span [ngSwitch]="!!editing">
+        <span *ngSwitchCase="false" (click)="edit()">
+          {{ data.story.story_title }}
+        </span>
+        <span *ngSwitchCase="true">
+          <input pInputText type="text" [(ngModel)]="data.story.story_title" />
+          <button
+            class="inline-button"
+            pButton
+            icon="fa fa-check"
+            (click)="save()"
+          ></button>
+          <button
+            class="inline-button"
+            pButton
+            icon="fa fa-times"
+            (click)="cancel()"
+          ></button>
+        </span>
+      </span>
+      <p>By: {{ data.author }}</p>
+    </div>
+    <div class="menu ui-g-3">
+      <div class="menu-tabs">
+        <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+      </div>
+    </div>
+  </header>
+  <router-outlet></router-outlet>
 </p-panel>

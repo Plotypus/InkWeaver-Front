@@ -1,66 +1,64 @@
 ﻿.stats {
-    text-align: left;
-   
-    background: #e6e6e6;
-    color: var(--light-blue);
-    padding: .5em 1em .5em 1em;
-    height: 100%;
-    overflow: auto;
+  text-align: left;
+
+  background: #e6e6e6;
+  color: var(--light-blue);
+  padding: 0.5em 1em 0.5em 1em;
+  height: 100%;
+  overflow: auto;
 }
 
-stats > .ui-grid, stats > .ui-grid > .ui-grid-row{
-    height: calc(100%);
+stats > .ui-grid,
+stats > .ui-grid > .ui-grid-row {
+  height: calc(100%);
 }
 
-.stats .search{
-    float: left;
-    padding-bottom: .5em
+.stats .search {
+  float: left;
+  padding-bottom: 0.5em;
 }
 
-stats .ui-tabview .ui-tabview-panel{
-    padding:0em !important;
+stats .ui-tabview .ui-tabview-panel {
+  padding: 0em !important;
 }
 
-stats .ui-tabview.ui-widget-content{
-    background: var(--light-blue);
+stats .ui-tabview.ui-widget-content {
+  background: var(--light-blue);
 }
 
-stats .ui-tabview-panel{
-    border:none;
+stats .ui-tabview-panel {
+  border: none;
 }
 
-.ui-chips>ul.ui-inputtext {
-    clear: left;
-    cursor: text;
-    list-style-type: none;
-    margin: 0;
-    overflow: auto;
-    padding: 0px .5em;
-    background: transparent;
-    border:none;
-
+.ui-chips > ul.ui-inputtext {
+  clear: left;
+  cursor: text;
+  list-style-type: none;
+  margin: 0;
+  overflow: auto;
+  padding: 0px 0.5em;
+  background: transparent;
+  border: none;
 }
 
-.stats #pageStats .ui-chips-input-token{
-    display:none;
+.stats #pageStats .ui-chips-input-token {
+  display: none;
 }
 
-#pageStats .ui-chips>ul.ui-inputtext{
-    max-height: 15em;
+#pageStats .ui-chips > ul.ui-inputtext {
+  max-height: 15em;
 }
 
-.stats .ui-chips-token{
-   
-    padding: .25em;
+.stats .ui-chips-token {
+  padding: 0.25em;
 }
 
-.stats .ui-dropdown{
-    width:25% !important;
+.stats .ui-dropdown {
+  width: 25% !important;
 }
-
 
 #wordFreq .ui-chips {
-    max-width: 300px;
-    max-height: 300px;
-    overflow: auto;
+  max-width: 300px;
+  max-height: 300px;
+  overflow: auto;
 }

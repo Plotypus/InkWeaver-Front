@@ -1,7 +1,7 @@
 ﻿export class Tooltip {
-    text: string;
-    display: string;
-    top: string;
-    left: string;
-    passive: boolean;
+  text: string;
+  display: string;
+  top: string;
+  left: string;
+  passive: boolean;
 }

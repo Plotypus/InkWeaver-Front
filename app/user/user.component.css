@@ -1,152 +1,153 @@
-﻿user > .ui-grid, user > .ui-grid > .ui-grid-row {
-    height: 100%;
+﻿user > .ui-grid,
+user > .ui-grid > .ui-grid-row {
+  height: 100%;
 }
 
 user .ui-datagrid-header {
-    border-radius: 0;
-    color: var(--dark-blue);
-    background: var(--light-gray);
+  border-radius: 0;
+  color: var(--dark-blue);
+  background: var(--light-gray);
 }
 
 user .ui-paginator {
-    background: var(--dark-blue) !important;
+  background: var(--dark-blue) !important;
 }
 
 user .ui-datagrid-content {
-    border: none;
-    padding: 1em;
-    border-top: 4px solid var(--dark-blue);
+  border: none;
+  padding: 1em;
+  border-top: 4px solid var(--dark-blue);
 }
 
 .story-tile .ui-panel-titlebar,
 .new-story-tile .ui-panel-titlebar {
-    color: white;
-    cursor: pointer;
-    text-align: center;
+  color: white;
+  cursor: pointer;
+  text-align: center;
 }
 
 .story-tile .ui-panel-content-wrapper {
-    cursor: pointer;
-    text-align: center;
-    background: var(--light-blue);
-    border: 2px solid var(--dark-blue);
-    position: relative;
+  cursor: pointer;
+  text-align: center;
+  background: var(--light-blue);
+  border: 2px solid var(--dark-blue);
+  position: relative;
 }
 
 .new-story-tile .ui-panel-content-wrapper {
-    cursor: pointer;
-    text-align: center;
-    background: white;
-    border: 2px solid var(--dark-blue);
+  cursor: pointer;
+  text-align: center;
+  background: white;
+  border: 2px solid var(--dark-blue);
 }
 
 .story-tile .fa-book,
 .new-story-tile .fa-plus-square-o {
-    margin: 5%;
-    font-size: 4em;
+  margin: 5%;
+  font-size: 4em;
 }
 
 .story-tile .fa-trash {
-    font-size: 1.5em;
-    color: var(--dark-gray);
-    position: absolute;
-    right: 0.5em;
-    bottom: 0.5em;
+  font-size: 1.5em;
+  color: var(--dark-gray);
+  position: absolute;
+  right: 0.5em;
+  bottom: 0.5em;
 }
 
 .subheader {
-    font-style: italic;
-    color: var(--dark-gray);
+  font-style: italic;
+  color: var(--dark-gray);
 }
 
 /* Navigation */
 .user-info {
-    margin: 5%;
-    padding: 5%;
-    height: 75%;
-    border-radius:4px;
-    background: var(--dark-blue);
+  margin: 5%;
+  padding: 5%;
+  height: 75%;
+  border-radius: 4px;
+  background: var(--dark-blue);
 }
 
 .user-info-fields input {
-    width: 70%;
+  width: 70%;
 }
 
 .user-info-fields button {
-    margin: 0;
-    width: 10%;
+  margin: 0;
+  width: 10%;
 }
 
 .user-info-fields textarea {
-    width: 100%;
-    min-height: 10em;
-    border-radius: 4px;
+  width: 100%;
+  min-height: 10em;
+  border-radius: 4px;
 }
 
 .user-info-label {
-    color: var(--dark-gray);
+  color: var(--dark-gray);
 }
 
 .user-info-field {
-    color: white;
-    cursor: pointer;
+  color: white;
+  cursor: pointer;
 }
 
 .default-field {
-    color: var(--tan);
-    font-style: italic;
+  color: var(--tan);
+  font-style: italic;
 }
 
 /* -------------------- Dialog -------------------- */
 .modal-label {
-    color: var(--dark-gray);
-    font-style: italic;
-    margin: 5% 0 2% 0;
+  color: var(--dark-gray);
+  font-style: italic;
+  margin: 5% 0 2% 0;
 }
 
 p-dialog .ui-dropdown-item {
-    border: none !important;
+  border: none !important;
 }
 
 p-dialog .ui-dialog-titlebar {
-    border-radius: 0;
-    color: var(--light-gray);
-    background: var(--dark-blue) !important;
+  border-radius: 0;
+  color: var(--light-gray);
+  background: var(--dark-blue) !important;
 }
 
 p-dialog .ui-dialog-titlebar-close {
-    color: var(--light-gray);
-    background: var(--dark-blue);
+  color: var(--light-gray);
+  background: var(--dark-blue);
 }
 
 p-dialog footer {
-    padding-right: 1.5em;
+  padding-right: 1.5em;
 }
 
 p-dialog .ui-dialog .ui-button {
-    float: right;
+  float: right;
 }
 
 p-dialog table,
 p-dialog input,
 p-dialog textarea,
 p-dialog .ui-dropdown {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 p-dialog .ui-dialog-content {
-    height: 75%;
+  height: 75%;
 }
 
 p-dialog input.ui-dropdown-filter {
-    width: 100%;
-    margin-bottom: 0;
+  width: 100%;
+  margin-bottom: 0;
 }
 
 p-dialog .ui-dropdown-filter-container {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 p-dialog .ui-dropdown.ui-state-focus .ui-dropdown-panel {
-    display: block !important;
+  display: block !important;
 }

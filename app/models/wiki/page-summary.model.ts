@@ -1,6 +1,6 @@
-﻿import { ID } from '../id.model';
+﻿import { ID } from "../id.model";
 
 export class PageSummary {
-    title: string;
-    page_id: ID;
+  title: string;
+  page_id: ID;
 }

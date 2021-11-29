@@ -1,61 +1,85 @@
-﻿        <!-- Stats -->
+﻿<!-- Stats -->
 
-        <div [ngSwitch]='mode'>
+<div [ngSwitch]="mode">
+  <!-- Story Stats -->
+  <ng-container *ngSwitchCase="true">
+    <h1>Statistics for {{ data.section.data.title }}</h1>
+    <h2>Word Count: {{ data.stats.word_count }}</h2>
+    <div class="search">
+      <i class="fa fa-search" style="margin: 4px 4px 0 0"></i>
+      <input #gb type="text" pInputText size="50" placeholder="Filter" />
+    </div>
+    <p-dataTable
+      [value]="wordFreq"
+      [rows]="10"
+      [paginator]="true"
+      [globalFilter]="gb"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      #dt
+    >
+      <p-column field="word" header="Word" [sortable]="true" [filter]="true">
+        <template pTemplate="filter" let-col>
+          <button
+            pButton
+            style="float: right"
+            type="button"
+            label="Exclude Words"
+            (click)="op2.show($event)"
+          ></button>
+        </template>
+      </p-column>
+      <p-column field="count" header="Frequency" [sortable]="true"> </p-column>
+    </p-dataTable>
 
-        <!-- Story Stats -->
-        <ng-container *ngSwitchCase='true'>
-           <h1>Statistics for {{data.section.data.title}}</h1>
-           	<h2> Word Count: {{data.stats.word_count}} </h2>
-        	<div class="search">
-        	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-        	    <input #gb type="text" pInputText size="50" placeholder="Filter">
-        	</div>
-            <p-dataTable [value]="wordFreq" [rows]="10" [paginator]="true" [globalFilter]="gb" [rowsPerPageOptions]="[5,10,20]" #dt>
-                <p-column field="word" header="Word" [sortable]="true" [filter]="true" >
-                    <template pTemplate="filter" let-col>
-                        <button pButton style="float:right;" type="button" label="Exclude Words" (click)="op2.show($event)"></button>
-                        
-                    </template>               
-                </p-column>
-                <p-column field="count" header="Frequency" [sortable]="true" >
-                   
-                </p-column>
-            </p-dataTable>
+    <p-overlayPanel #op2 [showCloseIcon]="true" [dismissable]="true">
+      <p-chips
+        id="wordFreq"
+        [(ngModel)]="excludeWord"
+        (onAdd)="updateWordTable()"
+        (onRemove)="updateWordTable()"
+      ></p-chips>
+    </p-overlayPanel>
+  </ng-container>
+  <!-- Wiki Stats -->
+  <ng-container *ngSwitchCase="false">
+    <h1>Statistics for {{ data.selectedEntry.data.title }}</h1>
 
-            <p-overlayPanel #op2 [showCloseIcon]="true" [dismissable]="true">
-                <p-chips id="wordFreq" [(ngModel)]="excludeWord" (onAdd)="updateWordTable()" (onRemove)="updateWordTable()"></p-chips>
-            </p-overlayPanel>
-        </ng-container>
-        <!-- Wiki Stats -->
-        <ng-container *ngSwitchCase='false'>
-            <h1>Statistics for {{data.selectedEntry.data.title}}</h1>
-            
-            <div>
-            <h3 style="padding: 1em 0em 0em 0em">Add another page</h3>
-            <p-dropdown [options]="statsOptions" [(ngModel)]="selectedOption" 
-            (ngModelChange)="onChange()" ></p-dropdown>
-             <h3>Graphed Pages</h3>
-            <p-chips id="pageStats" field='label' [(ngModel)]="statSegments" (onRemove)="updateDropdown($event, statSegments)">
-             
-            </p-chips>
-            </div>
-            
-            <div style="width:100%; padding:1em 0em 0em 0em">
-            <h3 style="display:inline-block" >Graph from</h3>
-            
-            <p-dropdown [options]="domain1" [(ngModel)]="domain1Sel" 
-            (ngModelChange)="updateDomain(1)"></p-dropdown>
-            <h3 style="display:inline-block">to</h3>
-            <p-dropdown [options]="domain2" [(ngModel)]="domain2Sel" 
-            (ngModelChange)="updateDomain(2)"></p-dropdown>
-            </div>
+    <div>
+      <h3 style="padding: 1em 0em 0em 0em">Add another page</h3>
+      <p-dropdown
+        [options]="statsOptions"
+        [(ngModel)]="selectedOption"
+        (ngModelChange)="onChange()"
+      ></p-dropdown>
+      <h3>Graphed Pages</h3>
+      <p-chips
+        id="pageStats"
+        field="label"
+        [(ngModel)]="statSegments"
+        (onRemove)="updateDropdown($event, statSegments)"
+      >
+      </p-chips>
+    </div>
 
-            <br>
-            <div>
-            
-            <p-chart type="bar" [data]="pageFreq" [options]="chartOption"></p-chart>
-            </div>
-            
-            
-        </ng-container>
-        </div>
+    <div style="width: 100%; padding: 1em 0em 0em 0em">
+      <h3 style="display: inline-block">Graph from</h3>
+
+      <p-dropdown
+        [options]="domain1"
+        [(ngModel)]="domain1Sel"
+        (ngModelChange)="updateDomain(1)"
+      ></p-dropdown>
+      <h3 style="display: inline-block">to</h3>
+      <p-dropdown
+        [options]="domain2"
+        [(ngModel)]="domain2Sel"
+        (ngModelChange)="updateDomain(2)"
+      ></p-dropdown>
+    </div>
+
+    <br />
+    <div>
+      <p-chart type="bar" [data]="pageFreq" [options]="chartOption"></p-chart>
+    </div>
+  </ng-container>
+</div>

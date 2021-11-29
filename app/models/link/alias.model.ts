@@ -1,6 +1,6 @@
-﻿import { ID } from '../id.model';
+﻿import { ID } from "../id.model";
 
 export class Alias {
-    page_id: ID;
-    alias_name: string;
+  page_id: ID;
+  alias_name: string;
 }

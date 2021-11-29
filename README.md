@@ -2,9 +2,10 @@
 
 ## Requirements
 
-Node.js (https://nodejs.org/en/)
+[Node.js](https://nodejs.org/en/) (inclues the npm command line interface) ()
 
 ## Instructions
+
 Clone the repository
 
 `cd Inkweaver-Front`

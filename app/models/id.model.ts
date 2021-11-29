@@ -1,3 +1,3 @@
 ﻿export class ID {
-    $oid: string;
+  $oid: string;
 }

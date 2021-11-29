@@ -1,7 +1,7 @@
-﻿import { ID } from '../id.model';
+﻿import { ID } from "../id.model";
 
 export class Collaborator {
-    user_id: ID;
-    name: string;
-    access_level: string;
+  user_id: ID;
+  name: string;
+  access_level: string;
 }

@@ -5,24 +5,16 @@
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": [
-      "es2016",
-      "dom"
-    ],
-    "module": "commonjs",
+    "lib": ["es2016", "dom"],
+    "module": "es2016",
     "moduleResolution": "node",
     "noImplicitAny": false,
     "outDir": "_out",
     "removeComments": true,
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "es6",
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "target": "es2016",
+    "typeRoots": ["node_modules/@types"]
   },
-  "exclude": [
-    "node_modules/*",
-    "**/*-aot.ts"
-  ]
+  "exclude": ["node_modules/*", "**/*-aot.ts"]
 }

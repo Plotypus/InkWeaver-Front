@@ -1,69 +1,109 @@
 ﻿<p-growl [value]="growl"></p-growl>
 
 <div class="login">
-    <p-panel header="Sign In" (keyup.enter)="signIn()">
-        <div class="ui-grid ui-grid-responsive">
-            <div class="ui-grid-row">
-                <div class="editor ui-grid-col-3"></div>
-                <div class="editor ui-grid-col-6">
-                    <table>
-                        <tbody>
-                            <tr class="login-row">
-                                <td></td>
-                                <td><label>Username</label></td>
-                                <td>
-                                    <input pInputText type="text" [(ngModel)]="login.username" required autofocus />
-                                </td>
-                            </tr>
-                            <tr class="login-row">
-                                <td></td>
-                                <td><label>Password</label></td>
-                                <td>
-                                    <input pInputText type="password" [(ngModel)]="login.password" required />
-                                </td>
-                            </tr>
-                            <tr class="login-row" *ngIf="signup">
-                                <td></td>
-                                <td><label>Name</label></td>
-                                <td>
-                                    <input pInputText type="text" [(ngModel)]="login.name" required />
-                                </td>
-                            </tr>
-                            <tr class="login-row" *ngIf="signup">
-                                <td></td>
-                                <td><label>Email</label></td>
-                                <td>
-                                    <input pInputText type="text" [(ngModel)]="login.email" required />
-                                </td>
-                            </tr>
-                            <tr class="login-row" *ngIf="signup">
-                                <td></td>
-                                <td><label>Bio</label></td>
-                                <td>
-                                    <input pInputText type="text" [(ngModel)]="login.bio" required />
-                                </td>
-                            </tr>
-                            <tr class="login-row">
-                                <td></td>
-                                <td></td>
-                                <td *ngIf="this.error" class="login-warn">{{this.error}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="editor ui-grid-col-3"></div>
-            </div>
-            <div class="ui-grid-row">
-                <div class="editor ui-grid-col-4"></div>
-                <div class="editor ui-grid-col-4" [ngSwitch]="signup">
-                    <button *ngSwitchCase="true" pButton (click)="signIn()" label="Sign Up"></button>
-                    <button *ngSwitchCase="false" pButton (click)="signIn()" label="Login"></button>
-                </div>
-                <div class="editor ui-grid-col-4" [ngSwitch]="signup">
-                    <a *ngSwitchCase="true" (click)="signup = false">Already have an account? Login here!</a>
-                    <a *ngSwitchCase="false" (click)="signup = true">Don't have an account? Sign up here!</a>
-                </div>
-            </div>
+  <p-panel header="Sign In" (keyup.enter)="signIn()">
+    <div class="ui-grid ui-grid-responsive">
+      <div class="ui-grid-row">
+        <div class="editor ui-grid-col-3"></div>
+        <div class="editor ui-grid-col-6">
+          <table>
+            <tbody>
+              <tr class="login-row">
+                <td></td>
+                <td><label>Username</label></td>
+                <td>
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="login.username"
+                    required
+                    autofocus
+                  />
+                </td>
+              </tr>
+              <tr class="login-row">
+                <td></td>
+                <td><label>Password</label></td>
+                <td>
+                  <input
+                    pInputText
+                    type="password"
+                    [(ngModel)]="login.password"
+                    required
+                  />
+                </td>
+              </tr>
+              <tr class="login-row" *ngIf="signup">
+                <td></td>
+                <td><label>Name</label></td>
+                <td>
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="login.name"
+                    required
+                  />
+                </td>
+              </tr>
+              <tr class="login-row" *ngIf="signup">
+                <td></td>
+                <td><label>Email</label></td>
+                <td>
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="login.email"
+                    required
+                  />
+                </td>
+              </tr>
+              <tr class="login-row" *ngIf="signup">
+                <td></td>
+                <td><label>Bio</label></td>
+                <td>
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="login.bio"
+                    required
+                  />
+                </td>
+              </tr>
+              <tr class="login-row">
+                <td></td>
+                <td></td>
+                <td *ngIf="this.error" class="login-warn">{{ this.error }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-    </p-panel>
+        <div class="editor ui-grid-col-3"></div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="editor ui-grid-col-4"></div>
+        <div class="editor ui-grid-col-4" [ngSwitch]="signup">
+          <button
+            *ngSwitchCase="true"
+            pButton
+            (click)="signIn()"
+            label="Sign Up"
+          ></button>
+          <button
+            *ngSwitchCase="false"
+            pButton
+            (click)="signIn()"
+            label="Login"
+          ></button>
+        </div>
+        <div class="editor ui-grid-col-4" [ngSwitch]="signup">
+          <a *ngSwitchCase="true" (click)="signup = false"
+            >Already have an account? Login here!</a
+          >
+          <a *ngSwitchCase="false" (click)="signup = true"
+            >Don't have an account? Sign up here!</a
+          >
+        </div>
+      </div>
+    </div>
+  </p-panel>
 </div>

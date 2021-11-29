@@ -1,193 +1,430 @@
 ﻿<p-contextMenu #contextMenu [model]="contextMenuItems"></p-contextMenu>
 
 <!-- Create Link Dialog -->
-<p-dialog modal="true" header="Create Link" [(visible)]="displayLinkCreator"
-          width="450" height="450" responsive="true" (keyup.enter)="createLink()">
-    <div class="modal-label">Link Text</div>
-    <input pInputText type="text" #link [(ngModel)]="word" />
-    <div class="modal-label">Wiki Page</div>
-    <p-dropdown [options]="newLinkPages" [(ngModel)]="newLinkID" filter="link"></p-dropdown>
-    <div class="modal-label" *ngIf="!newLinkID">Category Of New Wiki Page</div>
-    <p-dropdown [options]="newSegments" [(ngModel)]="newSegmentID" *ngIf="!newLinkID" filter="segment"></p-dropdown>
-    <footer>
-        <button pButton type="button" label="Create Link" icon="fa fa-link" iconPos="right" (click)="createLink()"></button>
-    </footer>
+<p-dialog
+  modal="true"
+  header="Create Link"
+  [(visible)]="displayLinkCreator"
+  width="450"
+  height="450"
+  responsive="true"
+  (keyup.enter)="createLink()"
+>
+  <div class="modal-label">Link Text</div>
+  <input pInputText type="text" #link [(ngModel)]="word" />
+  <div class="modal-label">Wiki Page</div>
+  <p-dropdown
+    [options]="newLinkPages"
+    [(ngModel)]="newLinkID"
+    filter="link"
+  ></p-dropdown>
+  <div class="modal-label" *ngIf="!newLinkID">Category Of New Wiki Page</div>
+  <p-dropdown
+    [options]="newSegments"
+    [(ngModel)]="newSegmentID"
+    *ngIf="!newLinkID"
+    filter="segment"
+  ></p-dropdown>
+  <footer>
+    <button
+      pButton
+      type="button"
+      label="Create Link"
+      icon="fa fa-link"
+      iconPos="right"
+      (click)="createLink()"
+    ></button>
+  </footer>
 </p-dialog>
 
 <!-- Add Section Dialog -->
-<p-dialog modal="true" header="Add Section" [(visible)]="displaySectionCreator"
-          width="450" height="450" responsive="true" (keyup.enter)="addSection()">
-    <div class="modal-label">Section Title</div>
-    <input pInputText type="text" [(ngModel)]="newSectionTitle" />
-    <footer>
-        <button pButton type="button" label="Add Section" (click)="addSection()"></button>
-    </footer>
+<p-dialog
+  modal="true"
+  header="Add Section"
+  [(visible)]="displaySectionCreator"
+  width="450"
+  height="450"
+  responsive="true"
+  (keyup.enter)="addSection()"
+>
+  <div class="modal-label">Section Title</div>
+  <input pInputText type="text" [(ngModel)]="newSectionTitle" />
+  <footer>
+    <button
+      pButton
+      type="button"
+      label="Add Section"
+      (click)="addSection()"
+    ></button>
+  </footer>
 </p-dialog>
 
 <!-- Delete Section Dialog -->
-<p-dialog modal="true" header="Delete Section" [(visible)]="displaySectionDeleter"
-          width="450" height="450" responsive="true" (keyup.enter)="deleteSection()">
-    <div class="modal-label" *ngIf="data.section && data.section.data">
-        Are you sure you want to delete {{data.section.data.title}}?
-    </div>
-    <footer>
-        <button pButton type="button" label="Delete Section" (click)="deleteSection()"></button>
-    </footer>
+<p-dialog
+  modal="true"
+  header="Delete Section"
+  [(visible)]="displaySectionDeleter"
+  width="450"
+  height="450"
+  responsive="true"
+  (keyup.enter)="deleteSection()"
+>
+  <div class="modal-label" *ngIf="data.section && data.section.data">
+    Are you sure you want to delete {{ data.section.data.title }}?
+  </div>
+  <footer>
+    <button
+      pButton
+      type="button"
+      label="Delete Section"
+      (click)="deleteSection()"
+    ></button>
+  </footer>
 </p-dialog>
 
 <!-- Add Bookmark Dialog -->
-<p-dialog modal="true" header="Add Bookmark" [(visible)]="displayBookmarkCreator"
-          width="450" height="450" responsive="true" (keyup.enter)="addBookmark()">
-    <div class="modal-label">Bookmark Title</div>
-    <input pInputText type="text" [(ngModel)]="newBookmark.name" />
-    <footer>
-        <button pButton type="button" label="Add Bookmark" (click)="addBookmark()"></button>
-    </footer>
+<p-dialog
+  modal="true"
+  header="Add Bookmark"
+  [(visible)]="displayBookmarkCreator"
+  width="450"
+  height="450"
+  responsive="true"
+  (keyup.enter)="addBookmark()"
+>
+  <div class="modal-label">Bookmark Title</div>
+  <input pInputText type="text" [(ngModel)]="newBookmark.name" />
+  <footer>
+    <button
+      pButton
+      type="button"
+      label="Add Bookmark"
+      (click)="addBookmark()"
+    ></button>
+  </footer>
 </p-dialog>
 
 <!-- Delete Bookmark Dialog -->
-<p-dialog modal="true" header="Delete Bookmark" [(visible)]="displayBookmarkDeleter"
-          width="450" height="450" responsive="true" (keyup.enter)="deleteBookmark()">
-    <div class="modal-label" *ngIf="bookmark.data">
-        Are you sure you want to delete {{bookmark.data.name}}?
-    </div>
-    <footer>
-        <button pButton type="button" label="Delete Bookmark" (click)="deleteBookmark()"></button>
-    </footer>
+<p-dialog
+  modal="true"
+  header="Delete Bookmark"
+  [(visible)]="displayBookmarkDeleter"
+  width="450"
+  height="450"
+  responsive="true"
+  (keyup.enter)="deleteBookmark()"
+>
+  <div class="modal-label" *ngIf="bookmark.data">
+    Are you sure you want to delete {{ bookmark.data.name }}?
+  </div>
+  <footer>
+    <button
+      pButton
+      type="button"
+      label="Delete Bookmark"
+      (click)="deleteBookmark()"
+    ></button>
+  </footer>
 </p-dialog>
 
 <div class="ui-grid ui-grid-responsive">
-    <div class="ui-grid-row">
-        <div class="ui-grid-col-9 editor-col">
-            <div *ngIf='statMode' class='stats'>
-                <stats [mode]='true'></stats>
-            </div>
-            <!-- Editor -->
-            <div [hidden]='statMode' class="editor">
-                <div class="loader" *ngIf="data.loading">
-                    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-                </div>
-                <div [ngClass]="{'loading-editor': data.loading}" (keyup)="keyUp($event)">
-                    <p-editor [(ngModel)]="data.storyDisplay" (blocked)="displayLinkCreator || displaySectionCreator || displaySectionDeleter || displayBookmarkCreator || displayBookmarkDeleter">
-                        <header>
-                            <span class="ql-formats">
-                                <button class="ql-link" (click)="openLinkCreator()"></button>
-                            </span>
-                            <span class="ql-formats">
-                                <select class="ql-size"></select>
-                                <select class="ql-font"></select>
-                                <select class="ql-color"></select>
-                            </span>
-                            <span class="ql-formats">
-                                <button class="ql-bold"></button>
-                                <button class="ql-italic"></button>
-                                <button class="ql-underline"></button>
-                                <button class="ql-strike"></button>
-                            </span>
-                            <span class="ql-formats">
-                                <button class="ql-list" value="ordered"></button>
-                                <button class="ql-list" value="bullet"></button>
-                                <button class="ql-indent" value="+1"></button>
-                                <button class="ql-indent" value="-1"></button>
-                                <select class="ql-align"></select>
-                            </span>
-                            <span class="ql-formats">
-                                <button class="ql-script" value="sub"></button>
-                                <button class="ql-script" value="super"></button>
-                            </span>
-                            <span class="ql-save">
-                                <button pButton type="button" label="Save" (click)="save(true)"></button>
-                                <button pButton type="button" label="Note" (click)="addNote()"></button>
-                            </span>
-                        </header>
-                    </p-editor>
-
-                    <div class="tooltip" [ngStyle]="{'display': data.tooltip.display,'top': data.tooltip.top, 'left': data.tooltip.left}">
-                        <div [innerHTML]="data.tooltip.text"></div>
-                        <div *ngIf="data.tooltip.passive">
-                            <button pButton type="button" label="Approve" (click)="approvePassive()"></button>
-                            <button pButton type="button" label="Reject" (click)="rejectPassive()"></button>
-                        </div>
-                    </div>
-                    <div class="tooltip" [ngSwitch]="!!noteEditing" [ngStyle]="{'display': note.display,'top': note.top, 'left': note.left}">
-                        <div *ngSwitchCase="false">
-                            <div>{{note.text}}</div>
-                            <button pButton type="button" label="Edit" (click)="noteEditing = true"></button>
-                        </div>
-                        <div *ngSwitchCase="true">
-                            <div><textarea pInputTextarea [(ngModel)]="note.text" autofocus></textarea></div>
-                            <button pButton type="button" label="Save" (click)="saveNote()"></button>
-                        </div>
-                    </div>
-                    <div class="suggest" [ngStyle]="{'display': suggest.display,'top': suggest.top, 'left': suggest.left}">
-                        <p-listbox [options]="suggest.options" [(ngModel)]="suggest.value"></p-listbox>
-                    </div>
-                </div>
-            </div>
-            <!-- Word Count -->
-            <div class="word-count">
-                <span *ngIf="!statMode">Word Count: {{wordCount}}</span>
-                <p-toggleButton onLabel="" offLabel="" onIcon="fa-pencil-square-o" offIcon="fa-bar-chart"
-                                [(ngModel)]="statMode" (onChange)="switchStats($event)"></p-toggleButton>
-            </div>
+  <div class="ui-grid-row">
+    <div class="ui-grid-col-9 editor-col">
+      <div *ngIf="statMode" class="stats">
+        <stats [mode]="true"></stats>
+      </div>
+      <!-- Editor -->
+      <div [hidden]="statMode" class="editor">
+        <div class="loader" *ngIf="data.loading">
+          <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
         </div>
+        <div
+          [ngClass]="{ 'loading-editor': data.loading }"
+          (keyup)="keyUp($event)"
+        >
+          <p-editor
+            [(ngModel)]="data.storyDisplay"
+            (blocked)="
+              (displayLinkCreator ||
+                displaySectionCreator ||
+                displaySectionDeleter ||
+                displayBookmarkCreator ||
+                displayBookmarkDeleter)
+            "
+          >
+            <header>
+              <span class="ql-formats">
+                <button class="ql-link" (click)="openLinkCreator()"></button>
+              </span>
+              <span class="ql-formats">
+                <select class="ql-size"></select>
+                <select class="ql-font"></select>
+                <select class="ql-color"></select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-indent" value="+1"></button>
+                <button class="ql-indent" value="-1"></button>
+                <select class="ql-align"></select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+              </span>
+              <span class="ql-save">
+                <button
+                  pButton
+                  type="button"
+                  label="Save"
+                  (click)="save(true)"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  label="Note"
+                  (click)="addNote()"
+                ></button>
+              </span>
+            </header>
+          </p-editor>
 
-
-        <!-- Navigation -->
-        <div class="navigation ui-grid-col-3">
-            <div class="nav-actions">
-                <div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>
-                <div class="ui-grid-col-6" (click)="openSectionCreator()">Add Subsection</div>
-                <div class="ui-grid-col-3" (click)="displaySectionDeleter = true">Delete</div>
+          <div
+            class="tooltip"
+            [ngStyle]="{
+              display: data.tooltip.display,
+              top: data.tooltip.top,
+              left: data.tooltip.left
+            }"
+          >
+            <div [innerHTML]="data.tooltip.text"></div>
+            <div *ngIf="data.tooltip.passive">
+              <button
+                pButton
+                type="button"
+                label="Approve"
+                (click)="approvePassive()"
+              ></button>
+              <button
+                pButton
+                type="button"
+                label="Reject"
+                (click)="rejectPassive()"
+              ></button>
             </div>
-            <p-treeTable [value]="data.storyNode" selectionMode="single" [(selection)]="data.section" (onNodeSelect)="selectSection($event)">
-                <p-column field="title">
-                    <template let-col let-node="rowData" pTemplate="body">
-                        <span [ngClass]="{'section-drag': dragNodeID.$oid === node.data.section_id.$oid}" class="section-header"
-                              pDraggable="sectiondragdrop" pDroppable="sectiondragdrop"
-                              (onDragStart)="sectionDrag(node)" (onDragEnd)="endDrag()"
-                              (onDrop)="sectionDrop(node)" (onDragEnter)="sectionDragEnter(node)"
-                              (contextmenu)="setContextMenu(node); contextMenu.show($event); $event.stopPropagation()">
-                            <span [ngSwitch]="!!renaming && node.data.section_id.$oid === data.section.data.section_id.$oid">
-                                <span *ngSwitchCase="false">{{node.data.title | truncate : 25}}</span>
-                                <span *ngSwitchCase="true" class="edit-title">
-                                    <input pInputText type="text" [(ngModel)]="newSectionTitle" (click)="$event.stopPropagation()" />
-                                    <button class="inline-button" pButton icon="fa-check" (click)="renameStory($event)" *ngIf="!node.parent"></button>
-                                    <button class="inline-button" pButton icon="fa-check" (click)="renameSection($event)" *ngIf="node.parent"></button>
-                                    <button class="inline-button" pButton icon="fa-times" (click)="cancelRenameSection($event)"></button>
-                                </span>
-                            </span>
-                        </span>
-                    </template>
-                </p-column>
-            </p-treeTable>
-
-            <hr />
-
-            <div class="bookmarks">
-                <div class="nav-actions">
-                    <div class="ui-grid-col-3" (click)="openBookmarkRenamer()">Rename</div>
-                    <div class="ui-grid-col-6" (click)="openBookmarkCreator()">Add Bookmark</div>
-                    <div class="ui-grid-col-3" (click)="displayBookmarkDeleter = true">Delete</div>
-                </div>
-                <p-treeTable [value]="data.bookmarks" selectionMode="single" [(selection)]="oldBookmark" (onNodeSelect)="selectBookmark($event)">
-                    <p-column field="title">
-                        <template let-col let-node="rowData" pTemplate="body">
-                            <span [ngSwitch]="!!bookmarkRenaming && node.data.bookmark_id.$oid === bookmark.data.bookmark_id.$oid">
-                                <span *ngSwitchCase="false">
-                                    <span *ngIf="!node.parent && node.data.name" class="bookmark-header"><i class="fa fa-bookmark"></i> {{node.data.name | truncate : 25}}</span>
-                                    <span *ngIf="node.parent && node.data.name">{{node.data.name | truncate : 25}}</span>
-                                </span>
-                                <span *ngSwitchCase="true" class="edit-title">
-                                    <input pInputText type="text" [(ngModel)]="newBookmark.name" (click)="$event.stopPropagation()" />
-                                    <button class="inline-button" pButton icon="fa-check" (click)="renameBookmark($event)"></button>
-                                    <button class="inline-button" pButton icon="fa-times" (click)="cancelRenameBookmark($event)"></button>
-                                </span>
-                            </span>
-                        </template>
-                    </p-column>
-                </p-treeTable>
+          </div>
+          <div
+            class="tooltip"
+            [ngSwitch]="!!noteEditing"
+            [ngStyle]="{
+              display: note.display,
+              top: note.top,
+              left: note.left
+            }"
+          >
+            <div *ngSwitchCase="false">
+              <div>{{ note.text }}</div>
+              <button
+                pButton
+                type="button"
+                label="Edit"
+                (click)="noteEditing = true"
+              ></button>
             </div>
+            <div *ngSwitchCase="true">
+              <div>
+                <textarea
+                  pInputTextarea
+                  [(ngModel)]="note.text"
+                  autofocus
+                ></textarea>
+              </div>
+              <button
+                pButton
+                type="button"
+                label="Save"
+                (click)="saveNote()"
+              ></button>
+            </div>
+          </div>
+          <div
+            class="suggest"
+            [ngStyle]="{
+              display: suggest.display,
+              top: suggest.top,
+              left: suggest.left
+            }"
+          >
+            <p-listbox [options]="suggest.options" [(ngModel)]="suggest.value">
+            </p-listbox>
+          </div>
         </div>
+      </div>
+      <!-- Word Count -->
+      <div class="word-count">
+        <span *ngIf="!statMode">Word Count: {{ wordCount }}</span>
+        <p-toggleButton
+          onLabel=""
+          offLabel=""
+          onIcon="fa-pencil-square-o"
+          offIcon="fa-bar-chart"
+          [(ngModel)]="statMode"
+          (onChange)="switchStats($event)"
+        >
+        </p-toggleButton>
+      </div>
     </div>
+
+    <!-- Navigation -->
+    <div class="navigation ui-grid-col-3">
+      <div class="nav-actions">
+        <div class="ui-grid-col-3" (click)="openSectionRenamer()">Rename</div>
+        <div class="ui-grid-col-6" (click)="openSectionCreator()">
+          Add Subsection
+        </div>
+        <div class="ui-grid-col-3" (click)="displaySectionDeleter = true">
+          Delete
+        </div>
+      </div>
+      <p-treeTable
+        [value]="data.storyNode"
+        selectionMode="single"
+        [(selection)]="data.section"
+        (onNodeSelect)="selectSection($event)"
+      >
+        <p-column field="title">
+          <template let-col let-node="rowData" pTemplate="body">
+            <span
+              [ngClass]="{
+                'section-drag': dragNodeID.$oid === node.data.section_id.$oid
+              }"
+              class="section-header"
+              pDraggable="sectiondragdrop"
+              pDroppable="sectiondragdrop"
+              (onDragStart)="sectionDrag(node)"
+              (onDragEnd)="endDrag()"
+              (onDrop)="sectionDrop(node)"
+              (onDragEnter)="sectionDragEnter(node)"
+              (contextmenu)="
+                setContextMenu(node);
+                contextMenu.show($event);
+                $event.stopPropagation()
+              "
+            >
+              <span
+                [ngSwitch]="
+                  !!renaming &&
+                  node.data.section_id.$oid ===
+                    data.section.data.section_id.$oid
+                "
+              >
+                <span *ngSwitchCase="false">{{
+                  node.data.title | truncate: 25
+                }}</span>
+                <span *ngSwitchCase="true" class="edit-title">
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="newSectionTitle"
+                    (click)="$event.stopPropagation()"
+                  />
+                  <button
+                    class="inline-button"
+                    pButton
+                    icon="fa-check"
+                    (click)="renameStory($event)"
+                    *ngIf="!node.parent"
+                  ></button>
+                  <button
+                    class="inline-button"
+                    pButton
+                    icon="fa-check"
+                    (click)="renameSection($event)"
+                    *ngIf="node.parent"
+                  ></button>
+                  <button
+                    class="inline-button"
+                    pButton
+                    icon="fa-times"
+                    (click)="cancelRenameSection($event)"
+                  ></button>
+                </span>
+              </span>
+            </span>
+          </template>
+        </p-column>
+      </p-treeTable>
+
+      <hr />
+
+      <div class="bookmarks">
+        <div class="nav-actions">
+          <div class="ui-grid-col-3" (click)="openBookmarkRenamer()">
+            Rename
+          </div>
+          <div class="ui-grid-col-6" (click)="openBookmarkCreator()">
+            Add Bookmark
+          </div>
+          <div class="ui-grid-col-3" (click)="displayBookmarkDeleter = true">
+            Delete
+          </div>
+        </div>
+        <p-treeTable
+          [value]="data.bookmarks"
+          selectionMode="single"
+          [(selection)]="oldBookmark"
+          (onNodeSelect)="selectBookmark($event)"
+        >
+          <p-column field="title">
+            <template let-col let-node="rowData" pTemplate="body">
+              <span
+                [ngSwitch]="
+                  !!bookmarkRenaming &&
+                  node.data.bookmark_id.$oid === bookmark.data.bookmark_id.$oid
+                "
+              >
+                <span *ngSwitchCase="false">
+                  <span
+                    *ngIf="!node.parent && node.data.name"
+                    class="bookmark-header"
+                    ><i class="fa fa-bookmark"></i>
+                    {{ node.data.name | truncate: 25 }}</span
+                  >
+                  <span *ngIf="node.parent && node.data.name">{{
+                    node.data.name | truncate: 25
+                  }}</span>
+                </span>
+                <span *ngSwitchCase="true" class="edit-title">
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="newBookmark.name"
+                    (click)="$event.stopPropagation()"
+                  />
+                  <button
+                    class="inline-button"
+                    pButton
+                    icon="fa-check"
+                    (click)="renameBookmark($event)"
+                  ></button>
+                  <button
+                    class="inline-button"
+                    pButton
+                    icon="fa-times"
+                    (click)="cancelRenameBookmark($event)"
+                  ></button>
+                </span>
+              </span>
+            </template>
+          </p-column>
+        </p-treeTable>
+      </div>
+    </div>
+  </div>
 </div>

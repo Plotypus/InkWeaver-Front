@@ -1,37 +1,37 @@
 ﻿.login {
-    top: 25%;
-    left: 25%;
-    width: 50%;
-    position: absolute;
-    text-align: center;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  position: absolute;
+  text-align: center;
 }
 
-    .login .ui-panel-titlebar {
-        color: var(--dark-blue);
-        background: var(--light-gray);
-    }
-    
-    .login .ui-grid {
-        background: white;
-        padding: 0 2em 2em 2em !important;
-    }
+.login .ui-panel-titlebar {
+  color: var(--dark-blue);
+  background: var(--light-gray);
+}
 
-    .login .ui-grid-row {
-        background: white;
-        color: var(--light-blue);
-        padding-top: 2em !important;
-    }
+.login .ui-grid {
+  background: white;
+  padding: 0 2em 2em 2em !important;
+}
+
+.login .ui-grid-row {
+  background: white;
+  color: var(--light-blue);
+  padding-top: 2em !important;
+}
 
 .login-row {
-    text-align: left;
+  text-align: left;
 }
 
 .login-warn {
-    text-align: left;
-    color: var(--orange);
+  text-align: left;
+  color: var(--orange);
 }
 
 .login a {
-    cursor: pointer;
-    color: var(--link-blue);
+  cursor: pointer;
+  color: var(--link-blue);
 }

@@ -1,5 +1,5 @@
-import {Word} from './word.model'
+import { Word } from "./word.model";
 
-export class WordTable{
-	[word:string]: Word;
+export class WordTable {
+  [word: string]: Word;
 }

@@ -1,243 +1,245 @@
 ﻿/* Height */
-edit > .ui-grid, edit > .ui-grid > .ui-grid-row {
-    height: 100%;
+edit > .ui-grid,
+edit > .ui-grid > .ui-grid-row {
+  height: 100%;
 }
 
 .editor {
-    height: calc(100% - 3em);
+  height: calc(100% - 3em);
 }
 
 .editor-col .stats {
-    height: calc(100% - 3em);
+  height: calc(100% - 3em);
 }
 
-.editor > div, .ui-editor-container {
-    height: 100%;
+.editor > div,
+.ui-editor-container {
+  height: 100%;
 }
 
 .ui-editor-toolbar {
-    height: 3em;
+  height: 3em;
 }
 
 .ui-editor-content {
-    height: calc(100% - 3em);
+  height: calc(100% - 3em);
 }
 
 .word-count {
-    height: 3em;
-    background: #e6e6e6;
-    padding: 0.75em;
+  height: 3em;
+  background: #e6e6e6;
+  padding: 0.75em;
 }
 
 .ui-grid-col-9 {
-    z-index: 20;
+  z-index: 20;
 }
 
 /* Toolbar */
 .ui-editor-toolbar {
-    border-radius: 0;
-    background: var(--light-gray);
+  border-radius: 0;
+  background: var(--light-gray);
 }
 
 .ql-expanded ::before {
-    color: black !important;
+  color: black !important;
 }
 
 .ql-save .ui-button {
-    width: 4em !important;
-    padding: 0 !important;
-    float: right !important;
-    margin: 0 0.25em 0 0.25em;
+  width: 4em !important;
+  padding: 0 !important;
+  float: right !important;
+  margin: 0 0.25em 0 0.25em;
 }
 
-    .ql-save .ui-button:first-child :hover {
-        color: var(--light-gray) !important;
-    }
+.ql-save .ui-button:first-child :hover {
+  color: var(--light-gray) !important;
+}
 
-    .ql-save .ui-button:nth-child(2) {
-        color: var(--dark-blue);
-        background: floralwhite !important;
-    }
+.ql-save .ui-button:nth-child(2) {
+  color: var(--dark-blue);
+  background: floralwhite !important;
+}
 
-        .ql-save .ui-button:nth-child(2) :hover {
-            color: var(--dark-gray) !important;
-        }
+.ql-save .ui-button:nth-child(2) :hover {
+  color: var(--dark-gray) !important;
+}
 
 /* Content */
 .editor {
-    z-index: 10;
+  z-index: 10;
 }
 
 .loading-editor {
-    filter: blur(2px);
+  filter: blur(2px);
 }
 
 .loader {
-    top: 50%;
-    left: 33%;
-    z-index: 10;
-    font-size: 2em;
-    text-align: center;
-    position: absolute;
-    color: var(--dark-blue);
-    height: 50% !important;
+  top: 50%;
+  left: 33%;
+  z-index: 10;
+  font-size: 2em;
+  text-align: center;
+  position: absolute;
+  color: var(--dark-blue);
+  height: 50% !important;
 }
 
 .editor .ui-editor-content {
-    background: white;
+  background: white;
 }
 
 .ui-editor-content h1 {
-    color: var(--dark-gray);
-    font-size: 1.8em !important;
-    margin: 0.5em 1em 0.5em 1em;
-    border-bottom: 1px solid var(--light-gray);
+  color: var(--dark-gray);
+  font-size: 1.8em !important;
+  margin: 0.5em 1em 0.5em 1em;
+  border-bottom: 1px solid var(--light-gray);
 }
 
 .ui-editor-content p {
-    padding: 1em 3em 1em 3em;
+  padding: 1em 3em 1em 3em;
 }
 
 .ql-link {
-    height: 2em !important;
+  height: 2em !important;
 }
 
-    .ql-link path, .ql-link line {
-        stroke: var(--link-blue) !important;
-    }
+.ql-link path,
+.ql-link line {
+  stroke: var(--link-blue) !important;
+}
 
 .ql-editor a {
-    cursor: pointer;
-    color: var(--link-blue) !important;
+  cursor: pointer;
+  color: var(--link-blue) !important;
 }
 
 #true {
-    color: var(--orange) !important;
+  color: var(--orange) !important;
 }
 
 #false {
-    cursor: text;
-    text-decoration: none;
-    color: black !important;
+  cursor: text;
+  text-decoration: none;
+  color: black !important;
 }
 
 .ql-tooltip {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .tooltip {
-    z-index: 20;
-    max-width: 25%;
-    padding: 0.25em;
-    position: absolute;
-    border-radius: 2px;
-    color: var(--light-blue);
-    background: floralwhite;
-    border: 1px solid var(--light-blue);
+  z-index: 20;
+  max-width: 25%;
+  padding: 0.25em;
+  position: absolute;
+  border-radius: 2px;
+  color: var(--light-blue);
+  background: floralwhite;
+  border: 1px solid var(--light-blue);
 }
 
-    .tooltip button {
-        float: right;
-        margin-top: 0.5em !important;
-        color: var(--light-blue) !important;
-        background: var(--light-gray) !important;
-    }
+.tooltip button {
+  float: right;
+  margin-top: 0.5em !important;
+  color: var(--light-blue) !important;
+  background: var(--light-gray) !important;
+}
 
 .suggest {
-    position: absolute;
-    border-radius: 2px;
-    border: 1px solid var(--light-blue);
+  position: absolute;
+  border-radius: 2px;
+  border: 1px solid var(--light-blue);
 }
 
-    .suggest .ui-listbox {
-        width: 100%;
-    }
+.suggest .ui-listbox {
+  width: 100%;
+}
 
-    .suggest .ui-state-highlight, .suggest .ui-state-hover {
-        border: none;
-    }
+.suggest .ui-state-highlight,
+.suggest .ui-state-hover {
+  border: none;
+}
 
 code {
-    width: 1em;
-    height: 1em;
-    margin-right: 0.5em;
-    cursor: pointer;
-    overflow: hidden;
-    display: inline-block;
-    color: floralwhite;
-    border: 1px solid var(--dark-gray);
-    background: floralwhite !important;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.5em;
+  cursor: pointer;
+  overflow: hidden;
+  display: inline-block;
+  color: floralwhite;
+  border: 1px solid var(--dark-gray);
+  background: floralwhite !important;
 }
-
-
 
 /* Navigation */
 .nav-actions {
-    text-align: center;
-    font-style: italic;
-    color: var(--dark-gray);
-    padding: 1em 0.5em 1em 0.5em;
+  text-align: center;
+  font-style: italic;
+  color: var(--dark-gray);
+  padding: 1em 0.5em 1em 0.5em;
 }
 
-    .nav-actions div {
-        cursor: pointer;
-    }
+.nav-actions div {
+  cursor: pointer;
+}
 
-        .nav-actions div:hover {
-            border-radius: 3px;
-            background: var(--dark-blue);
-        }
+.nav-actions div:hover {
+  border-radius: 3px;
+  background: var(--dark-blue);
+}
 
 p-treetable {
-    height: 50% !important;
+  height: 50% !important;
 }
 
 .bookmarks {
-    height: 50% !important;
+  height: 50% !important;
 }
 
 .navigation hr {
-    width: 90%;
-    padding-left: 1em;
-    border-color: var(--dark-gray);
-    background: var(--light-blue);
+  width: 90%;
+  padding-left: 1em;
+  border-color: var(--dark-gray);
+  background: var(--light-blue);
 }
 
 .editor-col p-togglebutton {
-    padding: 0 !important;
+  padding: 0 !important;
 }
 
-    .editor-col p-togglebutton .ui-button {
-        width: 5em;
-        height: 2em;
-        color: white !important;
-        background: var(--light-blue) !important;
-    }
+.editor-col p-togglebutton .ui-button {
+  width: 5em;
+  height: 2em;
+  color: white !important;
+  background: var(--light-blue) !important;
+}
 
-    .editor-col p-togglebutton .ui-button-icon-left {
-        margin-left: 25%;
-    }
+.editor-col p-togglebutton .ui-button-icon-left {
+  margin-left: 25%;
+}
 
 .section-drag {
-    width: 50%;
-    display: inline-block;
-    border-top: 1px solid var(--light-gray);
+  width: 50%;
+  display: inline-block;
+  border-top: 1px solid var(--light-gray);
 }
 
 /* Bookmarks */
 .bookmarks {
-    background: var(--light-blue);
+  background: var(--light-blue);
 }
 
-    .bookmarks .ui-treetable-toggler {
-        visibility: hidden !important;
-    }
+.bookmarks .ui-treetable-toggler {
+  visibility: hidden !important;
+}
 
-    .bookmarks .bookmark-header {
-        left: -1em;
-        position: relative;
-    }
+.bookmarks .bookmark-header {
+  left: -1em;
+  position: relative;
+}
 
 .bookmark-header i {
-    margin-right: 0.5em;
+  margin-right: 0.5em;
 }
