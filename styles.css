@@ -1,0 +1,21 @@
+:root {
+  --light-gray: #d3d3d3;
+  --dark-gray: #939393;
+  --light-blue: #252e3b;
+  --dark-blue: #14191f;
+  --link-blue: #0076ff;
+  --orange: #ed6e2b;
+  --tan: #fddc9b;
+}
+
+html {
+  height: 100%;
+  font-size: 0.9em;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--dark-blue);
+}
